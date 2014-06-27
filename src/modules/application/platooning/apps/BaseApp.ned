@@ -15,15 +15,22 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-cplusplus {{
-#include "AirFrame_m.h"
-}}
-class AirFrame;
+package org.mixim.modules.application.platooning.apps;
 
-//
-// Extension of base AirFrame message to have the underSensitivity field
-//
-message AirFrame11p extends AirFrame {
-    bool underSensitivity = false;
-    bool wasTransmitting = false;
+import org.mixim.base.modules.IBaseApplLayer;
+
+moduleinterface BaseApp extends IBaseApplLayer
+{
+    parameters:
+        //send actual or controller-computed acceleration
+        bool useControllerAcceleration;
+        //cacc and engine related parameters
+        double caccXi;
+        double caccOmegaN @unit("Hz");
+        double caccC1;
+        double engineTau @unit("s");
+
+        @display("i=block/app2");
+        @class(BaseApp);
+
 }

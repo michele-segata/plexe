@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2012-2014 Michele Segata <segata@ccs-labs.org>
+// Copright (c) 2012-2014 Michele Segata <segata@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -15,15 +15,24 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-cplusplus {{
-#include "AirFrame_m.h"
-}}
-class AirFrame;
+#ifndef SIMPLEPLATOONINGBEACONING_H_
+#define SIMPLEPLATOONINGBEACONING_H_
 
-//
-// Extension of base AirFrame message to have the underSensitivity field
-//
-message AirFrame11p extends AirFrame {
-    bool underSensitivity = false;
-    bool wasTransmitting = false;
-}
+#include "BaseProtocol.h"
+
+class SimplePlatooningBeaconing : public BaseProtocol
+{
+	protected:
+
+		virtual void handleSelfMsg(cMessage *msg);
+		virtual void messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicast);
+
+	public:
+		SimplePlatooningBeaconing();
+		virtual ~SimplePlatooningBeaconing();
+
+		virtual void initialize(int stage);
+		virtual void finish();
+};
+
+#endif /* SIMPLEPLATOONINGBEACONING_H_ */

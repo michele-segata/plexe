@@ -54,6 +54,12 @@ class Decider80211p: public BaseDecider {
 			LAST_DECIDER_80211_CONTROL_KIND,
 			RECWHILESEND
 		};
+		/**
+		 * @brief tell the outcome of a packetOk() call, which might be
+		 * correctly decoded, discarded due to low SNR or discarder due
+		 * to low SINR (i.e. collision)
+		 */
+		enum PACKET_OK_RESULT {DECODED, NOT_DECODED, COLLISION};
 	protected:
 		// threshold value for checking a SNR-map (SNR-threshold)
 		double snrThreshold;
@@ -81,13 +87,6 @@ class Decider80211p: public BaseDecider {
 		bool collectCollisionStats;
 		/** @brief count the number of collisions */
 		unsigned int collisions;
-
-		/**
-		 * @brief tell the outcome of a packetOk() call, which might be
-		 * correctly decoded, discarded due to low SNR or discarder due
-		 * to low SINR (i.e. collision)
-		 */
-		enum PACKET_OK_RESULT {DECODED, NOT_DECODED, COLLISION};
 
 	protected:
 
@@ -170,7 +169,7 @@ class Decider80211p: public BaseDecider {
 			myBusyTime(0),
 			myStartTime(simTime().dbl()),
 			curSyncFrame(0),
-			collectCollisionStats(collectCollisionStatistics),
+			collectCollisionStats(true),
 			collisions(0) {
 			phy11p = dynamic_cast<Decider80211pToPhy80211pInterface*>(phy);
 			assert(phy11p);

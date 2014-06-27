@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!-- debug config -->
+<launch>
+	<basedir path="examples/sinPlatoon/sumocfg" />
+	<copy file="freeway.net.xml" />
+	<copy file="freeway.rou.xml" />
+	<copy file="freeway.sumo.cfg" type="config" />
+</launch>

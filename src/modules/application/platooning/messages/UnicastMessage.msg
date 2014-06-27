@@ -15,15 +15,29 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-cplusplus {{
-#include "AirFrame_m.h"
-}}
-class AirFrame;
+enum UnicastMessageType {
+	DATA = 0;
+	ACK = 1;
+};
 
 //
-// Extension of base AirFrame message to have the underSensitivity field
+// Unicast message sent by the unicast protocol
 //
-message AirFrame11p extends AirFrame {
-    bool underSensitivity = false;
-    bool wasTransmitting = false;
+packet UnicastMessage {
+    //destination MAC address
+    int destination;
+    //source MAC address
+    int source;
+    //sequence number
+    int sequenceNumber;
+    //message type, data or ack
+    int type enum(UnicastMessageType);
+    //priority for the message (will be then mapped onto an AC)
+    //0 = AC_BK
+    //1 = AC_BE
+    //2 = AC_VI
+    //3 = AC_VO
+    int priority = 0;
+    //receive power in dBm
+    double recvPower_dBm;
 }

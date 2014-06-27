@@ -123,6 +123,12 @@ class Mac1609_4 : public BaseMacLayer,
 
 		void changeServiceChannel(int channelNumber);
 
+		/**
+		 * @brief Change the tx power the NIC card is using
+		 *
+		 * @param txPower_mW the tx power to be set in mW
+		 */
+		void setTxPower(double txPower_mW);
 
 	protected:
 		/** @brief States of the channel selecting operation.*/
@@ -225,6 +231,11 @@ class Mac1609_4 : public BaseMacLayer,
 		std::string myId;
 
 		Mac80211pToPhy11pInterface* phy11p;
+
+		//tell to anybody which is interested when the channel turns busy or idle
+		simsignal_t sigChannelBusy;
+		//tell to anybody which is interested when a collision occurred
+		simsignal_t sigCollision;
 };
 
 #endif /* ___MAC1609_4_H_*/

@@ -8,6 +8,7 @@
 /// @author  Tino Morenz
 /// @author  Michael Behrisch
 /// @author  Christoph Sommer
+/// @author  Michele Segata
 /// @date    2007/10/24
 /// @version $Id$
 ///
@@ -15,6 +16,7 @@
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.sourceforge.net/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
+// Copyright (C) 2012-2014 Michele Segata (segata@ccs-labs.org)
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -669,5 +671,75 @@
 // track vehicle
 #define VAR_TRACK_VEHICLE 0xa6
 
+// get generic information
+#define VAR_GET_GENERIC_INFORMATION 0xe9
+
+// set generic information
+#define VAR_SET_GENERIC_INFORMATION 0xea
+
+// set CACC constant spacing
+#define VAR_SET_CACC_SPACING 0xeb
+
+// get CACC constant spacing
+#define VAR_GET_CACC_SPACING 0xec
+
+// get ACC computed acceleration when faked CACC controller is enabled
+#define VAR_GET_ACC_ACCELERATION 0xed
+
+// determine whether a vehicle has crashed or not
+#define VAR_GET_CRASHED 0xee
+
+// set a fixed acceleration to a vehicle controlled by CC/ACC/CACC
+#define VAR_SET_FIXED_ACCELERATION 0xef
+
+// get vehicle speed and acceleration, needed for example by the platoon leader (get: vehicle)
+#define VAR_GET_SPEED_AND_ACCELERATION 0xf0
+
+// set speed and acceleration of the platoon leader
+#define VAR_SET_LEADER_SPEED_AND_ACCELERATION 0xf1
+
+// get lane count for the street the vehicle is currently traveling
+#define VAR_GET_LANES_COUNT 0xf2
+
+// set the lane change action that the driver should perform as given by the platooning controller
+#define VAR_SET_LANE_CHANGE_ACTION 0xf3
+
+// set the cruise control desired speed
+#define VAR_SET_CC_DESIRED_SPEED 0xf4
+
+// set the currently active vehicle controller which can be either the driver, or the ACC or the CACC
+#define VAR_SET_ACTIVE_CONTROLLER 0xf5
+
+// get whether a cruise controller is installed in the car
+#define VAR_GET_CC_INSTALLED 0xf6
+
+// get radar data from the car
+#define VAR_GET_RADAR_DATA 0xf7
+
+// communicate with the cruise control to give him fake indications. this can be useful when you want
+// to advance a vehicle to a certain position, for example, for joining a platoon. clearly the ACC
+// must always take into consideration both fake and real data
+#define VAR_SET_CONTROLLER_FAKE_DATA 0xf8
+
+// get the distance that a car has to travel until it reaches the end of its route
+#define VAR_GET_DISTANCE_TO_END 0xf9
+
+// get the current lane change action
+#define VAR_GET_LANE_CHANGE_ACTION 0xfa
+
+// get the currently active vehicle controller
+#define VAR_GET_ACTIVE_CONTROLLER 0xfb
+
+// get the distance from the beginning of the route
+#define VAR_GET_DISTANCE_FROM_BEGIN 0xfc
+
+// set speed and acceleration of the preceding vehicle
+#define VAR_SET_PREC_SPEED_AND_ACCELERATION 0xfd
+
+// set vehicle to move to a fixed lane
+#define VAR_SET_FIXED_LANE 0xfe
+
+// set ACC headway time
+#define VAR_SET_ACC_HEADWAY_TIME 0xff
 
 #endif

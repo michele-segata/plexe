@@ -15,15 +15,13 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-cplusplus {{
-#include "AirFrame_m.h"
-}}
-class AirFrame;
-
 //
-// Extension of base AirFrame message to have the underSensitivity field
+// Control message sent from the application layer to the unicast protocol
+// or vicevarsa
 //
-message AirFrame11p extends AirFrame {
-    bool underSensitivity = false;
-    bool wasTransmitting = false;
+packet UnicastProtocolControlMessage {
+    //control command requested (e.g., set mac address or fail to send)
+    int controlCommand;
+    //value for the control command (e.g., actual mac address)
+    int commandValue;
 }
