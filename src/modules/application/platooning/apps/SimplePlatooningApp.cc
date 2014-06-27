@@ -41,8 +41,11 @@ void SimplePlatooningApp::initialize(int stage) {
 		if (strcmp(strController, "ACC") == 0) {
 			controller = Plexe::ACC;
 		}
-		else {
+		else if (strcmp(strController, "CACC") == 0) {
 			controller = Plexe::CACC;
+		}
+		else {
+			controller = Plexe::MYCC;
 		}
 		//headway time for ACC
 		accHeadway = par("accHeadway").doubleValue();

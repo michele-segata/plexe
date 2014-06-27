@@ -26,14 +26,16 @@ module(scenario.node[*].prot)
 accCloseData <- prepare.vector('../results/platoons_Sinusoidal-0-0-0.3-2-200-1-0.1-0.vec')
 accFarData <- prepare.vector('../results/platoons_Sinusoidal-1-0-1.2-2-200-1-0.1-0.vec')
 caccData <- prepare.vector('../results/platoons_Sinusoidal-2-1-0.3-2-200-1-0.1-0.vec')
+ccData <- prepare.vector('../results/platoons_Sinusoidal-3-2-0.3-2-200-1-0.1-0.vec')
 
 #add a column to distinguish them before merging
 accCloseData$controller <- "ACC (0.3s)"
 accFarData$controller <- "ACC (1.2s)"
 caccData$controller <- "CACC"
+ccData$controller <- "MYCC"
 
 #merge all data together
-allData <- rbind(accCloseData, accFarData, caccData)
+allData <- rbind(accCloseData, accFarData, caccData, ccData)
 
 #plot speed as function of time for different controllers
 p1 <-	ggplot(allData, aes(x=time, y=speed, col=factor(nodeId))) +

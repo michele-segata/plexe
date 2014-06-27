@@ -35,7 +35,7 @@ enum PLATOONING_LANE_CHANGE_ACTION {
  * leave the control to the mobility model which reproduces a human driver
  */
 enum ACTIVE_CONTROLLER
-{DRIVER = 0, ACC = 1, CACC = 2, FAKED_CACC = 3};
+{DRIVER = 0, ACC = 1, CACC = 2, FAKED_CACC = 3, MYCC = 4};
 
 /**
  * @brief struct used as header for generic data passing to this model through
@@ -78,6 +78,9 @@ struct VEHICLE_DATA {
 #define CC_SET_CACC_OMEGA_N              0x05    //omega_n
 #define CC_SET_CACC_C1                   0x06    //C1
 #define CC_SET_ENGINE_TAU                0x07    //engine time constant
+
+#define CC_SET_MYCC_KD                   0x08    //k_d constant for new controller
+#define CC_SET_MYCC_KS                   0x09    //k_s constant for new controller
 
 }
 

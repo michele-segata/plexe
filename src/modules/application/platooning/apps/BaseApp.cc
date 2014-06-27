@@ -38,6 +38,8 @@ void BaseApp::initialize(int stage) {
 		caccXi = par("caccXi").doubleValue();
 		caccOmegaN = par("caccOmegaN").doubleValue();
 		engineTau = par("engineTau").doubleValue();
+		myccKd = par("myccKd").doubleValue();
+		myccKs = par("myccKs").doubleValue();
 
 		myId = getParentModule()->getIndex();
 	}
@@ -49,6 +51,8 @@ void BaseApp::initialize(int stage) {
 		traci->commandSetGenericInformation(traci->getExternalId(), CC_SET_CACC_OMEGA_N, &caccOmegaN, sizeof(double));
 		traci->commandSetGenericInformation(traci->getExternalId(), CC_SET_CACC_XI, &caccXi, sizeof(double));
 		traci->commandSetGenericInformation(traci->getExternalId(), CC_SET_ENGINE_TAU, &engineTau, sizeof(double));
+		traci->commandSetGenericInformation(traci->getExternalId(), CC_SET_MYCC_KD, &myccKd, sizeof(double));
+		traci->commandSetGenericInformation(traci->getExternalId(), CC_SET_MYCC_KS, &myccKs, sizeof(double));
 
 	}
 

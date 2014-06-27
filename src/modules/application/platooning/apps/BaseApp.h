@@ -57,6 +57,7 @@ class BaseApp : public BaseApplLayer
 		bool useControllerAcceleration;
 		//controller and engine related parameters
 		double caccXi, caccOmegaN, caccC1, engineTau;
+		double myccKd, myccKs;
 
 		//speed and acceleration requested from traci at the last polling cycle
 		double currentSpeed, currentAcceleration, currentControllerAcceleration;

@@ -35,6 +35,8 @@ simple SimplePlatooningApp like BaseApp
         double caccOmegaN @unit("Hz") = default(0.2 Hz);
         double caccC1 = default(0.5);
         double engineTau @unit("s") = default(0.5 s);
+        double myccKd = default(1);
+        double myccKs = default(1);
 
         //leader average speed during platooning
         double leaderSpeed @unit("kmph") = default(150kmph);
