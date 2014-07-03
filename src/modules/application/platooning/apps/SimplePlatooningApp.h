@@ -54,7 +54,9 @@ class SimplePlatooningApp : public BaseApp
 		cMessage *changeSpeed;
 
 	public:
-		SimplePlatooningApp() {}
+		SimplePlatooningApp() {
+			changeSpeed = 0;
+		}
 
 	protected:
 

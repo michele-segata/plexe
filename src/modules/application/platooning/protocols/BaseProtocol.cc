@@ -247,9 +247,6 @@ void BaseProtocol::messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicas
 	ASSERT2(false, "BaseProtocol::messageReceived() not overridden by subclass");
 }
 
-BaseProtocol::BaseProtocol() {
-}
-
 BaseProtocol::~BaseProtocol() {
 }
 
