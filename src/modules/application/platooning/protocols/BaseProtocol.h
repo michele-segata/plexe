@@ -104,7 +104,10 @@ class BaseProtocol : public BaseApplLayer {
 		//id for beacon message
 		static const int BEACON_TYPE = 12345;
 
-		BaseProtocol();
+		BaseProtocol() {
+			sendBeacon = 0;
+			dataPolling = 0;
+		}
 		virtual ~BaseProtocol();
 
 		virtual void initialize(int stage);
