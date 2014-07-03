@@ -102,6 +102,9 @@ class TraCIScenarioManager : public cSimpleModule
 		std::list<std::string> commandGetPlannedEdgeIds(std::string nodeId);
 		std::string commandGetRouteId(std::string nodeId);
 		std::list<std::string> commandGetRouteEdgeIds(std::string routeId);
+		std::list<std::string> commandGetVehicleTypeIds();
+		std::list<std::string> commandGetRouteIds();
+		std::list<std::string> commandGetRoadIds();
 		void commandChangeRoute(std::string nodeId, std::string roadId, double travelTime);
 		double commandDistanceRequest(Coord position1, Coord position2, bool returnDrivingDistance);
 		void commandStopNode(std::string nodeId, std::string roadId, double pos, uint8_t laneid, double radius, double waittime);
@@ -275,7 +278,14 @@ class TraCIScenarioManager : public cSimpleModule
 			return hosts;
 		}
 
-	protected:
+		simtime_t getUpdateInterval() {
+			return updateInterval;
+		}
+
+		bool isTraciInitialized() {
+			return traciInitialized;
+		}
+
 		/**
 		 * Coord equivalent for storing TraCI coordinates
 		 */
@@ -285,6 +295,8 @@ class TraCIScenarioManager : public cSimpleModule
 			double x;
 			double y;
 		};
+
+	protected:
 
 		/**
 		 * Byte-buffer that stores values in TraCI byte-order
@@ -410,6 +422,7 @@ class TraCIScenarioManager : public cSimpleModule
 				size_t buf_index;
 		};
 
+		bool traciInitialized;
 		bool debug; /**< whether to emit debug messages */
 		simtime_t connectAt; /**< when to connect to TraCI server (must be the initial timestep of the server) */
 		simtime_t firstStepAt; /**< when to start synchronizing with the TraCI server (-1: immediately after connecting) */
@@ -517,6 +530,16 @@ class TraCIScenarioManager : public cSimpleModule
 		 * convert OMNeT++ angle (in rad) to TraCI angle
 		 */
 		double omnet2traciAngle(double angle) const;
+
+		/**
+		 * adds a new vehicle to the queue which are tried to be inserted at the next SUMO time step;
+		 */
+		void insertNewVehicle();
+
+		/**
+		 * tries to add all vehicles in the vehicle queue to SUMO;
+		 */
+		void insertVehicles();
 
 		void subscribeToVehicleVariables(std::string vehicleId);
 		void unsubscribeFromVehicleVariables(std::string vehicleId);
