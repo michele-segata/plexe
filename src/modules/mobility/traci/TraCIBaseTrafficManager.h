@@ -82,7 +82,10 @@ class TraCIBaseTrafficManager : public cSimpleModule
 		//queue of vehicles to be inserted. maps the index of a route in routeIds to a list of indexes of vehicle
 		//types in vehicleTypeIds
 		typedef std::map<int, std::deque<struct Vehicle> > InsertQueue;
+	private:
 		InsertQueue vehicleInsertQueue;
+	protected:
+		void addVehicleToQueue(int routeId, struct Vehicle v);
 
 		/**
 		 * Inserts the vehicles which have been put into the queue

@@ -214,3 +214,7 @@ void TraCIBaseTrafficManager::insertVehicles() {
 		}
 	}
 }
+
+void TraCIBaseTrafficManager::addVehicleToQueue(int routeId, struct Vehicle v) {
+	vehicleInsertQueue[routeId].push_back(v);
+}
