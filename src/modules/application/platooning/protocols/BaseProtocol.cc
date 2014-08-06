@@ -81,6 +81,8 @@ void BaseProtocol::initialize(int stage) {
 		//vehicle position
 		posxOut.setName("posx");
 		posyOut.setName("posy");
+		//vehicle acceleration
+		accelerationOut.setName("acceleration");
 
 		//init data polling. do it at each tenth of a second
 		scheduleAt(SimTime(((int)((simTime().dbl() + .1) * 10)) / 10.0), dataPolling);
@@ -114,13 +116,15 @@ void BaseProtocol::handleSelfMsg(cMessage *msg) {
 		}
 
 		//get distance and relative speed w.r.t. front vehicle
-		double distance, relSpeed;
+		double distance, relSpeed, acceleration, speed, controllerAcceleration, posX, posY, time;
 		traci->commandGetRadarMeasurements(traci->getExternalId(), distance, relSpeed);
+		traci->commandGetVehicleData(traci->getExternalId(), speed, acceleration, controllerAcceleration, posX, posY, time);
 
 		//write data to output files
 		distanceOut.record(distance);
 		relSpeedOut.record(relSpeed);
 		nodeIdOut.record(myId);
+		accelerationOut.record(acceleration);
 		speedOut.record(traci->getCurrentSpeed().x);
 		Coord pos = traci->getPositionAt(simTime());
 		posxOut.record(pos.x);

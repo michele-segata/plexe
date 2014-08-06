@@ -30,7 +30,7 @@ class BaseProtocol : public BaseApplLayer {
 	private:
 
 		//output vectors for statistics
-		cOutVector distanceOut, relSpeedOut, nodeIdOut, speedOut, posxOut, posyOut;
+		cOutVector distanceOut, relSpeedOut, nodeIdOut, speedOut, posxOut, posyOut, accelerationOut;
 
 	protected:
 
