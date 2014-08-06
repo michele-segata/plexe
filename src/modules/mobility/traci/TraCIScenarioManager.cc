@@ -56,7 +56,7 @@ void TraCIScenarioManager::initialize(int stage) {
 		return;
 	}
 
-
+	traciInitialized = false;
 	debug = par("debug");
 	connectAt = par("connectAt");
 	firstStepAt = par("firstStepAt");
@@ -358,6 +358,9 @@ void TraCIScenarioManager::init_traci() {
 			}
 		}
 	}
+
+	traciInitialized = true;
+
 }
 
 void TraCIScenarioManager::finish() {
@@ -472,6 +475,18 @@ std::string TraCIScenarioManager::commandGetRouteId(std::string nodeId) {
 
 std::list<std::string> TraCIScenarioManager::commandGetRouteEdgeIds(std::string routeId) {
 	return genericGetStringList(CMD_GET_ROUTE_VARIABLE, routeId, VAR_EDGES, RESPONSE_GET_ROUTE_VARIABLE);
+}
+
+std::list<std::string> TraCIScenarioManager::commandGetVehicleTypeIds() {
+	return genericGetStringList(CMD_GET_VEHICLETYPE_VARIABLE, "", ID_LIST, RESPONSE_GET_VEHICLETYPE_VARIABLE);
+}
+
+std::list<std::string> TraCIScenarioManager::commandGetRouteIds() {
+	return genericGetStringList(CMD_GET_ROUTE_VARIABLE, "", ID_LIST, RESPONSE_GET_ROUTE_VARIABLE);
+}
+
+std::list<std::string> TraCIScenarioManager::commandGetRoadIds() {
+	return genericGetStringList(CMD_GET_EDGE_VARIABLE, "", ID_LIST, RESPONSE_GET_EDGE_VARIABLE);
 }
 
 void TraCIScenarioManager::commandChangeRoute(std::string nodeId, std::string roadId, double travelTime) {
@@ -1059,6 +1074,7 @@ void TraCIScenarioManager::processSimSubscription(std::string objectId, TraCIBuf
 }
 
 void TraCIScenarioManager::processVehicleSubscription(std::string objectId, TraCIBuffer& buf) {
+
 	bool isSubscribed = (subscribedVehicles.find(objectId) != subscribedVehicles.end());
 	double px;
 	double py;
@@ -1089,6 +1105,13 @@ void TraCIScenarioManager::processVehicleSubscription(std::string objectId, TraC
 			std::set<std::string> drivingVehicles;
 			for (uint32_t i = 0; i < count; ++i) {
 				std::string idstring; buf >> idstring;
+
+//			    //do not tell omnet about non radio equipped vehicles
+//			    std::string vTypeId = genericGetString(CMD_GET_VEHICLE_VARIABLE, idstring, VAR_TYPE, RESPONSE_GET_VEHICLE_VARIABLE);
+//			    if (vTypeId != "vtypeauto") {
+//			        continue;
+//			    }
+
 				drivingVehicles.insert(idstring);
 			}
 
@@ -1171,9 +1194,13 @@ void TraCIScenarioManager::processVehicleSubscription(std::string objectId, TraC
 	}
 
 	if (!mod) {
-		// no such module - need to create
-		addModule(objectId, moduleType, moduleName, moduleDisplayString, p, edge, speed, angle);
-		MYDEBUG << "Added vehicle #" << objectId << endl;
+	    //do not tell omnet about non radio equipped vehicles
+//	    std::string vTypeId = genericGetString(CMD_GET_VEHICLE_VARIABLE, objectId, VAR_TYPE, RESPONSE_GET_VEHICLE_VARIABLE);
+//	    if (vTypeId == "vtypeauto") {
+	        // no such module - need to create
+	        addModule(objectId, moduleType, moduleName, moduleDisplayString, p, edge, speed, angle);
+	        MYDEBUG << "Added vehicle #" << objectId << endl;
+//	    }
 	} else {
 		// module existed - update position
 		for (cModule::SubmoduleIterator iter(mod); !iter.end(); iter++) {
