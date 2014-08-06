@@ -52,6 +52,8 @@ class BaseApp : public BaseApplLayer
 
 		//id of this vehicle
 		int myId;
+		//id of leader and front vehicle
+		int leaderId, frontId;
 
 		//determine whether to send the actual acceleration or the one just computed by the controller
 		bool useControllerAcceleration;
