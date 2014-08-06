@@ -205,7 +205,7 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 
 	//send the message to the platooning application
 	UnicastMessage *duplicate = unicast->dup();
-	duplicate->encapsulate(epkt->dup());
+	duplicate->encapsulate(enc->dup());
 	send(duplicate, upperLayerOut);
 
 	delete enc;
