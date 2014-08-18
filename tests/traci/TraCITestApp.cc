@@ -141,7 +141,8 @@ void TraCITestApp::handlePositionUpdate() {
 
 	if (testNumber == testCounter++) {
 		if (t == 1) {
-			traci->getManager()->commandSetTrafficLightPhaseIndex("10", 2);
+			traci->getManager()->commandSetTrafficLightProgram("10", "myProgramGreenRed");
+			traci->getManager()->commandSetTrafficLightPhaseIndex("10", 1);
 		}
 		if (t == 30) {
 			assertTrue("(commandSetTrafficLightPhaseIndex) vehicle is at 31", roadId == "31");
@@ -184,7 +185,7 @@ void TraCITestApp::handlePositionUpdate() {
 			points.push_back(Coord(200, 100));
 			points.push_back(Coord(200, 200));
 			points.push_back(Coord(100, 200));
-			traci->getManager()->commandAddPolygon("testPoly", "testType", TraCIScenarioManager::Color(1, 1, 1, 1), true, 1, points);
+			traci->getManager()->commandAddPolygon("testPoly", "testType", TraCIColor::fromTkColor("red"), true, 1, points);
 		}
 		if (t == 31) {
 			std::list<std::string> polys = traci->commandGetPolygonIds();
@@ -219,11 +220,11 @@ void TraCITestApp::handlePositionUpdate() {
 	}
 
 	if (testNumber == testCounter++) {
-		if (t == 30) {
-			bool r = traci->getManager()->commandAddVehicle("testVehicle0", "vtype0", "route0", "25_0", 0, 70);
+		if (t == 28) {
+			bool r = traci->getManager()->commandAddVehicle("testVehicle0", "vtype0", "route0");
 			assertTrue("(commandAddVehicle) command reports success", r);
 		}
-		if (t == 31) {
+		if (t == 30) {
 			std::map<std::string, cModule*>::const_iterator i = traci->getManager()->getManagedHosts().find("testVehicle0");
 			bool r = (i != traci->getManager()->getManagedHosts().end());
 			assertTrue("(commandAddVehicle) vehicle now driving", r);

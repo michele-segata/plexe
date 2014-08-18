@@ -23,9 +23,9 @@ module(scenario.node[*].prot)
 }
 
 #load simulation output files
-accCloseData <- prepare.vector('../results/platoons_Sinusoidal-0-0-0.3-2-200-1-0.1-0.vec')
-accFarData <- prepare.vector('../results/platoons_Sinusoidal-1-0-1.2-2-200-1-0.1-0.vec')
-caccData <- prepare.vector('../results/platoons_Sinusoidal-2-1-0.3-2-200-1-0.1-0.vec')
+accCloseData <- prepare.vector('../results/Sinusoidal_0_0.3_0.vec')
+accFarData <- prepare.vector('../results/Sinusoidal_0_1.2_0.vec')
+caccData <- prepare.vector('../results/Sinusoidal_1_0.3_0.vec')
 
 #add a column to distinguish them before merging
 accCloseData$controller <- "ACC (0.3s)"
