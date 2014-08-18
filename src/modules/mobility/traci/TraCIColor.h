@@ -18,30 +18,25 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-#ifndef TraCIDemo11p_H
-#define TraCIDemo11p_H
+#ifndef WORLD_TRACI_TRACICOLORS_H
+#define WORLD_TRACI_TRACICOLORS_H
 
-#include "BaseWaveApplLayer.h"
-#include "mobility/traci/TraCIMobility.h"
+#include <omnetpp.h>
 
 /**
- * Small IVC Demo using 11p
+ * TraCI compatible color container
  */
-class TraCIDemo11p : public BaseWaveApplLayer {
+class TraCIColor {
 	public:
-		virtual void initialize(int stage);
+		TraCIColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
+		static TraCIColor fromTkColor(std::string tkColorName);
 
-	protected:
-		TraCIMobility* traci;
-		AnnotationManager* annotations;
-		simtime_t lastDroveAt;
-		bool sentMessage;
-
-	protected:
-		virtual void onBeacon(WaveShortMessage* wsm);
-		virtual void onData(WaveShortMessage* wsm);
-		void sendMessage(std::string blockedRoadId);
-		virtual void handlePositionUpdate(cObject* obj);
+	public:
+		uint8_t red;
+		uint8_t green;
+		uint8_t blue;
+		uint8_t alpha;
 };
 
 #endif
+

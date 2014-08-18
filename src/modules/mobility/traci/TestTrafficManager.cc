@@ -54,7 +54,7 @@ void TestTrafficManager::insertNewVehicle() {
 	v.speed = -1;
 	//insert nCars of the same type and with the same route, for testing purposes
 	for (i = 0; i < par("nCars").longValue(); i++) {
-		vehicleInsertQueue[routeId].push_back(v);
+		addVehicleToQueue(routeId, v);
 	}
 }
 

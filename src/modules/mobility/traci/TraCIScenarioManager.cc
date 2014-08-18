@@ -282,7 +282,7 @@ void TraCIScenarioManager::init_traci() {
 		uint32_t apiVersion = version.first;
 		std::string serverVersion = version.second;
 
-		if ((apiVersion == 3) || (apiVersion == 5)) {
+		if ((apiVersion == 3) || (apiVersion == 5) || (apiVersion == 6) || (apiVersion == 7)) {
 			MYDEBUG << "TraCI server \"" << serverVersion << "\" reports API version " << apiVersion << endl;
 		}
 		else {
@@ -592,7 +592,7 @@ void TraCIScenarioManager::commandSetPolygonShape(std::string polyId, std::list<
 	ASSERT(obuf.eof());
 }
 
-void TraCIScenarioManager::commandAddPolygon(std::string polyId, std::string polyType, const TraCIScenarioManager::Color& color, bool filled, int32_t layer, std::list<Coord> points) {
+void TraCIScenarioManager::commandAddPolygon(std::string polyId, std::string polyType, const TraCIColor& color, bool filled, int32_t layer, std::list<Coord> points) {
 	TraCIBuffer p;
 
 	p << static_cast<uint8_t>(ADD) << polyId;
@@ -608,6 +608,41 @@ void TraCIScenarioManager::commandAddPolygon(std::string polyId, std::string pol
 	}
 
 	TraCIBuffer buf = queryTraCI(CMD_SET_POLYGON_VARIABLE, p);
+	ASSERT(buf.eof());
+}
+
+void TraCIScenarioManager::commandRemovePolygon(std::string polyId, int32_t layer) {
+	TraCIBuffer p;
+
+	p << static_cast<uint8_t>(REMOVE) << polyId;
+	p << static_cast<uint8_t>(TYPE_INTEGER) << layer;
+
+	TraCIBuffer buf = queryTraCI(CMD_SET_POLYGON_VARIABLE, p);
+	ASSERT(buf.eof());
+}
+
+void TraCIScenarioManager::commandAddPoi(std::string poiId, std::string poiType, const TraCIColor& color, int32_t layer, Coord pos) {
+	TraCIBuffer p;
+
+	TraCICoord traciPos = omnet2traci(pos);
+	p << static_cast<uint8_t>(ADD) << poiId;
+	p << static_cast<uint8_t>(TYPE_COMPOUND) << static_cast<int32_t>(4);
+	p << static_cast<uint8_t>(TYPE_STRING) << poiType;
+	p << static_cast<uint8_t>(TYPE_COLOR) << color.red << color.green << color.blue << color.alpha;
+	p << static_cast<uint8_t>(TYPE_INTEGER) << layer;
+	p << static_cast<uint8_t>(POSITION_2D) << traciPos.x << traciPos.y;
+
+	TraCIBuffer buf = queryTraCI(CMD_SET_POI_VARIABLE, p);
+	ASSERT(buf.eof());
+}
+
+void TraCIScenarioManager::commandRemovePoi(std::string poiId, int32_t layer) {
+	TraCIBuffer p;
+
+	p << static_cast<uint8_t>(REMOVE) << poiId;
+	p << static_cast<uint8_t>(TYPE_INTEGER) << layer;
+
+	TraCIBuffer buf = queryTraCI(CMD_SET_POI_VARIABLE, p);
 	ASSERT(buf.eof());
 }
 
@@ -643,11 +678,16 @@ Coord TraCIScenarioManager::commandGetJunctionPosition(std::string junctionId) {
 	return genericGetCoord(CMD_GET_JUNCTION_VARIABLE, junctionId, VAR_POSITION, RESPONSE_GET_JUNCTION_VARIABLE);
 }
 
-bool TraCIScenarioManager::commandAddVehicle(std::string vehicleId, std::string vehicleTypeId, std::string routeId, std::string laneId, float emitPosition, float emitSpeed) {
+bool TraCIScenarioManager::commandAddVehicle(std::string vehicleId, std::string vehicleTypeId, std::string routeId, simtime_t emitTime_st, double emitPosition, double emitSpeed, int8_t emitLane) {
 	bool success = false;
-	TraCIBuffer buf = queryTraCIOptional(CMD_ADDVEHICLE, TraCIBuffer() << vehicleId << vehicleTypeId << routeId << laneId << emitPosition << emitSpeed, success);
+
+	uint8_t variableId = ADD;
+	uint8_t variableType = TYPE_COMPOUND;
+	int32_t count = 6;
+	int32_t emitTime = (emitTime_st < 0) ? (-1) : (floor(emitTime_st.dbl() * 1000));
+	TraCIBuffer buf = queryTraCIOptional(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << vehicleId << variableType << count << (uint8_t)TYPE_STRING << vehicleTypeId << (uint8_t)TYPE_STRING << routeId << (uint8_t)TYPE_INTEGER << emitTime << (uint8_t)TYPE_DOUBLE << emitPosition << (uint8_t)TYPE_DOUBLE <<emitSpeed << (uint8_t)TYPE_BYTE << emitLane, success);
 	ASSERT(buf.eof());
-	if (success) activeVehicleCount++;
+
 	return success;
 }
 
@@ -663,8 +703,8 @@ void TraCIScenarioManager::addModule(std::string nodeId, std::string type, std::
 	double option2 = (hosts.size() + 1) / (hosts.size() + unEquippedHosts.size() + 1.0);
 
 	if (fabs(option1 - penetrationRate) < fabs(option2 - penetrationRate)) {
-	    unEquippedHosts.insert(nodeId);
-	    return;
+		unEquippedHosts.insert(nodeId);
+		return;
 	}
 
 	int32_t nodeVectorIndex = nextNodeVectorIndex++;
@@ -708,8 +748,8 @@ cModule* TraCIScenarioManager::getManagedModule(std::string nodeId) {
 }
 
 bool TraCIScenarioManager::isModuleUnequipped(std::string nodeId) {
-    if (unEquippedHosts.find(nodeId) == unEquippedHosts.end()) return false;
-    return true;
+	if (unEquippedHosts.find(nodeId) == unEquippedHosts.end()) return false;
+	return true;
 }
 
 void TraCIScenarioManager::deleteModule(std::string nodeId) {

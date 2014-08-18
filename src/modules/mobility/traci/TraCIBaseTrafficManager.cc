@@ -173,9 +173,8 @@ void TraCIBaseTrafficManager::insertVehicles() {
 
 				//try to insert that into any lane
 				for (unsigned int laneId = 0; !suc && laneId < routeStartLaneIds[route].size(); laneId++) {
-					std::string lane = routeStartLaneIds[route][laneId];
 					EV << "trying to add " << veh.str() << " with " << route << " vehicle type " << type << std::endl;
-					suc = manager->commandAddVehicle(veh.str(), type, route, lane, v.position, v.speed);
+					suc = manager->commandAddVehicle(veh.str(), type, route, -TraCIScenarioManager::DEPART_NOW, v.position, v.speed, laneId);
 					if (suc) break;
 				}
 				if (!suc) {
@@ -192,9 +191,8 @@ void TraCIBaseTrafficManager::insertVehicles() {
 			else {
 
 				//try to insert into desired lane
-				std::string lane = routeStartLaneIds[route][v.lane];
 				EV << "trying to add " << veh.str() << " with " << route << " vehicle type " << type << std::endl;
-				suc = manager->commandAddVehicle(veh.str(), type, route, lane, v.position, v.speed);
+				suc = manager->commandAddVehicle(veh.str(), type, route, -TraCIScenarioManager::DEPART_NOW, v.position, v.speed, v.lane);
 
 				if (suc) {
 					EV << "successful inserted " << veh.str() << std::endl;
@@ -213,4 +211,8 @@ void TraCIBaseTrafficManager::insertVehicles() {
 			}
 		}
 	}
+}
+
+void TraCIBaseTrafficManager::addVehicleToQueue(int routeId, struct Vehicle v) {
+	vehicleInsertQueue[routeId].push_back(v);
 }
