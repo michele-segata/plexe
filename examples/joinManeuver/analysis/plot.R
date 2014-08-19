@@ -62,4 +62,4 @@ p3 <-	ggplot(allData, aes(x=time, y=acceleration, col=factor(nodeId))) +
 		ylim(c(-4, 3)) +
 		facet_grid(xi~.)
 #print(p3)
-ggsave('acceleration.pdf', p1, width=16, height=9)
+ggsave('acceleration.pdf', p3, width=16, height=9)
