@@ -67,7 +67,7 @@ void BaseProtocol::initialize(int stage) {
 		dataPolling = new cMessage("dataPolling");
 
 		//get traci interface
-		traci = TraCIMobilityAccess().get(getParentModule());
+		traci = Veins::TraCIMobilityAccess().get(getParentModule());
 
 		//set names for output vectors
 		//distance from front vehicle

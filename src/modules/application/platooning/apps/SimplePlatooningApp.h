@@ -18,7 +18,6 @@
 #ifndef SIMPLEPLATOONINGAPP_H_
 #define SIMPLEPLATOONINGAPP_H_
 
-#include <BaseNetwLayer.h>
 #include <BaseModule.h>
 #include "BaseApp.h"
 

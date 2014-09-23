@@ -19,14 +19,12 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-package org.mixim.examples.sinPlatoon;
-
-import org.mixim.base.modules.IBaseApplLayer;
-import org.mixim.modules.application.platooning.protocols.BaseProtocol;
-import org.mixim.modules.application.platooning.apps.BaseApp;
-import org.mixim.modules.application.platooning.UnicastProtocol;
-import org.mixim.modules.mobility.traci.TraCIMobility;
-import org.mixim.modules.nic.Nic80211p;
+import org.car2x.veins.base.modules.IBaseApplLayer;
+import org.car2x.veins.modules.application.platooning.protocols.BaseProtocol;
+import org.car2x.veins.modules.application.platooning.apps.BaseApp;
+import org.car2x.veins.modules.application.platooning.UnicastProtocol;
+import org.car2x.veins.modules.mobility.traci.TraCIMobility;
+import org.car2x.veins.modules.nic.Nic80211p;
 
 
 module Car

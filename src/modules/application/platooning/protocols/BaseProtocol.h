@@ -97,7 +97,7 @@ class BaseProtocol : public BaseApplLayer {
 		virtual void messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicast);
 
 		//traci mobility. used for getting/setting info about the car
-		TraCIMobility *traci;
+		Veins::TraCIMobility *traci;
 
 	public:
 

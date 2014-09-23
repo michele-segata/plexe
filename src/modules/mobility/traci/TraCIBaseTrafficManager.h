@@ -21,6 +21,7 @@
 #include <omnetpp.h>
 #include <queue>
 #include <TraCIScenarioManager.h>
+#include <TraCICommandInterface.h>
 
 class TraCIBaseTrafficManager : public cSimpleModule
 {
@@ -56,7 +57,9 @@ class TraCIBaseTrafficManager : public cSimpleModule
 
 	protected:
 		//pointer to the scenario manager, used to issue traci commands
-		TraCIScenarioManager *manager;
+		Veins::TraCIScenarioManager *manager;
+		//pointer to the command interface
+		Veins::TraCICommandInterface *commandInterface;
 		//vector of all the vehicle types available
 		std::vector<std::string> vehicleTypeIds;
 		//vector counting the number of vehicles inserted per each type
@@ -95,10 +98,10 @@ class TraCIBaseTrafficManager : public cSimpleModule
 		virtual void handleSelfMsg(cMessage *msg);
 		virtual void handleMessage(cMessage *msg);
 
-        /**
-         * virtual function that inheriting classes can override to get informed when scenario is loaded
-         */
-        virtual void scenarioLoaded() {};
+		/**
+		 * virtual function that inheriting classes can override to get informed when scenario is loaded
+		 */
+		virtual void scenarioLoaded() {};
 
 };
 

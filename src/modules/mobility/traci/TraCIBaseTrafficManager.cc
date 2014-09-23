@@ -38,8 +38,9 @@ void TraCIBaseTrafficManager::initialize(int stage) {
 		insertInOrder = true;
 
 		//search for the scenario manager. it will be needed to inject vehicles
-		manager = FindModule<TraCIScenarioManager*>::findGlobalModule();
+		manager = FindModule<Veins::TraCIScenarioManager*>::findGlobalModule();
 		ASSERT2(manager, "cannot find TraciScenarioManager");
+		commandInterface = manager->getCommandInterface();
 
 		//reset vehicles counter
 		vehCounter = 0;
@@ -97,7 +98,7 @@ int TraCIBaseTrafficManager::findVehicleTypeIndex(std::string vehType) {
 void TraCIBaseTrafficManager::loadSumoScenario() {
 	//get all the vehicle types
 	if(vehicleTypeIds.size()==0) {
-		std::list<std::string> vehTypes = manager->commandGetVehicleTypeIds();
+		std::list<std::string> vehTypes = commandInterface->commandGetVehicleTypeIds();
 		EV << "Having currently " << vehTypes.size() << " vehicle types" << std::endl;
 		for (std::list<std::string>::const_iterator i = vehTypes.begin(); i != vehTypes.end(); ++i) {
 			if(i->compare("DEFAULT_VEHTYPE")!=0) {
@@ -110,7 +111,7 @@ void TraCIBaseTrafficManager::loadSumoScenario() {
 	}
 	//get all roads
 	if(roadIds.size()==0) {
-		std::list<std::string> roads = manager->commandGetRoadIds();
+		std::list<std::string> roads = commandInterface->commandGetRoadIds();
 		EV << "Having currently " << roads.size() << " roads in the scenario" << std::endl;
 		for (std::list<std::string>::const_iterator i = roads.begin(); i != roads.end(); ++i) {
 			EV << *i << std::endl;
@@ -119,24 +120,24 @@ void TraCIBaseTrafficManager::loadSumoScenario() {
 	}
 	//get all lanes
 	if(laneIds.size()==0) {
-		std::list<std::string> lanes = manager->commandGetLaneIds();
+		std::list<std::string> lanes = commandInterface->commandGetLaneIds();
 		EV << "Having currently " << lanes.size() << " lanes in the scenario" << std::endl;
 		for (std::list<std::string>::const_iterator i = lanes.begin(); i != lanes.end(); ++i) {
 			EV << *i << std::endl;
 			laneIds.push_back(*i);
-			std::string edgeId = manager->commandGetLaneEdgeId(*i);
+			std::string edgeId = commandInterface->commandGetLaneEdgeId(*i);
 			laneIdsOnEdge[edgeId].push_back(*i);
 		}
 	}
 	//get all routes
 	if(routeIds.size()==0) {
-		std::list<std::string> routes = manager->commandGetRouteIds();
+		std::list<std::string> routes = commandInterface->commandGetRouteIds();
 		EV << "Having currently " << routes.size() << " routes in the scenario" << std::endl;
 		for (std::list<std::string>::const_iterator i = routes.begin(); i != routes.end(); ++i) {
 			std::string routeId = *i;
 			EV << routeId << std::endl;
 			routeIds.push_back(routeId);
-			std::list<std::string> routeEdges = manager->commandGetRouteEdgeIds(routeId);
+			std::list<std::string> routeEdges = commandInterface->commandGetRouteEdgeIds(routeId);
 			std::string firstEdge = *(routeEdges.begin());
 			EV << "First Edge of route " << routeId << " is " << firstEdge << std::endl;
 			routeStartLaneIds[routeId] = laneIdsOnEdge[firstEdge];
@@ -174,7 +175,7 @@ void TraCIBaseTrafficManager::insertVehicles() {
 				//try to insert that into any lane
 				for (unsigned int laneId = 0; !suc && laneId < routeStartLaneIds[route].size(); laneId++) {
 					EV << "trying to add " << veh.str() << " with " << route << " vehicle type " << type << std::endl;
-					suc = manager->commandAddVehicle(veh.str(), type, route, -TraCIScenarioManager::DEPART_NOW, v.position, v.speed, laneId);
+					suc = commandInterface->addVehicle(veh.str(), type, route, -Veins::TraCICommandInterface::DEPART_NOW, v.position, v.speed, laneId);
 					if (suc) break;
 				}
 				if (!suc) {
@@ -192,7 +193,7 @@ void TraCIBaseTrafficManager::insertVehicles() {
 
 				//try to insert into desired lane
 				EV << "trying to add " << veh.str() << " with " << route << " vehicle type " << type << std::endl;
-				suc = manager->commandAddVehicle(veh.str(), type, route, -TraCIScenarioManager::DEPART_NOW, v.position, v.speed, v.lane);
+				suc = commandInterface->addVehicle(veh.str(), type, route, -Veins::TraCICommandInterface::DEPART_NOW, v.position, v.speed, v.lane);
 
 				if (suc) {
 					EV << "successful inserted " << veh.str() << std::endl;

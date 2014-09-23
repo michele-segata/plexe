@@ -18,8 +18,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-#include "mobility/traci/TraCIScenarioManagerLaunchd.h"
-#include "mobility/traci/TraCIConstants.h"
+#include "modules/mobility/traci/TraCIScenarioManagerLaunchd.h"
+#include "modules/mobility/traci/TraCICommandInterface.h"
+#include "modules/mobility/traci/TraCIConstants.h"
 #define CMD_FILE_SEND 0x75
 
 #include <sstream>
@@ -28,7 +29,9 @@
 
 #define MYDEBUG EV
 
-Define_Module(TraCIScenarioManagerLaunchd);
+using Veins::TraCIScenarioManagerLaunchd;
+
+Define_Module(Veins::TraCIScenarioManagerLaunchd);
 
 TraCIScenarioManagerLaunchd::~TraCIScenarioManagerLaunchd()
 {
@@ -73,22 +76,25 @@ void TraCIScenarioManagerLaunchd::finish()
 
 void TraCIScenarioManagerLaunchd::init_traci() {
 	{
-		std::pair<uint32_t, std::string> version = TraCIScenarioManager::commandGetVersion();
+		std::pair<uint32_t, std::string> version = getCommandInterface()->getVersion();
 		uint32_t apiVersion = version.first;
 		std::string serverVersion = version.second;
 
-		ASSERT(apiVersion == 1);
-
-		MYDEBUG << "TraCI launchd reports version \"" << serverVersion << "\"" << endl;
+		if ((apiVersion == 1)) {
+			MYDEBUG << "TraCI server \"" << serverVersion << "\" reports API version " << apiVersion << endl;
+		}
+		else {
+			error("TraCI server \"%s\" reports API version %d, which is unsupported. We recommend using the version of sumo-launchd that ships with Veins.", serverVersion.c_str(), apiVersion);
+		}
 	}
 
 	std::string contents = launchConfig->tostr(0);
 
 	TraCIBuffer buf;
 	buf << std::string("sumo-launchd.launch.xml") << contents;
-	sendTraCIMessage(makeTraCICommand(CMD_FILE_SEND, buf));
+	connection->sendMessage(makeTraCICommand(CMD_FILE_SEND, buf));
 
-	TraCIBuffer obuf(receiveTraCIMessage());
+	TraCIBuffer obuf(connection->receiveMessage());
 	uint8_t cmdLength; obuf >> cmdLength;
 	uint8_t commandResp; obuf >> commandResp; if (commandResp != CMD_FILE_SEND) error("Expected response to command %d, but got one for command %d", CMD_FILE_SEND, commandResp);
 	uint8_t result; obuf >> result;
