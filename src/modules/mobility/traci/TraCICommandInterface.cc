@@ -953,4 +953,8 @@ double TraCICommandInterface::commandGetDistanceToRouteEnd(std::string vehicleId
 
 }
 
+std::string TraCICommandInterface::commandGetVType(std::string vehicleId) {
+	return genericGetString(CMD_GET_VEHICLE_VARIABLE, vehicleId, VAR_TYPE, RESPONSE_GET_VEHICLE_VARIABLE);
+}
+
 }

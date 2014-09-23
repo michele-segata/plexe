@@ -220,6 +220,10 @@ class TraCICommandInterface
 		 * is controlled by the faked CACC
 		 */
 		double commandGetACCAcceleration(std::string vehicleId);
+		/**
+		 * Returns the vehicle type of a vehicle
+		 */
+		std::string commandGetVType(std::string vehicleId);
 
 
 	private:

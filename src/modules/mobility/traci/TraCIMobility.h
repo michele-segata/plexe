@@ -350,6 +350,9 @@ class TraCIMobility : public BaseMobility
 		double commandGetDistanceFromRouteBegin(std::string vehicleId) {
 		    return getCommandInterface()->commandGetDistanceFromRouteBegin(vehicleId);
 		}
+		std::string commandGetVType(std::string vehicleId) {
+			return getCommandInterface()->commandGetVType(vehicleId);
+		}
 
 
 	protected:
