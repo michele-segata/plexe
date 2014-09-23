@@ -38,6 +38,8 @@
 #include "AirFrame11p_m.h"
 #include "MacToPhyControlInfo.h"
 
+using Veins::ObstacleControlAccess;
+
 Define_Module(PhyLayer80211p);
 
 /** This is needed to circumvent a bug in MiXiM that allows different header length interpretations for receiving and sending airframes*/
@@ -346,7 +348,16 @@ AnalogueModel* PhyLayer80211p::initializeSimpleObstacleShadowing(ParameterMap& p
 
 Decider* PhyLayer80211p::initializeDecider80211p(ParameterMap& params) {
 	double centerFreq = params["centerFrequency"];
-	Decider80211p* dec = new Decider80211p(this, sensitivity, centerFreq, findHost()->getIndex(), coreDebug);
+
+	bool collectCollisionStatistics = false;
+	{
+		ParameterMap::iterator it = params.find("collectCollisionStatistics");
+		if (it != params.end()) {
+			collectCollisionStatistics = it->second.doubleValue();
+		}
+	}
+
+	Decider80211p* dec = new Decider80211p(this, sensitivity, centerFreq, findHost()->getIndex(), collectCollisionStatistics, coreDebug);
 	dec->setPath(getParentModule()->getFullPath());
 	return dec;
 }

@@ -15,7 +15,7 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-package org.mixim.modules.mobility.traci;
+package org.car2x.veins.modules.mobility.traci;
 
 simple TestTrafficManager like TraCIBaseTrafficManager {
 

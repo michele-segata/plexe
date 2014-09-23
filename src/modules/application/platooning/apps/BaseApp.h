@@ -18,7 +18,6 @@
 #ifndef BASEAPP_H_
 #define BASEAPP_H_
 
-#include <BaseNetwLayer.h>
 #include <BaseModule.h>
 #include <BaseApplLayer.h>
 
@@ -48,7 +47,7 @@ class BaseApp : public BaseApplLayer
 
 	protected:
 
-		TraCIMobility* traci;
+		Veins::TraCIMobility* traci;
 
 		//id of this vehicle
 		int myId;

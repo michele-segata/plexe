@@ -22,7 +22,10 @@
 #define TraCIDemo11p_H
 
 #include "BaseWaveApplLayer.h"
-#include "mobility/traci/TraCIMobility.h"
+#include "modules/mobility/traci/TraCIMobility.h"
+
+using Veins::TraCIMobility;
+using Veins::AnnotationManager;
 
 /**
  * Small IVC Demo using 11p
@@ -30,18 +33,22 @@
 class TraCIDemo11p : public BaseWaveApplLayer {
 	public:
 		virtual void initialize(int stage);
-
+		virtual void receiveSignal(cComponent* source, simsignal_t signalID, cObject* obj);
 	protected:
 		TraCIMobility* traci;
 		AnnotationManager* annotations;
 		simtime_t lastDroveAt;
 		bool sentMessage;
-
+		bool isParking;
+		bool sendWhileParking;
+		static const simsignalwrap_t parkingStateChangedSignal;
 	protected:
 		virtual void onBeacon(WaveShortMessage* wsm);
 		virtual void onData(WaveShortMessage* wsm);
 		void sendMessage(std::string blockedRoadId);
 		virtual void handlePositionUpdate(cObject* obj);
+		virtual void handleParkingUpdate(cObject* obj);
+		virtual void sendWSM(WaveShortMessage* wsm);
 };
 
 #endif
