@@ -18,8 +18,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-#ifndef MOBILITY_TRACI_TRACIMOBILITY_H
-#define MOBILITY_TRACI_TRACIMOBILITY_H
+#ifndef VEINS_MOBILITY_TRACI_TRACIMOBILITY_H
+#define VEINS_MOBILITY_TRACI_TRACIMOBILITY_H
+
+#define TRACI_SIGNAL_PARKING_CHANGE_NAME "parkingStateChanged"
 
 #include <string>
 #include <fstream>
@@ -28,7 +30,8 @@
 
 #include <BaseMobility.h>
 #include "FindModule.h"
-#include "mobility/traci/TraCIScenarioManager.h"
+#include "modules/mobility/traci/TraCIScenarioManager.h"
+#include "modules/mobility/traci/TraCICommandInterface.h"
 
 /**
  * @brief
@@ -46,6 +49,7 @@
  *
  * @ingroup mobility
  */
+namespace Veins {
 class TraCIMobility : public BaseMobility
 {
 	public:
@@ -73,6 +77,7 @@ class TraCIMobility : public BaseMobility
 		virtual void preInitialize(std::string external_id, const Coord& position, std::string road_id = "", double speed = -1, double angle = -1);
 		virtual void nextPosition(const Coord& position, std::string road_id = "", double speed = -1, double angle = -1, TraCIScenarioManager::VehicleSignal signals = TraCIScenarioManager::VEH_SIGNAL_UNDEF);
 		virtual void changePosition();
+		virtual void changeParkingState(bool);
 		virtual void updateDisplayString();
 		virtual void setExternalId(std::string external_id) {
 			this->external_id = external_id;
@@ -86,6 +91,9 @@ class TraCIMobility : public BaseMobility
 		}
 		virtual Coord getPositionAt(const simtime_t& t) const {
 			return move.getPositionAt(t) ;
+		}
+		virtual bool getParkingState() const {
+			return isParking;
 		}
 		virtual std::string getRoadId() const {
 			if (road_id == "") throw cRuntimeError("TraCIMobility::getRoadId called with no road_id set yet");
@@ -110,91 +118,104 @@ class TraCIMobility : public BaseMobility
 			if (!manager) manager = TraCIScenarioManagerAccess().get();
 			return manager;
 		}
+		virtual TraCICommandInterface* getCommandInterface() const {
+			return getManager()->getCommandInterface();
+		}
 		void commandSetSpeedMode(int32_t bitset) {
-			getManager()->commandSetSpeedMode(getExternalId(), bitset);
+			getCommandInterface()->setSpeedMode(getExternalId(), bitset);
 		}
 		void commandSetSpeed(double speed) {
-			getManager()->commandSetSpeed(getExternalId(), speed);
+			getCommandInterface()->setSpeed(getExternalId(), speed);
+		}
+		void commandSetColor(const TraCIColor& color) {
+			getCommandInterface()->setColor(getExternalId(), color);
+		}
+		void commandSlowDown(double speed, int duration) {
+			getCommandInterface()->slowDown(getExternalId(),speed,duration);
 		}
 		void commandChangeRoute(std::string roadId, double travelTime) {
-			getManager()->commandChangeRoute(getExternalId(), roadId, travelTime);
+			getCommandInterface()->changeRoute(getExternalId(), roadId, travelTime);
 		}
-
 		void commandNewRoute(std::string roadId) {
-		    getManager()->commandNewRoute(getExternalId(), roadId);
+			getCommandInterface()->newRoute(getExternalId(), roadId);
 		}
 		void commandParkVehicle() {
-			getManager()->commandSetVehicleParking(getExternalId());
+			getCommandInterface()->setVehicleParking(getExternalId());
 		}
-
 		double commandDistanceRequest(Coord position1, Coord position2, bool returnDrivingDistance) {
-			return getManager()->commandDistanceRequest(position1, position2, returnDrivingDistance);
+			return getCommandInterface()->distanceRequest(getManager()->omnet2traci(position1), getManager()->omnet2traci(position2), returnDrivingDistance);
 		}
 		void commandStopNode(std::string roadId, double pos, uint8_t laneid, double radius, double waittime) {
-			return getManager()->commandStopNode(getExternalId(), roadId, pos, laneid, radius, waittime);
+			getCommandInterface()->stopNode(getExternalId(), roadId, pos, laneid, radius, waittime);
 		}
 		std::list<std::string> commandGetPolygonIds() {
-			return getManager()->commandGetPolygonIds();
+			return getCommandInterface()->getPolygonIds();
 		}
 		std::string commandGetPolygonTypeId(std::string polyId) {
-			return getManager()->commandGetPolygonTypeId(polyId);
+			return getCommandInterface()->getPolygonTypeId(polyId);
 		}
 		std::list<Coord> commandGetPolygonShape(std::string polyId) {
-			return getManager()->commandGetPolygonShape(polyId);
+			return getManager()->traci2omnet(getCommandInterface()->getPolygonShape(polyId));
 		}
 		void commandSetPolygonShape(std::string polyId, std::list<Coord> points) {
-			getManager()->commandSetPolygonShape(polyId, points);
+			getCommandInterface()->setPolygonShape(polyId, getManager()->omnet2traci(points));
 		}
-		bool commandAddVehicle(std::string vehicleId, std::string vehicleTypeId, std::string routeId, simtime_t emitTime_st = -TraCIScenarioManager::DEPART_NOW, double emitPosition = -TraCIScenarioManager::DEPART_POS_BASE, double emitSpeed = -TraCIScenarioManager::DEPART_SPEED_MAX, int8_t emitLane = -TraCIScenarioManager::DEPART_LANE_BEST_FREE) {
-			return getManager()->commandAddVehicle(vehicleId, vehicleTypeId, routeId, emitTime_st, emitPosition, emitSpeed, emitLane);
+		bool commandAddVehicle(std::string vehicleId, std::string vehicleTypeId, std::string routeId, simtime_t emitTime_st = -TraCICommandInterface::DEPART_NOW, double emitPosition = -TraCICommandInterface::DEPART_POS_BASE, double emitSpeed = -TraCICommandInterface::DEPART_SPEED_MAX, int8_t emitLane = -TraCICommandInterface::DEPART_LANE_BEST_FREE) {
+			return getCommandInterface()->addVehicle(vehicleId, vehicleTypeId, routeId, emitTime_st, emitPosition, emitSpeed, emitLane);
 		}
-		std::string commandGetVType(std::string vehicleId) {
-			return getManager()->commandGetVType(vehicleId);
+		int commandGetLaneIndex() {
+			return getCommandInterface()->getLaneIndex(getExternalId());
+		}
+		std::string commandGetLaneId() {
+			return getCommandInterface()->getLaneId(getExternalId());
+		}
+		bool commandChangeVehicleRoute(std::list<std::string> edges) {
+			return getCommandInterface()->changeVehicleRoute(getExternalId(), edges);
 		}
 		/**
 		 * Gets the index of the lane the vehicle is running on (0 for rightmost)
 		 */
 		unsigned int commandGetLaneIndex(std::string vehicleId) {
-		    return getManager()->commandGetLaneIndex(vehicleId);
+		    return getCommandInterface()->commandGetLaneIndex(vehicleId);
 		}
 		/**
 		 * Gets the total number of lanes on the edge the vehicle is currently traveling
 		 */
 		unsigned int commandGetLanesCount(std::string vehicleId) {
-		    return getManager()->commandGetLanesCount(vehicleId);
+		    return getCommandInterface()->commandGetLanesCount(vehicleId);
 		}
 		/**
 		 * Sets the data about the leader of the platoon. This data is usually received
 		 * by means of wireless communications
 		 */
 		void commandSetPlatoonLeaderData(std::string vehicleId, double leaderSpeed, double leaderAcceleration, double positionX = 0, double positionY = 0, double time = 0) {
-		    getManager()->commandSetPlatoonLeaderData(vehicleId, leaderSpeed, leaderAcceleration, positionX, positionY, time);
+		    getCommandInterface()->commandSetPlatoonLeaderData(vehicleId, leaderSpeed, leaderAcceleration, positionX, positionY, time);
 		}
 		/**
 		 * Sets the data about the preceding vehicle in the platoon. This data is usually
 		 * received by means of wireless communications
 		 */
 		void commandSetPrecedingVehicleData(std::string vehicleId, double leaderSpeed, double leaderAcceleration, double positionX = 0, double positionY = 0, double time = 0) {
-		    getManager()->commandSetPrecedingVehicleData(vehicleId, leaderSpeed, leaderAcceleration, positionX, positionY, time);
+		    getCommandInterface()->commandSetPrecedingVehicleData(vehicleId, leaderSpeed, leaderAcceleration, positionX, positionY, time);
 		}
 		void commandSetGenericInformation(std::string vehicleId, int type, const void* data, int length) {
-			getManager()->commandSetGenericInformation(vehicleId, type, data, length);
+			getCommandInterface()->commandSetGenericInformation(vehicleId, type, data, length);
 		}
 		void commandGetGenericInformation(std::string vehicleId, int type, const void* params, int paramsLength, void *result) {
-			getManager()->commandGetGenericInformation(vehicleId, type, params, paramsLength, result);
+			getCommandInterface()->commandGetGenericInformation(vehicleId, type, params, paramsLength, result);
 		}
 		/**
 		 * Gets the data about a vehicle. This can be used by a platoon leader in order to query for the acceleration
 		 * before sending the data to the followers
 		 */
 		void commandGetVehicleData(std::string vehicleId, double &speed, double &acceleration, double &controllerAcceleration, double &positionX, double &positionY, double &time) {
-		    return getManager()->commandGetVehicleData(vehicleId, speed, acceleration, controllerAcceleration, positionX, positionY, time);
+		    return getCommandInterface()->commandGetVehicleData(vehicleId, speed, acceleration, controllerAcceleration, positionX, positionY, time);
 		}
 		/**
 		 * Set the cruise control desired speed
 		 */
 		void commandSetCruiseControlDesiredSpeed(std::string vehicleId, double desiredSpeed) {
-		    getManager()->commandSetCruiseControlDesiredSpeed(vehicleId, desiredSpeed);
+		    getCommandInterface()->commandSetCruiseControlDesiredSpeed(vehicleId, desiredSpeed);
 		}
 		/**
 		 * Set the currently active controller, which can be either the driver, the ACC or
@@ -205,13 +226,13 @@ class TraCIMobility : public BaseMobility
 		 * ACC and 2 for CACC
 		 */
 		void commandSetActiveController(std::string vehicleId, int activeController) {
-		    getManager()->commandSetActiveController(vehicleId, activeController);
+		    getCommandInterface()->commandSetActiveController(vehicleId, activeController);
 		}
 		/**
 		 * Returns the currently active controller
 		 */
 		int commandGetActiveController(std::string vehicleId) {
-		    return getManager()->commandGetActiveController(vehicleId);
+		    return getCommandInterface()->commandGetActiveController(vehicleId);
 		}
 		/**
 		 * Sets the headway time for the ACC
@@ -220,7 +241,7 @@ class TraCIMobility : public BaseMobility
 		 * @param headway the headway time in seconds
 		 */
 		void commandSetACCHeadwayTime(std::string vehicleId, double headway) {
-			return getManager()->commandSetACCHeadwayTime(vehicleId, headway);
+			return getCommandInterface()->commandSetACCHeadwayTime(vehicleId, headway);
 		}
 		/**
 		 * Set CACC constant spacing
@@ -229,14 +250,14 @@ class TraCIMobility : public BaseMobility
 		 * @param spacing the constant spacing in meter
 		 */
 		void commandSetCACCConstantSpacing(std::string vehicleId, double spacing) {
-			getManager()->commandSetCACCConstantSpacing(vehicleId, spacing);
+			getCommandInterface()->commandSetCACCConstantSpacing(vehicleId, spacing);
 		}
 
 		/**
 		 * Returns the CACC constant spacing
 		 */
 		double commandGetCACCConstantSpacing(std::string vehicleId) {
-			return getManager()->commandGetCACCConstantSpacing(vehicleId);
+			return getCommandInterface()->commandGetCACCConstantSpacing(vehicleId);
 		}
 		/**
 		 * Enables/disables a fixed acceleration
@@ -246,7 +267,7 @@ class TraCIMobility : public BaseMobility
 		 * @param acceleration the fixed acceleration to be used if activate == 1
 		 */
 		void commandSetFixedAcceleration(std::string vehicleId, int activate, double acceleration) {
-			return getManager()->commandSetFixedAcceleration(vehicleId, activate, acceleration);
+			return getCommandInterface()->commandSetFixedAcceleration(vehicleId, activate, acceleration);
 		}
 		/**
 		 * Returns whether a vehicle has crashed or not
@@ -255,14 +276,14 @@ class TraCIMobility : public BaseMobility
 		 * @return true if the vehicle has crashed, false otherwise
 		 */
 		bool commandIsCrashed(std::string vehicleId) {
-			return getManager()->commandIsCrashed(vehicleId);
+			return getCommandInterface()->commandIsCrashed(vehicleId);
 		}
 		/**
 		 * Gets acceleration that the ACC has computed while the vehicle
 		 * is controlled by the faked CACC
 		 */
 		double commandGetACCAcceleration(std::string vehicleId) {
-			return getManager()->commandGetACCAcceleration(vehicleId);
+			return getCommandInterface()->commandGetACCAcceleration(vehicleId);
 		}
 		/**
 		 * Tells whether the car has an ACC/CACC controller installed or not. Basically
@@ -270,7 +291,7 @@ class TraCIMobility : public BaseMobility
 		 *
 		 */
 		bool commandIsCruiseControllerInstalled(std::string vehicleId) {
-		    return getManager()->commandIsCruiseControllerInstalled(vehicleId);
+		    return getCommandInterface()->commandIsCruiseControllerInstalled(vehicleId);
 		}
 		/**
 		 * Tells to the CC mobility model the desired lane change action to be performed
@@ -286,15 +307,15 @@ class TraCIMobility : public BaseMobility
 		 * into the platooning lane because the car is a part of a platoon
 		 */
 		void commandSetLaneChangeAction(std::string vehicleId, int action) {
-		    getManager()->commandSetLaneChangeAction(vehicleId, action);
+		    getCommandInterface()->commandSetLaneChangeAction(vehicleId, action);
 		}
 
 		int commandGetLaneChangeAction(std::string vehicleId) {
-		    return getManager()->commandGetLaneChangeAction(vehicleId);
+		    return getCommandInterface()->commandGetLaneChangeAction(vehicleId);
 		}
 
 		void commandSetFixedLane(std::string vehicleId, int laneIndex) {
-			getManager()->commandSetFixedLane(vehicleId, laneIndex);
+			getCommandInterface()->commandSetFixedLane(vehicleId, laneIndex);
 		}
 
 		/**
@@ -306,12 +327,12 @@ class TraCIMobility : public BaseMobility
 		 * interpreted like "there is nobody in front"
 		 */
 		void commandGetRadarMeasurements(std::string vehicleId, double &distance, double &relativeSpeed) {
-		    getManager()->commandGetRadarMeasurements(vehicleId, distance, relativeSpeed);
+		    getCommandInterface()->commandGetRadarMeasurements(vehicleId, distance, relativeSpeed);
 		}
 
 		void commandSetControllerFakeData(std::string vehicleId, double frontDistance, double frontSpeed, double frontAcceleration,
 		            double leaderSpeed, double leaderAcceleration) {
-		    getManager()->commandSetControllerFakeData(vehicleId, frontDistance, frontSpeed, frontAcceleration, leaderSpeed, leaderAcceleration);
+		    getCommandInterface()->commandSetControllerFakeData(vehicleId, frontDistance, frontSpeed, frontAcceleration, leaderSpeed, leaderAcceleration);
 		}
 
 		/**
@@ -320,15 +341,16 @@ class TraCIMobility : public BaseMobility
 		 * leave a platoon
 		 */
 		double commandGetDistanceToRouteEnd(std::string vehicleId) {
-		    return getManager()->commandGetDistanceToRouteEnd(vehicleId);
+		    return getCommandInterface()->commandGetDistanceToRouteEnd(vehicleId);
 		}
 
 		/**
 		 * Gets the distance that a vehicle has traveled since the beginning
 		 */
 		double commandGetDistanceFromRouteBegin(std::string vehicleId) {
-		    return getManager()->commandGetDistanceFromRouteBegin(vehicleId);
+		    return getCommandInterface()->commandGetDistanceFromRouteBegin(vehicleId);
 		}
+
 
 	protected:
 		bool debug; /**< whether to emit debug messages */
@@ -359,6 +381,11 @@ class TraCIMobility : public BaseMobility
 		mutable TraCIScenarioManager* manager;
 		double last_speed;
 
+		const static simsignalwrap_t parkingStateChangedSignal;
+
+		bool isParking;
+
+
 		virtual void fixIfHostGetsOutside(); /**< called after each read to check for (and handle) invalid positions */
 
 		/**
@@ -374,7 +401,9 @@ class TraCIMobility : public BaseMobility
 		 */
 		Coord calculateAntennaPosition(const Coord& vehiclePos) const;
 };
+}
 
+namespace Veins {
 class TraCIMobilityAccess
 {
 	public:
@@ -384,7 +413,7 @@ class TraCIMobilityAccess
 			return traci;
 		};
 };
-
+}
 
 #endif
 

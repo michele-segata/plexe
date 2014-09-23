@@ -15,9 +15,9 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-package org.mixim.modules.application.platooning.protocols;
+package org.car2x.veins.modules.application.platooning.protocols;
 
-import org.mixim.modules.application.platooning.protocols.BaseProtocol;
+import org.car2x.veins.modules.application.platooning.protocols.BaseProtocol;
 
 //
 // Define static beaconing for platooning

@@ -44,7 +44,7 @@ void BaseApp::initialize(int stage) {
 
 	if (stage == 1) {
 
-		traci = TraCIMobilityAccess().get(getParentModule());
+		traci = Veins::TraCIMobilityAccess().get(getParentModule());
 		traci->commandSetGenericInformation(traci->getExternalId(), CC_SET_CACC_C1, &caccC1, sizeof(double));
 		traci->commandSetGenericInformation(traci->getExternalId(), CC_SET_CACC_OMEGA_N, &caccOmegaN, sizeof(double));
 		traci->commandSetGenericInformation(traci->getExternalId(), CC_SET_CACC_XI, &caccXi, sizeof(double));

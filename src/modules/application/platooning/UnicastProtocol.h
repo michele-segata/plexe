@@ -18,7 +18,6 @@
 #ifndef UNICASTPROTOCOL_H_
 #define UNICASTPROTOCOL_H_
 
-#include <BaseNetwLayer.h>
 #include <BaseModule.h>
 #include <BaseWaveApplLayer.h>
 

@@ -15,9 +15,9 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-package org.mixim.modules.application.platooning.apps;
+package org.car2x.veins.modules.application.platooning.apps;
 
-import org.mixim.modules.application.platooning.apps.BaseApp;
+import org.car2x.veins.modules.application.platooning.apps.BaseApp;
 
 simple SimplePlatooningApp like BaseApp
 {
