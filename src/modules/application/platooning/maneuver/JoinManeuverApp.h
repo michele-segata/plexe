@@ -16,7 +16,6 @@
 #ifndef JOINMANEUVERAPP_H_
 #define JOINMANEUVERAPP_H_
 
-#include <BaseNetwLayer.h>
 #include <BaseModule.h>
 #include "BaseApp.h"
 
