@@ -13,9 +13,9 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-package org.mixim.modules.application.platooning.maneuver;
+package org.car2x.veins.modules.application.platooning.maneuver;
 
-import org.mixim.modules.application.platooning.apps.BaseApp;
+import org.car2x.veins.modules.application.platooning.apps.BaseApp;
 
 simple JoinManeuverApp like BaseApp
 {
