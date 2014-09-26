@@ -40,7 +40,6 @@ void TraCIBaseTrafficManager::initialize(int stage) {
 		//search for the scenario manager. it will be needed to inject vehicles
 		manager = FindModule<Veins::TraCIScenarioManager*>::findGlobalModule();
 		ASSERT2(manager, "cannot find TraciScenarioManager");
-		commandInterface = manager->getCommandInterface();
 
 		//reset vehicles counter
 		vehCounter = 0;
@@ -96,6 +95,9 @@ int TraCIBaseTrafficManager::findVehicleTypeIndex(std::string vehType) {
 }
 
 void TraCIBaseTrafficManager::loadSumoScenario() {
+
+	commandInterface = manager->getCommandInterface();
+
 	//get all the vehicle types
 	if(vehicleTypeIds.size()==0) {
 		std::list<std::string> vehTypes = commandInterface->commandGetVehicleTypeIds();
