@@ -24,6 +24,7 @@
 #include <assert.h>
 #include <omnetpp.h>
 #include <queue>
+#include <stdint.h>
 #include <BaseLayer.h>
 #include <MacToPhyControlInfo.h>
 #include <PhyLayer80211p.h>
@@ -33,6 +34,8 @@
 #include <Mac80211Pkt_m.h>
 #include <WaveShortMessage_m.h>
 #include <BaseMacLayer.h>
+
+#include "ConstsPhy.h"
 
 /**
  * @brief
@@ -124,11 +127,26 @@ class Mac1609_4 : public BaseMacLayer,
 		void changeServiceChannel(int channelNumber);
 
 		/**
-		 * @brief Change the tx power the NIC card is using
+		 * @brief Change the default tx power the NIC card is using
 		 *
 		 * @param txPower_mW the tx power to be set in mW
 		 */
 		void setTxPower(double txPower_mW);
+
+		/**
+		 * @brief Change the default MCS the NIC card is using
+		 *
+		 * @param mcs the default modulation and coding scheme
+		 * to use
+		 */
+		void setMCS(enum PHY_MCS mcs);
+
+		/**
+		 * @brief Change the phy layer carrier sense threshold.
+		 *
+		 * @param ccaThreshold_dBm the cca threshold in dBm
+		 */
+		void setCCAThreshold(double ccaThreshold_dBm);
 
 	protected:
 		/** @brief States of the channel selecting operation.*/
@@ -164,8 +182,8 @@ class Mac1609_4 : public BaseMacLayer,
 
 		bool guardActive() const;
 
-		void attachSignal(Mac80211Pkt* mac, simtime_t startTime, double frequency);
-		Signal* createSignal(simtime_t start, simtime_t length, double power, double bitrate, double frequency);
+		void attachSignal(Mac80211Pkt* mac, simtime_t startTime, double frequency, uint64_t datarate, double txPower_mW);
+		Signal* createSignal(simtime_t start, simtime_t length, double power, uint64_t bitrate, double frequency);
 
 		/** @brief maps a application layer priority (up) to an EDCA access category. */
 		t_access_category mapPriority(int prio);
@@ -174,9 +192,9 @@ class Mac1609_4 : public BaseMacLayer,
 		void channelBusySelf(bool generateTxOp);
 		void channelIdle(bool afterSwitch = false);
 
-		void setParametersForBitrate(int bitrate);
+		void setParametersForBitrate(uint64_t bitrate);
 
-		simtime_t getFrameDuration(int payloadLengthBits) const;
+		simtime_t getFrameDuration(int payloadLengthBits, enum PHY_MCS mcs = MCS_DEFAULT) const;
 
 	protected:
 		/** @brief Self message to indicate that the current channel shall be switched.*/
@@ -227,7 +245,7 @@ class Mac1609_4 : public BaseMacLayer,
 		double txPower;
 
 		/** @brief the bit rate at which we transmit */
-		double bitrate;
+		uint64_t bitrate;
 
 		/** @brief N_DBPS, derived from bitrate, for frame length calculation */
 		double n_dbps;

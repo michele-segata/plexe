@@ -28,7 +28,13 @@ protected:
 	/** @brief Stores the signal to noise ratio of the transmission */
 	double snr;
 
-	/** @brief Stores the received power in dBm */
+	/** @brief Stores the received power in dBm
+	 * Please note that this is NOT the RSSI. The RSSI is an indicator
+	 * of the quality of the signal which is not standardized, and
+	 * different vendors can define different indicators. This value
+	 * indicates the power that the frame had when received by the
+	 * NIC card, WITHOUT noise floor and WITHOUT interference
+	 */
 	double recvPower_dBm;
 
 	/** @brief Stores whether the uncorrect decoding was due to low power or collision */

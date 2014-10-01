@@ -61,8 +61,8 @@ simple Mac1609_4 extends BaseMacLayer
         int queueSize = default(0);
 
         // signal informing interested application about channel busy state
-        @signal[sigChannelBusy](type="long");
-		// signal informing interested application about a collision
-        @signal[sigCollision](type="long");
+        @signal[sigChannelBusy](type=bool);
+        // signal informing interested application about a collision
+        @signal[sigCollision](type=bool);
 
 }
