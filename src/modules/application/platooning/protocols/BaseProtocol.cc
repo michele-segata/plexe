@@ -85,7 +85,7 @@ void BaseProtocol::initialize(int stage) {
 		accelerationOut.setName("acceleration");
 
 		//init data polling. do it at each tenth of a second
-		scheduleAt(SimTime(((int)((simTime().dbl() + .1) * 10)) / 10.0), dataPolling);
+		scheduleAt(SimTime(((int)(ceil((simTime().dbl() + .1) * 10))) / 10.0), dataPolling);
 
 	}
 
