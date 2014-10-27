@@ -119,7 +119,7 @@ void UnicastProtocol::handleUpperControl(cMessage *msg)
 
 }
 
-void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsulatedId, int priority, SimTime timestamp)
+void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsulatedId, int priority, SimTime timestamp, t_channel channel)
 {
 
 	//this function cannot be called if we are still waiting for the ack
@@ -148,8 +148,12 @@ void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsu
 	//free it
 	unicast->encapsulate(msg);
 
-	WaveShortMessage *wsm = prepareWSM("beacon", 0, type_CCH, priority, 0, unicast->getSequenceNumber());
+	WaveShortMessage *wsm = prepareWSM("beacon", 0, channel, priority, 0, unicast->getSequenceNumber());
 	wsm->encapsulate(unicast);
+	//include control info that might have been set at higher layers
+	if (msg->getControlInfo()){
+		wsm->setControlInfo(msg->getControlInfo()->dup());
+	}
 	sendDown(wsm);
 
 	//TODO: check whether to leave this here or somewhere else
@@ -180,7 +184,7 @@ void UnicastProtocol::sendAck(UnicastMessage *msg)
 	unicast->setPriority(0);
 	unicast->setType(ACK);
 
-	WaveShortMessage *wsm = prepareWSM("beacon", 0, type_CCH, 0, 0, msg->getSequenceNumber());
+	WaveShortMessage *wsm = prepareWSM("beacon", 0, (t_channel)msg->getChannel(), msg->getPriority(), 0, msg->getSequenceNumber());
 	wsm->encapsulate(unicast);
 	sendDown(wsm);
 
@@ -189,7 +193,7 @@ void UnicastProtocol::sendAck(UnicastMessage *msg)
 void UnicastProtocol::resendMessage()
 {
 
-	WaveShortMessage *wsm = prepareWSM("beacon", 0, type_CCH, 0, 0, currentMsg->getSequenceNumber());
+	WaveShortMessage *wsm = prepareWSM("beacon", 0, (t_channel)currentMsg->getChannel(), currentMsg->getPriority(), 0, currentMsg->getSequenceNumber());
 	wsm->encapsulate(currentMsg->dup());
 	sendDown(wsm);
 
@@ -394,7 +398,7 @@ void UnicastProtocol::processNextPacket()
 	UnicastMessage *toSend = queue.front();
 
 	//send message down
-	sendMessageDown(toSend->getDestination(), toSend->decapsulate(), toSend->getEncapsulationId(), toSend->getPriority(), toSend->getTimestamp());
+	sendMessageDown(toSend->getDestination(), toSend->decapsulate(), toSend->getEncapsulationId(), toSend->getPriority(), toSend->getTimestamp(), (t_channel)toSend->getChannel());
 
 	delete toSend;
 
