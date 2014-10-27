@@ -134,16 +134,9 @@ class TraCIScenarioManager : public cSimpleModule
 		std::string host;
 		int port;
 
-		uint32_t vehicleNameCounter;
 		cMessage* myAddVehicleTimer;
-		std::vector<std::string> vehicleTypeIds;
-		std::map<int, std::queue<std::string> > vehicleInsertQueue;
-		std::set<std::string> queuedVehicles;
-		std::vector<std::string> routeIds;
-		int vehicleRngIndex;
-		int numVehicles;
 
-		cRNG* mobRng;
+		int numVehicles;
 
 		bool autoShutdown; /**< Shutdown module as soon as no more vehicles are in the simulation */
 		int margin;
@@ -197,16 +190,6 @@ class TraCIScenarioManager : public cSimpleModule
 		 * convert OMNeT++ angle (in rad) to TraCI angle
 		 */
 		double omnet2traciAngle(double angle) const;
-
-		/**
-		 * adds a new vehicle to the queue which are tried to be inserted at the next SUMO time step;
-		 */
-		void insertNewVehicle();
-
-		/**
-		 * tries to add all vehicles in the vehicle queue to SUMO;
-		 */
-		void insertVehicles();
 
 		void subscribeToVehicleVariables(std::string vehicleId);
 		void unsubscribeFromVehicleVariables(std::string vehicleId);

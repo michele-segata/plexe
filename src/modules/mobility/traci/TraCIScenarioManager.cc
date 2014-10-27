@@ -53,7 +53,6 @@ Define_Module(Veins::TraCIScenarioManager);
 
 TraCIScenarioManager::TraCIScenarioManager() :
 		myAddVehicleTimer(0),
-		mobRng(0),
 		connection(0),
 		connectAndStartTrigger(0),
 		executeOneTimestepTrigger(0),
@@ -93,10 +92,7 @@ void TraCIScenarioManager::initialize(int stage) {
 	std::string roiRoads_s = par("roiRoads");
 	std::string roiRects_s = par("roiRects");
 
-	vehicleNameCounter = 0;
-	vehicleRngIndex = par("vehicleRngIndex");
 	numVehicles = par("numVehicles").longValue();
-	mobRng = getRNG(vehicleRngIndex);
 
 	myAddVehicleTimer = new cMessage("myAddVehicleTimer");
 
@@ -261,34 +257,6 @@ void TraCIScenarioManager::handleSelfMsg(cMessage *msg) {
 		return;
 	}
 	if (msg == executeOneTimestepTrigger) {
-		if (simTime() > 1) {
-			if (vehicleTypeIds.size()==0) {
-				std::list<std::string> vehTypes = getCommandInterface()->getVehicleTypeIds();
-				for (std::list<std::string>::const_iterator i = vehTypes.begin(); i != vehTypes.end(); ++i) {
-					if (i->compare("DEFAULT_VEHTYPE")!=0) {
-						MYDEBUG  << *i << std::endl;
-						vehicleTypeIds.push_back(*i);
-					}
-				}
-			}
-			if (routeIds.size()==0) {
-				std::list<std::string> routes = getCommandInterface()->getRouteIds();
-				for (std::list<std::string>::const_iterator i = routes.begin(); i != routes.end(); ++i) {
-					std::string routeId = *i;
-					if (par("useRouteDistributions").boolValue() == true) {
-						if (std::count(routeId.begin(), routeId.end(), '#') >= 1) {
-							MYDEBUG << "Omitting route " << routeId << " as it seems to be a member of a route distribution (found '#' in name)" << std::endl;
-							continue;
-						}
-					}
-					MYDEBUG << "Adding " << routeId << " to list of possible routes" << std::endl;
-					routeIds.push_back(routeId);
-				}
-			}
-			for (int i = activeVehicleCount + queuedVehicles.size(); i< numVehicles; i++) {
-				insertNewVehicle();
-			}
-		}
 		executeOneTimestep();
 		return;
 	}
@@ -302,9 +270,6 @@ void TraCIScenarioManager::addModule(std::string nodeId, std::string type, std::
 
 	if (hosts.find(nodeId) != hosts.end()) error("tried adding duplicate module");
 
-	if (queuedVehicles.find(nodeId) != queuedVehicles.end()) {
-	    queuedVehicles.erase(nodeId);
-	}
 	double option1 = hosts.size() / (hosts.size() + unEquippedHosts.size() + 1.0);
 	double option2 = (hosts.size() + 1) / (hosts.size() + unEquippedHosts.size() + 1.0);
 
@@ -396,7 +361,6 @@ void TraCIScenarioManager::executeOneTimestep() {
 	uint32_t targetTime = getCurrentTimeMs();
 
 	if (targetTime > round(connectAt.dbl() * 1000)) {
-		insertVehicles();
 		TraCIBuffer buf = connection->query(CMD_SIMSTEP2, TraCIBuffer() << targetTime);
 
 		uint32_t count; buf >> count;
@@ -408,51 +372,6 @@ void TraCIScenarioManager::executeOneTimestep() {
 
 	if (!autoShutdownTriggered) scheduleAt(simTime()+updateInterval, executeOneTimestepTrigger);
 
-}
-
-void TraCIScenarioManager::insertNewVehicle() {
-	std::string type;
-	if (vehicleTypeIds.size()) {
-		int vehTypeId = mobRng->intRand(vehicleTypeIds.size());
-		type = vehicleTypeIds[vehTypeId];
-	}
-	else {
-		type = "DEFAULT_VEHTYPE";
-	}
-	int routeId = mobRng->intRand(routeIds.size());
-	vehicleInsertQueue[routeId].push(type);
-}
-
-void TraCIScenarioManager::insertVehicles() {
-
-	for (std::map<int, std::queue<std::string> >::iterator i = vehicleInsertQueue.begin(); i != vehicleInsertQueue.end(); ) {
-		std::string route = routeIds[i->first];
-		MYDEBUG << "process " << route << std::endl;
-		std::queue<std::string> vehicles = i->second;
-		while (!i->second.empty()) {
-			bool suc = false;
-			std::string type = i->second.front();
-			std::stringstream veh;
-			veh << type << "_" << vehicleNameCounter;
-			MYDEBUG << "trying to add " << veh.str() << " with " << route << " vehicle type " << type << std::endl;
-
-			suc = getCommandInterface()->addVehicle(veh.str(), type, route, simTime());
-			if (!suc) {
-				i->second.pop();
-			}
-			else {
-				MYDEBUG << "successful inserted " << veh.str() << std::endl;
-				queuedVehicles.insert(veh.str());
-				i->second.pop();
-				vehicleNameCounter++;
-			}
-		}
-		std::map<int, std::queue<std::string> >::iterator tmp = i;
-		++tmp;
-		vehicleInsertQueue.erase(i);
-		i = tmp;
-
-	}
 }
 
 Coord TraCIScenarioManager::traci2omnet(TraCICoord coord) const {
