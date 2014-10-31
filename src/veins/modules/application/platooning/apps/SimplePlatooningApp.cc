@@ -51,25 +51,25 @@ void SimplePlatooningApp::initialize(int stage) {
 
 		if (myId == 0) {
 			//ACC speed is 100 km/h
-			traciVehicle->commandSetCruiseControlDesiredSpeed(leaderSpeed / 3.6);
+			traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed / 3.6);
 			//leader uses the ACC
-			traciVehicle->commandSetActiveController(Plexe::ACC);
+			traciVehicle->setActiveController(Plexe::ACC);
 			//leader speed must oscillate
 			changeSpeed = new cMessage();
 			scheduleAt(simTime() + SimTime(0.1), changeSpeed);
 		}
 		else {
 			//followers speed is higher
-			traciVehicle->commandSetCruiseControlDesiredSpeed((leaderSpeed + 30) / 3.6);
+			traciVehicle->setCruiseControlDesiredSpeed((leaderSpeed + 30) / 3.6);
 			//followers use controller specified by the user
-			traciVehicle->commandSetActiveController(controller);
+			traciVehicle->setActiveController(controller);
 			//use headway time specified by the user (if ACC is employed)
-			traciVehicle->commandSetACCHeadwayTime(accHeadway);
+			traciVehicle->setACCHeadwayTime(accHeadway);
 
 			changeSpeed = 0;
 		}
 		//every car must run on first lane
-		traciVehicle->commandSetFixedLane(0);
+		traciVehicle->setFixedLane(0);
 
 	}
 
@@ -92,7 +92,7 @@ void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
 
 	if (msg == changeSpeed && myId == 0) {
 		//make leader speed oscillate
-		traciVehicle->commandSetCruiseControlDesiredSpeed((leaderSpeed + 10 * sin(2 * M_PI * simTime().dbl() * leaderOscillationFrequency)) / 3.6);
+		traciVehicle->setCruiseControlDesiredSpeed((leaderSpeed + 10 * sin(2 * M_PI * simTime().dbl() * leaderOscillationFrequency)) / 3.6);
 		scheduleAt(simTime() + SimTime(0.1), changeSpeed);
 	}
 

@@ -47,10 +47,10 @@ void BaseApp::initialize(int stage) {
 		mobility = Veins::TraCIMobilityAccess().get(getParentModule());
 		traci = mobility->getCommandInterface();
 		traciVehicle = mobility->getVehicleCommandInterface();
-		traciVehicle->commandSetGenericInformation(CC_SET_CACC_C1, &caccC1, sizeof(double));
-		traciVehicle->commandSetGenericInformation(CC_SET_CACC_OMEGA_N, &caccOmegaN, sizeof(double));
-		traciVehicle->commandSetGenericInformation(CC_SET_CACC_XI, &caccXi, sizeof(double));
-		traciVehicle->commandSetGenericInformation(CC_SET_ENGINE_TAU, &engineTau, sizeof(double));
+		traciVehicle->setGenericInformation(CC_SET_CACC_C1, &caccC1, sizeof(double));
+		traciVehicle->setGenericInformation(CC_SET_CACC_OMEGA_N, &caccOmegaN, sizeof(double));
+		traciVehicle->setGenericInformation(CC_SET_CACC_XI, &caccXi, sizeof(double));
+		traciVehicle->setGenericInformation(CC_SET_ENGINE_TAU, &engineTau, sizeof(double));
 
 	}
 
@@ -75,11 +75,11 @@ void BaseApp::handleLowerMsg(cMessage *msg) {
 
 		//if the message comes from the leader
 		if (epkt->getVehicleId() == 0) {
-			traciVehicle->commandSetPlatoonLeaderData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
+			traciVehicle->setPlatoonLeaderData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
 		}
 		//if the message comes from the vehicle in front
 		if (epkt->getVehicleId() == myId - 1) {
-			traciVehicle->commandSetPrecedingVehicleData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
+			traciVehicle->setPrecedingVehicleData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
 		}
 
 	}

@@ -119,8 +119,8 @@ void BaseProtocol::handleSelfMsg(cMessage *msg) {
 
 		//get distance and relative speed w.r.t. front vehicle
 		double distance, relSpeed, acceleration, speed, controllerAcceleration, posX, posY, time;
-		traciVehicle->commandGetRadarMeasurements(distance, relSpeed);
-		traciVehicle->commandGetVehicleData(speed, acceleration, controllerAcceleration, posX, posY, time);
+		traciVehicle->getRadarMeasurements(distance, relSpeed);
+		traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, posX, posY, time);
 
 		//write data to output files
 		distanceOut.record(distance);
@@ -147,7 +147,7 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 	UnicastMessage *unicast;
 	PlatooningBeacon *pkt;
 	//get information about the vehicle via traci
-	traciVehicle->commandGetVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
+	traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
 	//get current vehicle position
 	Coord veinsPosition = mobility->getPositionAt(simTime());
 	double veinsTime = simTime().dbl();

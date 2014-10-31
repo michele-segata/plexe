@@ -55,36 +55,32 @@ class TraCICommandInterface
 				std::string getVehicleTypeId();
 				bool changeVehicleRoute(const std::list<std::string>& roads);
 				/**
-				 * Gets the index of the lane the vehicle is running on (0 for rightmost)
-				 */
-				unsigned int commandGetLaneIndex();
-				/**
 				 * Gets the total number of lanes on the edge the vehicle is currently traveling
 				 */
-				unsigned int commandGetLanesCount();
+				unsigned int getLanesCount();
 				/**
 				 * Sets the data about the leader of the platoon. This data is usually received
 				 * by means of wireless communications
 				 */
-				void commandSetPlatoonLeaderData(double leaderSpeed, double leaderAcceleration, double positionX, double positionY, double time);
+				void setPlatoonLeaderData(double leaderSpeed, double leaderAcceleration, double positionX, double positionY, double time);
 				/**
 				 * Sets the data about the preceding vehicle in the platoon. This data is usually
 				 * received by means of wireless communications
 				 */
-				void commandSetPrecedingVehicleData(double speed, double acceleration, double positionX, double positionY, double time);
+				void setPrecedingVehicleData(double speed, double acceleration, double positionX, double positionY, double time);
 				/**
 				 * Gets the data about a vehicle. This can be used by a platoon leader in order to query for the acceleration
 				 * before sending the data to the followers
 				 */
-				void commandGetVehicleData(double &speed, double &acceleration, double &controllerAcceleration, double &positionX, double &positionY, double &time);
+				void getVehicleData(double &speed, double &acceleration, double &controllerAcceleration, double &positionX, double &positionY, double &time);
 
-				void commandSetGenericInformation(int type, const void* data, int length);
-				void commandGetGenericInformation(int type, const void* params, int paramsLength, void *result);
+				void setGenericInformation(int type, const void* data, int length);
+				void getGenericInformation(int type, const void* params, int paramsLength, void *result);
 
 				/**
 				 * Set the cruise control desired speed
 				 */
-				void commandSetCruiseControlDesiredSpeed(double desiredSpeed);
+				void setCruiseControlDesiredSpeed(double desiredSpeed);
 				/**
 				 * Set the currently active controller, which can be either the driver, the ACC or
 				 * the CACC. CC is not mentioned because CC and ACC work together
@@ -93,24 +89,24 @@ class TraCICommandInterface
 				 * @param activeController the controller to be activated: 0 for driver, 1 for
 				 * ACC and 2 for CACC
 				 */
-				void commandSetActiveController(int activeController);
+				void setActiveController(int activeController);
 
 				/**
 				 * Returns the currently active controller
 				 */
-				int commandGetActiveController();
+				int getActiveController();
 				/**
 				 * Set CACC constant spacing
 				 *
 				 * @param vehicleId the id of vehicle for which the constant spacing must be set
 				 * @param spacing the constant spacing in meter
 				 */
-				void commandSetCACCConstantSpacing(double spacing);
+				void setCACCConstantSpacing(double spacing);
 
 				/**
 				 * Returns the CACC constant spacing
 				 */
-				double commandGetCACCConstantSpacing();
+				double getCACCConstantSpacing();
 
 				/**
 				 * Sets the headway time for the ACC
@@ -118,7 +114,7 @@ class TraCICommandInterface
 				 * @param vehicleId the id of the vehicle
 				 * @param headway the headway time in seconds
 				 */
-				void commandSetACCHeadwayTime(double headway);
+				void setACCHeadwayTime(double headway);
 
 				/**
 				 * Enables/disables a fixed acceleration
@@ -127,7 +123,7 @@ class TraCICommandInterface
 				 * @param activate activate (1) or deactivate (0) the usage of a fixed acceleration
 				 * @param acceleration the fixed acceleration to be used if activate == 1
 				 */
-				void commandSetFixedAcceleration(int activate, double acceleration);
+				void setFixedAcceleration(int activate, double acceleration);
 
 				/**
 				 * Returns whether a vehicle has crashed or not
@@ -135,14 +131,14 @@ class TraCICommandInterface
 				 * @param vehicleId the id of the vehicle
 				 * @return true if the vehicle has crashed, false otherwise
 				 */
-				bool commandIsCrashed();
+				bool isCrashed();
 
 				/**
 				 * Tells whether the car has an ACC/CACC controller installed or not. Basically
 				 * it checks the the mobility model which is driving the car
 				 *
 				 */
-				bool commandIsCruiseControllerInstalled();
+				bool isCruiseControllerInstalled();
 				/**
 				 * Tells to the CC mobility model the desired lane change action to be performed
 				 *
@@ -156,19 +152,19 @@ class TraCICommandInterface
 				 * 3 = stay there: the application protocol wants the driver to keep the car
 				 * into the platooning lane because the car is a part of a platoon
 				 */
-				void commandSetLaneChangeAction(int action);
+				void setLaneChangeAction(int action);
 
 				/**
 				 * Returns the currently set lane change action
 				 */
-				int commandGetLaneChangeAction();
+				int getLaneChangeAction();
 
 				/**
 				 * Set a fixed lane a car should move to
 				 *
 				 * @param laneIndex lane to move to, where 0 indicates the rightmost
 				 */
-				void commandSetFixedLane(int laneIndex);
+				void setFixedLane(int laneIndex);
 
 				/**
 				 * Gets the data measured by the radar, i.e., distance and relative speed.
@@ -178,9 +174,9 @@ class TraCICommandInterface
 				 * method returns a distance value greater than 250m, it shall be
 				 * interpreted like "there is nobody in front"
 				 */
-				void commandGetRadarMeasurements(double &distance, double &relativeSpeed);
+				void getRadarMeasurements(double &distance, double &relativeSpeed);
 
-				void commandSetControllerFakeData(double frontDistance, double frontSpeed, double frontAcceleration,
+				void setControllerFakeData(double frontDistance, double frontSpeed, double frontAcceleration,
 				                    double leaderSpeed, double leaderAcceleration);
 
 				/**
@@ -188,22 +184,22 @@ class TraCICommandInterface
 				 * its route. Might be really useful for deciding when a car has to
 				 * leave a platoon
 				 */
-				double commandGetDistanceToRouteEnd();
+				double getDistanceToRouteEnd();
 
 				/**
 				 * Gets the distance that a vehicle has traveled since the begin
 				 */
-				double commandGetDistanceFromRouteBegin();
+				double getDistanceFromRouteBegin();
 
 				/**
 				 * Gets acceleration that the ACC has computed while the vehicle
 				 * is controlled by the faked CACC
 				 */
-				double commandGetACCAcceleration();
+				double getACCAcceleration();
 				/**
 				 * Returns the vehicle type of a vehicle
 				 */
-				std::string commandGetVType();
+				std::string getVType();
 
 			protected:
 				TraCICommandInterface* traci;

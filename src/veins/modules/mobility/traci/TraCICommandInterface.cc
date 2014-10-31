@@ -546,7 +546,7 @@ std::list<Coord> TraCICommandInterface::genericGetCoordList(uint8_t commandId, s
 	return res;
 }
 
-void TraCICommandInterface::Vehicle::commandGetVehicleData(double &speed, double &acceleration, double &controllerAcceleration, double &positionX, double &positionY, double &time) {
+void TraCICommandInterface::Vehicle::getVehicleData(double &speed, double &acceleration, double &controllerAcceleration, double &positionX, double &positionY, double &time) {
 
 		TraCIBuffer buf = traci->connection.query(CMD_GET_VEHICLE_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(VAR_GET_SPEED_AND_ACCELERATION) << nodeId);
 
@@ -576,7 +576,7 @@ void TraCICommandInterface::Vehicle::commandGetVehicleData(double &speed, double
 
 }
 
-void TraCICommandInterface::Vehicle::commandSetGenericInformation(int type, const void* data, int length) {
+void TraCICommandInterface::Vehicle::setGenericInformation(int type, const void* data, int length) {
 
 	uint8_t variableId = VAR_SET_GENERIC_INFORMATION;
 
@@ -594,7 +594,7 @@ void TraCICommandInterface::Vehicle::commandSetGenericInformation(int type, cons
 
 }
 
-void TraCICommandInterface::Vehicle::commandGetGenericInformation(int type, const void* params, int paramsLength, void *result) {
+void TraCICommandInterface::Vehicle::getGenericInformation(int type, const void* params, int paramsLength, void *result) {
 
 	uint8_t variableId = VAR_GET_GENERIC_INFORMATION;
 	struct Plexe::CCDataHeader header;
@@ -628,7 +628,7 @@ void TraCICommandInterface::Vehicle::commandGetGenericInformation(int type, cons
 
 }
 
-double TraCICommandInterface::Vehicle::commandGetACCAcceleration() {
+double TraCICommandInterface::Vehicle::getACCAcceleration() {
 
 	TraCIBuffer buf = traci->connection.query(CMD_GET_VEHICLE_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(VAR_GET_ACC_ACCELERATION) << nodeId);
 
@@ -651,40 +651,19 @@ double TraCICommandInterface::Vehicle::commandGetACCAcceleration() {
 
 }
 
-void TraCICommandInterface::Vehicle::commandSetPlatoonLeaderData(double speed, double acceleration, double positionX, double positionY, double time) {
+void TraCICommandInterface::Vehicle::setPlatoonLeaderData(double speed, double acceleration, double positionX, double positionY, double time) {
 	uint8_t variableId = VAR_SET_LEADER_SPEED_AND_ACCELERATION;
 	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << speed << acceleration << positionX << positionY << time);
 	ASSERT(buf.eof());
 }
 
-void TraCICommandInterface::Vehicle::commandSetPrecedingVehicleData(double speed, double acceleration, double positionX, double positionY, double time) {
+void TraCICommandInterface::Vehicle::setPrecedingVehicleData(double speed, double acceleration, double positionX, double positionY, double time) {
 	uint8_t variableId = VAR_SET_PREC_SPEED_AND_ACCELERATION;
 	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << speed << acceleration << positionX << positionY << time);
 	ASSERT(buf.eof());
 }
 
-unsigned int TraCICommandInterface::Vehicle::commandGetLaneIndex() {
-
-	TraCIBuffer buf = traci->connection.query(CMD_GET_VEHICLE_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(VAR_LANE_INDEX) << nodeId);
-
-	uint8_t cmdLength; buf >> cmdLength;
-	uint8_t commandId; buf >> commandId;
-	ASSERT(commandId == RESPONSE_GET_VEHICLE_VARIABLE);
-	uint8_t varId; buf >> varId;
-	ASSERT(varId == VAR_LANE_INDEX);
-	std::string retVehicleId; buf >> retVehicleId;
-	ASSERT(retVehicleId == nodeId);
-	uint8_t resType_r; buf >> resType_r;
-	ASSERT(resType_r == TYPE_INTEGER);
-	int lane; buf >> lane;
-
-	ASSERT(buf.eof());
-
-	return (unsigned int)lane;
-
-}
-
-unsigned int TraCICommandInterface::Vehicle::commandGetLanesCount() {
+unsigned int TraCICommandInterface::Vehicle::getLanesCount() {
 
 	TraCIBuffer buf = traci->connection.query(CMD_GET_VEHICLE_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(VAR_GET_LANES_COUNT) << nodeId);
 
@@ -705,7 +684,7 @@ unsigned int TraCICommandInterface::Vehicle::commandGetLanesCount() {
 
 }
 
-void TraCICommandInterface::Vehicle::commandSetCruiseControlDesiredSpeed(double desiredSpeed) {
+void TraCICommandInterface::Vehicle::setCruiseControlDesiredSpeed(double desiredSpeed) {
 
 	uint8_t variableId = VAR_SET_CC_DESIRED_SPEED;
 	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << desiredSpeed);
@@ -713,7 +692,7 @@ void TraCICommandInterface::Vehicle::commandSetCruiseControlDesiredSpeed(double 
 
 }
 
-void TraCICommandInterface::Vehicle::commandSetActiveController(int activeController) {
+void TraCICommandInterface::Vehicle::setActiveController(int activeController) {
 
 	uint8_t variableId = VAR_SET_ACTIVE_CONTROLLER;
 	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << activeController);
@@ -721,7 +700,7 @@ void TraCICommandInterface::Vehicle::commandSetActiveController(int activeContro
 
 }
 
-int TraCICommandInterface::Vehicle::commandGetActiveController() {
+int TraCICommandInterface::Vehicle::getActiveController() {
 
 	TraCIBuffer buf = traci->connection.query(CMD_GET_VEHICLE_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(VAR_GET_ACTIVE_CONTROLLER) << nodeId);
 
@@ -742,12 +721,12 @@ int TraCICommandInterface::Vehicle::commandGetActiveController() {
 
 }
 
-void TraCICommandInterface::Vehicle::commandSetCACCConstantSpacing(double spacing) {
+void TraCICommandInterface::Vehicle::setCACCConstantSpacing(double spacing) {
 	uint8_t variableId = VAR_SET_CACC_SPACING;
 	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << spacing);
 	ASSERT(buf.eof());
 }
-double TraCICommandInterface::Vehicle::commandGetCACCConstantSpacing() {
+double TraCICommandInterface::Vehicle::getCACCConstantSpacing() {
 
 	TraCIBuffer buf = traci->connection.query(CMD_GET_VEHICLE_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(VAR_GET_CACC_SPACING) << nodeId);
 
@@ -769,19 +748,19 @@ double TraCICommandInterface::Vehicle::commandGetCACCConstantSpacing() {
 	return spacing;
 }
 
-void TraCICommandInterface::Vehicle::commandSetACCHeadwayTime(double headway) {
+void TraCICommandInterface::Vehicle::setACCHeadwayTime(double headway) {
 	uint8_t variableId = VAR_SET_ACC_HEADWAY_TIME;
 	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << headway);
 	ASSERT(buf.eof());
 }
 
-void TraCICommandInterface::Vehicle::commandSetFixedAcceleration(int activate, double acceleration) {
+void TraCICommandInterface::Vehicle::setFixedAcceleration(int activate, double acceleration) {
 	uint8_t variableId = VAR_SET_FIXED_ACCELERATION;
 	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << activate << acceleration);
 	ASSERT(buf.eof());
 }
 
-bool TraCICommandInterface::Vehicle::commandIsCrashed() {
+bool TraCICommandInterface::Vehicle::isCrashed() {
 
 	int crashed;
 
@@ -807,7 +786,7 @@ bool TraCICommandInterface::Vehicle::commandIsCrashed() {
 	return crashed;
 }
 
-bool TraCICommandInterface::Vehicle::commandIsCruiseControllerInstalled() {
+bool TraCICommandInterface::Vehicle::isCruiseControllerInstalled() {
 
 	TraCIBuffer buf = traci->connection.query(CMD_GET_VEHICLE_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(VAR_GET_CC_INSTALLED) << nodeId);
 
@@ -828,7 +807,7 @@ bool TraCICommandInterface::Vehicle::commandIsCruiseControllerInstalled() {
 
 }
 
-void TraCICommandInterface::Vehicle::commandSetLaneChangeAction(int action) {
+void TraCICommandInterface::Vehicle::setLaneChangeAction(int action) {
 
 	uint8_t variableId = VAR_SET_LANE_CHANGE_ACTION;
 	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << action);
@@ -836,7 +815,7 @@ void TraCICommandInterface::Vehicle::commandSetLaneChangeAction(int action) {
 
 }
 
-int TraCICommandInterface::Vehicle::commandGetLaneChangeAction() {
+int TraCICommandInterface::Vehicle::getLaneChangeAction() {
 	TraCIBuffer buf = traci->connection.query(CMD_GET_VEHICLE_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(VAR_GET_LANE_CHANGE_ACTION) << nodeId);
 
 	uint8_t cmdLength; buf >> cmdLength;
@@ -855,13 +834,13 @@ int TraCICommandInterface::Vehicle::commandGetLaneChangeAction() {
 	return action;
 }
 
-void TraCICommandInterface::Vehicle::commandSetFixedLane(int laneIndex) {
+void TraCICommandInterface::Vehicle::setFixedLane(int laneIndex) {
 	uint8_t variableId = VAR_SET_FIXED_LANE;
 	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << laneIndex);
 	ASSERT(buf.eof());
 }
 
-void TraCICommandInterface::Vehicle::commandGetRadarMeasurements(double &distance, double &relativeSpeed) {
+void TraCICommandInterface::Vehicle::getRadarMeasurements(double &distance, double &relativeSpeed) {
 
 	TraCIBuffer buf = traci->connection.query(CMD_GET_VEHICLE_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(VAR_GET_RADAR_DATA) << nodeId);
 
@@ -887,7 +866,7 @@ void TraCICommandInterface::Vehicle::commandGetRadarMeasurements(double &distanc
 
 }
 
-void TraCICommandInterface::Vehicle::commandSetControllerFakeData(double frontDistance, double frontSpeed, double frontAcceleration,
+void TraCICommandInterface::Vehicle::setControllerFakeData(double frontDistance, double frontSpeed, double frontAcceleration,
                                                                   double leaderSpeed, double leaderAcceleration) {
 
 	uint8_t variableId = VAR_SET_CONTROLLER_FAKE_DATA;
@@ -897,7 +876,7 @@ void TraCICommandInterface::Vehicle::commandSetControllerFakeData(double frontDi
 
 }
 
-double TraCICommandInterface::Vehicle::commandGetDistanceFromRouteBegin() {
+double TraCICommandInterface::Vehicle::getDistanceFromRouteBegin() {
 
 	TraCIBuffer buf = traci->connection.query(CMD_GET_VEHICLE_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(VAR_GET_DISTANCE_FROM_BEGIN) << nodeId);
 
@@ -918,7 +897,7 @@ double TraCICommandInterface::Vehicle::commandGetDistanceFromRouteBegin() {
 
 }
 
-double TraCICommandInterface::Vehicle::commandGetDistanceToRouteEnd() {
+double TraCICommandInterface::Vehicle::getDistanceToRouteEnd() {
 
 	TraCIBuffer buf = traci->connection.query(CMD_GET_VEHICLE_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(VAR_GET_DISTANCE_TO_END) << nodeId);
 
@@ -939,7 +918,7 @@ double TraCICommandInterface::Vehicle::commandGetDistanceToRouteEnd() {
 
 }
 
-std::string TraCICommandInterface::Vehicle::commandGetVType() {
+std::string TraCICommandInterface::Vehicle::getVType() {
 	return traci->genericGetString(CMD_GET_VEHICLE_VARIABLE, nodeId, VAR_TYPE, RESPONSE_GET_VEHICLE_VARIABLE);
 }
 
