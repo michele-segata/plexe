@@ -59,6 +59,8 @@ void BaseApp::initialize(int stage) {
 		traciVehicle->setGenericInformation(CC_SET_PLOEG_H, &ploegH, sizeof(double));
 		traciVehicle->setGenericInformation(CC_SET_PLOEG_KP, &ploegKp, sizeof(double));
 		traciVehicle->setGenericInformation(CC_SET_PLOEG_KD, &ploegKd, sizeof(double));
+		traciVehicle->setGenericInformation(CC_SET_MYCC_KD, &myccKd, sizeof(double));
+		traciVehicle->setGenericInformation(CC_SET_MYCC_KS, &myccKs, sizeof(double));
 	}
 
 }
