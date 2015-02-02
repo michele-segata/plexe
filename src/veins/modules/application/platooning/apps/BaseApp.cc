@@ -38,6 +38,9 @@ void BaseApp::initialize(int stage) {
 		caccXi = par("caccXi").doubleValue();
 		caccOmegaN = par("caccOmegaN").doubleValue();
 		engineTau = par("engineTau").doubleValue();
+		ploegH = par("ploegH").doubleValue();
+		ploegKp = par("ploegKp").doubleValue();
+		ploegKd = par("ploegKd").doubleValue();
 		myccKd = par("myccKd").doubleValue();
 		myccKs = par("myccKs").doubleValue();
 
@@ -53,7 +56,9 @@ void BaseApp::initialize(int stage) {
 		traciVehicle->setGenericInformation(CC_SET_CACC_OMEGA_N, &caccOmegaN, sizeof(double));
 		traciVehicle->setGenericInformation(CC_SET_CACC_XI, &caccXi, sizeof(double));
 		traciVehicle->setGenericInformation(CC_SET_ENGINE_TAU, &engineTau, sizeof(double));
-
+		traciVehicle->setGenericInformation(CC_SET_PLOEG_H, &ploegH, sizeof(double));
+		traciVehicle->setGenericInformation(CC_SET_PLOEG_KP, &ploegKp, sizeof(double));
+		traciVehicle->setGenericInformation(CC_SET_PLOEG_KD, &ploegKd, sizeof(double));
 	}
 
 }

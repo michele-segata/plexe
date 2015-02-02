@@ -29,6 +29,9 @@ moduleinterface BaseApp extends IBaseApplLayer
         double caccOmegaN @unit("Hz");
         double caccC1;
         double engineTau @unit("s");
+        double ploegH @unit("s");
+        double ploegKp;
+        double ploegKd;
         double myccKd;
         double myccKs;
 

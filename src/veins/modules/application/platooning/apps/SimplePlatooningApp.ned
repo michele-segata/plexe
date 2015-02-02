@@ -35,6 +35,9 @@ simple SimplePlatooningApp like BaseApp
         double caccOmegaN @unit("Hz") = default(0.2 Hz);
         double caccC1 = default(0.5);
         double engineTau @unit("s") = default(0.5 s);
+        double ploegH @unit("s") = default(0.5 s);
+        double ploegKp = default(0.2);
+        double ploegKd = default(0.7);
         double myccKd = default(1);
         double myccKs = default(1);
 

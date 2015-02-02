@@ -1,5 +1,5 @@
 //
-// Copright (c) 2012-2014 Michele Segata <segata@ccs-labs.org>
+// Copright (c) 2012-2015 Michele Segata <segata@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -57,6 +57,8 @@ class BaseApp : public BaseApplLayer
 		bool useControllerAcceleration;
 		//controller and engine related parameters
 		double caccXi, caccOmegaN, caccC1, engineTau;
+		//controller parameters for Ploeg's CACC
+		double ploegH, ploegKp, ploegKd;
 		double myccKd, myccKs;
 
 		//speed and acceleration requested from traci at the last polling cycle
