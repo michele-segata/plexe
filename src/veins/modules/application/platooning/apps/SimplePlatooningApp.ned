@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2012-2014 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2015 Michele Segata <segata@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -35,6 +35,9 @@ simple SimplePlatooningApp like BaseApp
         double caccOmegaN @unit("Hz") = default(0.2 Hz);
         double caccC1 = default(0.5);
         double engineTau @unit("s") = default(0.5 s);
+        double ploegH @unit("s") = default(0.5 s);
+        double ploegKp = default(0.2);
+        double ploegKd = default(0.7);
 
         //leader average speed during platooning
         double leaderSpeed @unit("kmph") = default(150kmph);

@@ -1,5 +1,5 @@
 //
-// Copright (c) 2012-2014 Michele Segata <segata@ccs-labs.org>
+// Copright (c) 2012-2015 Michele Segata <segata@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -41,8 +41,11 @@ void SimplePlatooningApp::initialize(int stage) {
 		if (strcmp(strController, "ACC") == 0) {
 			controller = Plexe::ACC;
 		}
-		else {
+		else if (strcmp(strController, "CACC") == 0) {
 			controller = Plexe::CACC;
+		}
+		else {
+			controller = Plexe::PLOEG;
 		}
 		//headway time for ACC
 		accHeadway = par("accHeadway").doubleValue();

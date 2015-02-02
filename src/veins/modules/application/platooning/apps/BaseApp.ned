@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2012-2014 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2015 Michele Segata <segata@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -29,6 +29,9 @@ moduleinterface BaseApp extends IBaseApplLayer
         double caccOmegaN @unit("Hz");
         double caccC1;
         double engineTau @unit("s");
+        double ploegH @unit("s");
+        double ploegKp;
+        double ploegKd;
 
         @display("i=block/app2");
         @class(BaseApp);

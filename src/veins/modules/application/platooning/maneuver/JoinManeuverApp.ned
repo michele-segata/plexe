@@ -30,6 +30,9 @@ simple JoinManeuverApp like BaseApp
         double caccOmegaN @unit("Hz");
         double caccC1;
         double engineTau @unit("s");
+        double ploegH @unit("s") = default(0.5 s);
+        double ploegKp = default(0.2);
+        double ploegKd = default(0.7);
 
         @display("i=block/app2");
         @class(JoinManeuverApp);

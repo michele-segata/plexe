@@ -70,9 +70,9 @@ simtime_t Decider80211p::processNewSignal(AirFrame* msg) {
 		}
 		else {
 
-			if (!curSyncFrame) {
+			if (!currentSignal.first) {
 				//NIC is not yet synced to any frame, so lock and try to decode this frame
-				curSyncFrame = frame;
+				currentSignal.first = frame;
 				DBG_D11P << "AirFrame: " << frame->getId() << " with (" << recvPower << " > " << sensitivity << ") -> Trying to receive AirFrame." << std::endl;
 			}
 			else {
@@ -448,14 +448,14 @@ simtime_t Decider80211p::processSignalEnd(AirFrame* msg) {
 	else {
 
 		//first check whether this is the frame NIC is currently synced on
-		if (frame == curSyncFrame) {
+		if (frame == currentSignal.first) {
 			// check if the snrMapping is above the Decider's specific threshold,
 			// i.e. the Decider has received it correctly
 			result = checkIfSignalOk(frame);
 
 			//after having tried to decode the frame, the NIC is no more synced to the frame
 			//and it is ready for syncing on a new one
-			curSyncFrame = 0;
+			currentSignal.first = 0;
 		}
 		else {
 			//if this is not the frame we are synced on, we cannot receive it
@@ -492,7 +492,9 @@ simtime_t Decider80211p::processSignalEnd(AirFrame* msg) {
 		DBG_D11P << "I'm currently sending\n";
 	}
 	//check if channel is idle now
-	else if (cca(simTime(), frame) == false) {
+	//we declare channel busy if CCA tells us so, or if we are currently
+	//decoding a frame
+	else if (cca(simTime(), frame) == false || currentSignal.first != 0) {
 		DBG_D11P << "Channel not yet idle!\n";
 	}
 	else {
@@ -522,6 +524,25 @@ double Decider80211p::getCCAThreshold() {
 
 void Decider80211p::setCCAThreshold(double ccaThreshold_dBm) {
 	ccaThreshold = pow(10, ccaThreshold_dBm / 10);
+}
+
+void Decider80211p::switchToTx() {
+	if (currentSignal.first != 0) {
+		//we are currently trying to receive a frame.
+		if (allowTxDuringRx) {
+			//if the above layer decides to transmit anyhow, we need to abort reception
+			AirFrame11p *currentFrame = dynamic_cast<AirFrame11p *>(currentSignal.first);
+			assert(currentFrame);
+			//flag the frame as "while transmitting"
+			currentFrame->setWasTransmitting(true);
+			currentFrame->setBitError(true);
+			//forget about the signal
+			currentSignal.first = 0;
+		}
+		else {
+			opp_error("Decider80211p: mac layer requested phy to transmit a frame while currently receiving another");
+		}
+	}
 }
 
 void Decider80211p::finish() {

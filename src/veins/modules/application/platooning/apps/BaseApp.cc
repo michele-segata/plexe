@@ -1,5 +1,5 @@
 //
-// Copright (c) 2012-2014 Michele Segata <segata@ccs-labs.org>
+// Copright (c) 2012-2015 Michele Segata <segata@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -38,6 +38,9 @@ void BaseApp::initialize(int stage) {
 		caccXi = par("caccXi").doubleValue();
 		caccOmegaN = par("caccOmegaN").doubleValue();
 		engineTau = par("engineTau").doubleValue();
+		ploegH = par("ploegH").doubleValue();
+		ploegKp = par("ploegKp").doubleValue();
+		ploegKd = par("ploegKd").doubleValue();
 
 		myId = getParentModule()->getIndex();
 		leaderId = -2;
@@ -53,7 +56,9 @@ void BaseApp::initialize(int stage) {
 		traciVehicle->setGenericInformation(CC_SET_CACC_OMEGA_N, &caccOmegaN, sizeof(double));
 		traciVehicle->setGenericInformation(CC_SET_CACC_XI, &caccXi, sizeof(double));
 		traciVehicle->setGenericInformation(CC_SET_ENGINE_TAU, &engineTau, sizeof(double));
-
+		traciVehicle->setGenericInformation(CC_SET_PLOEG_H, &ploegH, sizeof(double));
+		traciVehicle->setGenericInformation(CC_SET_PLOEG_KP, &ploegKp, sizeof(double));
+		traciVehicle->setGenericInformation(CC_SET_PLOEG_KD, &ploegKd, sizeof(double));
 	}
 
 }
