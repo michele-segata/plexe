@@ -83,6 +83,20 @@ struct VEHICLE_DATA {
 #define CC_SET_PLOEG_KP                  0x21    //kp parameter of ploeg's CACC
 #define CC_SET_PLOEG_KD                  0x22    //kd parameter of ploeg's CACC
 
+#define CC_SET_VEHICLE_ENGINE_MODEL      0x30    //set the engine model for a vehicle
+#define CC_ENGINE_MODEL_FOLM             0x00    //first order lag model
+#define CC_ENGINE_MODEL_REALISTIC        0x01    //the detailed and realistic engine model
+
+#define CC_SET_VEHICLE_MODEL             0x31    //set the vehicle model, i.e., engine characteristics
+
+//parameter names for engine models
+#define FOLM_PAR_TAU                     "tau_s"
+#define FOLM_PAR_DT                      "dt_s"
+
+#define ENGINE_PAR_VEHICLE               "vehicle"
+#define ENGINE_PAR_XMLFILE               "xmlFile"
+#define ENGINE_PAR_DT                    "dt_s"
+
 }
 
 #endif /* CC_CONST_H */
