@@ -12,15 +12,15 @@
 		<!-- Mass in kilograms and mass factor considering engine rotational inertia -->
 		<mass mass="1300" massFactor="1.089"/>
 		<!-- Tracting wheels diameter in meters, friction coefficient, and parameters for rolling resistance -->
-		<wheels diameter="0.45" friction="0.7" cr1="0.0136" cr2="5.18e-7"/>
+		<wheels diameter="0.62" friction="0.7" cr1="0.0136" cr2="5.18e-7"/>
 		<!-- Air friction coefficients. Drag coefficient and maximum section in squared meters -->
 		<drag cAir="0.32" section="2.1"/>
 		<!-- Engine characteristics including power mapping parameters -->
-		<engine efficiency="0.8" cylinders="4" type="poly" maxRpm="7000" minRpm="1000" tauEx="0.1">
+		<engine efficiency="0.9" cylinders="4" type="poly" maxRpm="6750" minRpm="1000" tauEx="0.1">
 			<power x0="-40.2222208291346" x1="0.065292636898335" x2="-2.15942570332509e-05" x3="4.36009415355034e-09" x4="-3.13060657304086e-13"/>
 		</engine>
 		<!-- Gear shifting rules -->
-		<shifting rpm="6750" deltaRpm="100"/>
+		<shifting rpm="6500" deltaRpm="100"/>
 		<!-- Brakes data. Tau is the actuation time in seconds. Other parameters such as friction are taken from the wheels section -->
 		<brakes tau="0.2"/>
 	</vehicle>
@@ -65,7 +65,7 @@
 		<!-- Mass in kilograms and mass factor considering engine rotational inertia -->
 		<mass mass="1628" massFactor="1.089"/>
 		<!-- Tracting wheels diameter in meters, friction coefficient, and parameters for rolling resistance -->
-		<wheels diameter="0.59" friction="1" cr1="0.0136" cr2="5.18e-7"/>
+		<wheels diameter="0.66" friction="1" cr1="0.0136" cr2="5.18e-7"/>
 		<!-- Air friction coefficients. Drag coefficient and maximum section in squared meters -->
 		<drag cAir="0.30" section="2.1"/>
 		<!-- Engine characteristics including power mapping parameters -->
