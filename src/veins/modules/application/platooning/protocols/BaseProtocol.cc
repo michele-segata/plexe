@@ -150,10 +150,12 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 	traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
 	//get current vehicle position
 	Coord veinsPosition = mobility->getPositionAt(simTime());
+	//transform veins position into sumo position
+	Veins::TraCICoord coords = mobility->getManager()->omnet2traci(veinsPosition);
 	double veinsTime = simTime().dbl();
 
 	//TODO: use veins or sumo data?
-	Coord position(veinsPosition.x, veinsPosition.y, veinsPosition.z);
+	Coord position(coords.x, coords.y, 0);
 	double time = veinsTime;
 
 	//create and send beacon

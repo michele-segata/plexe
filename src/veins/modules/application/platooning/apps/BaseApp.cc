@@ -57,6 +57,30 @@ void BaseApp::initialize(int stage) {
 		traciVehicle->setGenericInformation(CC_SET_PLOEG_H, &ploegH, sizeof(double));
 		traciVehicle->setGenericInformation(CC_SET_PLOEG_KP, &ploegKp, sizeof(double));
 		traciVehicle->setGenericInformation(CC_SET_PLOEG_KD, &ploegKd, sizeof(double));
+		//set my position in the platoon
+		traciVehicle->setGenericInformation(CC_SET_VEHICLE_POSITION, &myId, sizeof(int));
+		//set platoon size. in this example, fixed to 8
+		int nCars = 8;
+		traciVehicle->setGenericInformation(CC_SET_PLATOON_SIZE, &nCars, sizeof(int));
+
+		Plexe::VEHICLE_DATA vehicleData;
+		//initialize own vehicle data
+		if (myId != 0) {
+			//my position
+			vehicleData.index = myId;
+			//my length
+			vehicleData.length = 4;
+			//the rest is all dummy data
+			vehicleData.acceleration = 10;
+			vehicleData.positionX = 400000;
+			vehicleData.positionY = 0;
+			vehicleData.speed = 200;
+			vehicleData.time = simTime().dbl();
+
+			//The previous information are sent to SUMO
+			traciVehicle->setGenericInformation(CC_SET_VEHICLE_DATA, &vehicleData, sizeof(struct Plexe::VEHICLE_DATA));
+
+		}
 	}
 
 }
@@ -86,6 +110,18 @@ void BaseApp::handleLowerMsg(cMessage *msg) {
 		if (epkt->getVehicleId() == myId - 1) {
 			traciVehicle->setPrecedingVehicleData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
 		}
+		//send data about every vehicle to the CACC. this is needed by the consensus controller
+		struct Plexe::VEHICLE_DATA vehicleData;
+		vehicleData.index = epkt->getVehicleId();
+		vehicleData.acceleration = epkt->getAcceleration();
+		//for now length is fixed to 4 meters
+		vehicleData.length = 4;
+		vehicleData.positionX = epkt->getPositionX();
+		vehicleData.positionY = epkt->getPositionY();
+		vehicleData.speed = epkt->getSpeed();
+		vehicleData.time = epkt->getTime();
+		//send information to CACC
+		traciVehicle->setGenericInformation(CC_SET_VEHICLE_DATA, &vehicleData, sizeof(struct Plexe::VEHICLE_DATA));
 
 	}
 

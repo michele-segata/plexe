@@ -26,23 +26,26 @@ module(scenario.node[*].prot)
 accCloseData <- prepare.vector('../results/Sinusoidal_0_0.3_0.vec')
 accFarData <- prepare.vector('../results/Sinusoidal_0_1.2_0.vec')
 caccData <- prepare.vector('../results/Sinusoidal_1_0.3_0.vec')
-ploegData <- prepare.vector('../results/Sinusoidal_2_0.0_0.vec')
+ploegData <- prepare.vector('../results/Sinusoidal_2_0.3_0.vec')
+consensusData <- prepare.vector('../results/Sinusoidal_3_0.3_0.vec')
 
 #add a column to distinguish them before merging
 accCloseData$controller <- "ACC (0.3s)"
 accFarData$controller <- "ACC (1.2s)"
 caccData$controller <- "CACC"
 ploegData$controller <- "PLOEG"
+consensusData$controller <- "CONSENSUS"
 
 #merge all data together
-allData <- rbind(accCloseData, accFarData, caccData, ploegData)
+allData <- rbind(accCloseData, accFarData, caccData, ploegData, consensusData)
+allData <- subset(allData, time >= 80)
 
 #plot speed as function of time for different controllers
 p1 <-	ggplot(allData, aes(x=time, y=speed, col=factor(nodeId))) +
 		geom_line() +
 		xlim(c(80, 100)) +
-		ylim(c(24,31)) +
-		facet_grid(controller~.)
+#		ylim(c(24,31)) +
+		facet_grid(controller~., scales='free_y')
 #print(p1)
 ggsave('speed.pdf', p1, width=16, height=9)
 
