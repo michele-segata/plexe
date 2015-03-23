@@ -99,12 +99,14 @@ void BaseProtocol::finish() {
 			cancelEvent(sendBeacon);
 		}
 		delete sendBeacon;
+		sendBeacon = 0;
 	}
 	if (dataPolling) {
 		if (dataPolling->isScheduled()) {
 			cancelEvent(dataPolling);
 		}
 		delete dataPolling;
+		dataPolling = 0;
 	}
 }
 
