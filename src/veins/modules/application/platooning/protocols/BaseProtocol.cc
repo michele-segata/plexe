@@ -21,6 +21,9 @@
 
 Define_Module(BaseProtocol)
 
+bool BaseProtocol::crashHappened = false;
+bool BaseProtocol::simulationCompleted = false;
+
 void BaseProtocol::initialize(int stage) {
 
 	BaseApplLayer::initialize(stage);
@@ -108,6 +111,32 @@ void BaseProtocol::finish() {
 		delete dataPolling;
 		dataPolling = 0;
 	}
+
+	if (!crashHappened && !simulationCompleted) {
+		if (traciVehicle->isCrashed()) {
+			crashHappened = true;
+			logVehicleData(true);
+			endSimulation();
+		}
+	}
+}
+
+void BaseProtocol::logVehicleData(bool crashed) {
+	//get distance and relative speed w.r.t. front vehicle
+	double distance, relSpeed, acceleration, speed, controllerAcceleration, posX, posY, time;
+	traciVehicle->getRadarMeasurements(distance, relSpeed);
+	traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, posX, posY, time);
+	if (crashed)
+		distance = 0;
+	//write data to output files
+	distanceOut.record(distance);
+	relSpeedOut.record(relSpeed);
+	nodeIdOut.record(myId);
+	accelerationOut.record(acceleration);
+	speedOut.record(mobility->getCurrentSpeed().x);
+	Coord pos = mobility->getPositionAt(simTime());
+	posxOut.record(pos.x);
+	posyOut.record(pos.y);
 }
 
 void BaseProtocol::handleSelfMsg(cMessage *msg) {
@@ -116,23 +145,11 @@ void BaseProtocol::handleSelfMsg(cMessage *msg) {
 
 		//check for simulation end. let the first vehicle check
 		if (myId == 0 && simTime() > communicationDuration) {
+			simulationCompleted = true;
 			endSimulation();
 		}
 
-		//get distance and relative speed w.r.t. front vehicle
-		double distance, relSpeed, acceleration, speed, controllerAcceleration, posX, posY, time;
-		traciVehicle->getRadarMeasurements(distance, relSpeed);
-		traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, posX, posY, time);
-
-		//write data to output files
-		distanceOut.record(distance);
-		relSpeedOut.record(relSpeed);
-		nodeIdOut.record(myId);
-		accelerationOut.record(acceleration);
-		speedOut.record(mobility->getCurrentSpeed().x);
-		Coord pos = mobility->getPositionAt(simTime());
-		posxOut.record(pos.x);
-		posyOut.record(pos.y);
+		logVehicleData();
 
 		scheduleAt(simTime() + SimTime(0.1), dataPolling);
 

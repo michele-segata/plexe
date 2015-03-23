@@ -49,6 +49,10 @@ class BaseProtocol : public BaseApplLayer {
 		SimTime communicationDuration;
 		//determine whether to send the actual acceleration or the one just computed by the controller
 		bool useControllerAcceleration;
+		//determine whether there has been a vehicle collision in the simulation. shared by all
+		static bool crashHappened;
+		//determine whether simulation correctly terminated
+		static bool simulationCompleted;
 
 		//input/output gates from/to upper layer
 		int upperLayerIn, upperLayerOut, upperControlIn, upperControlOut, lowerLayerIn, lowerLayerOut;
@@ -95,6 +99,11 @@ class BaseProtocol : public BaseApplLayer {
 		 * \param unicast the original unicast packet which was containing pkt
 		 */
 		virtual void messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicast);
+
+		/**
+		 * Log data about vehicle
+		 */
+		virtual void logVehicleData(bool crashed = false);
 
 		//traci mobility. used for getting/setting info about the car
 		Veins::TraCIMobility *mobility;
