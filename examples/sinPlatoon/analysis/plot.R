@@ -38,12 +38,12 @@ consensusData$controller <- "CONSENSUS"
 
 #merge all data together
 allData <- rbind(accCloseData, accFarData, caccData, ploegData, consensusData)
-allData <- subset(allData, time >= 80)
+allData <- subset(allData, time >= 100)
 
 #plot speed as function of time for different controllers
 p1 <-	ggplot(allData, aes(x=time, y=speed, col=factor(nodeId))) +
 		geom_line() +
-		xlim(c(80, 100)) +
+		xlim(c(100, 120)) +
 #		ylim(c(24,31)) +
 		facet_grid(controller~., scales='free_y')
 #print(p1)
@@ -53,7 +53,7 @@ ggsave('speed.pdf', p1, width=16, height=9)
 ss <-	subset(allData, nodeId != 0)
 p2 <-	ggplot(ss, aes(x=time, y=distance, col=factor(nodeId))) +
 		geom_line() +
-		xlim(c(80, 100)) +
+		xlim(c(100, 120)) +
 		facet_grid(controller~., scales="free_y")
 #print(p2)
 ggsave('distance.pdf', p2, width=16, height=9)

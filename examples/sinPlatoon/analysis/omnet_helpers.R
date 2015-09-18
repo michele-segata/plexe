@@ -1,5 +1,5 @@
 library(omnetpp)
-library(reshape, warn.conflicts = F)
+library(reshape2, warn.conflicts = F)
 
 getScalars <- function(scaFiles, module, scalarName, attributeName) {
 
