@@ -117,6 +117,8 @@ void UnicastProtocol::handleUpperControl(cMessage *msg)
 
 	}
 
+	delete msg;
+
 }
 
 void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsulatedId, int priority, SimTime timestamp, t_channel channel)
