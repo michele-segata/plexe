@@ -21,8 +21,9 @@
 
 Define_Module(BaseProtocol)
 
-bool BaseProtocol::crashHappened = false;
-bool BaseProtocol::simulationCompleted = false;
+//set signals for channel busy and collisions
+const simsignalwrap_t BaseProtocol::sigChannelBusy = simsignalwrap_t("sigChannelBusy");
+const simsignalwrap_t BaseProtocol::sigCollision = simsignalwrap_t("sigCollision");
 
 void BaseProtocol::initialize(int stage) {
 
@@ -32,8 +33,11 @@ void BaseProtocol::initialize(int stage) {
 
 		//init class variables
 		sendBeacon = 0;
+		channelBusy = false;
+		nCollisions = 0;
+		busyTime = SimTime(0);
 		seq_n = 0;
-		dataPolling = 0;
+		recordData = 0;
 
 		//get gates
 		upperLayerIn = findGate("upperLayerIn");
@@ -43,8 +47,14 @@ void BaseProtocol::initialize(int stage) {
 		lowerLayerIn = findGate("lowerLayerIn");
 		lowerLayerOut = findGate("lowerLayerOut");
 
+		//get traci interface
+		mobility = Veins::TraCIMobilityAccess().get(getParentModule());
+		traci = mobility->getCommandInterface();
+		traciVehicle = mobility->getVehicleCommandInterface();
+		positionHelper = FindModule<BasePositionHelper*>::findSubModule(getParentModule());
+
 		//this is the id of the vehicle. used also as network address
-		myId = getParentModule()->getIndex();
+		myId = positionHelper->getId();
 
 		//tell the unicast protocol below which mac address to use via control message
 		UnicastProtocolControlMessage *setMacAddress = new UnicastProtocolControlMessage("");
@@ -60,37 +70,35 @@ void BaseProtocol::initialize(int stage) {
 		priority = par("priority").longValue();
 		ASSERT2(priority >= 0 && priority <= 3, "priority value must be between 0 and 3");
 
-		//when to stop simulation (after communications started)
-		communicationDuration = SimTime(par("communicationDuration").longValue());
 		//use controller or real acceleration?
 		useControllerAcceleration = par("useControllerAcceleration").boolValue();
 
 		//init messages for scheduleAt
 		sendBeacon = new cMessage("sendBeacon");
-		dataPolling = new cMessage("dataPolling");
-
-		//get traci interface
-		mobility = Veins::TraCIMobilityAccess().get(getParentModule());
-		traci = mobility->getCommandInterface();
-		traciVehicle = mobility->getVehicleCommandInterface();
+		recordData = new cMessage("recordData");
 
 		//set names for output vectors
-		//distance from front vehicle
-		distanceOut.setName("distance");
-		//relative speed w.r.t. front vehicle
-		relSpeedOut.setName("relativeSpeed");
-		//vehicle id
+		//own id
 		nodeIdOut.setName("nodeId");
-		//current speed
-		speedOut.setName("speed");
-		//vehicle position
-		posxOut.setName("posx");
-		posyOut.setName("posy");
-		//vehicle acceleration
-		accelerationOut.setName("acceleration");
+		//channel busy time
+		busyTimeOut.setName("busyTime");
+		//mac layer collisions
+		collisionsOut.setName("collisions");
+		//delay metrics
+		lastLeaderMsgTime = SimTime(-1);
+		lastFrontMsgTime = SimTime(-1);
+		leaderDelayIdOut.setName("leaderDelayId");
+		frontDelayIdOut.setName("frontDelayId");
+		leaderDelayOut.setName("leaderDelay");
+		frontDelayOut.setName("frontDelay");
 
-		//init data polling. do it at each tenth of a second
-		scheduleAt(SimTime(((int)(ceil((simTime().dbl() + .1) * 10))) / 10.0), dataPolling);
+		//subscribe to signals for channel busy state and collisions
+		findHost()->subscribe(sigChannelBusy, this);
+		findHost()->subscribe(sigCollision, this);
+
+		//init statistics collection. round to second
+		SimTime rounded = SimTime(floor(simTime().dbl() + 1), SIMTIME_S);
+		scheduleAt(rounded, recordData);
 
 	}
 
@@ -104,54 +112,41 @@ void BaseProtocol::finish() {
 		delete sendBeacon;
 		sendBeacon = 0;
 	}
-	if (dataPolling) {
-		if (dataPolling->isScheduled()) {
-			cancelEvent(dataPolling);
+	if (recordData) {
+		if (recordData->isScheduled()) {
+			cancelEvent(recordData);
 		}
-		delete dataPolling;
-		dataPolling = 0;
+		delete recordData;
+		recordData = 0;
 	}
-
-	if (!crashHappened && !simulationCompleted) {
-		if (traciVehicle->isCrashed()) {
-			crashHappened = true;
-			logVehicleData(true);
-			endSimulation();
-		}
-	}
-}
-
-void BaseProtocol::logVehicleData(bool crashed) {
-	//get distance and relative speed w.r.t. front vehicle
-	double distance, relSpeed, acceleration, speed, controllerAcceleration, posX, posY, time;
-	traciVehicle->getRadarMeasurements(distance, relSpeed);
-	traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, posX, posY, time);
-	if (crashed)
-		distance = 0;
-	//write data to output files
-	distanceOut.record(distance);
-	relSpeedOut.record(relSpeed);
-	nodeIdOut.record(myId);
-	accelerationOut.record(acceleration);
-	speedOut.record(mobility->getCurrentSpeed().x);
-	Coord pos = mobility->getPositionAt(simTime());
-	posxOut.record(pos.x);
-	posyOut.record(pos.y);
+	BaseApplLayer::finish();
 }
 
 void BaseProtocol::handleSelfMsg(cMessage *msg) {
 
-	if (msg == dataPolling) {
+	if (msg == recordData) {
 
-		//check for simulation end. let the first vehicle check
-		if (myId == 0 && simTime() > communicationDuration) {
-			simulationCompleted = true;
-			endSimulation();
+		//if channel is currently busy, we have to split the amount of time between
+		//this period and the successive. so we just compute the channel busy time
+		//up to now, and then reset the "startBusy" timer to now
+		if (channelBusy) {
+			busyTime += simTime() - startBusy;
+			startBusy = simTime();
 		}
 
-		logVehicleData();
+		//time for writing statistics
+		//node id
+		nodeIdOut.record(myId);
+		//record busy time for this period
+		busyTimeOut.record(busyTime);
+		//record collisions for this period
+		collisionsOut.record(nCollisions);
 
-		scheduleAt(simTime() + SimTime(0.1), dataPolling);
+		//and reset counter
+		busyTime = SimTime(0);
+		nCollisions = 0;
+
+		scheduleAt(simTime() + SimTime(1, SIMTIME_S), recordData);
 
 	}
 
@@ -173,7 +168,6 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 	Veins::TraCICoord coords = mobility->getManager()->omnet2traci(veinsPosition);
 	double veinsTime = simTime().dbl();
 
-	//TODO: use veins or sumo data?
 	Coord position(coords.x, coords.y, 0);
 	double time = veinsTime;
 
@@ -224,6 +218,24 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 		//invoke messageReceived() method of subclass
 		messageReceived(epkt, unicast);
 
+		if (positionHelper->getLeaderId() == epkt->getVehicleId()) {
+			//check if this is at least the second message we have received
+			if (lastLeaderMsgTime.dbl() > 0) {
+				leaderDelayOut.record(simTime() - lastLeaderMsgTime);
+				leaderDelayIdOut.record(myId);
+			}
+			lastLeaderMsgTime = simTime();
+
+		}
+		if (positionHelper->getFrontId() == epkt->getVehicleId()) {
+			//check if this is at least the second message we have received
+			if (lastFrontMsgTime.dbl() > 0) {
+				frontDelayOut.record(simTime() - lastFrontMsgTime);
+				frontDelayIdOut.record(myId);
+			}
+			lastFrontMsgTime = simTime();
+		}
+
 	}
 
 	//send the message to the platooning application
@@ -232,6 +244,32 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 	send(duplicate, upperLayerOut);
 
 	delete enc;
+
+}
+
+void BaseProtocol::receiveSignal(cComponent *source, simsignal_t signalID, bool v) {
+
+	Enter_Method_Silent();
+	if (signalID == sigChannelBusy) {
+		if (v && !channelBusy) {
+			//channel turned busy, was idle before
+			startBusy = simTime();
+			channelBusy = true;
+			channelBusyStart();
+			return;
+		}
+		if (!v && channelBusy) {
+			//channel turned idle, was busy before
+			busyTime += simTime() - startBusy;
+			channelBusy = false;
+			channelIdleStart();
+			return;
+		}
+	}
+	if (signalID == sigCollision) {
+		collision();
+		nCollisions++;
+	}
 
 }
 

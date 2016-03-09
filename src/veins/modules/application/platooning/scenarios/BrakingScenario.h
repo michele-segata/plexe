@@ -15,12 +15,14 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-#ifndef SIMPLEPLATOONINGAPP_H_
-#define SIMPLEPLATOONINGAPP_H_
+#ifndef BRAKINGSCENARIO_H_
+#define BRAKINGSCENARIO_H_
+
+#include "veins/modules/application/platooning/scenarios/BaseScenario.h"
 
 #include "veins/modules/application/platooning/apps/BaseApp.h"
 
-class SimplePlatooningApp : public BaseApp
+class BrakingScenario : public BaseScenario
 {
 
 	public:
@@ -29,11 +31,26 @@ class SimplePlatooningApp : public BaseApp
 		virtual void finish();
 
 	protected:
-		virtual void onBeacon(WaveShortMessage* wsm);
-		virtual void onData(WaveShortMessage* wsm);
+
+		//leader average speed
+		double leaderSpeed;
+		//braking intensity in m/s/s
+		double brakingDeceleration;
+		//message used to tell the leader to start braking
+		cMessage *changeSpeed;
+		//start braking time
+		SimTime startBraking;
+		//application layer, used to stop the simulation
+		BaseApp *appl;
 
 	public:
-		SimplePlatooningApp() {}
+		BrakingScenario() {
+			leaderSpeed = 0;
+			brakingDeceleration = 0;
+			changeSpeed = 0;
+			startBraking = SimTime(0);
+			appl = 0;
+		}
 
 	protected:
 
@@ -41,4 +58,4 @@ class SimplePlatooningApp : public BaseApp
 
 };
 
-#endif /* SIMPLEPLATOONINGAPP_H_ */
+#endif

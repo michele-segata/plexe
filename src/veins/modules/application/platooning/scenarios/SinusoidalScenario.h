@@ -15,12 +15,12 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-#ifndef SIMPLEPLATOONINGAPP_H_
-#define SIMPLEPLATOONINGAPP_H_
+#ifndef SINUSOIDALSCENARIO_H_
+#define SINUSOIDALSCENARIO_H_
 
-#include "veins/modules/application/platooning/apps/BaseApp.h"
+#include "veins/modules/application/platooning/scenarios/BaseScenario.h"
 
-class SimplePlatooningApp : public BaseApp
+class SinusoidalScenario : public BaseScenario
 {
 
 	public:
@@ -29,11 +29,26 @@ class SimplePlatooningApp : public BaseApp
 		virtual void finish();
 
 	protected:
-		virtual void onBeacon(WaveShortMessage* wsm);
-		virtual void onData(WaveShortMessage* wsm);
+
+		//frequency at which the leader speed is oscillating
+		double leaderOscillationFrequency;
+		//oscillation amplitude
+		double oscillationAmplitude;
+		//leader average speed
+		double leaderSpeed;
+		//message used to tell the leader to continuously change its desired speed
+		cMessage *changeSpeed;
+		//start oscillation time
+		SimTime startOscillating;
 
 	public:
-		SimplePlatooningApp() {}
+		SinusoidalScenario() {
+			leaderOscillationFrequency = 0;
+			oscillationAmplitude = 0;
+			leaderSpeed = 0;
+			changeSpeed = 0;
+			startOscillating = SimTime(0);
+		}
 
 	protected:
 
@@ -41,4 +56,4 @@ class SimplePlatooningApp : public BaseApp
 
 };
 
-#endif /* SIMPLEPLATOONINGAPP_H_ */
+#endif

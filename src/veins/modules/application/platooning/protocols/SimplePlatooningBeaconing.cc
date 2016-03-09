@@ -24,7 +24,7 @@ void SimplePlatooningBeaconing::initialize(int stage) {
 
 	if (stage == 0) {
 		//random start time
-		SimTime beginTime = SimTime(uniform(0.001, 1.0));
+		SimTime beginTime = SimTime(uniform(0.001, beaconingInterval));
 		scheduleAt(simTime() + beaconingInterval + beginTime, sendBeacon);
 	}
 }

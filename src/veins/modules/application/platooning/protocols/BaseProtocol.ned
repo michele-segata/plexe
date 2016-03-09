@@ -32,8 +32,6 @@ moduleinterface BaseProtocol extends IBaseApplLayer
         int priority;// = default(0);
         //size of platooning messages
         int packetSize;// = default(25);
-        //for how much time should the simulation go on after starting the communication?
-        int communicationDuration @unit("s");
         //send actual or controller-computed acceleration
         bool useControllerAcceleration;
 		@display("i=block/network2");

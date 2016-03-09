@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2012-2015 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2016 Michele Segata <segata@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -15,17 +15,19 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-package org.car2x.veins.modules.application.platooning.apps;
+package org.car2x.veins.modules.application.platooning.utilities;
 
-import org.car2x.veins.base.modules.IBaseApplLayer;
-
-moduleinterface BaseApp extends IBaseApplLayer
+moduleinterface BasePositionHelper
 {
     parameters:
-        //duration of simulation
-        double simulationDuration @unit("s");
+        //number of cars in the scenario
+        int nCars;
+        //number of lanes in the scenario
+        int nLanes;
+        //number of cars in the platoon
+        int platoonSize;
 
         @display("i=block/app2");
-        @class(BaseApp);
+        @class(BasePositionHelper);
 
 }

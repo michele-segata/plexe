@@ -1,0 +1,23 @@
+[DEFAULT]
+defaultMap = default
+file = map-config
+
+[params]
+resdir = ../results
+
+[config]
+config = Sinusoidal
+out = Sinusoidal
+map    = %(defaultMap)s
+mapFile = %(file)s
+prefix = sin
+merge = 1
+
+[config]
+config = Braking
+out = Braking
+map    = %(defaultMap)s
+mapFile = %(file)s
+prefix = bra
+merge = 1
+

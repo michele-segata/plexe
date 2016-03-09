@@ -25,14 +25,42 @@
 
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 
+#include "veins/modules/application/platooning/utilities/BasePositionHelper.h"
+
 class BaseProtocol : public BaseApplLayer {
 
 	private:
 
-		//output vectors for statistics
-		cOutVector distanceOut, relSpeedOut, nodeIdOut, speedOut, posxOut, posyOut, accelerationOut;
+		//signals for busy channel and collisions
+		static const simsignalwrap_t sigChannelBusy;
+		static const simsignalwrap_t sigCollision;
+
+		//amount of time channel has been observed busy during the last "statisticsPeriod" seconds
+		SimTime busyTime;
+		//count the number of collision at the phy layer
+		int nCollisions;
+		//time at which channel turned busy
+		SimTime startBusy;
+		//indicates whether channel is busy or not
+		bool channelBusy;
+
+		//record the delay between each pair of messages received from leader and car in front
+		SimTime lastLeaderMsgTime;
+		SimTime lastFrontMsgTime;
+
+		//own id for statistics
+		cOutVector nodeIdOut;
+
+		//output vectors for busy time and collisions
+		cOutVector busyTimeOut, collisionsOut;
+
+		//output vector for delays
+		cOutVector leaderDelayIdOut, frontDelayIdOut, leaderDelayOut, frontDelayOut;
 
 	protected:
+
+		//determines position and role of each vehicle
+		BasePositionHelper *positionHelper;
 
 		//id of this vehicle
 		int myId;
@@ -45,20 +73,14 @@ class BaseProtocol : public BaseApplLayer {
 		int priority;
 		//packet size of the platooning message
 		int packetSize;
-		//time at which simulation should stop after communication started
-		SimTime communicationDuration;
 		//determine whether to send the actual acceleration or the one just computed by the controller
 		bool useControllerAcceleration;
-		//determine whether there has been a vehicle collision in the simulation. shared by all
-		static bool crashHappened;
-		//determine whether simulation correctly terminated
-		static bool simulationCompleted;
 
 		//input/output gates from/to upper layer
 		int upperLayerIn, upperLayerOut, upperControlIn, upperControlOut, lowerLayerIn, lowerLayerOut;
 
 		//messages for scheduleAt
-		cMessage *sendBeacon, *dataPolling;
+		cMessage *sendBeacon, *recordData;
 
 		/**
 		 * NB: this method must be overridden by inheriting classes, BUT THEY MUST invoke the super class
@@ -83,6 +105,9 @@ class BaseProtocol : public BaseApplLayer {
 		//handles and application layer message
 		void handleUnicastMsg(UnicastMessage *unicast);
 
+		//signal handler
+		void receiveSignal(cComponent *source, simsignal_t signalID, bool v);
+
 		/**
 		 * Sends a platooning message with all information about the car. This is an utility function for
 		 * subclasses
@@ -101,9 +126,13 @@ class BaseProtocol : public BaseApplLayer {
 		virtual void messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicast);
 
 		/**
-		 * Log data about vehicle
+		 * These methods signal changes in channel busy status to subclasses
+		 * or occurrences of collisions.
+		 * Subclasses which are interested should ovverride these methods.
 		 */
-		virtual void logVehicleData(bool crashed = false);
+		virtual void channelBusyStart() {}
+		virtual void channelIdleStart() {}
+		virtual void collision() {}
 
 		//traci mobility. used for getting/setting info about the car
 		Veins::TraCIMobility *mobility;
@@ -117,7 +146,7 @@ class BaseProtocol : public BaseApplLayer {
 
 		BaseProtocol() {
 			sendBeacon = 0;
-			dataPolling = 0;
+			recordData = 0;
 		}
 		virtual ~BaseProtocol();
 

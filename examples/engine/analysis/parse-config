@@ -1,0 +1,15 @@
+[DEFAULT]
+defaultMap = default
+file = map-config
+
+[params]
+resdir = ../results
+
+[config]
+config = EngineTest
+out = EngineTest
+map    = %(defaultMap)s
+mapFile = %(file)s
+prefix = eng
+merge = 1
+

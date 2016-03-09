@@ -24,6 +24,9 @@
 
 #include "veins/modules/application/platooning/protocols/BaseProtocol.h"
 
+bool BaseApp::crashHappened = false;
+bool BaseApp::simulationCompleted = false;
+
 Define_Module(BaseApp);
 
 void BaseApp::initialize(int stage) {
@@ -31,62 +34,56 @@ void BaseApp::initialize(int stage) {
 	BaseApplLayer::initialize(stage);
 
 	if (stage == 0) {
-
-		//init class variables
-		useControllerAcceleration = par("useControllerAcceleration").boolValue();
-		caccC1 = par("caccC1").doubleValue();
-		caccXi = par("caccXi").doubleValue();
-		caccOmegaN = par("caccOmegaN").doubleValue();
-		engineTau = par("engineTau").doubleValue();
-		ploegH = par("ploegH").doubleValue();
-		ploegKp = par("ploegKp").doubleValue();
-		ploegKd = par("ploegKd").doubleValue();
-
-		myId = getParentModule()->getIndex();
+		//when to stop simulation (after communications started)
+		simulationDuration = SimTime(par("simulationDuration").longValue());
+		//set names for output vectors
+		//distance from front vehicle
+		distanceOut.setName("distance");
+		//relative speed w.r.t. front vehicle
+		relSpeedOut.setName("relativeSpeed");
+		//vehicle id
+		nodeIdOut.setName("nodeId");
+		//current speed
+		speedOut.setName("speed");
+		//vehicle position
+		posxOut.setName("posx");
+		posyOut.setName("posy");
+		//vehicle acceleration
+		accelerationOut.setName("acceleration");
+		controllerAccelerationOut.setName("controllerAcceleration");
 	}
 
 	if (stage == 1) {
-
 		mobility = Veins::TraCIMobilityAccess().get(getParentModule());
 		traci = mobility->getCommandInterface();
 		traciVehicle = mobility->getVehicleCommandInterface();
-		traciVehicle->setGenericInformation(CC_SET_CACC_C1, &caccC1, sizeof(double));
-		traciVehicle->setGenericInformation(CC_SET_CACC_OMEGA_N, &caccOmegaN, sizeof(double));
-		traciVehicle->setGenericInformation(CC_SET_CACC_XI, &caccXi, sizeof(double));
-		traciVehicle->setGenericInformation(CC_SET_ENGINE_TAU, &engineTau, sizeof(double));
-		traciVehicle->setGenericInformation(CC_SET_PLOEG_H, &ploegH, sizeof(double));
-		traciVehicle->setGenericInformation(CC_SET_PLOEG_KP, &ploegKp, sizeof(double));
-		traciVehicle->setGenericInformation(CC_SET_PLOEG_KD, &ploegKd, sizeof(double));
-		//set my position in the platoon
-		traciVehicle->setGenericInformation(CC_SET_VEHICLE_POSITION, &myId, sizeof(int));
-		//set platoon size. in this example, fixed to 8
-		int nCars = 8;
-		traciVehicle->setGenericInformation(CC_SET_PLATOON_SIZE, &nCars, sizeof(int));
+		positionHelper = FindModule<BasePositionHelper*>::findSubModule(getParentModule());
+		myId = positionHelper->getId();
 
-		Plexe::VEHICLE_DATA vehicleData;
-		//initialize own vehicle data
-		if (myId != 0) {
-			//my position
-			vehicleData.index = myId;
-			//my length
-			vehicleData.length = 4;
-			//the rest is all dummy data
-			vehicleData.acceleration = 10;
-			vehicleData.positionX = 400000;
-			vehicleData.positionY = 0;
-			vehicleData.speed = 200;
-			vehicleData.time = simTime().dbl();
-
-			//The previous information are sent to SUMO
-			traciVehicle->setGenericInformation(CC_SET_VEHICLE_DATA, &vehicleData, sizeof(struct Plexe::VEHICLE_DATA));
-
-		}
+		recordData = new cMessage("recordData");
+		//init statistics collection. round to 0.1 seconds
+		SimTime rounded = SimTime(floor(simTime().dbl() * 1000 + 100), SIMTIME_MS);
+		scheduleAt(rounded, recordData);
 	}
 
 }
 
 void BaseApp::finish() {
 	BaseApplLayer::finish();
+	if (recordData) {
+		if (recordData->isScheduled()) {
+			cancelEvent(recordData);
+		}
+		delete recordData;
+		recordData = 0;
+	}
+	if (!crashHappened && !simulationCompleted) {
+		if (traciVehicle->isCrashed()) {
+			crashHappened = true;
+			logVehicleData(true);
+			endSimulation();
+		}
+	}
 }
 
 void BaseApp::handleLowerMsg(cMessage *msg) {
@@ -102,31 +99,55 @@ void BaseApp::handleLowerMsg(cMessage *msg) {
 		PlatooningBeacon *epkt = dynamic_cast<PlatooningBeacon *>(enc);
 		ASSERT2(epkt, "received UnicastMessage does not contain a PlatooningBeacon");
 
-		//if the message comes from the leader
-		if (epkt->getVehicleId() == 0) {
-			traciVehicle->setPlatoonLeaderData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
+		if (positionHelper->isInSamePlatoon(epkt->getVehicleId())) {
+
+			//if the message comes from the leader
+			if (epkt->getVehicleId() == positionHelper->getLeaderId()) {
+				traciVehicle->setPlatoonLeaderData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
+			}
+			//if the message comes from the vehicle in front
+			if (epkt->getVehicleId() == positionHelper->getFrontId()) {
+				traciVehicle->setPrecedingVehicleData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
+			}
+			//send data about every vehicle to the CACC. this is needed by the consensus controller
+			struct Plexe::VEHICLE_DATA vehicleData;
+			vehicleData.index = positionHelper->getMemberPosition(epkt->getVehicleId());
+			vehicleData.acceleration = epkt->getAcceleration();
+			//for now length is fixed to 4 meters. TODO: take it from sumo
+			vehicleData.length = 4;
+			vehicleData.positionX = epkt->getPositionX();
+			vehicleData.positionY = epkt->getPositionY();
+			vehicleData.speed = epkt->getSpeed();
+			vehicleData.time = epkt->getTime();
+			//send information to CACC
+			traciVehicle->setGenericInformation(CC_SET_VEHICLE_DATA, &vehicleData, sizeof(struct Plexe::VEHICLE_DATA));
+
 		}
-		//if the message comes from the vehicle in front
-		if (epkt->getVehicleId() == myId - 1) {
-			traciVehicle->setPrecedingVehicleData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
-		}
-		//send data about every vehicle to the CACC. this is needed by the consensus controller
-		struct Plexe::VEHICLE_DATA vehicleData;
-		vehicleData.index = epkt->getVehicleId();
-		vehicleData.acceleration = epkt->getAcceleration();
-		//for now length is fixed to 4 meters
-		vehicleData.length = 4;
-		vehicleData.positionX = epkt->getPositionX();
-		vehicleData.positionY = epkt->getPositionY();
-		vehicleData.speed = epkt->getSpeed();
-		vehicleData.time = epkt->getTime();
-		//send information to CACC
-		traciVehicle->setGenericInformation(CC_SET_VEHICLE_DATA, &vehicleData, sizeof(struct Plexe::VEHICLE_DATA));
 
 	}
 
 	delete enc;
 	delete unicast;
+}
+
+
+void BaseApp::logVehicleData(bool crashed) {
+	//get distance and relative speed w.r.t. front vehicle
+	double distance, relSpeed, acceleration, speed, controllerAcceleration, posX, posY, time;
+	traciVehicle->getRadarMeasurements(distance, relSpeed);
+	traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, posX, posY, time);
+	if (crashed)
+		distance = 0;
+	//write data to output files
+	distanceOut.record(distance);
+	relSpeedOut.record(relSpeed);
+	nodeIdOut.record(myId);
+	accelerationOut.record(acceleration);
+	controllerAccelerationOut.record(controllerAcceleration);
+	speedOut.record(mobility->getCurrentSpeed().x);
+	Coord pos = mobility->getPositionAt(simTime());
+	posxOut.record(pos.x);
+	posyOut.record(pos.y);
 }
 
 void BaseApp::handleLowerControl(cMessage *msg) {
@@ -144,11 +165,21 @@ void BaseApp::sendUnicast(cPacket *msg, int destination) {
 }
 
 void BaseApp::handleSelfMsg(cMessage *msg) {
+	if (msg == recordData) {
+		//check for simulation end. let the first vehicle check
+		if (myId == 0 && simTime() > simulationDuration)
+			stopSimulation();
+		//log mobility data
+		logVehicleData();
+		//re-schedule next event
+		scheduleAt(simTime() + SimTime(100, SIMTIME_MS), recordData);
+	}
+}
+
+void BaseApp::stopSimulation() {
+	simulationCompleted = true;
+	endSimulation();
 }
 
 void BaseApp::onBeacon(WaveShortMessage* wsm) {
-}
-
-std::string BaseApp::getExternalId() {
-	return mobility->getExternalId();
 }
