@@ -421,6 +421,7 @@ void UnicastProtocol::finish()
 		cancelAndDelete(timeout);
 		timeout = 0;
 	}
+	BaseWaveApplLayer::finish();
 }
 
 UnicastProtocol::UnicastProtocol()
