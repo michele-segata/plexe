@@ -1,6 +1,6 @@
 //
 // Copyright (C) 2008 Christoph Sommer <christoph.sommer@informatik.uni-erlangen.de>
-// Copyright (C) 2012-2015 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2016 Michele Segata <segata@ccs-labs.org>
 //
 // Documentation for these modules is at http://veins.car2x.org/
 //
