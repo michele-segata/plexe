@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2006-2011 Christoph Sommer <christoph.sommer@uibk.ac.at>
+// Copyright (C) 2006-2016 Christoph Sommer <christoph.sommer@uibk.ac.at>
 //
 // Documentation for these modules is at http://veins.car2x.org/
 //
@@ -18,29 +18,36 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-#ifndef WORLD_TRACI_TRACICOLORS_H
-#define WORLD_TRACI_TRACICOLORS_H
-
-#include "veins/base/utils/MiXiMDefs.h"
-
-namespace Veins {
+#ifndef WORLD_TRACI_TRACILAUNCHER_H
+#define WORLD_TRACI_TRACILAUNCHER_H
 
 /**
- * TraCI compatible color container
+ * @brief
+ * Launches a program (the TraCI server) when instantiated.
+ *
+ * See the Veins website <a href="http://veins.car2x.org/"> for a tutorial, documentation, and publications </a>.
+ *
+ * @author Christoph Sommer
+ *
+ * @see TraCIMobility
+ * @see TraCIScenarioManager
+ *
  */
-class TraCIColor {
+namespace Veins {
+class TraCILauncher
+{
 	public:
-		TraCIColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
-		static TraCIColor fromTkColor(std::string tkColorName);
+		TraCILauncher(std::string commandLine);
+		~TraCILauncher();
 
-	public:
-		uint8_t red;
-		uint8_t green;
-		uint8_t blue;
-		uint8_t alpha;
+	protected:
+
+#if defined(_WIN32) || defined(__WIN32__) || defined(WIN32) || defined(__CYGWIN__) || defined(_WIN64)
+#else
+		pid_t pid;
+#endif
+
 };
-
 }
 
 #endif
-

@@ -55,7 +55,9 @@ protected:
 
 public:
     /** @brief Speed of light in meters per second. */
-	static const double speedOfLight;
+	static const double speedOfLight() {
+		return 299792458.0; ///< meters per second
+	}
 
 protected:
     /**
@@ -107,7 +109,7 @@ public:
     	// if counter has done one complete cycle and will be set to a value it already had
     	if (airFrameId == -1){
     		// print a warning
-    		ev << "WARNING: AirFrameId-Counter has done one complete cycle."
+    		EV << "WARNING: AirFrameId-Counter has done one complete cycle."
     		<< " AirFrameIds are repeating now and may not be unique anymore." << endl;
     	}
 

@@ -42,7 +42,7 @@ void AnnotationManager::initialize() {
 	annotations.clear();
 	groups.clear();
 
-#if OMNETPP_CANVAS_VERSION == 0x20140709
+#if OMNETPP_CANVAS_VERSION == 0x20140709 || OMNETPP_VERSION >= 0x500
 	annotationLayer = new cGroupFigure();
 	cCanvas* canvas = getParentModule()->getCanvas();
 	canvas->addFigure(annotationLayer, canvas->findFigure("submodules"));
@@ -271,7 +271,7 @@ void AnnotationManager::scheduleErase(simtime_t deltaT, Annotation* annotation) 
 
 }
 
-#if OMNETPP_CANVAS_VERSION == 0x20140709
+#if OMNETPP_CANVAS_VERSION == 0x20140709 || OMNETPP_VERSION >= 0x500
 #else
 cModule* AnnotationManager::createDummyModule(std::string displayString) {
 	static int32_t nodeVectorIndex = -1;
@@ -319,7 +319,7 @@ cModule* AnnotationManager::createDummyModuleLine(Coord p1, Coord p2, std::strin
 #endif
 
 void AnnotationManager::show(const Annotation* annotation) {
-#if OMNETPP_CANVAS_VERSION == 0x20140709
+#if OMNETPP_CANVAS_VERSION == 0x20140709 || OMNETPP_VERSION >= 0x500
 	if (annotation->figure) return;
 #else
 	if (annotation->dummyObjects.size() > 0) return;
@@ -327,25 +327,31 @@ void AnnotationManager::show(const Annotation* annotation) {
 
 	if (const Point* o = dynamic_cast<const Point*>(annotation)) {
 
-		if (ev.isGUI()) {
+		if (hasGUI()) {
 			// no corresponding TkEnv representation
 		}
 
 		TraCIScenarioManager* traci = TraCIScenarioManagerAccess().get();
 		if (traci && traci->isConnected()) {
-			std::stringstream nameBuilder; nameBuilder << o->text << " " << ev.getUniqueNumber();
+			std::stringstream nameBuilder; nameBuilder << o->text << " " << getEnvir()->getUniqueNumber();
 			traci->getCommandInterface()->addPoi(nameBuilder.str(), "Annotation", TraCIColor::fromTkColor(o->color), 6, o->pos);
 			annotation->traciPoiIds.push_back(nameBuilder.str());
 		}
 	}
 	else if (const Line* l = dynamic_cast<const Line*>(annotation)) {
 
-		if (ev.isGUI()) {
-#if OMNETPP_CANVAS_VERSION == 0x20140709
+		if (hasGUI()) {
+#if OMNETPP_CANVAS_VERSION == 0x20140709 || OMNETPP_VERSION >= 0x500
 			cLineFigure* figure = new cLineFigure();
 			figure->setStart(cFigure::Point(l->p1.x, l->p1.y));
 			figure->setEnd(cFigure::Point(l->p2.x, l->p2.y));
-			figure->setLineColor(cFigure::Color::byName(l->color.c_str()));
+			figure->setLineColor(
+#if OMNETPP_VERSION < 0x500
+					cFigure::Color::byName
+#else
+					cFigure::Color
+#endif
+					(l->color.c_str()));
 			annotation->figure = figure;
 			annotationLayer->addFigure(annotation->figure);
 #else
@@ -357,7 +363,7 @@ void AnnotationManager::show(const Annotation* annotation) {
 		TraCIScenarioManager* traci = TraCIScenarioManagerAccess().get();
 		if (traci && traci->isConnected()) {
 			std::list<Coord> coords; coords.push_back(l->p1); coords.push_back(l->p2);
-			std::stringstream nameBuilder; nameBuilder << "Annotation" << ev.getUniqueNumber();
+			std::stringstream nameBuilder; nameBuilder << "Annotation" << getEnvir()->getUniqueNumber();
 			traci->getCommandInterface()->addPolygon(nameBuilder.str(), "Annotation", TraCIColor::fromTkColor(l->color), false, 5, coords);
 			annotation->traciLineIds.push_back(nameBuilder.str());
 		}
@@ -366,15 +372,21 @@ void AnnotationManager::show(const Annotation* annotation) {
 
 		ASSERT(p->coords.size() >= 2);
 
-		if (ev.isGUI()) {
-#if OMNETPP_CANVAS_VERSION == 0x20140709
+		if (hasGUI()) {
+#if OMNETPP_CANVAS_VERSION == 0x20140709 || OMNETPP_VERSION >= 0x500
 			cPolygonFigure* figure = new cPolygonFigure();
 			std::vector<cFigure::Point> points;
 			for (std::list<Coord>::const_iterator i = p->coords.begin(); i != p->coords.end(); ++i) {
 				points.push_back(cFigure::Point(i->x, i->y));
 			}
 			figure->setPoints(points);
-			figure->setLineColor(cFigure::Color::byName(p->color.c_str()));
+			figure->setLineColor(
+#if OMNETPP_VERSION < 0x500
+					cFigure::Color::byName
+#else
+					cFigure::Color
+#endif
+					(p->color.c_str()));
 			figure->setFilled(false);
 			annotation->figure = figure;
 			annotationLayer->addFigure(annotation->figure);
@@ -393,7 +405,7 @@ void AnnotationManager::show(const Annotation* annotation) {
 
 		TraCIScenarioManager* traci = TraCIScenarioManagerAccess().get();
 		if (traci && traci->isConnected()) {
-			std::stringstream nameBuilder; nameBuilder << "Annotation" << ev.getUniqueNumber();
+			std::stringstream nameBuilder; nameBuilder << "Annotation" << getEnvir()->getUniqueNumber();
 			traci->getCommandInterface()->addPolygon(nameBuilder.str(), "Annotation", TraCIColor::fromTkColor(p->color), false, 4, p->coords);
 			annotation->traciPolygonsIds.push_back(nameBuilder.str());
 		}
@@ -405,7 +417,7 @@ void AnnotationManager::show(const Annotation* annotation) {
 }
 
 void AnnotationManager::hide(const Annotation* annotation) {
-#if OMNETPP_CANVAS_VERSION == 0x20140709
+#if OMNETPP_CANVAS_VERSION == 0x20140709 || OMNETPP_VERSION >= 0x500
 	if (annotation->figure) {
 		delete annotationLayer->removeFigure(annotation->figure);
 		annotation->figure = 0;

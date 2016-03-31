@@ -82,7 +82,7 @@ TraCIScenarioManager::TypeMapping TraCIScenarioManager::parseMappings(std::strin
 	//and check that there exists at least one
 	if (typeMappings.size() == 0) {
 		if (!allowEmpty)
-			opp_error("parameter \"%s\" is empty", parameterName.c_str());
+			throw cRuntimeError("parameter \"%s\" is empty", parameterName.c_str());
 		else
 			return map;
 	}
@@ -101,7 +101,7 @@ TraCIScenarioManager::TypeMapping TraCIScenarioManager::parseMappings(std::strin
 			//"a b=c": this is not
 			if (typeMappings.size() != 1)
 				//stop simulation with an error
-				opp_error("parameter \"%s\" includes multiple mappings, but \"%s\" is not mapped to any vehicle type", parameterName.c_str(), mapping[0].c_str());
+				throw cRuntimeError("parameter \"%s\" includes multiple mappings, but \"%s\" is not mapped to any vehicle type", parameterName.c_str(), mapping[0].c_str());
 			else
 				//all vehicle types should be instantiated with this module type
 				map["*"] = mapping[0];
@@ -110,10 +110,10 @@ TraCIScenarioManager::TypeMapping TraCIScenarioManager::parseMappings(std::strin
 
 			//check that mapping is valid (a=b and not like a=b=c)
 			if (mapping.size() != 2)
-				opp_error("invalid syntax for mapping \"%s\" for parameter \"%s\"", typeMapping.c_str(), parameterName.c_str());
+				throw cRuntimeError("invalid syntax for mapping \"%s\" for parameter \"%s\"", typeMapping.c_str(), parameterName.c_str());
 			//check that the mapping does not already exist
 			if (map.find(mapping[0]) != map.end())
-				opp_error("duplicated mapping for vehicle type \"%s\" for parameter \"%s\"", mapping[0].c_str(), parameterName.c_str());
+				throw cRuntimeError("duplicated mapping for vehicle type \"%s\" for parameter \"%s\"", mapping[0].c_str(), parameterName.c_str());
 
 			//finally save the mapping
 			map[mapping[0]] = mapping[1];
@@ -164,7 +164,7 @@ void TraCIScenarioManager::parseModuleTypes() {
 	    std::back_inserter(intersection)
 	);
 	if (intersection.size() != typeKeys.size() || intersection.size() != nameKeys.size())
-		opp_error("keys of mappings of moduleType and moduleName are not the same");
+		throw cRuntimeError("keys of mappings of moduleType and moduleName are not the same");
 
 	if (displayStringKeys.size() == 0)
 		return;
@@ -176,7 +176,7 @@ void TraCIScenarioManager::parseModuleTypes() {
 	    std::back_inserter(intersection)
 	);
 	if (intersection.size() != displayStringKeys.size())
-		opp_error("keys of mappings of moduleType and moduleName are not the same");
+		throw cRuntimeError("keys of mappings of moduleType and moduleName are not the same");
 
 }
 
@@ -257,11 +257,11 @@ void TraCIScenarioManager::init_traci() {
 		uint32_t apiVersion = version.first;
 		std::string serverVersion = version.second;
 
-		if (apiVersion == 8) {
+		if (apiVersion == 10) {
 			MYDEBUG << "TraCI server \"" << serverVersion << "\" reports API version " << apiVersion << endl;
 		}
 		else {
-			error("TraCI server \"%s\" reports API version %d, which is unsupported. We recommend using SUMO 0.21.0.", serverVersion.c_str(), apiVersion);
+			error("TraCI server \"%s\" reports API version %d, which is unsupported. We recommend using SUMO 0.25.0.", serverVersion.c_str(), apiVersion);
 		}
 
 	}
@@ -325,15 +325,11 @@ void TraCIScenarioManager::init_traci() {
 			for (std::list<std::string>::iterator i = ids.begin(); i != ids.end(); ++i) {
 				std::string id = *i;
 				std::string typeId = getCommandInterface()->polygon(id).getTypeId();
-				if (typeId == "building") {
-					std::list<Coord> coords = getCommandInterface()->polygon(id).getShape();
-					Obstacle obs(id, 9, .4); // each building gets attenuation of 9 dB per wall, 0.4 dB per meter
-					std::vector<Coord> shape;
-					std::copy(coords.begin(), coords.end(), std::back_inserter(shape));
-					obs.setShape(shape);
-					obstacles->add(obs);
-
-				}
+				if (!obstacles->isTypeSupported(typeId)) continue;
+				std::list<Coord> coords = getCommandInterface()->polygon(id).getShape();
+				std::vector<Coord> shape;
+				std::copy(coords.begin(), coords.end(), std::back_inserter(shape));
+				obstacles->addFromTypeAndShape(id, typeId, shape);
 			}
 		}
 	}
@@ -405,7 +401,7 @@ void TraCIScenarioManager::addModule(std::string nodeId, std::string type, std::
 
 	// pre-initialize TraCIMobility
 	for (cModule::SubmoduleIterator iter(mod); !iter.end(); iter++) {
-		cModule* submod = iter();
+		cModule* submod = SUBMODULE_ITERATOR_TO_MODULE(iter);
 		ifInetTraCIMobilityCallPreInitialize(submod, nodeId, position, road_id, speed, angle);
 		TraCIMobility* mm = dynamic_cast<TraCIMobility*>(submod);
 		if (!mm) continue;
@@ -417,7 +413,7 @@ void TraCIScenarioManager::addModule(std::string nodeId, std::string type, std::
 
 	// post-initialize TraCIMobility
 	for (cModule::SubmoduleIterator iter(mod); !iter.end(); iter++) {
-		cModule* submod = iter();
+		cModule* submod = SUBMODULE_ITERATOR_TO_MODULE(iter);
 		TraCIMobility* mm = dynamic_cast<TraCIMobility*>(submod);
 		if (!mm) continue;
 		mm->changePosition();
@@ -438,7 +434,10 @@ void TraCIScenarioManager::deleteManagedModule(std::string nodeId) {
 	cModule* mod = getManagedModule(nodeId);
 	if (!mod) error("no vehicle with Id \"%s\" found", nodeId.c_str());
 
-	cc->unregisterNic(mod->getSubmodule("nic"));
+	cModule* nic = mod->getSubmodule("nic");
+	if (nic) {
+	    cc->unregisterNic(nic);
+	}
 
 	hosts.erase(nodeId);
 	mod->callFinish();
@@ -610,7 +609,7 @@ void TraCIScenarioManager::processSimSubscription(std::string objectId, TraCIBuf
 
 				cModule* mod = getManagedModule(idstring);
 				for (cModule::SubmoduleIterator iter(mod); !iter.end(); iter++) {
-					cModule* submod = iter();
+					cModule* submod = SUBMODULE_ITERATOR_TO_MODULE(iter);
 					TraCIMobility* mm = dynamic_cast<TraCIMobility*>(submod);
 					if (!mm) continue;
 					mm->changeParkingState(true);
@@ -630,7 +629,7 @@ void TraCIScenarioManager::processSimSubscription(std::string objectId, TraCIBuf
 
 				cModule* mod = getManagedModule(idstring);
 				for (cModule::SubmoduleIterator iter(mod); !iter.end(); iter++) {
-					cModule* submod = iter();
+					cModule* submod = SUBMODULE_ITERATOR_TO_MODULE(iter);
 					TraCIMobility* mm = dynamic_cast<TraCIMobility*>(submod);
 					if (!mm) continue;
 					mm->changeParkingState(false);
@@ -777,7 +776,7 @@ void TraCIScenarioManager::processVehicleSubscription(std::string objectId, TraC
 		if (iType == moduleType.end()) {
 			iType = moduleType.find("*");
 			if (iType == moduleType.end())
-				opp_error("cannot find a module type for vehicle type \"%s\"", vType.c_str());
+				throw cRuntimeError("cannot find a module type for vehicle type \"%s\"", vType.c_str());
 		}
 		mType = iType->second;
 		//search for module name
@@ -785,7 +784,7 @@ void TraCIScenarioManager::processVehicleSubscription(std::string objectId, TraC
 		if (iName == moduleName.end()) {
 			iName = moduleName.find(std::string("*"));
 			if (iName == moduleName.end())
-				opp_error("cannot find a module name for vehicle type \"%s\"", vType.c_str());
+				throw cRuntimeError("cannot find a module name for vehicle type \"%s\"", vType.c_str());
 		}
 		mName = iName->second;
 		if (moduleDisplayString.size() != 0) {
@@ -793,7 +792,7 @@ void TraCIScenarioManager::processVehicleSubscription(std::string objectId, TraC
 			if (iDisplayString == moduleDisplayString.end()) {
 				iDisplayString = moduleDisplayString.find("*");
 				if (iDisplayString == moduleDisplayString.end())
-					opp_error("cannot find a module display string for vehicle type \"%s\"", vType.c_str());
+					throw cRuntimeError("cannot find a module display string for vehicle type \"%s\"", vType.c_str());
 			}
 			mDisplayString = iDisplayString->second;
 		}
@@ -808,7 +807,7 @@ void TraCIScenarioManager::processVehicleSubscription(std::string objectId, TraC
 	} else {
 		// module existed - update position
 		for (cModule::SubmoduleIterator iter(mod); !iter.end(); iter++) {
-			cModule* submod = iter();
+			cModule* submod = SUBMODULE_ITERATOR_TO_MODULE(iter);
 			ifInetTraCIMobilityCallNextPosition(submod, p, edge, speed, angle);
 			TraCIMobility* mm = dynamic_cast<TraCIMobility*>(submod);
 			if (!mm) continue;

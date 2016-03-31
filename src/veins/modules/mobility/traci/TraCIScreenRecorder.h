@@ -21,7 +21,7 @@
 #ifndef WORLD_TRACI_TRACISCREENRECORDER_H
 #define WORLD_TRACI_TRACISCREENRECORDER_H
 
-#include <omnetpp.h>
+#include "veins/base/utils/MiXiMDefs.h"
 
 /**
  * @brief

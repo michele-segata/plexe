@@ -44,7 +44,7 @@ BaseConnectionManager* ChannelAccess::getConnectionManager(cModule* nic)
 						 ? nic->par("connectionManagerName").stringValue()
 						 : "";
 	if (cmName != ""){
-		cModule* ccModule = simulation.getModuleByPath(cmName.c_str());
+		cModule* ccModule = cSimulation::getActiveSimulation()->getModuleByPath(cmName.c_str());
 
 		return dynamic_cast<BaseConnectionManager *>(ccModule);
 	}
@@ -147,10 +147,10 @@ simtime_t ChannelAccess::calculatePropagationDelay(const NicEntry* nic) {
 	Coord           receiverPos = receiverModule->getMobilityModule()->getCurrentPosition(/*sStart*/);
 
 	// this time-point is used to calculate the distance between sending and receiving host
-	return receiverPos.distance(sendersPos) / BaseWorldUtility::speedOfLight;
+	return receiverPos.distance(sendersPos) / BaseWorldUtility::speedOfLight();
 }
 
-void ChannelAccess::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj)
+void ChannelAccess::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj, cObject* details)
 {
     if(signalID == mobilityStateChangedSignal) {
     	ChannelMobilityPtrType const mobility = check_and_cast<ChannelMobilityPtrType>(obj);
