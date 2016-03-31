@@ -16,7 +16,7 @@
 //
 
 #ifndef TESTTRAFFICMANAGER_H_
-#define TESTTRAFFICMANAGER_H
+#define TESTTRAFFICMANAGER_H_
 
 #include "veins/modules/mobility/traci/TraCIBaseTrafficManager.h"
 
@@ -42,4 +42,4 @@ class TestTrafficManager : public TraCIBaseTrafficManager
 
 };
 
-#endif /* TESTTRAFFICMANAGER_H */
+#endif /* TESTTRAFFICMANAGER_H_ */

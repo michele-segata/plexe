@@ -16,7 +16,7 @@
 //
 
 #ifndef SUMOTRAFFICMANAGER_H_
-#define SUMOTRAFFICMANAGER_H
+#define SUMOTRAFFICMANAGER_H_
 
 #include "veins/modules/mobility/traci/TraCIBaseTrafficManager.h"
 
@@ -38,4 +38,4 @@ class SumoTrafficManager : public TraCIBaseTrafficManager
 
 };
 
-#endif /* SUMOTRAFFICMANAGER_H */
+#endif /* SUMOTRAFFICMANAGER_H_ */

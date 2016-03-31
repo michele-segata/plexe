@@ -16,7 +16,7 @@
 //
 
 #ifndef TRACIBASETRAFFICMANAGER_H_
-#define TRACIBASETRAFFICMANAGER_H
+#define TRACIBASETRAFFICMANAGER_H_
 
 #include <omnetpp.h>
 #include <queue>
@@ -105,4 +105,4 @@ class TraCIBaseTrafficManager : public cSimpleModule
 
 };
 
-#endif /* TRACIBASETRAFFICMANAGER_H */
+#endif /* TRACIBASETRAFFICMANAGER_H_ */
