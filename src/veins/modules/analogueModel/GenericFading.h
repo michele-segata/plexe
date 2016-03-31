@@ -95,7 +95,6 @@ public:
  */
 class MIXIM_API GenericFadingMapping: public SimpleConstMapping {
 protected:
-	static DimensionSet dimensions;
 
 	/** @brief Pointer to the model.*/
 	GenericFading* model;

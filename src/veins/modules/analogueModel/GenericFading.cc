@@ -20,8 +20,6 @@
 #include "veins/base/phyLayer/Signal_.h"
 #include "veins/base/messages/AirFrame_m.h"
 
-DimensionSet GenericFadingMapping::dimensions(Dimension::time);
-
 double GenericFadingMapping::getValue(const Argument& pos) const {
 	return attenuationFactor;
 }
