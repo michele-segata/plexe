@@ -53,8 +53,7 @@ void BaseScenario::initialize(int stage) {
 			controller = Plexe::CONSENSUS;
 		}
 		else {
-			opp_error("Invalid controller selected");
-			exit(1);
+			throw cRuntimeError("Invalid controller selected");
 		}
 
 	}

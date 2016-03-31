@@ -106,7 +106,10 @@ class BaseProtocol : public BaseApplLayer {
 		void handleUnicastMsg(UnicastMessage *unicast);
 
 		//signal handler
-		void receiveSignal(cComponent *source, simsignal_t signalID, bool v);
+		void receiveSignal(cComponent *source, simsignal_t signalID, bool v, cObject *details);
+		void receiveSignal(cComponent *source, simsignal_t signalID, bool v) {
+			receiveSignal(source, signalID, v, 0);
+		}
 
 		/**
 		 * Sends a platooning message with all information about the car. This is an utility function for

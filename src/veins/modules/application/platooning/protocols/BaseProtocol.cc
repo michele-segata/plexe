@@ -247,7 +247,7 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 
 }
 
-void BaseProtocol::receiveSignal(cComponent *source, simsignal_t signalID, bool v) {
+void BaseProtocol::receiveSignal(cComponent *source, simsignal_t signalID, bool v, cObject *details) {
 
 	Enter_Method_Silent();
 	if (signalID == sigChannelBusy) {

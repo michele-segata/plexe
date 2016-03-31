@@ -114,7 +114,7 @@ public:
 		switch(model->distribution) {
 			case GenericFading::GAUSSIAN:
 
-				attenuationFactor = 1 / (pow(10.0, normal(0, model->stdDev) / 10.0));
+				attenuationFactor = 1 / (pow(10.0, (RNGCONTEXT normal(0, model->stdDev)) / 10.0));
 
 				break;
 			case GenericFading::NAKAGAMI:
@@ -123,7 +123,7 @@ public:
 				//the ns-3 implementation uses gamma(m, txPowerW / m), while the INET framework
 				//uses gamma(m, avgRxPowerW / m). in this case, we simply compute the attenuation
 				//factor using gamma(m, 1/m)
-				attenuationFactor = gamma_d(model->nakagamiM, 1 / model->nakagamiM);
+				attenuationFactor = (RNGCONTEXT gamma_d(model->nakagamiM, 1 / model->nakagamiM));
 				break;
 			default:
 				ASSERT2(0, "invalid distribution type set for GenericFading");
