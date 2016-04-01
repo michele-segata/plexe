@@ -49,6 +49,8 @@ simple SinusoidalScenario like BaseScenario
         double ploegKp = default(0.2);
         double ploegKd = default(0.7);
 
+        //location of the file with vehicle parameters
+        string vehicleFile = default("./vehicles.xml");
         //enable/disable the realistic engine model
         bool useRealisticEngine = default(false);
         //vehicle type for the realistic engine model

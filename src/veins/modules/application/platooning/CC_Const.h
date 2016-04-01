@@ -88,6 +88,7 @@ struct VEHICLE_DATA {
 #define CC_ENGINE_MODEL_REALISTIC        0x01    //the detailed and realistic engine model
 
 #define CC_SET_VEHICLE_MODEL             0x31    //set the vehicle model, i.e., engine characteristics
+#define CC_SET_VEHICLES_FILE             0x32    //set the location of the vehicle parameters file
 
 //parameter names for engine models
 #define FOLM_PAR_TAU                     "tau_s"

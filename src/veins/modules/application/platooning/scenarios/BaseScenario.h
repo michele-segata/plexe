@@ -61,6 +61,8 @@ class BaseScenario : public BaseApplLayer
 		double ploegKp;
 		double ploegKd;
 
+		//location of the file with vehicle parameters
+		std::string vehicleFile;
 		//enable/disable realistic engine model
 		bool useRealisticEngine;
 		//vehicle type for realistic engine model

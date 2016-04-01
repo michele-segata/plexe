@@ -39,6 +39,8 @@ moduleinterface BaseScenario extends IBaseApplLayer
         double ploegKp;
         double ploegKd;
 
+        //location of the file with vehicle parameters
+        string vehicleFile;
         //enable/disable the realistic engine model
         bool useRealisticEngine;
         //vehicle type for the realistic engine model

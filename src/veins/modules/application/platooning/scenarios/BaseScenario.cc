@@ -35,8 +35,10 @@ void BaseScenario::initialize(int stage) {
 		ploegKd = par("ploegKd").doubleValue();
 
 		useRealisticEngine = par("useRealisticEngine").boolValue();
-		if (useRealisticEngine)
+		if (useRealisticEngine) {
+			vehicleFile = par("vehicleFile").stdstringValue();
 			vehicleType = par("vehicleType").stdstringValue();
+		}
 
 		const char *strController = par("controller").stringValue();
 		//for now we have only two possibilities
@@ -122,7 +124,12 @@ void BaseScenario::initializeControllers() {
 
 	if (useRealisticEngine) {
 		int engineModel = CC_ENGINE_MODEL_REALISTIC;
+		//the order is important
+		//1. let sumo instantiate the realistic engine model
 		traciVehicle->setGenericInformation(CC_SET_VEHICLE_ENGINE_MODEL, &engineModel, sizeof(engineModel));
+		//2. tell the realistic engine model the location of the parameters file
+		traciVehicle->setGenericInformation(CC_SET_VEHICLES_FILE, vehicleFile.c_str(), vehicleFile.length() + 1);
+		//3. tell the realistic engine model which vehicle (in the specified parameters file) to use
 		traciVehicle->setGenericInformation(CC_SET_VEHICLE_MODEL, vehicleType.c_str(), vehicleType.length() + 1);
 	}
 }
