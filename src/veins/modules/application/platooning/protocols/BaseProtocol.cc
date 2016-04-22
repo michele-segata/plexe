@@ -238,13 +238,12 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 
 	//find the application responsible for this beacon
 	ApplicationMap::iterator app = apps.find(unicast->getKind());
-	if (app == apps.end())
-		throw cRuntimeError("BaseProtocol received a packet with protocol type #%d, but no app with that id is registered", unicast->getType());
-
-	//send the message to the platooning application responsible for it
-	UnicastMessage *duplicate = unicast->dup();
-	duplicate->encapsulate(enc->dup());
-	send(duplicate, app->second.second);
+	if (app != apps.end()) {
+		//send the message to the application responsible for it
+		UnicastMessage *duplicate = unicast->dup();
+		duplicate->encapsulate(enc->dup());
+		send(duplicate, app->second.second);
+	}
 
 	delete enc;
 
