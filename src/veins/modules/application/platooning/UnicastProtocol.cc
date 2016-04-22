@@ -121,7 +121,7 @@ void UnicastProtocol::handleUpperControl(cMessage *msg)
 
 }
 
-void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsulatedId, int priority, SimTime timestamp, t_channel channel)
+void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsulatedId, int priority, SimTime timestamp, t_channel channel, short kind)
 {
 
 	//this function cannot be called if we are still waiting for the ack
@@ -144,6 +144,7 @@ void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsu
 	unicast->setByteLength(0);
 	unicast->setPriority(priority);
 	unicast->setTimestamp(timestamp);
+	unicast->setKind(kind);
 	//encapsulate message. NOTICE that we are encapsulating the message directly
 	//decapsulated from the message coming from the application. we could use
 	//msg->dup(), but then, since msg has been decapsulated, we would have to
@@ -400,7 +401,7 @@ void UnicastProtocol::processNextPacket()
 	UnicastMessage *toSend = queue.front();
 
 	//send message down
-	sendMessageDown(toSend->getDestination(), toSend->decapsulate(), toSend->getEncapsulationId(), toSend->getPriority(), toSend->getTimestamp(), (t_channel)toSend->getChannel());
+	sendMessageDown(toSend->getDestination(), toSend->decapsulate(), toSend->getEncapsulationId(), toSend->getPriority(), toSend->getTimestamp(), (t_channel)toSend->getChannel(), toSend->getKind());
 
 	delete toSend;
 

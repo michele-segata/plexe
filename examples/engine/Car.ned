@@ -76,8 +76,6 @@ module Car
                 @display("p=130,172;i=block/cogwheel");
         }
     connections allowunconnected:
-        prot.upperLayerIn <-- appl.lowerLayerOut;
-        prot.upperLayerOut --> appl.lowerLayerIn;
         unicast.upperControlIn <-- prot.lowerControlOut;
         unicast.upperControlOut --> prot.lowerControlIn;
         unicast.upperLayerIn <-- prot.lowerLayerOut;

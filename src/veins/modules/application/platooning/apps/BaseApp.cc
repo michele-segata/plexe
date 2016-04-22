@@ -57,7 +57,11 @@ void BaseApp::initialize(int stage) {
 		traci = mobility->getCommandInterface();
 		traciVehicle = mobility->getVehicleCommandInterface();
 		positionHelper = FindModule<BasePositionHelper*>::findSubModule(getParentModule());
+		protocol = FindModule<BaseProtocol*>::findSubModule(getParentModule());
 		myId = positionHelper->getId();
+
+		//connect application to protocol
+		protocol->registerApplication(BaseProtocol::BEACON_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"));
 
 		recordData = new cMessage("recordData");
 		//init statistics collection. round to 0.1 seconds

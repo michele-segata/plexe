@@ -29,6 +29,8 @@
 
 #include "veins/modules/application/platooning/utilities/BasePositionHelper.h"
 
+class BaseProtocol;
+
 class BaseApp : public BaseApplLayer
 {
 
@@ -52,6 +54,9 @@ class BaseApp : public BaseApplLayer
 
 		//determines position and role of each vehicle
 		BasePositionHelper *positionHelper;
+
+		//lower layer protocol
+		BaseProtocol *protocol;
 
 		//time at which simulation should stop
 		SimTime simulationDuration;

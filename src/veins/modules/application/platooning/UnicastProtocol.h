@@ -135,8 +135,9 @@ class UnicastProtocol : public BaseWaveApplLayer
 		 * \param priority the priority of the message, a value from 0 to 3 which will be then mapped
 		 * onto an AC (AC_BK = 0, ... AC_VO = 3)
 		 * \param channel 0 for CCH, 1 for SCH
+		 * \param kind id of the application, for (de)multiplexing
 		 */
-		void sendMessageDown(int destination, cPacket *msg, int encapsulatedId, int priority, SimTime timestamp, t_channel channel);
+		void sendMessageDown(int destination, cPacket *msg, int encapsulatedId, int priority, SimTime timestamp, t_channel channel, short kind);
 
 		/**
 		 * Sends an ack in response to an unicast message

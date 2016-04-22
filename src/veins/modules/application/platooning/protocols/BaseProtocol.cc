@@ -40,8 +40,6 @@ void BaseProtocol::initialize(int stage) {
 		recordData = 0;
 
 		//get gates
-		upperLayerIn = findGate("upperLayerIn");
-		upperLayerOut = findGate("upperLayerOut");
 		lowerControlIn = findGate("lowerControlIn");
 		lowerControlOut = findGate("lowerControlOut");
 		lowerLayerIn = findGate("lowerLayerIn");
@@ -238,10 +236,15 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 
 	}
 
-	//send the message to the platooning application
+	//find the application responsible for this beacon
+	ApplicationMap::iterator app = apps.find(unicast->getKind());
+	if (app == apps.end())
+		throw cRuntimeError("BaseProtocol received a packet with protocol type #%d, but no app with that id is registered", unicast->getType());
+
+	//send the message to the platooning application responsible for it
 	UnicastMessage *duplicate = unicast->dup();
 	duplicate->encapsulate(enc->dup());
-	send(duplicate, upperLayerOut);
+	send(duplicate, app->second.second);
 
 	delete enc;
 
@@ -310,6 +313,20 @@ void BaseProtocol::handleLowerControl(cMessage *msg) {
 
 void BaseProtocol::messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicast) {
 	ASSERT2(false, "BaseProtocol::messageReceived() not overridden by subclass");
+}
+
+void BaseProtocol::registerApplication(int applicationId, cGate* appInputGate, cGate* appOutputGate) {
+	int nApps = apps.size();
+	if (nApps == MAX_APPLICATIONS_COUNT)
+		throw cRuntimeError("BaseProtocol: application with id=%d tried to register, but no space left", applicationId);
+	//connect gates
+	cGate *upperIn, *upperOut;
+	upperOut = gate("upperLayerOut", nApps);
+	upperOut->connectTo(appInputGate);
+	upperIn = gate("upperLayerIn", nApps);
+	appOutputGate->connectTo(upperIn);
+	//save the mapping in the connection
+	apps[applicationId] = AppInOut(upperIn, upperOut);
 }
 
 BaseProtocol::~BaseProtocol() {

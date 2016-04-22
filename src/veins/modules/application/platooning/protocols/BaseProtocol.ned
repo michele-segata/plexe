@@ -37,8 +37,8 @@ moduleinterface BaseProtocol extends IBaseApplLayer
 		@display("i=block/network2");
         @class(BaseProtocol);
      gates:
-         input upperLayerIn;
-         output upperLayerOut;
+         input upperLayerIn[10];
+         output upperLayerOut[10];
          input upperControlIn;
          output upperControlOut;
 }

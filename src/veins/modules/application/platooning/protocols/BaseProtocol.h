@@ -27,6 +27,9 @@
 
 #include "veins/modules/application/platooning/utilities/BasePositionHelper.h"
 
+//maximum number of upper layer apps that can connect (see .ned file)
+#define MAX_APPLICATIONS_COUNT 10
+
 class BaseProtocol : public BaseApplLayer {
 
 	private:
@@ -77,7 +80,16 @@ class BaseProtocol : public BaseApplLayer {
 		bool useControllerAcceleration;
 
 		//input/output gates from/to upper layer
-		int upperLayerIn, upperLayerOut, upperControlIn, upperControlOut, lowerLayerIn, lowerLayerOut;
+		int upperControlIn, upperControlOut, lowerLayerIn, lowerLayerOut;
+
+		//registered upper layer applications. this is a mapping between
+		//beacon id inside packets coming from upper layer and the gate they
+		//the application is connected to. convention: id, from app, to app
+		typedef cGate OutputGate;
+		typedef cGate InputGate;
+		typedef std::pair<InputGate*, OutputGate*> AppInOut;
+		typedef std::map<int, AppInOut> ApplicationMap;
+		ApplicationMap apps;
 
 		//messages for scheduleAt
 		cMessage *sendBeacon, *recordData;
@@ -155,6 +167,9 @@ class BaseProtocol : public BaseApplLayer {
 
 		virtual void initialize(int stage);
 		virtual void finish();
+
+		//register a higher level application by its id
+		void registerApplication(int applicationId, cGate* appInputGate, cGate* appOutputGate);
 };
 
 #endif /* BASEPROTOCOL_H_ */
