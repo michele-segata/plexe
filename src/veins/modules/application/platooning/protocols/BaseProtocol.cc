@@ -315,6 +315,10 @@ void BaseProtocol::messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicas
 }
 
 void BaseProtocol::registerApplication(int applicationId, cGate* appInputGate, cGate* appOutputGate) {
+	//check if an already registered id exists
+	ApplicationMap::iterator app = apps.find(applicationId);
+	if (app != apps.end())
+		throw cRuntimeError("BaseProtocol: application with id=%d already registered. Are you double-registering or do you have duplicated application IDs?", applicationId);
 	int nApps = apps.size();
 	if (nApps == MAX_APPLICATIONS_COUNT)
 		throw cRuntimeError("BaseProtocol: application with id=%d tried to register, but no space left", applicationId);
