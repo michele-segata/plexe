@@ -81,6 +81,8 @@ class BaseProtocol : public BaseApplLayer {
 
 		//input/output gates from/to upper layer
 		int upperControlIn, upperControlOut, lowerLayerIn, lowerLayerOut;
+		//id range of input gates from upper layer
+		int minUpperId, maxUpperId;
 
 		//registered upper layer applications. this is a mapping between
 		//beacon id inside packets coming from upper layer and the gate they
@@ -116,6 +118,9 @@ class BaseProtocol : public BaseApplLayer {
 
 		//handles and application layer message
 		void handleUnicastMsg(UnicastMessage *unicast);
+
+		//override handleMessage to manager upper layer gate array
+		virtual void handleMessage(cMessage *msg);
 
 		//signal handler
 		void receiveSignal(cComponent *source, simsignal_t signalID, bool v, cObject *details);

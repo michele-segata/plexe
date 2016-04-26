@@ -44,6 +44,8 @@ void BaseProtocol::initialize(int stage) {
 		lowerControlOut = findGate("lowerControlOut");
 		lowerLayerIn = findGate("lowerLayerIn");
 		lowerLayerOut = findGate("lowerLayerOut");
+		minUpperId = gate("upperLayerIn", 0)->getId();
+		maxUpperId = gate("upperLayerIn", MAX_APPLICATIONS_COUNT - 1)->getId();
 
 		//get traci interface
 		mobility = Veins::TraCIMobilityAccess().get(getParentModule());
@@ -273,6 +275,13 @@ void BaseProtocol::receiveSignal(cComponent *source, simsignal_t signalID, bool 
 		nCollisions++;
 	}
 
+}
+
+void BaseProtocol::handleMessage(cMessage *msg) {
+	if (msg->getArrivalGateId() >= minUpperId && msg->getArrivalGateId() <= maxUpperId)
+		handleUpperMsg(msg);
+	else
+		BaseApplLayer::handleMessage(msg);
 }
 
 void BaseProtocol::handleLowerMsg(cMessage *msg) {
