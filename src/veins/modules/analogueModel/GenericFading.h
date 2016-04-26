@@ -110,7 +110,7 @@ public:
 	GenericFadingMapping(GenericFading* model,
 	                     const Argument& start,
 	                     const Argument& end):
-		SimpleConstMapping(dimensions, start, end), model(model) {
+		SimpleConstMapping(Dimension::time(), start, end), model(model) {
 		switch(model->distribution) {
 			case GenericFading::GAUSSIAN:
 
