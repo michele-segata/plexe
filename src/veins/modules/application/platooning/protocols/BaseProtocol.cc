@@ -45,7 +45,7 @@ void BaseProtocol::initialize(int stage) {
 		lowerLayerIn = findGate("lowerLayerIn");
 		lowerLayerOut = findGate("lowerLayerOut");
 		minUpperId = gate("upperLayerIn", 0)->getId();
-		maxUpperId = gate("upperLayerIn", MAX_APPLICATIONS_COUNT - 1)->getId();
+		maxUpperId = gate("upperLayerIn", MAX_GATES_COUNT - 1)->getId();
 
 		//get traci interface
 		mobility = Veins::TraCIMobilityAccess().get(getParentModule());
@@ -240,11 +240,15 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 
 	//find the application responsible for this beacon
 	ApplicationMap::iterator app = apps.find(unicast->getKind());
-	if (app != apps.end()) {
-		//send the message to the application responsible for it
-		UnicastMessage *duplicate = unicast->dup();
-		duplicate->encapsulate(enc->dup());
-		send(duplicate, app->second.second);
+	if (app != apps.end() && app->second.size() != 0) {
+		AppList applications = app->second;
+		AppList::iterator i;
+		for (AppList::iterator i = applications.begin(); i != applications.end(); i++) {
+			//send the message to the applications responsible for it
+			UnicastMessage *duplicate = unicast->dup();
+			duplicate->encapsulate(enc->dup());
+			send(duplicate, i->second);
+		}
 	}
 
 	delete enc;
@@ -324,21 +328,36 @@ void BaseProtocol::messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicas
 }
 
 void BaseProtocol::registerApplication(int applicationId, cGate* appInputGate, cGate* appOutputGate) {
-	//check if an already registered id exists
-	ApplicationMap::iterator app = apps.find(applicationId);
-	if (app != apps.end())
-		throw cRuntimeError("BaseProtocol: application with id=%d already registered. Are you double-registering or do you have duplicated application IDs?", applicationId);
-	int nApps = apps.size();
-	if (nApps == MAX_APPLICATIONS_COUNT)
+	if (usedGates == MAX_GATES_COUNT)
 		throw cRuntimeError("BaseProtocol: application with id=%d tried to register, but no space left", applicationId);
-	//connect gates
+	//connect gates, if not already connected. a gate might be already
+	//connected if an application is registering for multiple packet types
 	cGate *upperIn, *upperOut;
-	upperOut = gate("upperLayerOut", nApps);
-	upperOut->connectTo(appInputGate);
-	upperIn = gate("upperLayerIn", nApps);
-	appOutputGate->connectTo(upperIn);
+	if (!appInputGate->isConnected() || !appOutputGate->isConnected()) {
+		if (appOutputGate->isConnected() || appOutputGate->isConnected())
+			throw cRuntimeError("BaseProtocol: the application should not be connected but one if its gates is connected");
+		upperOut = gate("upperLayerOut", usedGates);
+		upperOut->connectTo(appInputGate);
+		upperIn = gate("upperLayerIn", usedGates);
+		appOutputGate->connectTo(upperIn);
+		connections[appInputGate] = upperOut;
+		connections[appOutputGate] = upperIn;
+		usedGates++;
+	}
+	else {
+		//find BaseProtocol gates already connected to the application
+		GateConnections::iterator gate;
+		gate = connections.find(appOutputGate);
+		if (gate == connections.end())
+			throw cRuntimeError("BaseProtocol: gate should already be connected by not found in the connection list");
+		upperIn = gate->second;
+		gate = connections.find(appInputGate);
+		if (gate == connections.end())
+			throw cRuntimeError("BaseProtocol: gate should already be connected by not found in the connection list");
+		upperOut = gate->second;
+	}
 	//save the mapping in the connection
-	apps[applicationId] = AppInOut(upperIn, upperOut);
+	apps[applicationId].push_back(AppInOut(upperIn, upperOut));
 }
 
 BaseProtocol::~BaseProtocol() {
