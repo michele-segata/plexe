@@ -84,23 +84,6 @@ class PositionHelper : public BasePositionHelper
 		 */
 		virtual bool isInSamePlatoon(int vehicleId);
 
-	protected:
-
-		//id of the leader of the platoon
-		int leaderId;
-		//id of the vehicle in front of me
-		int frontId;
-		//my position within the platoon
-		int position;
-		//number of cars in the scenario
-		int nCars;
-		//is this car a leader?
-		bool leader;
-		//id of this car's platoon
-		int platoonId;
-		//lane of this car's platoon
-		int platoonLane;
-
 	public:
 
 		static int getIdFromExternalId(std::string externalId);
@@ -115,14 +98,7 @@ class PositionHelper : public BasePositionHelper
 		static bool isInSamePlatoon(int vehicleId, int myId, int nLanes, int platoonSize);
 
 	public:
-		PositionHelper() {
-			leaderId = INVALID_PLATOON_ID;
-			frontId = INVALID_PLATOON_ID;
-			position = -1;
-			nCars = -1;
-			platoonSize = -1;
-			nLanes = -1;
-			leader = false;
+		PositionHelper() : BasePositionHelper() {
 		}
 
 };

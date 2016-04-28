@@ -52,11 +52,11 @@ int BasePositionHelper::getHighestId() {
 }
 
 int BasePositionHelper::getPosition() {
-	return -1;
+	return position;
 }
 
 int BasePositionHelper::getLeaderId() {
-	return getMemberId(0);
+	return leaderId;
 }
 
 bool BasePositionHelper::isLeader() {
@@ -67,7 +67,7 @@ int BasePositionHelper::getFrontId() {
 	if (isLeader())
 		return -1;
 	else
-		return getMemberId(getPosition() - 1);
+		return frontId;
 }
 
 int BasePositionHelper::getMemberId(int position) {
@@ -79,15 +79,15 @@ int BasePositionHelper::getMemberPosition(int vehicleId) {
 }
 
 int BasePositionHelper::getPlatoonId() {
-	return -1;
+	return platoonId;
 }
 
 int BasePositionHelper::getPlatoonLane() {
-	return -1;
+	return platoonLane;
 }
 
 bool BasePositionHelper::isInSamePlatoon(int vehicleId) {
-	return -1;
+	return false;
 }
 
 int BasePositionHelper::getLanesCount() {
@@ -96,4 +96,44 @@ int BasePositionHelper::getLanesCount() {
 
 int BasePositionHelper::getPlatoonSize() {
 	return platoonSize;
+}
+
+void BasePositionHelper::setId(int id) {
+	myId = id;
+}
+
+void BasePositionHelper::setHighestId(int id) {
+	highestId = id;
+}
+
+void BasePositionHelper::setPosition(int position) {
+	this->position = position;
+}
+
+void BasePositionHelper::setLeaderId(int id) {
+	leaderId = id;
+}
+
+void BasePositionHelper::setIsLeader(bool isLeader) {
+	leader = isLeader;
+}
+
+void BasePositionHelper::setFrontId(int id) {
+	frontId = id;
+}
+
+void BasePositionHelper::setPlatoonId(int id) {
+	platoonId = id;
+}
+
+void BasePositionHelper::setPlatoonLane(int lane) {
+	platoonLane = lane;
+}
+
+void BasePositionHelper::setLanesCount(int lanes) {
+	nLanes = lanes;
+}
+
+void BasePositionHelper::setPlatoonSize(int size) {
+	platoonSize = size;
 }
