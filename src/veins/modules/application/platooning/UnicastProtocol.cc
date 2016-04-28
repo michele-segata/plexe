@@ -175,7 +175,7 @@ void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsu
 
 }
 
-void UnicastProtocol::sendAck(UnicastMessage *msg)
+void UnicastProtocol::sendAck(const UnicastMessage *msg)
 {
 
 	UnicastMessage *unicast = new UnicastMessage("unicast");
@@ -204,7 +204,7 @@ void UnicastProtocol::resendMessage()
 	nAttempts++;
 }
 
-void UnicastProtocol::handleUnicastMessage(UnicastMessage *msg)
+void UnicastProtocol::handleUnicastMessage(const UnicastMessage *msg)
 {
 
 	ASSERT2(msg->getType() == DATA, "handleUnicastMessage cannot handle ACK frames");
@@ -233,7 +233,7 @@ void UnicastProtocol::handleUnicastMessage(UnicastMessage *msg)
 			//we have never seen this message, we have to send it up to to the application
 			//notice that we do not decapsulate, because the upper layer may want to know
 			//the sender address, so we just pass up the entire frame
-			send(msg, upperLayerOut);
+			send(msg->dup(), upperLayerOut);
 
 			//update next expected sequence number
 			receiveSequenceNumbers[source] = msg->getSequenceNumber() + 1;
@@ -251,20 +251,15 @@ void UnicastProtocol::handleUnicastMessage(UnicastMessage *msg)
 		if (destination == -1)
 		{
 			//message is broadcast. directed to this node but no need to ack
-			send(msg, upperLayerOut);
+			send(msg->dup(), upperLayerOut);
 			//update next expected sequence number
 			receiveSequenceNumbers[source] = msg->getSequenceNumber() + 1;
-		}
-		else
-		{
-			//if the message is not for this node, drop it
-			delete msg;
 		}
 	}
 
 }
 
-void UnicastProtocol::handleAckMessage(UnicastMessage *ack)
+void UnicastProtocol::handleAckMessage(const UnicastMessage *ack)
 {
 
 	ASSERT2(ack->getType() == ACK, "handleAckMessage cannot handle DATA frames");
@@ -272,7 +267,6 @@ void UnicastProtocol::handleAckMessage(UnicastMessage *ack)
 	//if ack is not directed to this node, just drop it
 	if (ack->getDestination() != macAddress)
 	{
-		delete ack;
 		return;
 	}
 
@@ -280,7 +274,6 @@ void UnicastProtocol::handleAckMessage(UnicastMessage *ack)
 	{
 		//we have received an ack we were not waiting for. do nothing
 		DBG << "unexpected ACK";
-		delete ack;
 	}
 	else
 	{
@@ -348,6 +341,8 @@ void UnicastProtocol::handleLowerMsg(cMessage *msg)
 			ASSERT2(0, "unknown unicast message received");
 			break;
 	}
+
+	delete unicast;
 
 }
 

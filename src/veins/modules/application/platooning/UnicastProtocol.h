@@ -114,12 +114,12 @@ class UnicastProtocol : public BaseWaveApplLayer
 		 * Handle unicast procedures, e.g., determining whether the
 		 * message is directed to this node, sending the ack, etc.
 		 */
-		virtual void handleUnicastMessage(UnicastMessage *msg);
+		virtual void handleUnicastMessage(const UnicastMessage *msg);
 
 		/**
 		 * Handle the reception of an ack frame
 		 */
-		virtual void handleAckMessage(UnicastMessage *ack);
+		virtual void handleAckMessage(const UnicastMessage *ack);
 
 		/**
 		 * Generates and sends a message. if a unicast address is specified, then the message is
@@ -144,7 +144,7 @@ class UnicastProtocol : public BaseWaveApplLayer
 		 *
 		 * \param msg the unicast message to be acknowledged
 		 */
-		void sendAck(UnicastMessage *msg);
+		void sendAck(const UnicastMessage *msg);
 
 		/**
 		 * Resend the current unicast message after an ack timeout occurred.
