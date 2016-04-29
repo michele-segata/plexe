@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2013-2015 Michele Segata <segata@ccs-labs.org>, Stefan Joerer <joerer@ccs-labs.org>
+// Copyright (C) 2013-2016 Michele Segata <segata@ccs-labs.org>, Stefan Joerer <joerer@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -16,7 +16,7 @@
 //
 
 #ifndef TRACIBASETRAFFICMANAGER_H_
-#define TRACIBASETRAFFICMANAGER_H
+#define TRACIBASETRAFFICMANAGER_H_
 
 #include <omnetpp.h>
 #include <queue>
@@ -105,4 +105,4 @@ class TraCIBaseTrafficManager : public cSimpleModule
 
 };
 
-#endif /* TRACIBASETRAFFICMANAGER_H */
+#endif /* TRACIBASETRAFFICMANAGER_H_ */

@@ -20,7 +20,7 @@
 #ifndef WORLD_ANNOTATION_ANNOTATIONDUMMY_H
 #define WORLD_ANNOTATION_ANNOTATIONDUMMY_H
 
-#include <omnetpp.h>
+#include "veins/base/utils/MiXiMDefs.h"
 
 /**
  * AnnotationDummy is just a workaround to visualize annotations

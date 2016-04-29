@@ -6,7 +6,7 @@
 ///
 // File defining constants, structs, and enums for cruise controllers
 /****************************************************************************/
-// Copyright (C) 2012-2015 Michele Segata (segata@ccs-labs.org)
+// Copyright (C) 2012-2016 Michele Segata (segata@ccs-labs.org)
 /****************************************************************************/
 //
 //   This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,7 @@ enum PLATOONING_LANE_CHANGE_ACTION {
  * leave the control to the mobility model which reproduces a human driver
  */
 enum ACTIVE_CONTROLLER
-{DRIVER = 0, ACC = 1, CACC = 2, FAKED_CACC = 3, PLOEG = 4};
+{DRIVER = 0, ACC = 1, CACC = 2, FAKED_CACC = 3, PLOEG = 4, CONSENSUS = 5};
 
 /**
  * @brief struct used as header for generic data passing to this model through
@@ -59,7 +59,7 @@ struct VEHICLE_DATA {
     double length;       //vehicle length
 };
 
-#define MAX_N_CARS 20
+#define MAX_N_CARS 8
 
 /**
  * List of constants defining the type of message in the generic data passing function.
@@ -82,6 +82,21 @@ struct VEHICLE_DATA {
 #define CC_SET_PLOEG_H                   0x20    //time headway of ploeg's CACC
 #define CC_SET_PLOEG_KP                  0x21    //kp parameter of ploeg's CACC
 #define CC_SET_PLOEG_KD                  0x22    //kd parameter of ploeg's CACC
+
+#define CC_SET_VEHICLE_ENGINE_MODEL      0x30    //set the engine model for a vehicle
+#define CC_ENGINE_MODEL_FOLM             0x00    //first order lag model
+#define CC_ENGINE_MODEL_REALISTIC        0x01    //the detailed and realistic engine model
+
+#define CC_SET_VEHICLE_MODEL             0x31    //set the vehicle model, i.e., engine characteristics
+#define CC_SET_VEHICLES_FILE             0x32    //set the location of the vehicle parameters file
+
+//parameter names for engine models
+#define FOLM_PAR_TAU                     "tau_s"
+#define FOLM_PAR_DT                      "dt_s"
+
+#define ENGINE_PAR_VEHICLE               "vehicle"
+#define ENGINE_PAR_XMLFILE               "xmlFile"
+#define ENGINE_PAR_DT                    "dt_s"
 
 }
 

@@ -1,5 +1,5 @@
 //
-// Copright (c) 2012-2015 Michele Segata <segata@ccs-labs.org>
+// Copyright (c) 2012-2016 Michele Segata <segata@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -25,14 +25,45 @@
 
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 
+#include "veins/modules/application/platooning/utilities/BasePositionHelper.h"
+
+//maximum number of upper layer apps that can connect (see .ned file)
+#define MAX_GATES_COUNT 10
+
 class BaseProtocol : public BaseApplLayer {
 
 	private:
 
-		//output vectors for statistics
-		cOutVector distanceOut, relSpeedOut, nodeIdOut, speedOut, posxOut, posyOut, accelerationOut;
+		//signals for busy channel and collisions
+		static const simsignalwrap_t sigChannelBusy;
+		static const simsignalwrap_t sigCollision;
+
+		//amount of time channel has been observed busy during the last "statisticsPeriod" seconds
+		SimTime busyTime;
+		//count the number of collision at the phy layer
+		int nCollisions;
+		//time at which channel turned busy
+		SimTime startBusy;
+		//indicates whether channel is busy or not
+		bool channelBusy;
+
+		//record the delay between each pair of messages received from leader and car in front
+		SimTime lastLeaderMsgTime;
+		SimTime lastFrontMsgTime;
+
+		//own id for statistics
+		cOutVector nodeIdOut;
+
+		//output vectors for busy time and collisions
+		cOutVector busyTimeOut, collisionsOut;
+
+		//output vector for delays
+		cOutVector leaderDelayIdOut, frontDelayIdOut, leaderDelayOut, frontDelayOut;
 
 	protected:
+
+		//determines position and role of each vehicle
+		BasePositionHelper *positionHelper;
 
 		//id of this vehicle
 		int myId;
@@ -45,16 +76,33 @@ class BaseProtocol : public BaseApplLayer {
 		int priority;
 		//packet size of the platooning message
 		int packetSize;
-		//time at which simulation should stop after communication started
-		SimTime communicationDuration;
 		//determine whether to send the actual acceleration or the one just computed by the controller
 		bool useControllerAcceleration;
 
 		//input/output gates from/to upper layer
-		int upperLayerIn, upperLayerOut, upperControlIn, upperControlOut, lowerLayerIn, lowerLayerOut;
+		int upperControlIn, upperControlOut, lowerLayerIn, lowerLayerOut;
+		//id range of input gates from upper layer
+		int minUpperId, maxUpperId;
+
+		//registered upper layer applications. this is a mapping between
+		//beacon id inside packets coming from upper layer and the gate they
+		//the application is connected to. convention: id, from app, to app
+		typedef cGate OutputGate;
+		typedef cGate InputGate;
+		typedef std::pair<InputGate*, OutputGate*> AppInOut;
+		typedef std::vector<AppInOut> AppList;
+		typedef std::map<int, AppList> ApplicationMap;
+		ApplicationMap apps;
+		//number of gates from the array used
+		int usedGates;
+		//maps of already existing connections
+		typedef cGate ThisGate;
+		typedef cGate OtherGate;
+		typedef std::map<OtherGate*, ThisGate*> GateConnections;
+		GateConnections connections;
 
 		//messages for scheduleAt
-		cMessage *sendBeacon, *dataPolling;
+		cMessage *sendBeacon, *recordData;
 
 		/**
 		 * NB: this method must be overridden by inheriting classes, BUT THEY MUST invoke the super class
@@ -79,6 +127,15 @@ class BaseProtocol : public BaseApplLayer {
 		//handles and application layer message
 		void handleUnicastMsg(UnicastMessage *unicast);
 
+		//override handleMessage to manager upper layer gate array
+		virtual void handleMessage(cMessage *msg);
+
+		//signal handler
+		void receiveSignal(cComponent *source, simsignal_t signalID, bool v, cObject *details);
+		void receiveSignal(cComponent *source, simsignal_t signalID, bool v) {
+			receiveSignal(source, signalID, v, 0);
+		}
+
 		/**
 		 * Sends a platooning message with all information about the car. This is an utility function for
 		 * subclasses
@@ -96,6 +153,15 @@ class BaseProtocol : public BaseApplLayer {
 		 */
 		virtual void messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicast);
 
+		/**
+		 * These methods signal changes in channel busy status to subclasses
+		 * or occurrences of collisions.
+		 * Subclasses which are interested should ovverride these methods.
+		 */
+		virtual void channelBusyStart() {}
+		virtual void channelIdleStart() {}
+		virtual void collision() {}
+
 		//traci mobility. used for getting/setting info about the car
 		Veins::TraCIMobility *mobility;
 		Veins::TraCICommandInterface *traci;
@@ -108,12 +174,16 @@ class BaseProtocol : public BaseApplLayer {
 
 		BaseProtocol() {
 			sendBeacon = 0;
-			dataPolling = 0;
+			recordData = 0;
+			usedGates = 0;
 		}
 		virtual ~BaseProtocol();
 
 		virtual void initialize(int stage);
 		virtual void finish();
+
+		//register a higher level application by its id
+		void registerApplication(int applicationId, cGate* appInputGate, cGate* appOutputGate);
 };
 
 #endif /* BASEPROTOCOL_H_ */

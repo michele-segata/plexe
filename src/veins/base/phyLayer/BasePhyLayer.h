@@ -15,7 +15,7 @@
 class AnalogueModel;
 class Decider;
 class BaseWorldUtility;
-class cXMLElement;
+//class omnetpp::cXMLElement;
 
 using Veins::AirFrame;
 using Veins::ChannelAccess;
@@ -90,13 +90,12 @@ protected:
 	 * the same time as an AirFrame starts (or ends). Depending on which message
 	 * is handled first the result of ChannelSenseRequest would differ.
 	 */
-	static short airFramePriority;
+	static short airFramePriority() {
+		return 10;
+	}
 
 	/** @brief Defines the strength of the thermal noise.*/
 	ConstantSimpleConstMapping* thermalNoise;
-
-	/** @brief The maximum transmission power a message can be send with */
-	double maxTXPower;
 
 	/** @brief The sensitivity describes the minimum strength a signal must have to be received.*/
 	double sensitivity;

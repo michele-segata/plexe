@@ -1,5 +1,5 @@
 //
-// Copright (c) 2012-2015 Michele Segata <segata@ccs-labs.org>
+// Copyright (c) 2012-2016 Michele Segata <segata@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -27,6 +27,10 @@
 
 #include "veins/modules/application/platooning/CC_Const.h"
 
+#include "veins/modules/application/platooning/utilities/BasePositionHelper.h"
+
+class BaseProtocol;
+
 class BaseApp : public BaseApplLayer
 {
 
@@ -35,39 +39,54 @@ class BaseApp : public BaseApplLayer
 		virtual void initialize(int stage);
 		virtual void finish();
 
-		/**
-		 * Returns the traci external id of this car
-		 */
-		std::string getExternalId();
-
 	protected:
 		virtual void onBeacon(WaveShortMessage* wsm);
 		virtual void onData(WaveShortMessage* wsm);
 
 	protected:
 
+		//id of this vehicle
+		int myId;
+
 		Veins::TraCIMobility* mobility;
 		Veins::TraCICommandInterface *traci;
 		Veins::TraCICommandInterface::Vehicle *traciVehicle;
 
-		//id of this vehicle
-		int myId;
-		//id of leader and front vehicle
-		int leaderId, frontId;
+		//determines position and role of each vehicle
+		BasePositionHelper *positionHelper;
 
-		//determine whether to send the actual acceleration or the one just computed by the controller
-		bool useControllerAcceleration;
-		//controller and engine related parameters
-		double caccXi, caccOmegaN, caccC1, engineTau;
-		//controller parameters for Ploeg's CACC
-		double ploegH, ploegKp, ploegKd;
+		//lower layer protocol
+		BaseProtocol *protocol;
 
-		//speed and acceleration requested from traci at the last polling cycle
-		double currentSpeed, currentAcceleration, currentControllerAcceleration;
+		//time at which simulation should stop
+		SimTime simulationDuration;
+		//determine whether there has been a vehicle collision in the simulation. shared by all
+		static bool crashHappened;
+		//determine whether simulation correctly terminated
+		static bool simulationCompleted;
+
+		/**
+		 * Log data about vehicle
+		 */
+		virtual void logVehicleData(bool crashed = false);
+
+		//output vectors for mobility stats
+		//id of the vehicle
+		cOutVector nodeIdOut;
+		//distance and relative speed
+		cOutVector distanceOut, relSpeedOut;
+		//speed and position
+		cOutVector speedOut, posxOut, posyOut;
+		//real acceleration and controller acceleration
+		cOutVector accelerationOut, controllerAccelerationOut;
+
+		//messages for scheduleAt
+		cMessage *recordData;
 
 	public:
-		BaseApp()
-		{}
+		BaseApp() {
+			recordData = 0;
+		}
 
 		/**
 		 * Sends a unicast message
@@ -77,15 +96,16 @@ class BaseApp : public BaseApplLayer
 		 */
 		void sendUnicast(cPacket *msg, int destination);
 
-//    virtual ~BeaconingApp();
+		/**
+		 * Stops the simulation. Can be invoked by other classes
+		 */
+		void stopSimulation();
 
 	protected:
 
 		virtual void handleLowerMsg(cMessage *msg);
 		virtual void handleSelfMsg(cMessage *msg);
 		virtual void handleLowerControl(cMessage *msg);
-
-
 
 };
 

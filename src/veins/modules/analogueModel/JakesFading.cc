@@ -22,8 +22,6 @@
 using Veins::AirFrame;
 using Veins::ChannelAccess;
 
-DimensionSet JakesFadingMapping::dimensions(Dimension::time);
-
 double JakesFadingMapping::getValue(const Argument& pos) const {
 	double f = model->carrierFrequency;
 	double v = relSpeed;
@@ -32,7 +30,7 @@ double JakesFadingMapping::getValue(const Argument& pos) const {
 	double im_h = 0;
 
 	// Compute Doppler shift.
-	double doppler_shift = v * f / BaseWorldUtility::speedOfLight;
+	double doppler_shift = v * f / BaseWorldUtility::speedOfLight();
 
 	for (int i = 0; i < model->fadingPaths; i++) {
 		// Some math for complex numbers:
@@ -77,8 +75,8 @@ JakesFading::JakesFading(int fadingPaths, simtime_t_cref delayRMS,
 	delay = new simtime_t[fadingPaths];
 
 	for (int i = 0; i < fadingPaths; i++) {
-		angleOfArrival[i] = cos(uniform(0, M_PI));
-		delay[i] = exponential(delayRMS);
+		angleOfArrival[i] = cos(RNGCONTEXT uniform(0, M_PI));
+		delay[i] = (RNGCONTEXT exponential(delayRMS));
 	}
 }
 

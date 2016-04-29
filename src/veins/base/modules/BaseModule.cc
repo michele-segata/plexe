@@ -51,7 +51,7 @@ void BaseModule::initialize(int stage) {
     }
 }
 
-void BaseModule::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj) {
+void BaseModule::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj, cObject* details) {
 	Enter_Method_Silent();
 	if (signalID == catHostStateSignal) {
 		const HostState *const pHostState = dynamic_cast<const HostState *const>(obj);
@@ -59,7 +59,7 @@ void BaseModule::receiveSignal(cComponent *source, simsignal_t signalID, cObject
 			handleHostState(*pHostState);
 		}
 		else {
-			opp_warning("Got catHostStateSignal but obj was not a HostState pointer?");
+			throw cRuntimeError("Got catHostStateSignal but obj was not a HostState pointer?");
 		}
 	}
 }

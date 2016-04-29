@@ -1,5 +1,5 @@
 //
-// Copright (c) 2012-2015 Michele Segata <segata@ccs-labs.org>
+// Copyright (c) 2012-2016 Michele Segata <segata@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -32,30 +32,12 @@ class SimplePlatooningApp : public BaseApp
 		virtual void onBeacon(WaveShortMessage* wsm);
 		virtual void onData(WaveShortMessage* wsm);
 
-	private:
-
-		//frequency at which the leader speed is oscillating
-		double leaderOscillationFrequency;
-		//controller to be used for platooning
-		enum Plexe::ACTIVE_CONTROLLER controller;
-		//headway time for ACC
-		double accHeadway;
-		//leader average speed
-		double leaderSpeed;
-
-		//message used to tell the leader to continuously change its desired speed
-		cMessage *changeSpeed;
-
 	public:
-		SimplePlatooningApp() {
-			changeSpeed = 0;
-		}
+		SimplePlatooningApp() {}
 
 	protected:
 
 		virtual void handleSelfMsg(cMessage *msg);
-
-
 
 };
 

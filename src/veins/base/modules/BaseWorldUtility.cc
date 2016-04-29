@@ -25,8 +25,6 @@
 Define_Module(BaseWorldUtility);
 
 
-const double BaseWorldUtility::speedOfLight = 299792458.0; ///< meters per second
-
 BaseWorldUtility::BaseWorldUtility():
 		isInitialized(false)
 {}
@@ -39,7 +37,7 @@ void BaseWorldUtility::initialize(int stage) {
 		//check if necessary modules are there
 		//Connection Manager
 		if(!FindModule<BaseConnectionManager*>::findGlobalModule()) {
-			opp_warning("Could not find a connection manager module in the network!");
+			throw cRuntimeError("Could not find a connection manager module in the network!");
 		}
 	}
 }
@@ -55,15 +53,15 @@ void BaseWorldUtility::initializeIfNecessary()
                                use2DFlag ? 0. : par("playgroundSizeZ").doubleValue());
 
 	if(playgroundSize.x < 0) {
-		opp_error("Playground size in X direction is invalid: "\
+		throw cRuntimeError("Playground size in X direction is invalid: "\
 				  "(%f). Should be greater than or equal to zero.", playgroundSize.x);
 	}
 	if(playgroundSize.y < 0) {
-		opp_error("Playground size in Y direction is invalid: "\
+	    throw cRuntimeError("Playground size in Y direction is invalid: "\
 				  "(%f). Should be greater than or equal to zero.", playgroundSize.y);
 	}
 	if(!use2DFlag && playgroundSize.z < 0) {
-		opp_error("Playground size in Z direction is invalid: "\
+	    throw cRuntimeError("Playground size in Z direction is invalid: "\
 				  "(%f). Should be greater than or equal to zero.", playgroundSize.z);
 	}
 

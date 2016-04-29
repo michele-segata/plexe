@@ -1,5 +1,5 @@
 //
-// Copright (c) 2012-2015 Michele Segata <segata@ccs-labs.org>
+// Copyright (c) 2012-2016 Michele Segata <segata@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -24,7 +24,7 @@ void SimplePlatooningBeaconing::initialize(int stage) {
 
 	if (stage == 0) {
 		//random start time
-		SimTime beginTime = SimTime(uniform(0.001, 1.0));
+		SimTime beginTime = SimTime(uniform(0.001, beaconingInterval));
 		scheduleAt(simTime() + beaconingInterval + beginTime, sendBeacon);
 	}
 }

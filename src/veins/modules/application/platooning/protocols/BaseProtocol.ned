@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2012-2015 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2016 Michele Segata <segata@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -32,15 +32,13 @@ moduleinterface BaseProtocol extends IBaseApplLayer
         int priority;// = default(0);
         //size of platooning messages
         int packetSize;// = default(25);
-        //for how much time should the simulation go on after starting the communication?
-        int communicationDuration @unit("s");
         //send actual or controller-computed acceleration
         bool useControllerAcceleration;
-		@display("i=block/network2");
+        @display("i=block/network2");
         @class(BaseProtocol);
      gates:
-         input upperLayerIn;
-         output upperLayerOut;
+         input upperLayerIn[10];
+         output upperLayerOut[10];
          input upperControlIn;
          output upperControlOut;
 }

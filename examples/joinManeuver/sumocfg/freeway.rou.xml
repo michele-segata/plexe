@@ -3,6 +3,4 @@
 		<carFollowing-CC tau="0.5" omegaN="1" xi="2" c1="0.5" decel="6" lambda="0.5" lanesCount="4" ccAccel="1.5"/>
 	</vType>
 	<route id="platoon_route" edges="edge_0_0 edge_0_1 edge_0_2 edge_0_3 edge_1_0 edge_1_1 edge_1_2 edge_1_3 edge_2_0 edge_2_1 edge_2_2 edge_2_3 edge_3_0 edge_3_1 edge_3_2 edge_3_3 edge_4_0 edge_4_1 edge_4_4 edge_4_6 absorption_4"/>
-	<flow id="platoon" route="platoon_route" type="vtypeauto" begin="0" period="0.5" departLane="0" number="4" departSpeed="27.77"/>
-	<flow id="joiner" route="platoon_route" type="vtypeauto" begin="10" period="0.5" departLane="0" number="1" departSpeed="27.77"/>
 </routes>
