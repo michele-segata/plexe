@@ -34,7 +34,7 @@ moduleinterface BaseProtocol extends IBaseApplLayer
         int packetSize;// = default(25);
         //send actual or controller-computed acceleration
         bool useControllerAcceleration;
-		@display("i=block/network2");
+        @display("i=block/network2");
         @class(BaseProtocol);
      gates:
          input upperLayerIn[10];
