@@ -2,7 +2,7 @@
 
 using Veins::AirFrame;
 
-#define debugEV (ev.isDisabled()||!debug) ? ev : ev << "PhyLayer(SimpleObstacleShadowing): "
+#define debugEV EV << "PhyLayer(SimpleObstacleShadowing): "
 
 #if 0
 SimplePathlossConstMapping::SimplePathlossConstMapping(const DimensionSet& dimensions,
@@ -19,10 +19,10 @@ double SimplePathlossConstMapping::getValue(const Argument& pos) const
 {
 	double freq = model->carrierFrequency;
 	if(hasFrequency) {
-		assert(pos.hasArgVal(Dimension::frequency));
-		freq = pos.getArgValue(Dimension::frequency);
+		assert(pos.hasArgVal(Dimension::frequency()));
+		freq = pos.getArgValue(Dimension::frequency());
 	}
-	double wavelength = BaseWorldUtility::speedOfLight / freq;
+	double wavelength = BaseWorldUtility::speedOfLight() / freq;
 	return (wavelength * wavelength) * distFactor;
 }
 #endif
@@ -35,7 +35,7 @@ SimpleObstacleShadowing::SimpleObstacleShadowing(ObstacleControl& obstacleContro
 	playgroundSize(playgroundSize),
 	debug(debug)
 {
-	if (useTorus) opp_error("SimpleObstacleShadowing does not work on torus-shaped playgrounds");
+	if (useTorus) throw cRuntimeError("SimpleObstacleShadowing does not work on torus-shaped playgrounds");
 }
 
 
@@ -46,8 +46,8 @@ void SimpleObstacleShadowing::filterSignal(AirFrame *frame, const Coord& senders
 
 	debugEV << "value is: " << factor << endl;
 
-	bool hasFrequency = s.getTransmissionPower()->getDimensionSet().hasDimension(Dimension::frequency);
-	const DimensionSet& domain = hasFrequency ? DimensionSet::timeFreqDomain : DimensionSet::timeDomain;
+	bool hasFrequency = s.getTransmissionPower()->getDimensionSet().hasDimension(Dimension::frequency());
+	const DimensionSet& domain = hasFrequency ? DimensionSet::timeFreqDomain() : DimensionSet::timeDomain();
 	ConstantSimpleConstMapping* attMapping = new ConstantSimpleConstMapping(domain, factor);
 	s.addAttenuation(attMapping);
 }

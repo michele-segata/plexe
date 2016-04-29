@@ -1,6 +1,6 @@
 //
 // Copyright (C) 2008 Christoph Sommer <christoph.sommer@informatik.uni-erlangen.de>
-// Copyright (C) 2012-2015 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2016 Michele Segata <segata@ccs-labs.org>
 //
 //
 // Documentation for these modules is at http://veins.car2x.org/
@@ -22,7 +22,8 @@
 
 import org.car2x.veins.base.connectionManager.ConnectionManager;
 import org.car2x.veins.base.modules.BaseWorldUtility;
-import org.car2x.veins.modules.mobility.traci.TraCIScenarioManagerLaunchd;
+import org.car2x.veins.modules.mobility.traci.TraCIScenarioManagerForker;
+import org.car2x.veins.modules.mobility.traci.TraCIBaseTrafficManager;
 import org.car2x.veins.modules.obstacle.ObstacleControl;
 import org.car2x.veins.modules.world.annotations.AnnotationManager;
 
@@ -32,6 +33,7 @@ module Highway
         double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)
         double playgroundSizeY @unit(m); // y size of the area the nodes are in (in meters)
         double playgroundSizeZ @unit(m); // z size of the area the nodes are in (in meters)
+        string traffic_type;
         @display("bgb=$playgroundSizeX,$playgroundSizeY");
     submodules:
         obstacles: ObstacleControl {
@@ -51,9 +53,13 @@ module Highway
                 playgroundSizeZ = playgroundSizeZ;
                 @display("p=30,0;i=misc/globe");
         }
-        manager: TraCIScenarioManagerLaunchd {
+        manager: TraCIScenarioManagerForker {
             parameters:
                 @display("p=512,128");
+        }
+        traffic: <traffic_type> like TraCIBaseTrafficManager {
+            parameters:
+                @display("p=200,200");
         }
 
     connections allowunconnected:

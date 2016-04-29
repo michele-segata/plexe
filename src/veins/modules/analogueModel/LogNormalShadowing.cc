@@ -27,14 +27,14 @@ LogNormalShadowing::LogNormalShadowing(double mean, double stdDev, simtime_t_cre
 LogNormalShadowing::~LogNormalShadowing() {}
 
 double LogNormalShadowing::randomLogNormalGain() const {
-	return FWMath::dBm2mW(-1.0 * normal(mean, stdDev));
+	return FWMath::dBm2mW(-1.0 * (RNGCONTEXT normal(mean, stdDev)));
 }
 
 void LogNormalShadowing::filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos) {
 	Signal&   signal = frame->getSignal();
 	simtime_t start  = signal.getReceptionStart();
 	simtime_t end    = signal.getReceptionEnd();
-	Mapping*  att    = MappingUtils::createMapping(DimensionSet::timeDomain, Mapping::LINEAR);
+	Mapping*  att    = MappingUtils::createMapping(DimensionSet::timeDomain(), Mapping::LINEAR);
 
 	Argument pos;
 

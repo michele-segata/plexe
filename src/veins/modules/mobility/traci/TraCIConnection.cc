@@ -8,8 +8,6 @@
 #include <arpa/inet.h>
 #endif
 
-#include <cenvir.h>
-#include <cexception.h>
 #include <algorithm>
 #include <functional>
 
@@ -50,7 +48,7 @@ TraCIConnection::~TraCIConnection() {
 TraCIConnection* TraCIConnection::connect(const char* host, int port) {
 	MYDEBUG << "TraCIScenarioManager connecting to TraCI server" << endl;
 
-	if (initsocketlibonce() != 0) opp_error("Could not init socketlib");
+	if (initsocketlibonce() != 0) throw cRuntimeError("Could not init socketlib");
 
 	in_addr addr;
 	struct hostent* host_ent;
@@ -62,22 +60,39 @@ TraCIConnection* TraCIConnection::connect(const char* host, int port) {
 	} else if ((host_ent = gethostbyname(host))) {
 		addr = *((struct in_addr*) host_ent->h_addr_list[0]);
 	} else {
-		opp_error("Invalid TraCI server address: %s", host);
+		throw cRuntimeError("Invalid TraCI server address: %s", host);
 		return 0;
 	}
 
 	sockaddr_in address;
-	memset((char*) &address, 0, sizeof(address));
+	sockaddr* address_p = (sockaddr*)&address;
+	memset(address_p, 0, sizeof(address));
 	address.sin_family = AF_INET;
 	address.sin_port = htons(port);
 	address.sin_addr.s_addr = addr.s_addr;
 
 	SOCKET* socketPtr = new SOCKET();
-	*socketPtr = ::socket(AF_INET, SOCK_STREAM, 0);
-	if (*socketPtr < 0) opp_error("Could not create socket to connect to TraCI server");
+	if (*socketPtr < 0) throw cRuntimeError("Could not create socket to connect to TraCI server");
 
-	if (::connect(*socketPtr, (sockaddr const*) &address, sizeof(address)) < 0) {
-		opp_error("Could not connect to TraCI server. Make sure it is running and not behind a firewall. Error message: %d: %s", sock_errno(), strerror(sock_errno()));
+	for (int tries=1; tries <= 10; ++tries) {
+		*socketPtr = ::socket(AF_INET, SOCK_STREAM, 0);
+		if (::connect(*socketPtr, address_p, sizeof(address)) >= 0) break;
+		closesocket(socket(socketPtr));
+
+		std::stringstream ss;
+		ss << "Could not connect to TraCI server; error message: " << sock_errno() << ": " << strerror(sock_errno());
+		std::string msg = ss.str();
+
+		int sleepDuration = tries*.25 + 1;
+
+		if (tries >= 10) {
+			throw cRuntimeError(msg.c_str());
+		}
+		else if (tries == 3) {
+			EV_WARN << msg << " -- Will retry in " << sleepDuration << " second(s)." << std::endl;
+		}
+
+		sleep(sleepDuration);
 	}
 
 	{
@@ -97,8 +112,8 @@ TraCIBuffer TraCIConnection::query(uint8_t commandId, const TraCIBuffer& buf) {
 	ASSERT(commandResp == commandId);
 	uint8_t result; obuf >> result;
 	std::string description; obuf >> description;
-	if (result == RTYPE_NOTIMPLEMENTED) opp_error("TraCI server reported command 0x%2x not implemented (\"%s\"). Might need newer version.", commandId, description.c_str());
-	if (result == RTYPE_ERR) opp_error("TraCI server reported error executing command 0x%2x (\"%s\").", commandId, description.c_str());
+	if (result == RTYPE_NOTIMPLEMENTED) throw cRuntimeError("TraCI server reported command 0x%2x not implemented (\"%s\"). Might need newer version.", commandId, description.c_str());
+	if (result == RTYPE_ERR) throw cRuntimeError("TraCI server reported error executing command 0x%2x (\"%s\").", commandId, description.c_str());
 	ASSERT(result == RTYPE_OK);
 	return obuf;
 }
@@ -118,7 +133,7 @@ TraCIBuffer TraCIConnection::queryOptional(uint8_t commandId, const TraCIBuffer&
 }
 
 std::string TraCIConnection::receiveMessage() {
-	if (!socketPtr) opp_error("Not connected to TraCI server");
+	if (!socketPtr) throw cRuntimeError("Not connected to TraCI server");
 
 	uint32_t msgLength;
 	{
@@ -129,11 +144,11 @@ std::string TraCIConnection::receiveMessage() {
 			if (receivedBytes > 0) {
 				bytesRead += receivedBytes;
 			} else if (receivedBytes == 0) {
-				opp_error("Connection to TraCI server closed unexpectedly. Check your server's log");
+				throw cRuntimeError("Connection to TraCI server closed unexpectedly. Check your server's log");
 			} else {
 				if (sock_errno() == EINTR) continue;
 				if (sock_errno() == EAGAIN) continue;
-				opp_error("Connection to TraCI server lost. Check your server's log. Error message: %d: %s", sock_errno(), strerror(sock_errno()));
+				throw cRuntimeError("Connection to TraCI server lost. Check your server's log. Error message: %d: %s", sock_errno(), strerror(sock_errno()));
 			}
 		}
 		TraCIBuffer(std::string(buf2, sizeof(uint32_t))) >> msgLength;
@@ -149,11 +164,11 @@ std::string TraCIConnection::receiveMessage() {
 			if (receivedBytes > 0) {
 				bytesRead += receivedBytes;
 			} else if (receivedBytes == 0) {
-				opp_error("Connection to TraCI server closed unexpectedly. Check your server's log");
+				throw cRuntimeError("Connection to TraCI server closed unexpectedly. Check your server's log");
 			} else {
 				if (sock_errno() == EINTR) continue;
 				if (sock_errno() == EAGAIN) continue;
-				opp_error("Connection to TraCI server lost. Check your server's log. Error message: %d: %s", sock_errno(), strerror(sock_errno()));
+				throw cRuntimeError("Connection to TraCI server lost. Check your server's log. Error message: %d: %s", sock_errno(), strerror(sock_errno()));
 			}
 		}
 	}
@@ -161,7 +176,7 @@ std::string TraCIConnection::receiveMessage() {
 }
 
 void TraCIConnection::sendMessage(std::string buf) {
-	if (!socketPtr) opp_error("Not connected to TraCI server");
+	if (!socketPtr) throw cRuntimeError("Not connected to TraCI server");
 
 	{
 		uint32_t msgLength = sizeof(uint32_t) + buf.length();
@@ -175,7 +190,7 @@ void TraCIConnection::sendMessage(std::string buf) {
 			} else {
 				if (sock_errno() == EINTR) continue;
 				if (sock_errno() == EAGAIN) continue;
-				opp_error("Connection to TraCI server lost. Check your server's log. Error message: %d: %s", sock_errno(), strerror(sock_errno()));
+				throw cRuntimeError("Connection to TraCI server lost. Check your server's log. Error message: %d: %s", sock_errno(), strerror(sock_errno()));
 			}
 		}
 	}
@@ -190,7 +205,7 @@ void TraCIConnection::sendMessage(std::string buf) {
 			} else {
 				if (sock_errno() == EINTR) continue;
 				if (sock_errno() == EAGAIN) continue;
-				opp_error("Connection to TraCI server lost. Check your server's log. Error message: %d: %s", sock_errno(), strerror(sock_errno()));
+				throw cRuntimeError("Connection to TraCI server lost. Check your server's log. Error message: %d: %s", sock_errno(), strerror(sock_errno()));
 			}
 		}
 	}
@@ -233,8 +248,8 @@ std::list<TraCICoord> TraCIConnection::omnet2traci(const std::list<Coord>& list)
 
 double TraCIConnection::traci2omnetAngle(double angle) const {
 
-	// rotate angle so 0 is east (in TraCI's angle interpretation 0 is south)
-	angle = angle - 90;
+	// rotate angle so 0 is east (in TraCI's angle interpretation 0 is north, 90 is east)
+	angle = 90 - angle;
 
 	// convert to rad
 	angle = angle * M_PI / 180.0;
@@ -251,8 +266,8 @@ double TraCIConnection::omnet2traciAngle(double angle) const {
 	// convert to degrees
 	angle = angle * 180 / M_PI;
 
-	// rotate angle so 0 is south (in OMNeT++'s angle interpretation 0 is east)
-	angle = angle + 90;
+	// rotate angle so 0 is south (in OMNeT++'s angle interpretation 0 is east, 90 is north)
+	angle = 90 - angle;
 
 	// normalize angle to -180 <= angle < 180
 	while (angle < -180) angle += 360;

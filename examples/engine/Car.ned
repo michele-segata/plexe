@@ -1,6 +1,6 @@
 //
 // Copyright (C) 2008 Christoph Sommer <christoph.sommer@informatik.uni-erlangen.de>
-// Copyright (C) 2012-2015 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2016 Michele Segata <segata@ccs-labs.org>
 //
 // Documentation for these modules is at http://veins.car2x.org/
 //
@@ -20,6 +20,8 @@
 //
 
 import org.car2x.veins.base.modules.IBaseApplLayer;
+import org.car2x.veins.modules.application.platooning.utilities.BasePositionHelper;
+import org.car2x.veins.modules.application.platooning.scenarios.BaseScenario;
 import org.car2x.veins.modules.application.platooning.protocols.BaseProtocol;
 import org.car2x.veins.modules.application.platooning.apps.BaseApp;
 import org.car2x.veins.modules.application.platooning.UnicastProtocol;
@@ -30,12 +32,24 @@ import org.car2x.veins.modules.nic.Nic80211p;
 module Car
 {
     parameters:
+        string scenario_type;
+        string helper_type;
         string appl_type;
         string protocol_type;
 
     gates:
         input radioIn; // gate for sendDirect
     submodules:
+
+        helper: <helper_type> like BasePositionHelper {
+            parameters:
+                @display("p=90,100");
+        }
+
+        scenario: <scenario_type> like BaseScenario {
+            parameters:
+                @display("p=90,100");
+        }
 
         appl: <appl_type> like BaseApp {
             parameters:
@@ -62,8 +76,6 @@ module Car
                 @display("p=130,172;i=block/cogwheel");
         }
     connections allowunconnected:
-        prot.upperLayerIn <-- appl.lowerLayerOut;
-        prot.upperLayerOut --> appl.lowerLayerIn;
         unicast.upperControlIn <-- prot.lowerControlOut;
         unicast.upperControlOut --> prot.lowerControlIn;
         unicast.upperLayerIn <-- prot.lowerLayerOut;

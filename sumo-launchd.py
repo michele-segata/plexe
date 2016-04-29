@@ -534,7 +534,7 @@ def wait_for_connections(sumo_command, shlex, sumo_port, bind_address, do_daemon
     listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     listener.bind((bind_address, sumo_port))
-    listener.listen(5)
+    listener.listen(0)
     logging.info("Listening on port %d" % sumo_port)
 
     if do_daemonize:

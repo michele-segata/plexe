@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <string>
 
-#include <cexception.h>
+#include "veins/base/utils/MiXiMDefs.h"
 
 namespace Veins {
 

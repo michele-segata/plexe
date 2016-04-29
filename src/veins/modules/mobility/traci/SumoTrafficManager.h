@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2013-2015 Michele Segata <segata@ccs-labs.org>, Stefan Joerer <joerer@ccs-labs.org>
+// Copyright (C) 2013-2016 Michele Segata <segata@ccs-labs.org>, Stefan Joerer <joerer@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -16,7 +16,7 @@
 //
 
 #ifndef SUMOTRAFFICMANAGER_H_
-#define SUMOTRAFFICMANAGER_H
+#define SUMOTRAFFICMANAGER_H_
 
 #include "veins/modules/mobility/traci/TraCIBaseTrafficManager.h"
 
@@ -38,4 +38,4 @@ class SumoTrafficManager : public TraCIBaseTrafficManager
 
 };
 
-#endif /* SUMOTRAFFICMANAGER_H */
+#endif /* SUMOTRAFFICMANAGER_H_ */

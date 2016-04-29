@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2012-2014 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2016 Michele Segata <segata@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -22,18 +22,8 @@ import org.car2x.veins.base.modules.IBaseApplLayer;
 moduleinterface BaseApp extends IBaseApplLayer
 {
     parameters:
-        //send actual or controller-computed acceleration
-        bool useControllerAcceleration;
-        //cacc and engine related parameters
-        double caccXi;
-        double caccOmegaN @unit("Hz");
-        double caccC1;
-        double engineTau @unit("s");
-        double ploegH @unit("s");
-        double ploegKp;
-        double ploegKd;
-        double myccKd;
-        double myccKs;
+        //duration of simulation
+        double simulationDuration @unit("s");
 
         @display("i=block/app2");
         @class(BaseApp);

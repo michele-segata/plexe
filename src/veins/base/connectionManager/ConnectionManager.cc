@@ -5,7 +5,7 @@
 #include "veins/base/modules/BaseWorldUtility.h"
 
 #ifndef ccEV
-#define ccEV (ev.isDisabled()||!coreDebug) ? ev : ev << getName() << ": "
+#define ccEV EV << getName() << ": "
 #endif
 
 Define_Module( ConnectionManager );
@@ -26,7 +26,7 @@ double ConnectionManager::calcInterfDist()
 	//minimum path loss coefficient
 	double alpha            = par("alpha").doubleValue();
 
-	double waveLength     = (BaseWorldUtility::speedOfLight/carrierFrequency);
+	double waveLength     = (BaseWorldUtility::speedOfLight()/carrierFrequency);
 	//minimum power level to be able to physically receive a signal
 	double minReceivePower = pow(10.0, sat/10.0);
 

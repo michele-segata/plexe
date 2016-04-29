@@ -1,7 +1,5 @@
 #include "veins/base/phyLayer/BasePhyLayer.h"
 
-#include <cxmlelement.h>
-
 #include "veins/base/phyLayer/MacToPhyControlInfo.h"
 #include "veins/base/phyLayer/PhyToMacControlInfo.h"
 #include "veins/base/utils/FindModule.h"
@@ -14,8 +12,6 @@ using Veins::AirFrame;
 
 //introduce BasePhyLayer as module to OMNet
 Define_Module(BasePhyLayer);
-
-short BasePhyLayer::airFramePriority = 10;
 
 Coord NoMobiltyPos = Coord::ZERO;
 
@@ -66,7 +62,7 @@ void BasePhyLayer::initialize(int stage) {
 		//	- initialize basic parameters
 		if(par("useThermalNoise").boolValue()) {
 			double thermalNoiseVal = FWMath::dBm2mW(par("thermalNoise").doubleValue());
-			thermalNoise = new ConstantSimpleConstMapping(DimensionSet::timeDomain,
+			thermalNoise = new ConstantSimpleConstMapping(DimensionSet::timeDomain(),
 														  thermalNoiseVal);
 		} else {
 			thermalNoise = 0;
@@ -74,7 +70,6 @@ void BasePhyLayer::initialize(int stage) {
 		headerLength = par("headerLength").longValue();
 		sensitivity = par("sensitivity").doubleValue();
 		sensitivity = FWMath::dBm2mW(sensitivity);
-		maxTXPower = par("maxTXPower").doubleValue();
 
 		recordStats = par("recordStats").boolValue();
 
@@ -84,12 +79,12 @@ void BasePhyLayer::initialize(int stage) {
 		// get pointer to the world module
 		world = FindModule<BaseWorldUtility*>::findGlobalModule();
         if (world == NULL) {
-            opp_error("Could not find BaseWorldUtility module");
+            throw cRuntimeError("Could not find BaseWorldUtility module");
         }
 
         if(cc->hasPar("sat")
 		   && (sensitivity - FWMath::dBm2mW(cc->par("sat").doubleValue())) < -0.000001) {
-            opp_error("Sensitivity can't be smaller than the "
+            throw cRuntimeError("Sensitivity can't be smaller than the "
 					  "signal attenuation threshold (sat) in ConnectionManager. "
 					  "Please adjust your omnetpp.ini file accordingly.");
 		}
@@ -149,10 +144,8 @@ void BasePhyLayer::getParametersFromXML(cXMLElement* xmlData, ParameterMap& outp
 		const char* name = (*it)->getAttribute("name");
 		const char* type = (*it)->getAttribute("type");
 		const char* value = (*it)->getAttribute("value");
-		if(name == 0 || type == 0 || value == 0) {
-			ev << "Invalid parameter, could not find name, type or value." << endl;
-			continue;
-		}
+		if(name == 0 || type == 0 || value == 0)
+			throw cRuntimeError("Invalid parameter, could not find name, type or value");
 
 		std::string sType = type; 	//needed for easier comparision
 		std::string sValue = value;	//needed for easier comparision
@@ -173,8 +166,7 @@ void BasePhyLayer::getParametersFromXML(cXMLElement* xmlData, ParameterMap& outp
 			param.setLongValue(strtol(value, 0, 0));
 
 		} else {
-			ev << "Unknown parameter type: \"" << sType << "\"" << endl;
-			continue;
+			throw cRuntimeError("Unknown parameter type: '%s'", sType.c_str());
 		}
 
 		//add parameter to output map
@@ -195,20 +187,17 @@ void BasePhyLayer::initializeDecider(cXMLElement* xmlConfig) {
 	decider = 0;
 
 	if(xmlConfig == 0) {
-		opp_error("No decider configuration file specified.");
-		return;
+		throw cRuntimeError("No decider configuration file specified.");
 	}
 
 	cXMLElementList deciderList = xmlConfig->getElementsByTagName("Decider");
 
 	if(deciderList.empty()) {
-		opp_error("No decider configuration found in configuration file.");
-		return;
+		throw cRuntimeError("No decider configuration found in configuration file.");
 	}
 
 	if(deciderList.size() > 1) {
-		opp_error("More than one decider configuration found in configuration file.");
-		return;
+		throw cRuntimeError("More than one decider configuration found in configuration file.");
 	}
 
 	cXMLElement* deciderData = deciderList.front();
@@ -216,8 +205,7 @@ void BasePhyLayer::initializeDecider(cXMLElement* xmlConfig) {
 	const char* name = deciderData->getAttribute("type");
 
 	if(name == 0) {
-		opp_error("Could not read type of decider from configuration file.");
-		return;
+		throw cRuntimeError("Could not read type of decider from configuration file.");
 	}
 
 	ParameterMap params;
@@ -226,8 +214,7 @@ void BasePhyLayer::initializeDecider(cXMLElement* xmlConfig) {
 	decider = getDeciderFromName(name, params);
 
 	if(decider == 0) {
-		opp_error("Could not find a decider with the name \"%s\".", name);
-		return;
+		throw cRuntimeError("Could not find a decider with the name \"%s\".", name);
 	}
 
 	coreEV << "Decider \"" << name << "\" loaded." << endl;
@@ -255,7 +242,7 @@ void BasePhyLayer::initializeAnalogueModels(cXMLElement* xmlConfig) {
 
 	if(newAnalogueModel == 0)
 	{
-		opp_warning("Could not find an analogue model with the name \"%s\".", s.c_str());
+		throw cRuntimeError("Could not find an analogue model with the name \"%s\".", s.c_str());
 	}
 	else
 	{
@@ -264,15 +251,13 @@ void BasePhyLayer::initializeAnalogueModels(cXMLElement* xmlConfig) {
 
 
 	if(xmlConfig == 0) {
-		opp_warning("No analogue models configuration file specified.");
-		return;
+		throw cRuntimeError("No analogue models configuration file specified.");
 	}
 
 	cXMLElementList analogueModelList = xmlConfig->getElementsByTagName("AnalogueModel");
 
 	if(analogueModelList.empty()) {
-		opp_warning("No analogue models configuration found in configuration file.");
-		return;
+		throw cRuntimeError("No analogue models configuration found in configuration file.");
 	}
 
 	// iterate over all AnalogueModel-entries, get a new AnalogueModel instance and add
@@ -286,8 +271,7 @@ void BasePhyLayer::initializeAnalogueModels(cXMLElement* xmlConfig) {
 		const char* name = analogueModelData->getAttribute("type");
 
 		if(name == 0) {
-			opp_warning("Could not read name of analogue model.");
-			continue;
+			throw cRuntimeError("Could not read name of analogue model.");
 		}
 
 		ParameterMap params;
@@ -296,8 +280,7 @@ void BasePhyLayer::initializeAnalogueModels(cXMLElement* xmlConfig) {
 		AnalogueModel* newAnalogueModel = getAnalogueModelFromName(name, params);
 
 		if(newAnalogueModel == 0) {
-			opp_warning("Could not find an analogue model with the name \"%s\".", name);
-			continue;
+			throw cRuntimeError("Could not find an analogue model with the name \"%s\".", name);
 		}
 
 		// attach the new AnalogueModel to the AnalogueModelList
@@ -345,14 +328,14 @@ void BasePhyLayer::handleMessage(cMessage* msg) {
 
 	//unknown message
 	} else {
-		ev << "Unknown message received." << endl;
+		EV << "Unknown message received." << endl;
 		delete msg;
 	}
 }
 
 void BasePhyLayer::handleAirFrame(AirFrame* frame) {
 	//TODO: ask jerome to set air frame priority in his UWBIRPhy
-	//assert(frame->getSchedulingPriority() == airFramePriority);
+	//assert(frame->getSchedulingPriority() == airFramePriority());
 
 	switch(frame->getState()) {
 	case START_RECEIVE:
@@ -368,8 +351,7 @@ void BasePhyLayer::handleAirFrame(AirFrame* frame) {
 		break;
 
 	default:
-		opp_error( "Unknown AirFrame state: %s", frame->getState());
-		break;
+		throw cRuntimeError( "Unknown AirFrame state: %s", frame->getState());
 	}
 }
 
@@ -432,7 +414,7 @@ void BasePhyLayer::handleAirFrameReceiving(AirFrame* frame) {
 
 	//invalid point in time
 	} else if(nextHandleTime < simTime() || nextHandleTime > signalEndTime) {
-		opp_error("Invalid next handle time returned by Decider. Expected a value between current simulation time (%.2f) and end of signal (%.2f) but got %.2f",
+		throw cRuntimeError("Invalid next handle time returned by Decider. Expected a value between current simulation time (%.2f) and end of signal (%.2f) but got %.2f",
 								SIMTIME_DBL(simTime()), SIMTIME_DBL(signalEndTime), SIMTIME_DBL(nextHandleTime));
 	}
 
@@ -466,7 +448,7 @@ void BasePhyLayer::handleUpperMessage(cMessage* msg){
 	{
         delete msg;
         msg = 0;
-		opp_error("Error: message for sending received, but radio not in state TX");
+		throw cRuntimeError("Error: message for sending received, but radio not in state TX");
 	}
 
 	// check if not already sending
@@ -474,7 +456,7 @@ void BasePhyLayer::handleUpperMessage(cMessage* msg){
 	{
         delete msg;
         msg = 0;
-		opp_error("Error: message for sending received, but radio already sending");
+		throw cRuntimeError("Error: message for sending received, but radio already sending");
 	}
 
 	// build the AirFrame to send
@@ -517,7 +499,7 @@ AirFrame *BasePhyLayer::encapsMsg(cPacket *macPkt)
 	//channel consistency (before any thing else happens at a time
 	//point t make sure that the channel has removed every AirFrame
 	//ended at t and added every AirFrame started at t)
-	frame->setSchedulingPriority(airFramePriority);
+	frame->setSchedulingPriority(airFramePriority());
 	frame->setProtocolId(myProtocolId());
 	frame->setBitLength(headerLength);
 	frame->setId(world->getUniqueAirFrameId());
@@ -554,7 +536,7 @@ void BasePhyLayer::handleChannelSenseRequest(cMessage* msg) {
 			channelInfo.startRecording(simTime());
 		}
 	} else if(nextHandleTime >= 0.0){
-		opp_error("Next handle time of ChannelSenseRequest returned by the Decider is smaller then current simulation time: %.2f",
+		throw cRuntimeError("Next handle time of ChannelSenseRequest returned by the Decider is smaller then current simulation time: %.2f",
 				SIMTIME_DBL(nextHandleTime));
 	}
 
@@ -569,8 +551,7 @@ void BasePhyLayer::handleUpperControlMessage(cMessage* msg){
 		handleChannelSenseRequest(msg);
 		break;
 	default:
-		ev << "Received unknown control message from upper layer!" << endl;
-		break;
+		throw cRuntimeError("Received unknown control message from upper layer!");
 	}
 }
 
@@ -732,7 +713,7 @@ simtime_t BasePhyLayer::setRadioState(int rs) {
 	assert(radio);
 
 	if(txOverTimer && txOverTimer->isScheduled()) {
-		opp_warning("Switched radio while sending an AirFrame. The effects this would have on the transmission are not simulated by the BasePhyLayer!");
+		EV_WARN << "Switched radio while sending an AirFrame. The effects this would have on the transmission are not simulated by the BasePhyLayer!";
 	}
 
 	simtime_t switchTime = radio->switchTo(rs, simTime());
@@ -770,7 +751,7 @@ int BasePhyLayer::getPhyHeaderLength() {
 
 void BasePhyLayer::setCurrentRadioChannel(int newRadioChannel) {
 	if(txOverTimer && txOverTimer->isScheduled()) {
-		opp_warning("Switched channel while sending an AirFrame. The effects this would have on the transmission are not simulated by the BasePhyLayer!");
+		EV_WARN << "Switched channel while sending an AirFrame. The effects this would have on the transmission are not simulated by the BasePhyLayer!";
 	}
 
 	radio->setCurrentChannel(newRadioChannel);
