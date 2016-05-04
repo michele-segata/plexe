@@ -47,7 +47,7 @@
 			<power x0="148.963930699413" x1="-0.391263308810579" x2="0.000493162790906321" x3="-1.76150897505153e-07" x4="2.82601265913631e-11" x5="-1.68707494616654e-15"/>
 		</engine>
 		<!-- Gear shifting rules -->
-		<shifting rpm="6500" deltaRpm="200"/>
+		<shifting rpm="6300" deltaRpm="200"/>
 		<!-- Brakes data. Tau is the actuation time in seconds. Other parameters such as friction are taken from the wheels section -->
 		<brakes tau="0.2"/>
 	</vehicle>
