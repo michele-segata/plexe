@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2012 David Eckhoff <eckhoff@cs.fau.de>
+// Copyright (C) 2016 David Eckhoff <david.eckhoff@fau.de>
 //
 // Documentation for these modules is at http://veins.car2x.org/
 //
@@ -850,6 +850,17 @@ void Mac1609_4::setParametersForBitrate(uint64_t bitrate) {
 	throw cRuntimeError("Chosen Bitrate is not valid for 802.11p: Valid rates are: 3Mbps, 4.5Mbps, 6Mbps, 9Mbps, 12Mbps, 18Mbps, 24Mbps and 27Mbps. Please adjust your omnetpp.ini file accordingly.");
 }
 
+bool Mac1609_4::isChannelSwitchingActive() {
+    return useSCH;
+}
+
+simtime_t Mac1609_4::getSwitchingInterval() {
+    return SWITCHING_INTERVAL_11P;
+}
+
+bool Mac1609_4::isCurrentChannelCCH() {
+    return (activeChannel ==  type_CCH);
+}
 
 simtime_t Mac1609_4::getFrameDuration(int payloadLengthBits, enum PHY_MCS mcs) const {
     simtime_t duration;
