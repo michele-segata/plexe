@@ -103,6 +103,7 @@ void HumanInterferingProtocol::sendInterferingMessage() {
 	UnicastMessage *unicast = new UnicastMessage("", INTERFERENCE_TYPE);
 	unicast->setDestination(-1);
 	unicast->setPriority(priority);
+	unicast->setChannel(Channels::CCH);
 
 	//create platooning beacon with data about the car
 	InterferingBeacon *pkt = new InterferingBeacon();

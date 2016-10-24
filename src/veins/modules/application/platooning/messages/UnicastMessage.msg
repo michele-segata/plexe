@@ -40,6 +40,6 @@ packet UnicastMessage {
     int priority = 0;
     //receive power in dBm
     double recvPower_dBm;
-    //channel (0 CCH, 1 SCH)
+    //channel number
     int channel;
 }
