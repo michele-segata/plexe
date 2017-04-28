@@ -121,7 +121,7 @@ void UnicastProtocol::handleUpperControl(cMessage *msg)
 
 }
 
-void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsulatedId, int priority, SimTime timestamp, t_channel channel, short kind)
+void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsulatedId, int priority, SimTime timestamp, enum Channels::ChannelNumber channel, short kind)
 {
 
 	//this function cannot be called if we are still waiting for the ack
@@ -145,13 +145,17 @@ void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsu
 	unicast->setPriority(priority);
 	unicast->setTimestamp(timestamp);
 	unicast->setKind(kind);
+	unicast->setChannel(channel);
 	//encapsulate message. NOTICE that we are encapsulating the message directly
 	//decapsulated from the message coming from the application. we could use
 	//msg->dup(), but then, since msg has been decapsulated, we would have to
 	//free it
 	unicast->encapsulate(msg);
 
-	WaveShortMessage *wsm = prepareWSM("beacon", 0, channel, priority, 0, unicast->getSequenceNumber());
+	WaveShortMessage *wsm = new WaveShortMessage();
+	populateWSM(wsm, 0, unicast->getSequenceNumber());
+	wsm->setChannelNumber(channel);
+	wsm->setPriority(priority);
 	wsm->encapsulate(unicast);
 	//include control info that might have been set at higher layers
 	if (msg->getControlInfo()){
@@ -185,9 +189,13 @@ void UnicastProtocol::sendAck(const UnicastMessage *msg)
 	unicast->setSequenceNumber(msg->getSequenceNumber());
 	unicast->setByteLength(0);
 	unicast->setPriority(0);
+	unicast->setChannel(msg->getChannel());
 	unicast->setType(ACK);
 
-	WaveShortMessage *wsm = prepareWSM("beacon", 0, (t_channel)msg->getChannel(), msg->getPriority(), 0, msg->getSequenceNumber());
+	WaveShortMessage *wsm = new WaveShortMessage();
+	populateWSM(wsm, 0, msg->getSequenceNumber());
+	wsm->setChannelNumber(msg->getChannel());
+	wsm->setPriority(msg->getPriority());
 	wsm->encapsulate(unicast);
 	sendDown(wsm);
 
@@ -196,7 +204,10 @@ void UnicastProtocol::sendAck(const UnicastMessage *msg)
 void UnicastProtocol::resendMessage()
 {
 
-	WaveShortMessage *wsm = prepareWSM("beacon", 0, (t_channel)currentMsg->getChannel(), currentMsg->getPriority(), 0, currentMsg->getSequenceNumber());
+	WaveShortMessage *wsm = new WaveShortMessage();
+	populateWSM(wsm, 0, currentMsg->getSequenceNumber());
+	wsm->setChannelNumber(currentMsg->getChannel());
+	wsm->setPriority(currentMsg->getPriority());
 	wsm->encapsulate(currentMsg->dup());
 	sendDown(wsm);
 
@@ -273,7 +284,7 @@ void UnicastProtocol::handleAckMessage(const UnicastMessage *ack)
 	if (currentMsg == 0)
 	{
 		//we have received an ack we were not waiting for. do nothing
-		DBG << "unexpected ACK";
+		DBG_APP << "unexpected ACK";
 	}
 	else
 	{
@@ -396,7 +407,7 @@ void UnicastProtocol::processNextPacket()
 	UnicastMessage *toSend = queue.front();
 
 	//send message down
-	sendMessageDown(toSend->getDestination(), toSend->decapsulate(), toSend->getEncapsulationId(), toSend->getPriority(), toSend->getTimestamp(), (t_channel)toSend->getChannel(), toSend->getKind());
+	sendMessageDown(toSend->getDestination(), toSend->decapsulate(), toSend->getEncapsulationId(), toSend->getPriority(), toSend->getTimestamp(), (enum Channels::ChannelNumber)toSend->getChannel(), toSend->getKind());
 
 	delete toSend;
 

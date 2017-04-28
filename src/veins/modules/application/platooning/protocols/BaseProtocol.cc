@@ -175,6 +175,7 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 	unicast = new UnicastMessage("", BEACON_TYPE);
 	unicast->setDestination(-1);
 	unicast->setPriority(priority);
+	unicast->setChannel(Channels::CCH);
 
 	//create platooning beacon with data about the car
 	pkt = new PlatooningBeacon();

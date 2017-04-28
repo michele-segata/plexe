@@ -177,6 +177,7 @@ void JoinManeuverScenario::handleLowerMsg(cMessage *msg) {
 void JoinManeuverScenario::sendUnicast(cPacket *msg, int destination) {
 	UnicastMessage *unicast = new UnicastMessage("", MANEUVER_TYPE);
 	unicast->setDestination(destination);
+	unicast->setChannel(Channels::CCH);
 	unicast->encapsulate(msg);
 	sendDown(unicast);
 }

@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2011 David Eckhoff <eckhoff@cs.fau.de>
+// Copyright (C) 2016 David Eckhoff <david.eckhoff@fau.de>
 //
 // Documentation for these modules is at http://veins.car2x.org/
 //
@@ -18,32 +18,14 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-#include "veins/base/utils/NetwToMacControlInfo.h"
-#include "veins/modules/utility/Consts80211p.h"
+package org.car2x.veins.modules.application.traci;
+import org.car2x.veins.modules.application.ieee80211p.BaseWaveApplLayer;
 
-#ifndef ___WAVEAPPTOMAC1609_4INTERFACE_H_
-#define ___WAVEAPPTOMAC1609_4INTERFACE_H_
-
-/**
- * @brief
- * Interface between WaveApplication Layer and Mac1609_4
- *
- * @author David Eckhoff
- *
- * @ingroup macLayer
- */
-class WaveAppToMac1609_4Interface {
-    public:
-
-        virtual bool isChannelSwitchingActive() = 0;
-
-        virtual simtime_t getSwitchingInterval() =  0;
-
-        virtual bool isCurrentChannelCCH() = 0;
-
-        virtual void changeServiceChannel(int channelNumber) = 0;
-
-        virtual ~WaveAppToMac1609_4Interface() {} ;
-};
-
-#endif /* ___WAVEAPPTOMAC1609_4INTERFACE_H_ */
+//
+// network description file for your Veins Application. Add parameters here
+//
+simple MyVeinsApp extends BaseWaveApplLayer
+{
+    @class(MyVeinsApp);
+    string appName = default("My first Veins App!");
+}

@@ -1,5 +1,6 @@
 //
 // Copyright (C) 2008 Christoph Sommer <christoph.sommer@informatik.uni-erlangen.de>
+// Copyright (C) 2012-2016 Michele Segata <segata@ccs-labs.org>
 //
 // Documentation for these modules is at http://veins.car2x.org/
 //
@@ -18,41 +19,49 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-package org.car2x.veins.nodes;
+import org.car2x.veins.base.modules.IBaseApplLayer;
 
-import org.car2x.veins.base.modules.*;
+import org.car2x.veins.modules.application.platooning.protocols.HumanInterferingProtocol;
+import org.car2x.veins.modules.application.platooning.UnicastProtocol;
+import org.car2x.veins.modules.mobility.traci.TraCIMobility;
 import org.car2x.veins.modules.nic.Nic80211p;
 
-module Car
+
+module HumanCar
 {
-    parameters:
-        string applType; //type of the application layer
-        string nicType = default("Nic80211p"); // type of network interface card
-        string veinsmobilityType = default("org.car2x.veins.modules.mobility.traci.TraCIMobility"); //type of the mobility module
+
     gates:
-        input veinsradioIn; // gate for sendDirect
+        input radioIn; // gate for sendDirect
     submodules:
-        appl: <applType> like org.car2x.veins.base.modules.IBaseApplLayer {
+
+
+        prot: HumanInterferingProtocol {
             parameters:
-                @display("p=60,50");
+                @display("p=60,200");
         }
 
-        nic: <nicType> like org.car2x.veins.modules.nic.INic80211p {
+        unicast: UnicastProtocol {
             parameters:
-                @display("p=60,166");
+                @display("p=60,300");
         }
 
-        veinsmobility: <veinsmobilityType> like org.car2x.veins.base.modules.IMobility {
+        nic: Nic80211p {
+            parameters:
+                @display("p=60,400");
+        }
+
+        mobility: TraCIMobility {
             parameters:
                 @display("p=130,172;i=block/cogwheel");
         }
-        
-    connections:
-        nic.upperLayerOut --> appl.lowerLayerIn;
-        nic.upperLayerIn <-- appl.lowerLayerOut;
-        nic.upperControlOut --> appl.lowerControlIn;
-        nic.upperControlIn <-- appl.lowerControlOut;
+    connections allowunconnected:
+        unicast.upperControlIn <-- prot.lowerControlOut;
+        unicast.upperControlOut --> prot.lowerControlIn;
+        unicast.upperLayerIn <-- prot.lowerLayerOut;
+        unicast.upperLayerOut --> prot.lowerLayerIn;
+        nic.upperLayerIn <-- unicast.lowerLayerOut;
+        nic.upperLayerOut --> unicast.lowerLayerIn;
 
-        veinsradioIn --> nic.radioIn;
+        radioIn --> nic.radioIn;
 
 }

@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2011 David Eckhoff <eckhoff@cs.fau.de>
+// Copyright (C) 2016 David Eckhoff <david.eckhoff@fau.de>
 //
 // Documentation for these modules is at http://veins.car2x.org/
 //
@@ -18,32 +18,35 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-#include "veins/base/utils/NetwToMacControlInfo.h"
-#include "veins/modules/utility/Consts80211p.h"
+#ifndef __VEINS_MYVEINSAPP_H_
+#define __VEINS_MYVEINSAPP_H_
 
-#ifndef ___WAVEAPPTOMAC1609_4INTERFACE_H_
-#define ___WAVEAPPTOMAC1609_4INTERFACE_H_
+#include <omnetpp.h>
+#include "veins/modules/application/ieee80211p/BaseWaveApplLayer.h"
+
+using namespace omnetpp;
 
 /**
  * @brief
- * Interface between WaveApplication Layer and Mac1609_4
+ * This is a stub for a typical Veins application layer.
+ * Most common functions are overloaded.
+ * See MyVeinsApp.cc for hints
  *
  * @author David Eckhoff
  *
- * @ingroup macLayer
  */
-class WaveAppToMac1609_4Interface {
+
+class MyVeinsApp : public BaseWaveApplLayer {
     public:
+        virtual void initialize(int stage);
+        virtual void finish();
+    protected:
+        virtual void onBSM(BasicSafetyMessage* bsm);
+        virtual void onWSM(WaveShortMessage* wsm);
+        virtual void onWSA(WaveServiceAdvertisment* wsa);
 
-        virtual bool isChannelSwitchingActive() = 0;
+        virtual void handleSelfMsg(cMessage* msg);
+        virtual void handlePositionUpdate(cObject* obj);
+    };
 
-        virtual simtime_t getSwitchingInterval() =  0;
-
-        virtual bool isCurrentChannelCCH() = 0;
-
-        virtual void changeServiceChannel(int channelNumber) = 0;
-
-        virtual ~WaveAppToMac1609_4Interface() {} ;
-};
-
-#endif /* ___WAVEAPPTOMAC1609_4INTERFACE_H_ */
+#endif
