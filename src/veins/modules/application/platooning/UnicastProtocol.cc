@@ -145,6 +145,7 @@ void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsu
 	unicast->setPriority(priority);
 	unicast->setTimestamp(timestamp);
 	unicast->setKind(kind);
+	unicast->setChannel(channel);
 	//encapsulate message. NOTICE that we are encapsulating the message directly
 	//decapsulated from the message coming from the application. we could use
 	//msg->dup(), but then, since msg has been decapsulated, we would have to
@@ -188,6 +189,7 @@ void UnicastProtocol::sendAck(const UnicastMessage *msg)
 	unicast->setSequenceNumber(msg->getSequenceNumber());
 	unicast->setByteLength(0);
 	unicast->setPriority(0);
+	unicast->setChannel(msg->getChannel());
 	unicast->setType(ACK);
 
 	WaveShortMessage *wsm = new WaveShortMessage();
