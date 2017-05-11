@@ -68,7 +68,7 @@ void BaseProtocol::initialize(int stage) {
 		packetSize = par("packetSize").longValue();
 		//priority of platooning message
 		priority = par("priority").longValue();
-		ASSERT2(priority >= 0 && priority <= 3, "priority value must be between 0 and 3");
+		ASSERT2(priority >= 0 && priority <= 7, "priority value must be between 0 and 7");
 
 		//use controller or real acceleration?
 		useControllerAcceleration = par("useControllerAcceleration").boolValue();
