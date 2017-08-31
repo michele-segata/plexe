@@ -78,6 +78,9 @@ void BaseScenario::initialize(int stage) {
 		}
 		//set the current lane
 		traciVehicle->setFixedLane(positionHelper->getPlatoonLane());
+
+		if (positionHelper->getId() == 0)
+			traci->guiView("View #0").trackVehicle(mobility->getExternalId());
 	}
 
 }
