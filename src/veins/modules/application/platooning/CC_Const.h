@@ -29,6 +29,12 @@ enum PLATOONING_LANE_CHANGE_ACTION {
     MOVE_TO_FIXED_LANE = 4    //move the car to a specific lane
 };
 
+/**
+ * @brief TraCI modes for lane changing
+ */
+#define FIX_LC 0b1000000000
+#define DEFAULT_NOTRACI_LC 0b1010101010
+
 /** @enum ACTIVE_CONTROLLER
  * @brief Determines the currently active controller, i.e., ACC, CACC, or the
  * driver. In future we might need to switch off the automatic controller and

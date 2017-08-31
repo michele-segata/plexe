@@ -859,34 +859,41 @@ bool TraCICommandInterface::Vehicle::isCruiseControllerInstalled() {
 
 void TraCICommandInterface::Vehicle::setLaneChangeAction(int action) {
 
-	uint8_t variableId = VAR_SET_LANE_CHANGE_ACTION;
-	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << action);
+	uint8_t variableId = VAR_LANECHANGE_MODE;
+	uint8_t type = TYPE_INTEGER;
+	int traciAction;
+	if (action == Plexe::MOVE_TO_FIXED_LANE || action == Plexe::STAY_IN_CURRENT_LANE)
+		traciAction = FIX_LC;
+	else
+		traciAction = DEFAULT_NOTRACI_LC;
+	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << type << traciAction);
 	ASSERT(buf.eof());
 
 }
 
-int TraCICommandInterface::Vehicle::getLaneChangeAction() {
-	TraCIBuffer buf = traci->connection.query(CMD_GET_VEHICLE_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(VAR_GET_LANE_CHANGE_ACTION) << nodeId);
+void TraCICommandInterface::Vehicle::setFixedLane(int8_t laneIndex) {
 
-	uint8_t cmdLength; buf >> cmdLength;
-	uint8_t commandId; buf >> commandId;
-	ASSERT(commandId == RESPONSE_GET_VEHICLE_VARIABLE);
-	uint8_t varId; buf >> varId;
-	ASSERT(varId == VAR_GET_LANE_CHANGE_ACTION);
-	std::string retVehicleId; buf >> retVehicleId;
-	ASSERT(retVehicleId == nodeId);
-	uint8_t resType_r; buf >> resType_r;
-	ASSERT(resType_r == TYPE_INTEGER);
-	int action; buf >> action;
+	if (laneIndex >= 0)
+		setLaneChangeAction(Plexe::MOVE_TO_FIXED_LANE);
+	else
+		setLaneChangeAction(Plexe::DRIVER_CHOICE);
 
-	ASSERT(buf.eof());
-
-	return action;
-}
-
-void TraCICommandInterface::Vehicle::setFixedLane(int laneIndex) {
-	uint8_t variableId = VAR_SET_FIXED_LANE;
-	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << laneIndex);
+	uint8_t commandType = TYPE_COMPOUND;
+	int nParameters = 2;
+	uint8_t laneType = TYPE_BYTE;
+	uint8_t durationType = TYPE_INTEGER;
+	uint8_t variableId = CMD_CHANGELANE;
+	int duration;
+	if (laneIndex >= 0) {
+		// set duration to the maximum possible integer (24 days in milliseconds)
+		duration = 2147483647;
+	}
+	else {
+		// set the duration to 1 millisecond to cancel current lane choice
+		duration = 1;
+		laneIndex = getLaneIndex();
+	}
+	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << commandType << nParameters << laneType << laneIndex << durationType << duration);
 	ASSERT(buf.eof());
 }
 

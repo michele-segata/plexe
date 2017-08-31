@@ -139,32 +139,14 @@ class TraCICommandInterface
 				 *
 				 */
 				bool isCruiseControllerInstalled();
-				/**
-				 * Tells to the CC mobility model the desired lane change action to be performed
-				 *
-				 * @param vehicleId the vehicle id to communicate the action to
-				 * @param action the action to be performed. this can be either:
-				 * 0 = driver choice: the application protocol wants to let the driver chose the lane
-				 * 1 = management lane: the application protocol wants the driver to move the car
-				 * to the management lane, i.e., the leftmost minus one
-				 * 2 = platooning lane: the application protocol wants the driver to move the car
-				 * to the platooning lane, i.e., the leftmost
-				 * 3 = stay there: the application protocol wants the driver to keep the car
-				 * into the platooning lane because the car is a part of a platoon
-				 */
-				void setLaneChangeAction(int action);
-
-				/**
-				 * Returns the currently set lane change action
-				 */
-				int getLaneChangeAction();
 
 				/**
 				 * Set a fixed lane a car should move to
 				 *
-				 * @param laneIndex lane to move to, where 0 indicates the rightmost
+				 * @param laneIndex lane to move to, where 0 indicates the rightmost.
+				 * Set the lane index to -1 to give control back to the human driver
 				 */
-				void setFixedLane(int laneIndex);
+				void setFixedLane(int8_t laneIndex);
 
 				/**
 				 * Gets the data measured by the radar, i.e., distance and relative speed.
@@ -205,6 +187,21 @@ class TraCICommandInterface
 				TraCICommandInterface* traci;
 				TraCIConnection* connection;
 				std::string nodeId;
+
+				/**
+				 * Tells to the CC mobility model the desired lane change action to be performed
+				 *
+				 * @param vehicleId the vehicle id to communicate the action to
+				 * @param action the action to be performed. this can be either:
+				 * 0 = driver choice: the application protocol wants to let the driver chose the lane
+				 * 1 = management lane: the application protocol wants the driver to move the car
+				 * to the management lane, i.e., the leftmost minus one
+				 * 2 = platooning lane: the application protocol wants the driver to move the car
+				 * to the platooning lane, i.e., the leftmost
+				 * 3 = stay there: the application protocol wants the driver to keep the car
+				 * into the platooning lane because the car is a part of a platoon
+				 */
+				void setLaneChangeAction(int action);
 		};
 		Vehicle vehicle(std::string nodeId) {
 			return Vehicle(this, nodeId);
