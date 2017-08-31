@@ -708,7 +708,7 @@ void TraCICommandInterface::Vehicle::setPlatoonLeaderData(double speed, double a
 }
 
 void TraCICommandInterface::Vehicle::setPrecedingVehicleData(double speed, double acceleration, double positionX, double positionY, double time) {
-	uint8_t variableId = VAR_SET_PREC_SPEED_AND_ACCELERATION;
+	uint8_t variableId = VAR_SET_PRECEDING_SPEED_AND_ACCELERATION;
 	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << speed << acceleration << positionX << positionY << time);
 	ASSERT(buf.eof());
 }

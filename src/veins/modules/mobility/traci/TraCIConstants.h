@@ -949,8 +949,8 @@
 // get the distance from the beginning of the route
 #define VAR_GET_DISTANCE_FROM_BEGIN 0xfc
 
-// set speed and acceleration of the preceding vehicle
-#define VAR_SET_PREC_SPEED_AND_ACCELERATION 0xfd
+// set speed and acceleration of preceding vehicle
+#define VAR_SET_PRECEDING_SPEED_AND_ACCELERATION 0xfd
 
 // set ACC headway time
 #define VAR_SET_ACC_HEADWAY_TIME 0xff
