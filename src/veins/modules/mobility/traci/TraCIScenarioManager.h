@@ -130,6 +130,13 @@ class TraCIScenarioManager : public cSimpleModule
 			return connection->omnet2traci(coords);
 		}
 
+		/**
+		 * returns whether simulation is running under gui or not
+		 */
+		virtual bool isGuiSimulation() {
+			return false;
+		}
+
 	protected:
 		bool traciInitialized;
 		bool debug; /**< whether to emit debug messages */

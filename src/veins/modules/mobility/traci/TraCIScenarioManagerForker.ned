@@ -65,7 +65,10 @@ simple TraCIScenarioManagerForker
         bool useRouteDistributions = default(false);
         int vehicleRngIndex = default(0); // index of the RNG stream to be used, all random numbers concerning the managed vehicles
 
-        string commandLine = default("sumo --remote-port $port --seed $seed --configuration-file $configFile"); // command line for running TraCI server (substituting $configFile, $seed, $port)
+        bool useGui = default(true);
+        string sumoCommand = default("sumo");
+        string sumoGuiCommand = default("sumo-gui");
+        string commandLine = default("--remote-port $port --seed $seed --configuration-file $configFile"); // command line for running TraCI server (substituting $configFile, $seed, $port)
         string configFile = default("my.sumo.cfg"); // substitution for $configFile parameter
         int seed = default(-1); // substitution for $seed parameter (-1: current run number)
         int port = default(-1);  // substitution for $port parameter (-1: autodetect)
