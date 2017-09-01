@@ -18,6 +18,9 @@
 #ifndef CC_CONST_H
 #define CC_CONST_H
 
+#include <string>
+#include <sstream>
+
 namespace Plexe {
 
 /**
@@ -65,36 +68,29 @@ struct VEHICLE_DATA {
     double length;       //vehicle length
 };
 
+static std::string packVehicleData(const struct VEHICLE_DATA &d) {
+    std::stringstream pack;
+    pack << d.index << ":" << d.speed << ":" << d.acceleration << ":" <<
+            d.positionX << ":" << d.positionY << ":" << d.time << ":" <<
+            d.length;
+    return pack.str();
+}
+static struct VEHICLE_DATA unpackVehicleData(const std::string &d) {
+    struct VEHICLE_DATA v;
+    int nParameters = sscanf(d.c_str(), "%d:%lf:%lf:%lf:%lf:%lf:%lf", &v.index,
+                             &v.speed, &v.acceleration, &v.positionX,
+                             &v.positionY, &v.time, &v.length);
+
+    // if not enough parameter, mark as invalid
+    if (nParameters != 7)
+        v.index = -1;
+    return v;
+}
+
 #define MAX_N_CARS 8
 
-/**
- * List of constants defining the type of message in the generic data passing function.
- * The setGenericInformation() method is meant to ease the procedure of adding new data
- * passing to the model, without having to change TraCIConstants, and TraCIServerAPI_Vehicle,
- * as well as a lot of file within Veins.
- */
-
-#define CC_SET_VEHICLE_DATA              0x00    //set data about a vehicle, like position, speed, acceleration, etc
-#define CC_SET_VEHICLE_POSITION          0x01    //set the position of the vehicle in the platoon (0 based)
-#define CC_SET_PLATOON_SIZE              0x02    //set the number of cars in the platoon
-#define CC_GET_VEHICLE_DATA              0x03    //get stored data about a vehicle
-
-//set of controller-related constants
-#define CC_SET_CACC_XI                   0x04    //xi
-#define CC_SET_CACC_OMEGA_N              0x05    //omega_n
-#define CC_SET_CACC_C1                   0x06    //C1
-#define CC_SET_ENGINE_TAU                0x07    //engine time constant
-
-#define CC_SET_PLOEG_H                   0x20    //time headway of ploeg's CACC
-#define CC_SET_PLOEG_KP                  0x21    //kp parameter of ploeg's CACC
-#define CC_SET_PLOEG_KD                  0x22    //kd parameter of ploeg's CACC
-
-#define CC_SET_VEHICLE_ENGINE_MODEL      0x30    //set the engine model for a vehicle
 #define CC_ENGINE_MODEL_FOLM             0x00    //first order lag model
 #define CC_ENGINE_MODEL_REALISTIC        0x01    //the detailed and realistic engine model
-
-#define CC_SET_VEHICLE_MODEL             0x31    //set the vehicle model, i.e., engine characteristics
-#define CC_SET_VEHICLES_FILE             0x32    //set the location of the vehicle parameters file
 
 //parameter names for engine models
 #define FOLM_PAR_TAU                     "tau_s"
@@ -103,6 +99,25 @@ struct VEHICLE_DATA {
 #define ENGINE_PAR_VEHICLE               "vehicle"
 #define ENGINE_PAR_XMLFILE               "xmlFile"
 #define ENGINE_PAR_DT                    "dt_s"
+
+#define CC_PAR_VEHICLE_DATA              "ccvd"   //data about a vehicle, like position, speed, acceleration, etc
+#define CC_PAR_VEHICLE_POSITION          "ccvp"   //position of the vehicle in the platoon (0 based)
+#define CC_PAR_PLATOON_SIZE              "ccps"   //number of cars in the platoon
+
+//set of controller-related constants
+#define CC_PAR_CACC_XI                   "ccxi"    //xi
+#define CC_PAR_CACC_OMEGA_N              "ccon"    //omega_n
+#define CC_PAR_CACC_C1                   "ccc1"    //C1
+#define CC_PAR_ENGINE_TAU                "cctau"   //engine time constant
+
+#define CC_PAR_PLOEG_H                   "ccph"    //time headway of ploeg's CACC
+#define CC_PAR_PLOEG_KP                  "ccpkp"   //kp parameter of ploeg's CACC
+#define CC_PAR_PLOEG_KD                  "ccpkd"   //kd parameter of ploeg's CACC
+
+#define CC_PAR_VEHICLE_ENGINE_MODEL      "ccem"    //set the engine model for a vehicle
+
+#define CC_PAR_VEHICLE_MODEL             "ccvm"    //set the vehicle model, i.e., engine characteristics
+#define CC_PAR_VEHICLES_FILE             "ccvf"    //set the location of the vehicle parameters file
 
 }
 

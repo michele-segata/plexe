@@ -359,6 +359,31 @@ bool TraCICommandInterface::Vehicle::changeVehicleRoute(const std::list<std::str
 	return true;
 }
 
+void TraCICommandInterface::Vehicle::setParameter(const std::string &parameter, int value) {
+	static int32_t nParameters = 2;
+	std::stringstream strValue;
+	strValue << value;
+	setParameter(parameter, strValue.str());
+}
+
+void TraCICommandInterface::Vehicle::setParameter(const std::string &parameter, double value) {
+	static int32_t nParameters = 2;
+	std::stringstream strValue;
+	strValue << value;
+	setParameter(parameter, strValue.str());
+}
+
+void TraCICommandInterface::Vehicle::setParameter(const std::string &parameter, const std::string &value) {
+	static int32_t nParameters = 2;
+	std::stringstream par;
+	par << "carFollowModel." << parameter;
+	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE,
+	    TraCIBuffer() << static_cast<uint8_t>(VAR_PARAMETER) << nodeId << static_cast<uint8_t>(TYPE_COMPOUND) <<
+	    nParameters << static_cast<uint8_t>(TYPE_STRING) << par.str() <<
+	    static_cast<uint8_t>(TYPE_STRING) << value);
+	ASSERT(buf.eof());
+}
+
 std::pair<double, double> TraCICommandInterface::getLonLat(const Coord& coord) {
 	TraCIBuffer request;
 	request << static_cast<uint8_t>(POSITION_CONVERSION) << std::string("sim0")
@@ -633,58 +658,6 @@ void TraCICommandInterface::Vehicle::getVehicleData(double &speed, double &accel
 		buf >> time;
 
 		ASSERT(buf.eof());
-
-}
-
-void TraCICommandInterface::Vehicle::setGenericInformation(int type, const void* data, int length) {
-
-	uint8_t variableId = VAR_SET_GENERIC_INFORMATION;
-
-	struct Plexe::CCDataHeader header;
-	header.type = type;
-	header.size = length;
-
-	TraCIBuffer buffer = TraCIBuffer();
-	buffer << variableId << nodeId;
-	buffer << header;
-	buffer.writeBuffer((unsigned char *)data, length);
-
-	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, buffer);
-	ASSERT(buf.eof());
-
-}
-
-void TraCICommandInterface::Vehicle::getGenericInformation(int type, const void* params, int paramsLength, void *result) {
-
-	uint8_t variableId = VAR_GET_GENERIC_INFORMATION;
-	struct Plexe::CCDataHeader header;
-	header.type = type;
-	header.size = paramsLength;
-
-	TraCIBuffer buffer = TraCIBuffer();
-	buffer << variableId << nodeId;
-	buffer << header;
-	if (paramsLength != 0) {
-		buffer.writeBuffer((unsigned char *)params, paramsLength);
-	}
-
-	TraCIBuffer buf = traci->connection.query(CMD_GET_VEHICLE_VARIABLE, buffer);
-
-	uint8_t cmdLength; buf >> cmdLength;
-	if (cmdLength == 0) {
-		uint32_t cmdLengthX;
-		buf >> cmdLengthX;
-	}
-	uint8_t commandId; buf >> commandId;
-	ASSERT(commandId == RESPONSE_GET_VEHICLE_VARIABLE);
-	uint8_t varId; buf >> varId;
-	ASSERT(varId == VAR_GET_GENERIC_INFORMATION);
-	std::string retVehicleId; buf >> retVehicleId;
-	ASSERT(retVehicleId == nodeId);
-
-	buf.readBuffer((unsigned char *)&header, sizeof(struct Plexe::CCDataHeader));
-	ASSERT(header.type == type);
-	buf.readBuffer((unsigned char *)result, header.size);
 
 }
 

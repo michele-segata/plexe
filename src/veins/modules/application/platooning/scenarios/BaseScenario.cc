@@ -94,20 +94,18 @@ void BaseScenario::handleSelfMsg(cMessage *msg) {
 
 void BaseScenario::initializeControllers() {
 	//engine lag
-	traciVehicle->setGenericInformation(CC_SET_ENGINE_TAU, &engineTau, sizeof(double));
+	traciVehicle->setParameter(CC_PAR_ENGINE_TAU, engineTau);
 	//PATH's CACC parameters
-	traciVehicle->setGenericInformation(CC_SET_CACC_C1, &caccC1, sizeof(double));
-	traciVehicle->setGenericInformation(CC_SET_CACC_OMEGA_N, &caccOmegaN, sizeof(double));
-	traciVehicle->setGenericInformation(CC_SET_CACC_XI, &caccXi, sizeof(double));
+	traciVehicle->setParameter(CC_PAR_CACC_C1, caccC1);
+	traciVehicle->setParameter(CC_PAR_CACC_OMEGA_N, caccOmegaN);
+	traciVehicle->setParameter(CC_PAR_CACC_XI, caccXi);
 	//Ploeg's parameters
-	traciVehicle->setGenericInformation(CC_SET_PLOEG_H, &ploegH, sizeof(double));
-	traciVehicle->setGenericInformation(CC_SET_PLOEG_KP, &ploegKp, sizeof(double));
-	traciVehicle->setGenericInformation(CC_SET_PLOEG_KD, &ploegKd, sizeof(double));
+	traciVehicle->setParameter(CC_PAR_PLOEG_H, ploegH);
+	traciVehicle->setParameter(CC_PAR_PLOEG_KP, ploegKp);
+	traciVehicle->setParameter(CC_PAR_PLOEG_KD, ploegKd);
 	//consensus parameters
-	int position = positionHelper->getPosition();
-	traciVehicle->setGenericInformation(CC_SET_VEHICLE_POSITION, &position, sizeof(int));
-	int nCars = positionHelper->getPlatoonSize();
-	traciVehicle->setGenericInformation(CC_SET_PLATOON_SIZE, &nCars, sizeof(int));
+	traciVehicle->setParameter(CC_PAR_VEHICLE_POSITION, positionHelper->getPosition());
+	traciVehicle->setParameter(CC_PAR_PLATOON_SIZE, positionHelper->getPlatoonSize());
 
 	Plexe::VEHICLE_DATA vehicleData;
 	//initialize own vehicle data
@@ -122,17 +120,18 @@ void BaseScenario::initializeControllers() {
 		vehicleData.positionY = 0;
 		vehicleData.speed = 200;
 		vehicleData.time = simTime().dbl();
-		traciVehicle->setGenericInformation(CC_SET_VEHICLE_DATA, &vehicleData, sizeof(struct Plexe::VEHICLE_DATA));
+		std::string vData = Plexe::packVehicleData(vehicleData);
+		traciVehicle->setParameter(CC_PAR_VEHICLE_DATA, vData);
 	}
 
 	if (useRealisticEngine) {
 		int engineModel = CC_ENGINE_MODEL_REALISTIC;
 		//the order is important
 		//1. let sumo instantiate the realistic engine model
-		traciVehicle->setGenericInformation(CC_SET_VEHICLE_ENGINE_MODEL, &engineModel, sizeof(engineModel));
+		traciVehicle->setParameter(CC_PAR_VEHICLE_ENGINE_MODEL, engineModel);
 		//2. tell the realistic engine model the location of the parameters file
-		traciVehicle->setGenericInformation(CC_SET_VEHICLES_FILE, vehicleFile.c_str(), vehicleFile.length() + 1);
+		traciVehicle->setParameter(CC_PAR_VEHICLES_FILE, vehicleFile);
 		//3. tell the realistic engine model which vehicle (in the specified parameters file) to use
-		traciVehicle->setGenericInformation(CC_SET_VEHICLE_MODEL, vehicleType.c_str(), vehicleType.length() + 1);
+		traciVehicle->setParameter(CC_PAR_VEHICLE_MODEL, vehicleType);
 	}
 }

@@ -54,6 +54,9 @@ class TraCICommandInterface
 				int32_t getLaneIndex();
 				std::string getTypeId();
 				bool changeVehicleRoute(const std::list<std::string>& roads);
+				void setParameter(const std::string &parameter, int value);
+				void setParameter(const std::string &parameter, double value);
+				void setParameter(const std::string &parameter, const std::string &value);
 				/**
 				 * Gets the total number of lanes on the edge the vehicle is currently traveling
 				 */
@@ -73,9 +76,6 @@ class TraCICommandInterface
 				 * before sending the data to the followers
 				 */
 				void getVehicleData(double &speed, double &acceleration, double &controllerAcceleration, double &positionX, double &positionY, double &time);
-
-				void setGenericInformation(int type, const void* data, int length);
-				void getGenericInformation(int type, const void* params, int paramsLength, void *result);
 
 				/**
 				 * Set the cruise control desired speed
