@@ -123,8 +123,7 @@ void BaseApp::handleLowerMsg(cMessage *msg) {
 			vehicleData.speed = epkt->getSpeed();
 			vehicleData.time = epkt->getTime();
 			//send information to CACC
-			std::string vData = Plexe::packVehicleData(vehicleData);
-			traciVehicle->setParameter(CC_PAR_VEHICLE_DATA, vData);
+			traciVehicle->setVehicleData(&vehicleData);
 
 		}
 

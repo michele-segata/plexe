@@ -8,6 +8,8 @@
 #include "veins/modules/mobility/traci/TraCIColor.h"
 #include "veins/base/utils/Coord.h"
 
+#include "veins/modules/application/platooning/CC_Const.h"
+
 namespace Veins {
 
 class TraCIConnection;
@@ -57,6 +59,9 @@ class TraCICommandInterface
 				void setParameter(const std::string &parameter, int value);
 				void setParameter(const std::string &parameter, double value);
 				void setParameter(const std::string &parameter, const std::string &value);
+				void getParameter(const std::string &parameter, int &value);
+				void getParameter(const std::string &parameter, double &value);
+				void getParameter(const std::string &parameter, std::string &value);
 				/**
 				 * Gets the total number of lanes on the edge the vehicle is currently traveling
 				 */
@@ -134,13 +139,6 @@ class TraCICommandInterface
 				bool isCrashed();
 
 				/**
-				 * Tells whether the car has an ACC/CACC controller installed or not. Basically
-				 * it checks the the mobility model which is driving the car
-				 *
-				 */
-				bool isCruiseControllerInstalled();
-
-				/**
 				 * Set a fixed lane a car should move to
 				 *
 				 * @param laneIndex lane to move to, where 0 indicates the rightmost.
@@ -158,8 +156,9 @@ class TraCICommandInterface
 				 */
 				void getRadarMeasurements(double &distance, double &relativeSpeed);
 
-				void setControllerFakeData(double frontDistance, double frontSpeed, double frontAcceleration,
-				                    double leaderSpeed, double leaderAcceleration);
+				void setLeaderFakeData(double leaderSpeed, double leaderAcceleration);
+
+				void setFrontFakeData(double frontDistance, double frontSpeed, double frontAcceleration);
 
 				/**
 				 * Gets the distance that a vehicle has to travel to reach the end of
@@ -182,6 +181,14 @@ class TraCICommandInterface
 				 * Returns the vehicle type of a vehicle
 				 */
 				std::string getVType();
+				/**
+				 * Sets data information about a vehicle in the same platoon
+				 */
+				void setVehicleData(const struct Plexe::VEHICLE_DATA *data);
+				/**
+				 * Gets data information about a vehicle in the same platoon, as stored by this car
+				 */
+				void getVehicleData(struct Plexe::VEHICLE_DATA *data, int index);
 
 			protected:
 				TraCICommandInterface* traci;

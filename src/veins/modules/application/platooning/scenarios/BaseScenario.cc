@@ -120,8 +120,7 @@ void BaseScenario::initializeControllers() {
 		vehicleData.positionY = 0;
 		vehicleData.speed = 200;
 		vehicleData.time = simTime().dbl();
-		std::string vData = Plexe::packVehicleData(vehicleData);
-		traciVehicle->setParameter(CC_PAR_VEHICLE_DATA, vData);
+		traciVehicle->setVehicleData(&vehicleData);
 	}
 
 	if (useRealisticEngine) {

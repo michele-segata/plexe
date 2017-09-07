@@ -68,25 +68,6 @@ struct VEHICLE_DATA {
     double length;       //vehicle length
 };
 
-static std::string packVehicleData(const struct VEHICLE_DATA &d) {
-    std::stringstream pack;
-    pack << d.index << ":" << d.speed << ":" << d.acceleration << ":" <<
-            d.positionX << ":" << d.positionY << ":" << d.time << ":" <<
-            d.length;
-    return pack.str();
-}
-static struct VEHICLE_DATA unpackVehicleData(const std::string &d) {
-    struct VEHICLE_DATA v;
-    int nParameters = sscanf(d.c_str(), "%d:%lf:%lf:%lf:%lf:%lf:%lf", &v.index,
-                             &v.speed, &v.acceleration, &v.positionX,
-                             &v.positionY, &v.time, &v.length);
-
-    // if not enough parameter, mark as invalid
-    if (nParameters != 7)
-        v.index = -1;
-    return v;
-}
-
 #define MAX_N_CARS 8
 
 #define CC_ENGINE_MODEL_FOLM             0x00    //first order lag model
@@ -118,6 +99,57 @@ static struct VEHICLE_DATA unpackVehicleData(const std::string &d) {
 
 #define CC_PAR_VEHICLE_MODEL             "ccvm"    //set the vehicle model, i.e., engine characteristics
 #define CC_PAR_VEHICLES_FILE             "ccvf"    //set the location of the vehicle parameters file
+
+// set CACC constant spacing
+#define PAR_CACC_SPACING                 "ccsp"
+
+// get ACC computed acceleration when faked CACC controller is enabled
+#define PAR_ACC_ACCELERATION             "ccacc"
+
+// determine whether a vehicle has crashed or not
+#define PAR_CRASHED                      "cccr"
+
+// set a fixed acceleration to a vehicle controlled by CC/ACC/CACC
+#define PAR_FIXED_ACCELERATION           "ccfa"
+
+// get vehicle speed and acceleration, needed for example by the platoon leader (get: vehicle)
+#define PAR_SPEED_AND_ACCELERATION       "ccsa"
+
+// set speed and acceleration of the platoon leader
+#define PAR_LEADER_SPEED_AND_ACCELERATION "cclsa"
+
+// get lane count for the street the vehicle is currently traveling
+#define PAR_LANES_COUNT                  "cclc"
+
+// set the cruise control desired speed
+#define PAR_CC_DESIRED_SPEED             "ccds"
+
+// set the currently active vehicle controller which can be either the driver, or the ACC or the CACC
+#define PAR_ACTIVE_CONTROLLER            "ccac"
+
+// get whether a cruise controller is installed in the car
+#define PAR_CC_INSTALLED                 "ccci"
+
+// get radar data from the car
+#define PAR_RADAR_DATA                   "ccrd"
+
+// communicate with the cruise control to give him fake indications. this can be useful when you want
+// to advance a vehicle to a certain position, for example, for joining a platoon. clearly the ACC
+// must always take into consideration both fake and real data
+#define PAR_LEADER_FAKE_DATA             "cclfd"
+#define PAR_FRONT_FAKE_DATA              "ccffd"
+
+// get the distance that a car has to travel until it reaches the end of its route
+#define PAR_DISTANCE_TO_END              "ccdte"
+
+// get the distance from the beginning of the route
+#define PAR_DISTANCE_FROM_BEGIN          "ccdfb"
+
+// set speed and acceleration of preceding vehicle
+#define PAR_PRECEDING_SPEED_AND_ACCELERATION "ccpsa"
+
+// set ACC headway time
+#define PAR_ACC_HEADWAY_TIME             "ccaht"
 
 }
 
