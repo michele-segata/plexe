@@ -33,6 +33,7 @@ class TraCICommandInterface
 
 		// Vehicle methods
 		bool addVehicle(std::string vehicleId, std::string vehicleTypeId, std::string routeId, simtime_t emitTime_st = -DEPART_NOW, double emitPosition = -DEPART_POS_BASE, double emitSpeed = -DEPART_SPEED_MAX, int8_t emitLane = -DEPART_LANE_BEST_FREE);
+		void executePlexeTimestep();
 		class Vehicle {
 			public:
 				Vehicle(TraCICommandInterface* traci, std::string nodeId) : traci(traci), nodeId(nodeId) {
@@ -56,6 +57,9 @@ class TraCICommandInterface
 				int32_t getLaneIndex();
 				std::string getTypeId();
 				bool changeVehicleRoute(const std::list<std::string>& roads);
+				void setLaneChangeMode(int mode);
+				void getLaneChangeState(int direction, int &state1, int &state2);
+				void changeLane(int lane, int duration);
 				void setParameter(const std::string &parameter, int value);
 				void setParameter(const std::string &parameter, double value);
 				void setParameter(const std::string &parameter, const std::string &value);
@@ -142,9 +146,11 @@ class TraCICommandInterface
 				 * Set a fixed lane a car should move to
 				 *
 				 * @param laneIndex lane to move to, where 0 indicates the rightmost.
+				 * @param safe whether changing lane should respect safety distance
+				 * or simply avoid collisions
 				 * Set the lane index to -1 to give control back to the human driver
 				 */
-				void setFixedLane(int8_t laneIndex);
+				void setFixedLane(int8_t laneIndex, bool safe=false);
 
 				/**
 				 * Gets the data measured by the radar, i.e., distance and relative speed.
@@ -391,6 +397,15 @@ class TraCICommandInterface
 		int32_t genericGetInt(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId);
 		std::list<std::string> genericGetStringList(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId);
 		std::list<Coord> genericGetCoordList(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId);
+
+		typedef struct {
+			int lane;
+			bool safe;
+			bool wait;
+		} PlexeLaneChange;
+		typedef std::map<std::string, PlexeLaneChange> PlexeLaneChanges;
+		PlexeLaneChanges laneChanges;
+		void __changeLane(std::string veh, int current, int direction, bool safe=true);
 };
 
 }

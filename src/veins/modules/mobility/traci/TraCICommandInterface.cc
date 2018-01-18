@@ -9,6 +9,7 @@
 #include "veins/modules/mobility/traci/ParBuffer.h"
 
 #include "veins/modules/application/platooning/CC_Const.h"
+#define LCA_OVERLAPPING 1 << 13
 
 #ifdef _WIN32
 #define realpath(N,R) _fullpath((R),(N),_MAX_PATH)
@@ -358,6 +359,52 @@ bool TraCICommandInterface::Vehicle::changeVehicleRoute(const std::list<std::str
 	TraCIBuffer obuf = connection->query(CMD_SET_VEHICLE_VARIABLE, buf);
 	ASSERT(obuf.eof());
 	return true;
+}
+
+void TraCICommandInterface::Vehicle::setLaneChangeMode(int mode) {
+	uint8_t variableId = VAR_LANECHANGE_MODE;
+	uint8_t type = TYPE_INTEGER;
+	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << type << mode);
+	ASSERT(buf.eof());
+}
+
+void TraCICommandInterface::Vehicle::getLaneChangeState(int direction, int &state1, int &state2) {
+	TraCIBuffer response = traci->connection.query(CMD_GET_VEHICLE_VARIABLE,
+	    TraCIBuffer() << static_cast<uint8_t>(CMD_CHANGELANE) << nodeId <<
+	    static_cast<uint8_t>(TYPE_INTEGER) << direction);
+	uint8_t cmdLength;
+	response >> cmdLength;
+	uint8_t responseId;
+	response >> responseId;
+	ASSERT(responseId == RESPONSE_GET_VEHICLE_VARIABLE);
+	uint8_t variable;
+	response >> variable;
+	ASSERT(variable == CMD_CHANGELANE);
+	std::string id;
+	response >> id;
+	uint8_t type;
+	response >> type;
+	ASSERT(type == TYPE_COMPOUND);
+	int count;
+	response >> count;
+	ASSERT(count == 2);
+	response >> type;
+	ASSERT(type == TYPE_INTEGER);
+	response >> state1;
+	response >> type;
+	ASSERT(type == TYPE_INTEGER);
+	response >> state2;
+}
+
+void TraCICommandInterface::Vehicle::changeLane(int lane, int duration) {
+	uint8_t commandType = TYPE_COMPOUND;
+	int nParameters = 2;
+	uint8_t variableId = CMD_CHANGELANE;
+	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId
+	                                          << nodeId << commandType << nParameters <<
+	                                          static_cast<uint8_t>(TYPE_BYTE) << (uint8_t) lane <<
+	                                          static_cast<uint8_t>(TYPE_INTEGER) << duration);
+	ASSERT(buf.eof());
 }
 
 void TraCICommandInterface::Vehicle::setParameter(const std::string &parameter, int value) {
@@ -738,6 +785,7 @@ bool TraCICommandInterface::Vehicle::isCrashed() {
 
 void TraCICommandInterface::Vehicle::setLaneChangeAction(int action) {
 
+	std::cout << "setLaneChangeAction API is deprecated. Please remove it from your code\n";
 	uint8_t variableId = VAR_LANECHANGE_MODE;
 	uint8_t type = TYPE_INTEGER;
 	int traciAction;
@@ -750,30 +798,67 @@ void TraCICommandInterface::Vehicle::setLaneChangeAction(int action) {
 
 }
 
-void TraCICommandInterface::Vehicle::setFixedLane(int8_t laneIndex) {
+void TraCICommandInterface::executePlexeTimestep() {
+	std::vector<PlexeLaneChanges::iterator> satisfied;
+	for (auto i = laneChanges.begin(); i != laneChanges.end(); i++) {
+		if (i->second.wait) {
+			i->second.wait = false;
+			continue;
+		}
+		int current = vehicle(i->first).getLaneIndex();
+		int nLanes = i->second.lane - current;
+		int direction;
+		if (nLanes > 0)
+			direction = 1;
+		else if (nLanes < 0)
+			direction = -1;
+		else
+			direction = 0;
 
-	if (laneIndex >= 0)
-		setLaneChangeAction(Plexe::MOVE_TO_FIXED_LANE);
-	else
-		setLaneChangeAction(Plexe::DRIVER_CHOICE);
+		if (direction == 0) {
+			satisfied.push_back(i);
+			if (i->second.safe)
+				vehicle(i->first).setLaneChangeMode(FIX_LC);
+			else
+				vehicle(i->first).setLaneChangeMode(FIX_LC_AGGRESSIVE);
+		}
+		else {
+			__changeLane(i->first, current, direction, i->second.safe);
+		}
+	}
+	for (int i = 0; i < satisfied.size(); i++)
+		laneChanges.erase(satisfied[i]);
+}
 
-	uint8_t commandType = TYPE_COMPOUND;
-	int nParameters = 2;
-	uint8_t laneType = TYPE_BYTE;
-	uint8_t durationType = TYPE_INTEGER;
-	uint8_t variableId = CMD_CHANGELANE;
-	int duration;
-	if (laneIndex >= 0) {
-		// set duration to the maximum possible integer (24 days in milliseconds)
-		duration = 2147483647;
+void TraCICommandInterface::__changeLane(std::string veh, int current, int direction, bool safe) {
+	if (safe) {
+		vehicle(veh).setLaneChangeMode(FIX_LC);
+		vehicle(veh).changeLane(current + direction, 0);
 	}
 	else {
-		// set the duration to 1 millisecond to cancel current lane choice
-		duration = 1;
-		laneIndex = getLaneIndex();
+		int state, state2;
+		vehicle(veh).getLaneChangeState(direction, state, state2);
+		if ((state & LCA_OVERLAPPING) == 0) {
+			vehicle(veh).setLaneChangeMode(FIX_LC_AGGRESSIVE);
+			vehicle(veh).changeLane(current + direction, 0);
+			laneChanges[veh].wait = true;
+		}
 	}
-	TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << commandType << nParameters << laneType << laneIndex << durationType << duration);
-	ASSERT(buf.eof());
+}
+
+void TraCICommandInterface::Vehicle::setFixedLane(int8_t laneIndex, bool safe) {
+
+	if (laneIndex == -1) {
+		setLaneChangeMode(DEFAULT_NOTRACI_LC);
+		return;
+	}
+
+	PlexeLaneChange lc;
+	lc.lane = laneIndex;
+	lc.safe = safe;
+	lc.wait = false;
+	traci->laneChanges[nodeId] = lc;
+
 }
 
 void TraCICommandInterface::Vehicle::getRadarMeasurements(double &distance, double &relativeSpeed) {

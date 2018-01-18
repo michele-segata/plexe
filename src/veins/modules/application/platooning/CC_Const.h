@@ -36,6 +36,7 @@ enum PLATOONING_LANE_CHANGE_ACTION {
  * @brief TraCI modes for lane changing
  */
 #define FIX_LC 0b1000000000
+#define FIX_LC_AGGRESSIVE 0b0000000000
 #define DEFAULT_NOTRACI_LC 0b1010101010
 
 /** @enum ACTIVE_CONTROLLER

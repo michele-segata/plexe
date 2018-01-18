@@ -544,6 +544,8 @@ void TraCIScenarioManager::executeOneTimestep() {
 
 	if (!autoShutdownTriggered) scheduleAt(simTime()+updateInterval, executeOneTimestepTrigger);
 
+	commandIfc->executePlexeTimestep();
+
 }
 
 void TraCIScenarioManager::subscribeToVehicleVariables(std::string vehicleId) {
