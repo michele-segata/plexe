@@ -407,6 +407,11 @@ void TraCICommandInterface::Vehicle::changeLane(int lane, int duration) {
 	ASSERT(buf.eof());
 }
 
+double TraCICommandInterface::Vehicle::getLength() {
+	return traci->genericGetDouble(static_cast<uint8_t>(CMD_GET_VEHICLE_VARIABLE), nodeId,
+	                               static_cast<uint8_t>(VAR_LENGTH), static_cast<uint8_t>(RESPONSE_GET_VEHICLE_VARIABLE));
+}
+
 void TraCICommandInterface::Vehicle::setParameter(const std::string &parameter, int value) {
 	std::stringstream strValue;
 	strValue << value;

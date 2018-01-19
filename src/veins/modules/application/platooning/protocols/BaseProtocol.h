@@ -69,6 +69,8 @@ class BaseProtocol : public BaseApplLayer {
 		int myId;
 		//sequence number of sent messages
 		int seq_n;
+		//vehicle length
+		double length;
 
 		//beaconing interval (i.e., update frequency)
 		SimTime beaconingInterval;

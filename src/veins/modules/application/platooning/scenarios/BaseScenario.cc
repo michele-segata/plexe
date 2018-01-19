@@ -112,8 +112,8 @@ void BaseScenario::initializeControllers() {
 	if (!positionHelper->isLeader()) {
 		//my position
 		vehicleData.index = positionHelper->getPosition();
-		//my length. TODO: take it from SUMO
-		vehicleData.length = 4;
+		//my length
+		vehicleData.length = traciVehicle->getLength();
 		//the rest is all dummy data
 		vehicleData.acceleration = 10;
 		vehicleData.positionX = 400000;

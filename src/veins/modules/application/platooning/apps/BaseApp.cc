@@ -116,8 +116,7 @@ void BaseApp::handleLowerMsg(cMessage *msg) {
 			struct Plexe::VEHICLE_DATA vehicleData;
 			vehicleData.index = positionHelper->getMemberPosition(epkt->getVehicleId());
 			vehicleData.acceleration = epkt->getAcceleration();
-			//for now length is fixed to 4 meters. TODO: take it from sumo
-			vehicleData.length = 4;
+			vehicleData.length = epkt->getLength();
 			vehicleData.positionX = epkt->getPositionX();
 			vehicleData.positionY = epkt->getPositionY();
 			vehicleData.speed = epkt->getSpeed();

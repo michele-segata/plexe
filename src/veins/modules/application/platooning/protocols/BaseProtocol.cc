@@ -55,6 +55,7 @@ void BaseProtocol::initialize(int stage) {
 
 		//this is the id of the vehicle. used also as network address
 		myId = positionHelper->getId();
+		length = traciVehicle->getLength();
 
 		//tell the unicast protocol below which mac address to use via control message
 		UnicastProtocolControlMessage *setMacAddress = new UnicastProtocolControlMessage("");
@@ -191,6 +192,7 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 	pkt->setPositionY(position.y);
 	//set the time to now
 	pkt->setTime(time);
+	pkt->setLength(length);
 	//i generated the message, i send it
 	pkt->setRelayerId(myId);
 	pkt->setKind(BEACON_TYPE);

@@ -60,6 +60,7 @@ class TraCICommandInterface
 				void setLaneChangeMode(int mode);
 				void getLaneChangeState(int direction, int &state1, int &state2);
 				void changeLane(int lane, int duration);
+				double getLength();
 				void setParameter(const std::string &parameter, int value);
 				void setParameter(const std::string &parameter, double value);
 				void setParameter(const std::string &parameter, const std::string &value);
