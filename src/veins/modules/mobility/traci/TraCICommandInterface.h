@@ -121,6 +121,18 @@ class TraCICommandInterface
 				double getCACCConstantSpacing();
 
 				/**
+				 * Sets all PATH's CACC and FAKED CACC parameters. Parameters set to negative values
+				 * will remain untouched
+				 */
+				void setPathCACCParameters(double omegaN=-1, double xi=-1, double c1=-1, double distance=-1);
+
+				/**
+				 * Sets all Ploeg's CACCparameters. Parameters set to negative values
+				 * will remain untouched
+				 */
+				void setPloegCACCParameters(double kp=-1, double kd=-1, double h=-1);
+
+				/**
 				 * Sets the headway time for the ACC
 				 *
 				 * @param vehicleId the id of the vehicle

@@ -782,6 +782,26 @@ double TraCICommandInterface::Vehicle::getCACCConstantSpacing() {
 	return v;
 }
 
+void TraCICommandInterface::Vehicle::setPathCACCParameters(double omegaN, double xi, double c1, double distance) {
+	if (omegaN >= 0)
+		setParameter(CC_PAR_CACC_OMEGA_N, omegaN);
+	if (xi >= 0)
+		setParameter(CC_PAR_CACC_XI, xi);
+	if (c1 >= 0)
+		setParameter(CC_PAR_CACC_C1, c1);
+	if (distance >= 0)
+		setParameter(PAR_CACC_SPACING, distance);
+}
+
+void TraCICommandInterface::Vehicle::setPloegCACCParameters(double kp, double kd, double h) {
+	if (kp >= 0)
+		setParameter(CC_PAR_PLOEG_KP, kp);
+	if (kd >= 0)
+		setParameter(CC_PAR_PLOEG_KD, kd);
+	if (h >= 0)
+		setParameter(CC_PAR_PLOEG_H, h);
+}
+
 void TraCICommandInterface::Vehicle::setACCHeadwayTime(double headway) {
 	setParameter(PAR_ACC_HEADWAY_TIME, headway);
 }
