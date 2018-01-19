@@ -950,6 +950,24 @@ void TraCICommandInterface::Vehicle::useControllerAcceleration(bool use) {
 	setParameter(PAR_USE_CONTROLLER_ACCELERATION, use ? 1 : 0);
 }
 
+void TraCICommandInterface::Vehicle::getEngineData(int &gear, double &rpm) {
+	ParBuffer inBuf;
+	std::string v;
+	inBuf << PAR_ENGINE_DATA;
+	getParameter(inBuf.str(), v);
+	ParBuffer outBuf(v);
+	outBuf >> gear >> rpm;
+}
+
+void TraCICommandInterface::Vehicle::enableAutoFeed(bool enable, std::string leaderId, std::string frontId) {
+	if (enable && (leaderId.compare("") == 0 || frontId.compare("") == 0))
+		return;
+	ParBuffer inBuf;
+	if (enable)
+		inBuf << 1 << leaderId << frontId;
+	else
+		inBuf << 0;
+	setParameter(PAR_USE_AUTO_FEEDING, inBuf.str());
 }
 
 }

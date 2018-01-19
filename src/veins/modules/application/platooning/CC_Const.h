@@ -156,6 +156,12 @@ struct VEHICLE_DATA {
 // set ACC headway time
 #define PAR_ACC_HEADWAY_TIME             "ccaht"
 
+// return engine information (for the realistic engine model)
+#define PAR_ENGINE_DATA                  "cced"
+
+// enabling/disabling auto feeding
+#define PAR_USE_AUTO_FEEDING             "ccaf"
+
 }
 
 #endif /* CC_CONST_H */

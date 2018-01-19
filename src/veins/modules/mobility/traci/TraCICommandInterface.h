@@ -209,6 +209,26 @@ class TraCICommandInterface
 				 */
 				void useControllerAcceleration(bool use);
 
+				/**
+				 * If the vehicle is using the realistic engine model, this method
+				 * returns the current gear and the engine RPM
+				 * @param gear the current gear. if the realistic engine model is
+				 * not used, this field is set to -1
+				 * @param rpm the current engine rpm
+				 */
+				void getEngineData(int &gear, double &rpm);
+
+				/**
+				 * Activates or deactivates autofeeding, meaning that the user is not
+				 * simulating inter-vehicle communication, so the CACCs will
+				 * automatically take the required data from other vehicles automatically
+				 * @param enable: boolean to enable or disable auto feeding
+				 * @param leaderId: id of the leader vehicle. When disabling auto
+				 * feeding, this parameter can be an empty string
+				 * @param frontId: id of the front vehicle. When disabling auto
+				 * feeding, this parameter can be an empty string
+				 */
+				void enableAutoFeed(bool enable, std::string leaderId="", std::string frontId="");
 
 			protected:
 				TraCICommandInterface* traci;
