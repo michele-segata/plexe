@@ -32,8 +32,6 @@ simple SimplePlatooningBeaconing like BaseProtocol
         //size of platooning messages
         int packetSize;// = default(25);
         int headerLength @unit("bit") = default(0bit);
-        //send actual or controller-computed acceleration
-        bool useControllerAcceleration = default(true);
         @display("i=block/network2");
         @class(SimplePlatooningBeaconing);
     gates:

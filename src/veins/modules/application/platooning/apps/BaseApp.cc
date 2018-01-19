@@ -106,11 +106,13 @@ void BaseApp::handleLowerMsg(cMessage *msg) {
 
 			//if the message comes from the leader
 			if (epkt->getVehicleId() == positionHelper->getLeaderId()) {
-				traciVehicle->setPlatoonLeaderData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
+				traciVehicle->setLeaderVehicleData(epkt->getControllerAcceleration(), epkt->getAcceleration(),
+				    epkt->getSpeed(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
 			}
 			//if the message comes from the vehicle in front
 			if (epkt->getVehicleId() == positionHelper->getFrontId()) {
-				traciVehicle->setPrecedingVehicleData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
+				traciVehicle->setFrontVehicleData(epkt->getControllerAcceleration(), epkt->getAcceleration(),
+				    epkt->getSpeed(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
 			}
 			//send data about every vehicle to the CACC. this is needed by the consensus controller
 			struct Plexe::VEHICLE_DATA vehicleData;

@@ -71,9 +71,6 @@ void BaseProtocol::initialize(int stage) {
 		priority = par("priority").longValue();
 		ASSERT2(priority >= 0 && priority <= 7, "priority value must be between 0 and 7");
 
-		//use controller or real acceleration?
-		useControllerAcceleration = par("useControllerAcceleration").boolValue();
-
 		//init messages for scheduleAt
 		sendBeacon = new cMessage("sendBeacon");
 		recordData = new cMessage("recordData");
@@ -180,12 +177,8 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 
 	//create platooning beacon with data about the car
 	pkt = new PlatooningBeacon();
-	if (useControllerAcceleration) {
-		pkt->setAcceleration(controllerAcceleration);
-	}
-	else {
-		pkt->setAcceleration(acceleration);
-	}
+	pkt->setControllerAcceleration(controllerAcceleration);
+	pkt->setAcceleration(acceleration);
 	pkt->setSpeed(speed);
 	pkt->setVehicleId(myId);
 	pkt->setPositionX(position.x);

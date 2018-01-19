@@ -731,16 +731,26 @@ double TraCICommandInterface::Vehicle::getACCAcceleration() {
 	return v;
 }
 
-void TraCICommandInterface::Vehicle::setPlatoonLeaderData(double speed, double acceleration, double positionX, double positionY, double time) {
+void TraCICommandInterface::Vehicle::setLeaderVehicleData(double controllerAcceleration, double acceleration, double speed, double positionX, double positionY, double time) {
 	ParBuffer buf;
-	buf << speed << acceleration << positionX << positionY << time;
+	buf << speed << acceleration << positionX << positionY << time << controllerAcceleration;
 	setParameter(PAR_LEADER_SPEED_AND_ACCELERATION, buf.str());
 }
 
-void TraCICommandInterface::Vehicle::setPrecedingVehicleData(double speed, double acceleration, double positionX, double positionY, double time) {
+void TraCICommandInterface::Vehicle::setPlatoonLeaderData(double speed, double acceleration, double positionX, double positionY, double time) {
+	std::cout << "setPlatoonLeaderData() is deprecated and will be removed. Please use setLeaderVehicleData()\n";
+	setLeaderVehicleData(acceleration, acceleration, speed, positionX, positionY, time);
+}
+
+void TraCICommandInterface::Vehicle::setFrontVehicleData(double controllerAcceleration, double acceleration, double speed, double positionX, double positionY, double time) {
 	ParBuffer buf;
-	buf << speed << acceleration << positionX << positionY << time;
+	buf << speed << acceleration << positionX << positionY << time << controllerAcceleration;
 	setParameter(PAR_PRECEDING_SPEED_AND_ACCELERATION, buf.str());
+}
+
+void TraCICommandInterface::Vehicle::setPrecedingVehicleData(double speed, double acceleration, double positionX, double positionY, double time) {
+	std::cout << "setPrecedingVehicleData() is deprecated and will be removed. Please use setFrontVehicleData()\n";
+	setFrontVehicleData(acceleration, acceleration, speed, positionX, positionY, time);
 }
 
 unsigned int TraCICommandInterface::Vehicle::getLanesCount() {
@@ -873,16 +883,27 @@ void TraCICommandInterface::Vehicle::getRadarMeasurements(double &distance, doub
 	buf >> distance >> relativeSpeed;
 }
 
-void TraCICommandInterface::Vehicle::setLeaderFakeData(double leaderSpeed, double leaderAcceleration) {
+void TraCICommandInterface::Vehicle::setLeaderVehicleFakeData(double controllerAcceleration, double acceleration, double speed) {
 	ParBuffer buf;
-	buf << leaderSpeed << leaderAcceleration;
+	buf << speed << acceleration << controllerAcceleration;
 	setParameter(PAR_LEADER_FAKE_DATA, buf.str());
 }
 
-void TraCICommandInterface::Vehicle::setFrontFakeData(double frontDistance, double frontSpeed, double frontAcceleration) {
+void TraCICommandInterface::Vehicle::setLeaderFakeData(double leaderSpeed, double leaderAcceleration) {
+	std::cout << "setLeaderFakeData() is deprecated and will be removed. Please use setLeaderVehicleFakeData()\n";
+	setLeaderVehicleFakeData(leaderAcceleration, leaderAcceleration, leaderSpeed);
+}
+
+void TraCICommandInterface::Vehicle::setFrontVehicleFakeData(double controllerAcceleration, double acceleration,
+    double speed, double distance) {
 	ParBuffer buf;
-	buf << frontSpeed << frontAcceleration << frontDistance;
+	buf << speed << acceleration << distance << controllerAcceleration;
 	setParameter(PAR_FRONT_FAKE_DATA, buf.str());
+}
+
+void TraCICommandInterface::Vehicle::setFrontFakeData(double frontDistance, double frontSpeed, double frontAcceleration) {
+	std::cout << "setFrontFakeData() is deprecated and will be removed. Please use setFrontVehicleFakeData()\n";
+	setFrontVehicleFakeData(frontAcceleration, frontAcceleration, frontSpeed, frontDistance);
 }
 
 double TraCICommandInterface::Vehicle::getDistanceFromRouteBegin() {
@@ -909,7 +930,7 @@ void TraCICommandInterface::Vehicle::setVehicleData(const struct Plexe::VEHICLE_
 	setParameter(CC_PAR_VEHICLE_DATA, buf.str());
 }
 
-void TraCICommandInterface::Vehicle::getVehicleData(struct Plexe::VEHICLE_DATA *data, int index) {
+void TraCICommandInterface::Vehicle::getStoredVehicleData(struct Plexe::VEHICLE_DATA *data, int index) {
 	ParBuffer inBuf;
 	std::string v;
 	inBuf << CC_PAR_VEHICLE_DATA << index;
@@ -917,7 +938,18 @@ void TraCICommandInterface::Vehicle::getVehicleData(struct Plexe::VEHICLE_DATA *
 	ParBuffer outBuf(v);
 	outBuf >> data->index >> data->speed >> data->acceleration >>
 	          data->positionX >> data->positionY >> data->time >>
-	          data->length;
+	          data->length >> data->u;
+}
+
+void TraCICommandInterface::Vehicle::getVehicleData(struct Plexe::VEHICLE_DATA *data, int index) {
+	std::cout << "getVehicleData() is deprecated and will be removed. Please use getStoredVehicleData()\n";
+	getStoredVehicleData(data, index);
+}
+
+void TraCICommandInterface::Vehicle::useControllerAcceleration(bool use) {
+	setParameter(PAR_USE_CONTROLLER_ACCELERATION, use ? 1 : 0);
+}
+
 }
 
 }

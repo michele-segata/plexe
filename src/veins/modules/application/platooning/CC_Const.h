@@ -67,6 +67,7 @@ struct VEHICLE_DATA {
     double positionY;    //position of the vehicle in the simulation
     double time;         //time at which such information was read from vehicle's sensors
     double length;       //vehicle length
+    double u;            //controller acceleration
 };
 
 #define MAX_N_CARS 8
@@ -118,6 +119,9 @@ struct VEHICLE_DATA {
 
 // set speed and acceleration of the platoon leader
 #define PAR_LEADER_SPEED_AND_ACCELERATION "cclsa"
+
+// set whether CACCs should use real or controller acceleration
+#define PAR_USE_CONTROLLER_ACCELERATION "ccca"
 
 // get lane count for the street the vehicle is currently traveling
 #define PAR_LANES_COUNT                  "cclc"

@@ -33,6 +33,7 @@ void BaseScenario::initialize(int stage) {
 		ploegH = par("ploegH").doubleValue();
 		ploegKp = par("ploegKp").doubleValue();
 		ploegKd = par("ploegKd").doubleValue();
+		useControllerAcceleration = par("useControllerAcceleration").boolValue();
 
 		useRealisticEngine = par("useRealisticEngine").boolValue();
 		if (useRealisticEngine) {
@@ -106,6 +107,8 @@ void BaseScenario::initializeControllers() {
 	//consensus parameters
 	traciVehicle->setParameter(CC_PAR_VEHICLE_POSITION, positionHelper->getPosition());
 	traciVehicle->setParameter(CC_PAR_PLATOON_SIZE, positionHelper->getPlatoonSize());
+	//use of controller acceleration
+	traciVehicle->useControllerAcceleration(useControllerAcceleration);
 
 	Plexe::VEHICLE_DATA vehicleData;
 	//initialize own vehicle data

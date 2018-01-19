@@ -78,8 +78,6 @@ class BaseProtocol : public BaseApplLayer {
 		int priority;
 		//packet size of the platooning message
 		int packetSize;
-		//determine whether to send the actual acceleration or the one just computed by the controller
-		bool useControllerAcceleration;
 
 		//input/output gates from/to upper layer
 		int upperControlIn, upperControlOut, lowerLayerIn, lowerLayerOut;

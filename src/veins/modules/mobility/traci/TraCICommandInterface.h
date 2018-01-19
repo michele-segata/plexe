@@ -75,11 +75,13 @@ class TraCICommandInterface
 				 * Sets the data about the leader of the platoon. This data is usually received
 				 * by means of wireless communications
 				 */
+				void setLeaderVehicleData(double controllerAcceleration, double acceleration, double speed, double positionX, double positionY, double time);
 				void setPlatoonLeaderData(double leaderSpeed, double leaderAcceleration, double positionX, double positionY, double time);
 				/**
 				 * Sets the data about the preceding vehicle in the platoon. This data is usually
 				 * received by means of wireless communications
 				 */
+				void setFrontVehicleData(double controllerAcceleration, double acceleration, double speed, double positionX, double positionY, double time);
 				void setPrecedingVehicleData(double speed, double acceleration, double positionX, double positionY, double time);
 				/**
 				 * Gets the data about a vehicle. This can be used by a platoon leader in order to query for the acceleration
@@ -163,8 +165,10 @@ class TraCICommandInterface
 				 */
 				void getRadarMeasurements(double &distance, double &relativeSpeed);
 
+				void setLeaderVehicleFakeData(double controllerAcceleration, double acceleration, double speed);
 				void setLeaderFakeData(double leaderSpeed, double leaderAcceleration);
 
+				void setFrontVehicleFakeData(double controllerAcceleration, double acceleration, double speed, double distance);
 				void setFrontFakeData(double frontDistance, double frontSpeed, double frontAcceleration);
 
 				/**
@@ -196,6 +200,15 @@ class TraCICommandInterface
 				 * Gets data information about a vehicle in the same platoon, as stored by this car
 				 */
 				void getVehicleData(struct Plexe::VEHICLE_DATA *data, int index);
+				void getStoredVehicleData(struct Plexe::VEHICLE_DATA *data, int index);
+
+				/**
+				 * Determines whether PATH's and PLOEG's CACCs should use the controller
+				 * or the real acceleration when computing the control action
+				 * @param use if set to true, the vehicle will use the controller acceleration
+				 */
+				void useControllerAcceleration(bool use);
+
 
 			protected:
 				TraCICommandInterface* traci;

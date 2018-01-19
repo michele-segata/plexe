@@ -50,6 +50,7 @@ simple AccelerateAndBrakeScenario like BaseScenario
         double ploegH @unit("s") = default(0.5s);
         double ploegKp = default(0.2);
         double ploegKd = default(0.7);
+        bool useControllerAcceleration = default(true);
 
         //location of the file with vehicle parameters
         string vehicleFile = default("./vehicles.xml");

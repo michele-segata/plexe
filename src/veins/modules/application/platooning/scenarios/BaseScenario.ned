@@ -38,6 +38,8 @@ moduleinterface BaseScenario extends IBaseApplLayer
         double ploegH @unit("s");
         double ploegKp;
         double ploegKd;
+        //use the real or the controller acceleration for computing the acceleration
+        bool useControllerAcceleration;
 
         //location of the file with vehicle parameters
         string vehicleFile;
