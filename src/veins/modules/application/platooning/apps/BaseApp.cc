@@ -123,6 +123,7 @@ void BaseApp::handleLowerMsg(cMessage *msg) {
 			vehicleData.positionY = epkt->getPositionY();
 			vehicleData.speed = epkt->getSpeed();
 			vehicleData.time = epkt->getTime();
+			vehicleData.u = epkt->getControllerAcceleration();
 			//send information to CACC
 			traciVehicle->setVehicleData(&vehicleData);
 

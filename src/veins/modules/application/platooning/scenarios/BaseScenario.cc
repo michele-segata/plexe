@@ -123,6 +123,7 @@ void BaseScenario::initializeControllers() {
 		vehicleData.positionY = 0;
 		vehicleData.speed = 200;
 		vehicleData.time = simTime().dbl();
+		vehicleData.u = 0;
 		traciVehicle->setVehicleData(&vehicleData);
 	}
 
