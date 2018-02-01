@@ -60,6 +60,11 @@ class BaseScenario : public BaseApplLayer
 		double ploegH;
 		double ploegKp;
 		double ploegKd;
+		double flatbedKa;
+		double flatbedKv;
+		double flatbedKp;
+		double flatbedH;
+		double flatbedD;
 		bool useControllerAcceleration;
 
 		//location of the file with vehicle parameters

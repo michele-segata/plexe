@@ -50,6 +50,11 @@ simple AccelerateAndBrakeScenario like BaseScenario
         double ploegH @unit("s") = default(0.5s);
         double ploegKp = default(0.2);
         double ploegKd = default(0.7);
+        double flatbedKa = default(2.4);
+        double flatbedKv = default(0.6);
+        double flatbedKp = default(12);
+        double flatbedH = default(4);
+        double flatbedD = default(5);
         bool useControllerAcceleration = default(true);
 
         //location of the file with vehicle parameters

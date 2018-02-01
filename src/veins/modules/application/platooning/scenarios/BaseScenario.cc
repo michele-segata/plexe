@@ -33,6 +33,11 @@ void BaseScenario::initialize(int stage) {
 		ploegH = par("ploegH").doubleValue();
 		ploegKp = par("ploegKp").doubleValue();
 		ploegKd = par("ploegKd").doubleValue();
+		flatbedKa = par("flatbedKa").doubleValue();
+		flatbedKv = par("flatbedKv").doubleValue();
+		flatbedKp = par("flatbedKp").doubleValue();
+		flatbedH = par("flatbedH").doubleValue();
+		flatbedD = par("flatbedD").doubleValue();
 		useControllerAcceleration = par("useControllerAcceleration").boolValue();
 
 		useRealisticEngine = par("useRealisticEngine").boolValue();
@@ -54,6 +59,9 @@ void BaseScenario::initialize(int stage) {
 		}
 		else if (strcmp(strController, "CONSENSUS") == 0) {
 			controller = Plexe::CONSENSUS;
+		}
+		else if (strcmp(strController, "FLATBED") == 0) {
+			controller = Plexe::FLATBED;
 		}
 		else {
 			throw cRuntimeError("Invalid controller selected");
@@ -104,6 +112,12 @@ void BaseScenario::initializeControllers() {
 	traciVehicle->setParameter(CC_PAR_PLOEG_H, ploegH);
 	traciVehicle->setParameter(CC_PAR_PLOEG_KP, ploegKp);
 	traciVehicle->setParameter(CC_PAR_PLOEG_KD, ploegKd);
+	//flatbed's parameters
+	traciVehicle->setParameter(CC_PAR_FLATBED_KA, flatbedKa);
+	traciVehicle->setParameter(CC_PAR_FLATBED_KV, flatbedKv);
+	traciVehicle->setParameter(CC_PAR_FLATBED_KP, flatbedKp);
+	traciVehicle->setParameter(CC_PAR_FLATBED_H, flatbedH);
+	traciVehicle->setParameter(CC_PAR_FLATBED_D, flatbedD);
 	//consensus parameters
 	traciVehicle->setParameter(CC_PAR_VEHICLE_POSITION, positionHelper->getPosition());
 	traciVehicle->setParameter(CC_PAR_PLATOON_SIZE, positionHelper->getPlatoonSize());

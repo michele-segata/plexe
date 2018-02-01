@@ -38,6 +38,11 @@ moduleinterface BaseScenario extends IBaseApplLayer
         double ploegH @unit("s");
         double ploegKp;
         double ploegKd;
+        double flatbedKa;
+        double flatbedKv;
+        double flatbedKp;
+        double flatbedH;
+        double flatbedD;
         //use the real or the controller acceleration for computing the acceleration
         bool useControllerAcceleration;
 
