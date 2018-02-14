@@ -429,10 +429,6 @@ void UnicastProtocol::onData(WaveShortMessage* wsm)
 
 void UnicastProtocol::finish()
 {
-	if (timeout) {
-		cancelAndDelete(timeout);
-		timeout = 0;
-	}
 	BaseWaveApplLayer::finish();
 }
 
@@ -443,4 +439,8 @@ UnicastProtocol::UnicastProtocol()
 
 UnicastProtocol::~UnicastProtocol()
 {
+	if (timeout) {
+                cancelAndDelete(timeout);
+                timeout = nullptr;
+	}
 }
