@@ -242,6 +242,39 @@ class TraCICommandInterface
 				 */
 				void enableAutoFeed(bool enable, std::string leaderId="", std::string frontId="");
 
+				/**
+				 * Activates or deactivates prediction, i.e., interpolation of missing
+				 * data for the control system
+				 * @param enable: enable or disable prediction
+				 */
+				void usePrediction(bool enable);
+
+				/**
+				 * Adds a platoon member to this vehicle, usually considered to be the
+				 * leader. Members are used to perform coordinated, whole-platoon lane
+				 * changes
+				 * @param memberId: sumo id of the member being added
+				 * @param position: position (0-based) of the vehicle
+				 */
+				void addPlatoonMember(std::string memberId, int position);
+
+				/**
+				 * Removes a platoon member from this vehicle, usually considered to be the
+				 * leader. Members are used to perform coordinated, whole-platoon lane
+				 * changes
+				 * @param memberId: sumo id of the member being removed
+				 */
+				void removePlatoonMember(std::string memberId);
+
+				/**
+				 * Enables/disables automatic, coordinated, whole-platoon lane changes.
+				 * This function should be invoked on the leader which decides whether
+				 * the platoon can gain speed by changing lane. The leader will then
+				 * check whether lane changing is possible and, in case, do so
+				 * @param enable: enable or disable automatic platoon lane changes
+				 */
+				void enableAutoLaneChanging(bool enable);
+
 			protected:
 				TraCICommandInterface* traci;
 				TraCIConnection* connection;

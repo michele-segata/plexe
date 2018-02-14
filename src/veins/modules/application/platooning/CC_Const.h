@@ -168,6 +168,16 @@ struct VEHICLE_DATA {
 // enabling/disabling auto feeding
 #define PAR_USE_AUTO_FEEDING             "ccaf"
 
+// enabling/disabling data prediction
+#define PAR_USE_PREDICTION               "ccup"
+
+// add/remove members from own platoon
+#define PAR_ADD_MEMBER                   "ccam"
+#define PAR_REMOVE_MEMBER                "ccrm"
+
+// let the leader automatically change lane for the whole platoon if there is a speed advantage
+#define PAR_ENABLE_AUTO_LANE_CHANGE      "ccalc"
+
 }
 
 #endif /* CC_CONST_H */

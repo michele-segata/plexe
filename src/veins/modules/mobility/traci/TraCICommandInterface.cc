@@ -990,4 +990,22 @@ void TraCICommandInterface::Vehicle::enableAutoFeed(bool enable, std::string lea
 	setParameter(PAR_USE_AUTO_FEEDING, inBuf.str());
 }
 
+void TraCICommandInterface::Vehicle::usePrediction(bool enable) {
+	setParameter(PAR_USE_PREDICTION, enable ? 1 : 0);
+}
+
+void TraCICommandInterface::Vehicle::addPlatoonMember(std::string memberId, int position) {
+	ParBuffer inBuf;
+	inBuf << memberId << position;
+	setParameter(PAR_ADD_MEMBER, inBuf.str());
+}
+
+void TraCICommandInterface::Vehicle::removePlatoonMember(std::string memberId) {
+	setParameter(PAR_REMOVE_MEMBER, memberId);
+}
+
+void TraCICommandInterface::Vehicle::enableAutoLaneChanging(bool enable) {
+	setParameter(PAR_ENABLE_AUTO_LANE_CHANGE, enable ? 1 : 0);
+}
+
 }
