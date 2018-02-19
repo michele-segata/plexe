@@ -47,16 +47,6 @@ void BaseProtocol::initialize(int stage) {
 		minUpperId = gate("upperLayerIn", 0)->getId();
 		maxUpperId = gate("upperLayerIn", MAX_GATES_COUNT - 1)->getId();
 
-		//get traci interface
-		mobility = Veins::TraCIMobilityAccess().get(getParentModule());
-		traci = mobility->getCommandInterface();
-		traciVehicle = mobility->getVehicleCommandInterface();
-		positionHelper = FindModule<BasePositionHelper*>::findSubModule(getParentModule());
-
-		//this is the id of the vehicle. used also as network address
-		myId = positionHelper->getId();
-		length = traciVehicle->getLength();
-
 		//tell the unicast protocol below which mac address to use via control message
 		UnicastProtocolControlMessage *setMacAddress = new UnicastProtocolControlMessage("");
 		setMacAddress->setControlCommand(SET_MAC_ADDRESS);
@@ -98,6 +88,18 @@ void BaseProtocol::initialize(int stage) {
 		SimTime rounded = SimTime(floor(simTime().dbl() + 1), SIMTIME_S);
 		scheduleAt(rounded, recordData);
 
+	}
+
+	if (stage == 1) {
+		//get traci interface
+		mobility = Veins::TraCIMobilityAccess().get(getParentModule());
+		traci = mobility->getCommandInterface();
+		traciVehicle = mobility->getVehicleCommandInterface();
+		positionHelper = FindModule<BasePositionHelper*>::findSubModule(getParentModule());
+
+		//this is the id of the vehicle. used also as network address
+		myId = positionHelper->getId();
+		length = traciVehicle->getLength();
 	}
 
 }
