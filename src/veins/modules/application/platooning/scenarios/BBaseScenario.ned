@@ -48,6 +48,7 @@ simple BBaseScenario like BaseScenario
         double flatbedH = default(4);
         double flatbedD = default(5);
         bool useControllerAcceleration = default(true);
+        bool usePrediction = default(true);
 
         //location of the file with vehicle parameters
         string vehicleFile = default("./vehicles.xml");

@@ -39,6 +39,7 @@ void BaseScenario::initialize(int stage) {
 		flatbedH = par("flatbedH").doubleValue();
 		flatbedD = par("flatbedD").doubleValue();
 		useControllerAcceleration = par("useControllerAcceleration").boolValue();
+		usePrediction = par("usePrediction").boolValue();
 
 		useRealisticEngine = par("useRealisticEngine").boolValue();
 		if (useRealisticEngine) {
@@ -88,6 +89,7 @@ void BaseScenario::initialize(int stage) {
 		//set the current lane
 		traciVehicle->setFixedLane(positionHelper->getPlatoonLane());
 		traciVehicle->setSpeedMode(0);
+		traciVehicle->usePrediction(usePrediction);
 
 		if (positionHelper->getId() == 0)
 			traci->guiView("View #0").trackVehicle(mobility->getExternalId());
