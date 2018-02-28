@@ -173,5 +173,5 @@ with open(args.name + ".add.xml", "w") as additional_file:
 
 print ("OK")
 
-print("Network length -> " + format(side * args.edges, '.2f'))
+print("Network length -> %f" % (side * args.edges))
 print ("Success.")
