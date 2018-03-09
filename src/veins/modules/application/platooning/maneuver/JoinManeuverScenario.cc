@@ -63,12 +63,12 @@ void JoinManeuverScenario::prepareManeuverCars(int platoonLane) {
 			positionHelper->setPlatoonLane(platoonLane);
 			positionHelper->setPlatoonId(positionHelper->getId());
 
-			vehicleData.joinerId = -1;
-			vehicleData.speed = 100/3.6;
-			vehicleData.formation.push_back(0);
-			vehicleData.formation.push_back(1);
-			vehicleData.formation.push_back(2);
-			vehicleData.formation.push_back(3);
+			platoonData.joinerId = -1;
+			platoonData.speed = 100/3.6;
+			platoonData.formation.push_back(0);
+			platoonData.formation.push_back(1);
+			platoonData.formation.push_back(2);
+			platoonData.formation.push_back(3);
 
 			break;
 		}
@@ -88,11 +88,11 @@ void JoinManeuverScenario::prepareManeuverCars(int platoonLane) {
 			positionHelper->setPlatoonLane(platoonLane);
 			positionHelper->setPlatoonId(positionHelper->getLeaderId());
 
-			vehicleData.speed = 100/3.6;
-			vehicleData.formation.push_back(0);
-			vehicleData.formation.push_back(1);
-			vehicleData.formation.push_back(2);
-			vehicleData.formation.push_back(3);
+			platoonData.speed = 100/3.6;
+			platoonData.formation.push_back(0);
+			platoonData.formation.push_back(1);
+			platoonData.formation.push_back(2);
+			platoonData.formation.push_back(3);
 
 
 			break;
@@ -112,7 +112,7 @@ void JoinManeuverScenario::prepareManeuverCars(int platoonLane) {
 			positionHelper->setIsLeader(false);
 			positionHelper->setPlatoonLane(-1);
 
-			vehicleData.speed = 100/3.6;
+			platoonData.speed = 100/3.6;
 
 			//after 30 seconds of simulation, start the maneuver
 			startManeuver = new cMessage();
@@ -139,7 +139,7 @@ ManeuverMessage *JoinManeuverScenario::generateMessage() {
 	msg->setVehicleId(positionHelper->getId());
 	msg->setPlatoonId(positionHelper->getPlatoonId());
 	msg->setPlatoonLane(positionHelper->getPlatoonLane());
-	msg->setPlatoonSpeed(vehicleData.speed);
+	msg->setPlatoonSpeed(platoonData.speed);
 	return msg;
 }
 
@@ -208,9 +208,9 @@ void JoinManeuverScenario::handleLeaderMsg(cMessage *msg) {
 					//this will be the front vehicle for the car which will join
 					toSend->setFrontVehicleId(3);
 					//save some data. who is joining?
-					vehicleData.joinerId = maneuver->getVehicleId();
+					platoonData.joinerId = maneuver->getVehicleId();
 					//send a positive ack to the joiner
-					sendUnicast(toSend, vehicleData.joinerId);
+					sendUnicast(toSend, platoonData.joinerId);
 
 					leaderFsm = LS_WAIT_JOINER_IN_POSITION;
 				}
@@ -226,7 +226,7 @@ void JoinManeuverScenario::handleLeaderMsg(cMessage *msg) {
 					//tell him to join the platoon
 					toSend = generateMessage();
 					toSend->setMessageType(LM_JOIN_PLATOON);
-					sendUnicast(toSend, vehicleData.joinerId);
+					sendUnicast(toSend, platoonData.joinerId);
 
 					leaderFsm = LS_WAIT_JOINER_TO_JOIN;
 
@@ -241,12 +241,12 @@ void JoinManeuverScenario::handleLeaderMsg(cMessage *msg) {
 				//the joiner has joined the platoon
 				if (maneuver->getMessageType() == JM_IN_PLATOON) {
 					//add the joiner to the list of vehicles in the platoon
-					vehicleData.formation.push_back(vehicleData.joinerId);
+					platoonData.formation.push_back(platoonData.joinerId);
 					toSend = generateMessage();
 					toSend->setMessageType(LM_UPDATE_FORMATION);
-					toSend->setPlatoonFormationArraySize(vehicleData.formation.size());
-					for (unsigned int i = 0; i < vehicleData.formation.size(); i++) {
-						toSend->setPlatoonFormation(i, vehicleData.formation[i]);
+					toSend->setPlatoonFormationArraySize(platoonData.formation.size());
+					for (unsigned int i = 0; i < platoonData.formation.size(); i++) {
+						toSend->setPlatoonFormation(i, platoonData.formation[i]);
 					}
 					//send to all vehicles
 					sendUnicast(toSend, -1);
@@ -311,21 +311,21 @@ void JoinManeuverScenario::handleJoinerMsg(cMessage *msg) {
 				if (maneuver->getMessageType() == LM_MOVE_IN_POSITION) {
 					//save some data about the platoon
 					positionHelper->setFrontId(maneuver->getFrontVehicleId());
-					vehicleData.joinLane = maneuver->getPlatoonLane();
+					platoonData.joinLane = maneuver->getPlatoonLane();
 
 					//check for correct lane. if not in correct lane, change it
 					int currentLane = traciVehicle->getLaneIndex();
-					if (currentLane != vehicleData.joinLane) {
-						traciVehicle->setFixedLane(vehicleData.joinLane);
+					if (currentLane != platoonData.joinLane) {
+						traciVehicle->setFixedLane(platoonData.joinLane);
 					}
 
 					//activate faked CACC. this way we can approach the front car using data obtained through GPS
 					traciVehicle->setCACCConstantSpacing(15);
 					//we have no data so far, so for the moment just initialize with some fake data
-					traciVehicle->setLeaderVehicleFakeData(0, 0, vehicleData.speed);
-					traciVehicle->setFrontVehicleFakeData(0, 0, vehicleData.speed, 15);
+					traciVehicle->setLeaderVehicleFakeData(0, 0, platoonData.speed);
+					traciVehicle->setFrontVehicleFakeData(0, 0, platoonData.speed, 15);
 					//set a CC speed higher than the platoon speed to approach it
-					traciVehicle->setCruiseControlDesiredSpeed(vehicleData.speed + 30/3.6);
+					traciVehicle->setCruiseControlDesiredSpeed(platoonData.speed + 30/3.6);
 					traciVehicle->setActiveController(Plexe::FAKED_CACC);
 					joinerFsm = JS_MOVE_IN_POSITION;
 				}
@@ -383,9 +383,9 @@ void JoinManeuverScenario::handleJoinerMsg(cMessage *msg) {
 			//we're now following. if we get an update of the formation, change it accordingly
 			if (maneuver && maneuver->getPlatoonId() == positionHelper->getPlatoonId()) {
 				if (maneuver->getMessageType() == LM_UPDATE_FORMATION) {
-					vehicleData.formation.clear();
+					platoonData.formation.clear();
 					for (unsigned int i = 0; i < maneuver->getPlatoonFormationArraySize(); i++) {
-						vehicleData.formation.push_back(maneuver->getPlatoonFormation(i));
+						platoonData.formation.push_back(maneuver->getPlatoonFormation(i));
 					}
 				}
 			}
@@ -425,9 +425,9 @@ void JoinManeuverScenario::handleFollowerMsg(cMessage *msg) {
 
 			if (maneuver && maneuver->getPlatoonId() == positionHelper->getPlatoonId()) {
 				if (maneuver->getMessageType() == LM_UPDATE_FORMATION) {
-					vehicleData.formation.clear();
+					platoonData.formation.clear();
 					for (unsigned int i = 0; i < maneuver->getPlatoonFormationArraySize(); i++) {
-						vehicleData.formation.push_back(maneuver->getPlatoonFormation(i));
+						platoonData.formation.push_back(maneuver->getPlatoonFormation(i));
 					}
 				}
 			}

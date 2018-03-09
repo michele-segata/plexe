@@ -30,7 +30,7 @@ class JoinManeuverScenario : public BaseScenario
 		//define the roles
 		enum JOIN_ROLE {LEADER, FOLLOWER, JOINER};
 		//data that each car needs to keep
-		struct VEHICLE_DATA {
+		struct PLATOON_DATA {
 			double				speed;		//speed of the platoon
 			int					joinLane;	//the lane chosen for joining the platoon
 			int					joinerId;	//the id of the vehicle joining the platoon
@@ -72,7 +72,7 @@ class JoinManeuverScenario : public BaseScenario
 		//the position of this vehicle in the platoon
 		int position;
 		//data known by the vehicle
-		struct VEHICLE_DATA vehicleData;
+		struct PLATOON_DATA platoonData;
 		//message used to start the maneuver
 		cMessage *startManeuver;
 		//pointer to protocol
