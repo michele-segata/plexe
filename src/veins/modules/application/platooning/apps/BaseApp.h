@@ -107,6 +107,10 @@ class BaseApp : public BaseApplLayer
 		virtual void handleSelfMsg(cMessage *msg);
 		virtual void handleLowerControl(cMessage *msg);
 
+		/**
+		 * Handles PlatoonBeacons
+		 */
+		virtual void onPlatoonBeacon(PlatooningBeacon* pb);
 };
 
 #endif /* BASEAPP_H_ */

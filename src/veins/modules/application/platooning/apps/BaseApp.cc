@@ -90,57 +90,17 @@ void BaseApp::finish() {
 }
 
 void BaseApp::handleLowerMsg(cMessage *msg) {
-
-	UnicastMessage *unicast = dynamic_cast<UnicastMessage *>(msg);
-	ASSERT2(unicast, "received a frame not of type UnicastMessage");
+	UnicastMessage* unicast = check_and_cast<UnicastMessage*>(msg);
 
 	cPacket *enc = unicast->decapsulate();
 	ASSERT2(enc, "received a UnicastMessage with nothing inside");
 
 	if (enc->getKind() == BaseProtocol::BEACON_TYPE) {
-
-		PlatooningBeacon *epkt = dynamic_cast<PlatooningBeacon *>(enc);
-		ASSERT2(epkt, "received UnicastMessage does not contain a PlatooningBeacon");
-
-		if (positionHelper->isInSamePlatoon(epkt->getVehicleId())) {
-
-			//if the message comes from the leader
-			if (epkt->getVehicleId() == positionHelper->getLeaderId()) {
-				traciVehicle->setLeaderVehicleData(epkt->getControllerAcceleration(), epkt->getAcceleration(),
-				    epkt->getSpeed(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
-				traciVehicle->setLeaderVehicleFakeData(epkt->getControllerAcceleration(), epkt->getAcceleration(), epkt->getSpeed());
-			}
-			//if the message comes from the vehicle in front
-			if (epkt->getVehicleId() == positionHelper->getFrontId()) {
-				traciVehicle->setFrontVehicleData(epkt->getControllerAcceleration(), epkt->getAcceleration(),
-				    epkt->getSpeed(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
-				//get front vehicle position
-				Coord frontPosition(epkt->getPositionX(), epkt->getPositionY(), 0);
-				//get my position
-				Veins::TraCICoord traciPosition = mobility->getManager()->omnet2traci(mobility->getCurrentPosition());
-				Coord position(traciPosition.x, traciPosition.y);
-				//compute distance
-				double distance = position.distance(frontPosition) - epkt->getLength();
-				traciVehicle->setFrontVehicleFakeData(epkt->getControllerAcceleration(), epkt->getAcceleration(), epkt->getSpeed(), distance);
-			}
-			//send data about every vehicle to the CACC. this is needed by the consensus controller
-			struct Plexe::VEHICLE_DATA vehicleData;
-			vehicleData.index = positionHelper->getMemberPosition(epkt->getVehicleId());
-			vehicleData.acceleration = epkt->getAcceleration();
-			vehicleData.length = epkt->getLength();
-			vehicleData.positionX = epkt->getPositionX();
-			vehicleData.positionY = epkt->getPositionY();
-			vehicleData.speed = epkt->getSpeed();
-			vehicleData.time = epkt->getTime();
-			vehicleData.u = epkt->getControllerAcceleration();
-			//send information to CACC
-			traciVehicle->setVehicleData(&vehicleData);
-
-		}
-
+		onPlatoonBeacon(check_and_cast<PlatooningBeacon *>(enc));
+	} else {
+		error("received unknown message type");
 	}
 
-	delete enc;
 	delete unicast;
 }
 
@@ -196,4 +156,40 @@ void BaseApp::stopSimulation() {
 }
 
 void BaseApp::onBeacon(WaveShortMessage* wsm) {
+}
+
+void BaseApp::onPlatoonBeacon(PlatooningBeacon* pb) {
+	if (positionHelper->isInSamePlatoon(pb->getVehicleId())) {
+		//if the message comes from the leader
+		if (pb->getVehicleId() == positionHelper->getLeaderId()) {
+			traciVehicle->setLeaderVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(),
+				pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
+			traciVehicle->setLeaderVehicleFakeData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed());
+		}
+		//if the message comes from the vehicle in front
+		if (pb->getVehicleId() == positionHelper->getFrontId()) {
+			traciVehicle->setFrontVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(),
+				pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
+			//get front vehicle position
+			Coord frontPosition(pb->getPositionX(), pb->getPositionY(), 0);
+			//get my position
+			Veins::TraCICoord traciPosition = mobility->getManager()->omnet2traci(mobility->getCurrentPosition());
+			Coord position(traciPosition.x, traciPosition.y);
+			//compute distance
+			double distance = position.distance(frontPosition) - pb->getLength();
+			traciVehicle->setFrontVehicleFakeData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed(), distance);
+		}
+		//send data about every vehicle to the CACC. this is needed by the consensus controller
+		struct Plexe::VEHICLE_DATA vehicleData;
+		vehicleData.index = positionHelper->getMemberPosition(pb->getVehicleId());
+		vehicleData.acceleration = pb->getAcceleration();
+		vehicleData.length = pb->getLength();
+		vehicleData.positionX = pb->getPositionX();
+		vehicleData.positionY = pb->getPositionY();
+		vehicleData.speed = pb->getSpeed();
+		vehicleData.time = pb->getTime();
+		vehicleData.u = pb->getControllerAcceleration();
+		//send information to CACC
+		traciVehicle->setVehicleData(&vehicleData);
+	}
 }
