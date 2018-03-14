@@ -47,12 +47,6 @@ void BaseProtocol::initialize(int stage) {
 		minUpperId = gate("upperLayerIn", 0)->getId();
 		maxUpperId = gate("upperLayerIn", MAX_GATES_COUNT - 1)->getId();
 
-		//tell the unicast protocol below which mac address to use via control message
-		UnicastProtocolControlMessage *setMacAddress = new UnicastProtocolControlMessage("");
-		setMacAddress->setControlCommand(SET_MAC_ADDRESS);
-		setMacAddress->setCommandValue(myId);
-		send(setMacAddress, lowerControlOut);
-
 		//beaconing interval in seconds
 		beaconingInterval = SimTime(par("beaconingInterval").doubleValue());
 		//platooning message packet size
@@ -100,6 +94,11 @@ void BaseProtocol::initialize(int stage) {
 		//this is the id of the vehicle. used also as network address
 		myId = positionHelper->getId();
 		length = traciVehicle->getLength();
+		//tell the unicast protocol below which mac address to use via control message
+		UnicastProtocolControlMessage *setMacAddress = new UnicastProtocolControlMessage("");
+		setMacAddress->setControlCommand(SET_MAC_ADDRESS);
+		setMacAddress->setCommandValue(myId);
+		send(setMacAddress, lowerControlOut);
 	}
 
 }
