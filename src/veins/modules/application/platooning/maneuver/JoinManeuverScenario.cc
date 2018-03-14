@@ -24,12 +24,9 @@ void JoinManeuverScenario::initialize(int stage) {
 	BaseScenario::initialize(stage);
 
 	if (stage == 0) {
-
-		//name the FSMs
-		leaderFsm.setName("leaderFsm");
-		followerFsm.setName("followerFsm");
-		joinerFsm.setName("joinerFsm");
-
+		leaderFsm = LS_LEADING;
+		joinerFsm = JS_IDLE;
+		followerFsm = FS_FOLLOW;
 	}
 
 	if (stage == 1) {
@@ -199,12 +196,8 @@ void JoinManeuverScenario::handleLeaderMsg(cMessage *msg) {
 	}
 
 	//check current leader status
-	FSM_Switch(leaderFsm) {
-		case FSM_Exit(LS_INIT): {
-			FSM_Goto(leaderFsm, LS_LEADING);
-			break;
-		}
-		case FSM_Exit(LS_LEADING): {
+	switch (leaderFsm) {
+		case LS_LEADING: {
 			//when getting a message, and being in the LEADING state, we need
 			//to check if this is a join request. if not just ignore it
 			if (maneuver && maneuver->getPlatoonId() == positionHelper->getPlatoonId()) {
@@ -219,12 +212,12 @@ void JoinManeuverScenario::handleLeaderMsg(cMessage *msg) {
 					//send a positive ack to the joiner
 					sendUnicast(toSend, vehicleData.joinerId);
 
-					FSM_Goto(leaderFsm, LS_WAIT_JOINER_IN_POSITION);
+					leaderFsm = LS_WAIT_JOINER_IN_POSITION;
 				}
 			}
 			break;
 		}
-		case FSM_Exit(LS_WAIT_JOINER_IN_POSITION): {
+		case LS_WAIT_JOINER_IN_POSITION: {
 
 			if (maneuver && maneuver->getPlatoonId() == positionHelper->getPlatoonId()) {
 				//the joiner is now in position and is ready to join
@@ -235,14 +228,14 @@ void JoinManeuverScenario::handleLeaderMsg(cMessage *msg) {
 					toSend->setMessageType(LM_JOIN_PLATOON);
 					sendUnicast(toSend, vehicleData.joinerId);
 
-					FSM_Goto(leaderFsm, LS_WAIT_JOINER_TO_JOIN);
+					leaderFsm = LS_WAIT_JOINER_TO_JOIN;
 
 				}
 			}
 
 			break;
 		}
-		case FSM_Exit(LS_WAIT_JOINER_TO_JOIN): {
+		case LS_WAIT_JOINER_TO_JOIN: {
 
 			if (maneuver && maneuver->getPlatoonId() == positionHelper->getPlatoonId()) {
 				//the joiner has joined the platoon
@@ -258,7 +251,7 @@ void JoinManeuverScenario::handleLeaderMsg(cMessage *msg) {
 					//send to all vehicles
 					sendUnicast(toSend, -1);
 
-					FSM_Goto(leaderFsm, LS_LEADING);
+					leaderFsm = LS_LEADING;
 
 				}
 
@@ -297,26 +290,20 @@ void JoinManeuverScenario::handleJoinerMsg(cMessage *msg) {
 	}
 
 	//check current joiner status
-	FSM_Switch(joinerFsm) {
+	switch(joinerFsm) {
 
-		//init state, just move to the idle state
-		case FSM_Exit(JS_INIT): {
-			FSM_Goto(joinerFsm, JS_IDLE);
-			break;
-		}
-
-		case FSM_Exit(JS_IDLE): {
+		case JS_IDLE: {
 			//if this is a self message triggering the beginning of procedure, then ask for joining
 			if (msg == startManeuver) {
 				toSend = generateMessage();
 				toSend->setMessageType(JM_REQUEST_JOIN);
 				sendUnicast(toSend, positionHelper->getLeaderId());
-				FSM_Goto(joinerFsm, JS_WAIT_REPLY);
+				joinerFsm = JS_WAIT_REPLY;
 			}
 			break;
 		}
 
-		case FSM_Exit(JS_WAIT_REPLY): {
+		case JS_WAIT_REPLY: {
 
 			if (maneuver && maneuver->getPlatoonId() == positionHelper->getPlatoonId()) {
 
@@ -340,14 +327,14 @@ void JoinManeuverScenario::handleJoinerMsg(cMessage *msg) {
 					//set a CC speed higher than the platoon speed to approach it
 					traciVehicle->setCruiseControlDesiredSpeed(vehicleData.speed + 30/3.6);
 					traciVehicle->setActiveController(Plexe::FAKED_CACC);
-					FSM_Goto(joinerFsm, JS_MOVE_IN_POSITION);
+					joinerFsm = JS_MOVE_IN_POSITION;
 				}
 
 			}
 			break;
 		}
 
-		case FSM_Exit(JS_MOVE_IN_POSITION): {
+		case JS_MOVE_IN_POSITION: {
 
 			//if we get data, just feed the fake CACC
 			if (beacon && beacon->getVehicleId() == positionHelper->getFrontId()) {
@@ -363,13 +350,13 @@ void JoinManeuverScenario::handleJoinerMsg(cMessage *msg) {
 					toSend = generateMessage();
 					toSend->setMessageType(JM_IN_POSITION);
 					sendUnicast(toSend, positionHelper->getLeaderId());
-					FSM_Goto(joinerFsm, JS_WAIT_JOIN);
+					joinerFsm = JS_WAIT_JOIN;
 				}
 			}
 			break;
 		}
 
-		case FSM_Exit(JS_WAIT_JOIN): {
+		case JS_WAIT_JOIN: {
 
 			if (maneuver && maneuver->getPlatoonId() == positionHelper->getPlatoonId()) {
 
@@ -383,7 +370,7 @@ void JoinManeuverScenario::handleJoinerMsg(cMessage *msg) {
 				toSend = generateMessage();
 				toSend->setMessageType(JM_IN_PLATOON);
 				sendUnicast(toSend, positionHelper->getLeaderId());
-				FSM_Goto(joinerFsm, JS_FOLLOW);
+				joinerFsm = JS_FOLLOW;
 
 			}
 
@@ -391,7 +378,7 @@ void JoinManeuverScenario::handleJoinerMsg(cMessage *msg) {
 
 		}
 
-		case FSM_Exit(JS_FOLLOW): {
+		case JS_FOLLOW: {
 
 			//we're now following. if we get an update of the formation, change it accordingly
 			if (maneuver && maneuver->getPlatoonId() == positionHelper->getPlatoonId()) {
@@ -432,14 +419,9 @@ void JoinManeuverScenario::handleFollowerMsg(cMessage *msg) {
 	}
 
 	//check current follower status
-	FSM_Switch(followerFsm) {
+	switch(followerFsm) {
 
-		case FSM_Exit(FS_INIT): {
-			FSM_Goto(followerFsm, FS_FOLLOW);
-			break;
-		}
-
-		case FSM_Exit(FS_FOLLOW): {
+		case FS_FOLLOW: {
 
 			if (maneuver && maneuver->getPlatoonId() == positionHelper->getPlatoonId()) {
 				if (maneuver->getMessageType() == LM_UPDATE_FORMATION) {

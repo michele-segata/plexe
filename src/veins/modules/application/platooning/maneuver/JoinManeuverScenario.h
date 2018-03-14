@@ -38,23 +38,20 @@ class JoinManeuverScenario : public BaseScenario
 		};
 		//define the states for each role
 		typedef enum _LEADER_STATES {
-			LS_INIT = 0,
-			LS_LEADING = FSM_Steady(1),
-			LS_WAIT_JOINER_IN_POSITION = FSM_Steady(2),
-			LS_WAIT_JOINER_TO_JOIN = FSM_Steady(3)
+			LS_LEADING,
+			LS_WAIT_JOINER_IN_POSITION,
+			LS_WAIT_JOINER_TO_JOIN
 		} LEADER_STATES;
 		typedef enum _JOINER_STATES {
-			JS_INIT = 0,
-			JS_IDLE = FSM_Steady(1),
-			JS_WAIT_REPLY = FSM_Steady(2),
-			JS_MOVE_IN_POSITION = FSM_Steady(3),
-			JS_WAIT_JOIN = FSM_Steady(4),
-			JS_JOIN_PLATOON = FSM_Steady(5),
-			JS_FOLLOW = FSM_Steady(6)
+			JS_IDLE,
+			JS_WAIT_REPLY,
+			JS_MOVE_IN_POSITION,
+			JS_WAIT_JOIN,
+			JS_JOIN_PLATOON,
+			JS_FOLLOW
 		} JOINER_STATES;
 		typedef enum _FOLLOWER_STATES {
-			FS_INIT = 0,
-			FS_FOLLOW = FSM_Steady(1)
+			FS_FOLLOW
 		} FOLLOWER_STATES;
 		//define the messages that can be sent by each role
 		enum LEADER_MSGS {
@@ -69,7 +66,7 @@ class JoinManeuverScenario : public BaseScenario
 		};
 
 		//the state machine handler
-		cFSM leaderFsm, joinerFsm, followerFsm;
+		int leaderFsm, joinerFsm, followerFsm;
 		//the role of this vehicle
 		JOIN_ROLE role;
 		//the position of this vehicle in the platoon
