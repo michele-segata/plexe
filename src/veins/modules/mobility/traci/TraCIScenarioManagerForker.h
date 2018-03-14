@@ -51,9 +51,14 @@ class TraCIScenarioManagerForker : public TraCIScenarioManager
 		virtual void initialize(int stage);
 		virtual void finish();
 
+		virtual bool isGuiSimulation();
+
 	protected:
 
-		std::string commandLine; /**< command line for running TraCI server (substituting $configFile, $seed, $port) */
+		bool useGui;
+		std::string sumoCommand; // command line to run sumo (no gui)
+		std::string sumoGuiCommand; // command line to run sumo (with gui)
+		std::string commandLine; /**< command line parameters for running TraCI server (substituting $configFile, $seed, $port) */
 		std::string configFile; /**< substitution for $configFile parameter */
 		int seed; /**< substitution for $seed parameter (-1: current run number) */
 

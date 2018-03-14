@@ -17,43 +17,11 @@
 
 package org.car2x.veins.modules.application.platooning.maneuver;
 
-import org.car2x.veins.modules.application.platooning.scenarios.BaseScenario;
+import org.car2x.veins.modules.application.platooning.scenarios.BBaseScenario;
 
-simple JoinManeuverScenario like BaseScenario
+simple JoinManeuverScenario extends BBaseScenario
 {
     parameters:
-
-        //base scenario inherited parameters
-        //controller used by followers
-        string controller;
-        //list of various controller parameters
-        //headway time to be used for the ACC
-        double accHeadway @unit("s") = default(1.2s);
-        //headway time for leaders using ACC
-        double leaderHeadway @unit("s") = default(1.2s);
-        //cacc and engine related parameters
-        double caccXi = default(1);
-        double caccOmegaN @unit("Hz") = default(0.2Hz);
-        double caccC1 = default(0.5);
-        double engineTau @unit("s") = default(0.5s);
-        double ploegH @unit("s") = default(0.5s);
-        double ploegKp = default(0.2);
-        double ploegKd = default(0.7);
-
-        //location of the file with vehicle parameters
-        string vehicleFile = default("./vehicles.xml");
-        //enable/disable the realistic engine model
-        bool useRealisticEngine = default(false);
-        //vehicle type for the realistic engine model
-        string vehicleType = default("");
-
-        int headerLength @unit("bit") = default(0bit);
-
         @display("i=block/app2");
         @class(JoinManeuverScenario);
-    gates:
-        input lowerLayerIn;
-        output lowerLayerOut;
-        input lowerControlIn;
-        output lowerControlOut;
 }

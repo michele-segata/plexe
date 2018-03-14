@@ -60,6 +60,13 @@ class BaseScenario : public BaseApplLayer
 		double ploegH;
 		double ploegKp;
 		double ploegKd;
+		double flatbedKa;
+		double flatbedKv;
+		double flatbedKp;
+		double flatbedH;
+		double flatbedD;
+		bool useControllerAcceleration;
+		bool usePrediction;
 
 		//location of the file with vehicle parameters
 		std::string vehicleFile;
@@ -77,6 +84,8 @@ class BaseScenario : public BaseApplLayer
 			traciVehicle = 0;
 			positionHelper = 0;
 			useRealisticEngine = false;
+			useControllerAcceleration = true;
+			usePrediction = true;
 		}
 
 	protected:

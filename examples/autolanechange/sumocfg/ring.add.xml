@@ -1,0 +1,15 @@
+<!-- Generated with ./ringGen.py -r 200 -n ring -l 3 -s 36 -e 20 -->
+<additionals>
+    <route id="r1" edges="edg2 edg1"/>
+    <route id="r2" edges="edg1 edg2"/>
+    <rerouter id="rerouter1" edges="edg1">
+        <interval end="1e9">
+            <routeProbReroute id="r2"/>
+        </interval>
+    </rerouter>
+    <rerouter id="rerouter2" edges="edg2">
+        <interval end="1e9">
+            <routeProbReroute id="r1"/>
+        </interval>
+    </rerouter>
+</additionals>

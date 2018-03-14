@@ -8,14 +8,17 @@
 /// @author  Tino Morenz
 /// @author  Michael Behrisch
 /// @author  Christoph Sommer
+/// @author  Mario Krumnow
+/// @author  Jakob Erdmann
+/// @author  Laura Bieker
 /// @author  Michele Segata
 /// @date    2007/10/24
 /// @version $Id$
 ///
 /// holds codes used for TraCI
 /****************************************************************************/
-// SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
-// Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
+// SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
+// Copyright (C) 2007-2017 DLR (http://www.dlr.de/) and contributors
 // Copyright (C) 2012-2016 Michele Segata (segata@ccs-labs.org)
 /****************************************************************************/
 //
@@ -29,12 +32,10 @@
 #ifndef TRACICONSTANTS_H
 #define TRACICONSTANTS_H
 
-
 // ****************************************
 // VERSION
 // ****************************************
-#define TRACI_VERSION 7
-
+#define TRACI_VERSION 15
 
 // ****************************************
 // COMMANDS
@@ -42,7 +43,11 @@
 // command: get version
 #define CMD_GETVERSION 0x00
 
+// command: load
+#define CMD_LOAD 0x01
+
 // command: simulation step
+#define CMD_SIMSTEP 0x02
 #define CMD_SIMSTEP2 0x02
 
 // command: stop node
@@ -56,6 +61,9 @@
 
 // command: slow down
 #define CMD_SLOWDOWN 0x14
+
+// command: set sublane (vehicle)
+#define CMD_CHANGESUBLANE 0x15
 
 // command: change target
 #define CMD_CHANGETARGET 0x31
@@ -271,6 +279,34 @@
 // response: subscribe GUI variable
 #define RESPONSE_SUBSCRIBE_GUI_VARIABLE 0xec
 
+// command: subscribe areal detector (e2) context
+#define CMD_SUBSCRIBE_LANEAREA_CONTEXT 0x8d
+// response: subscribe areal detector (e2) context
+#define RESPONSE_SUBSCRIBE_LANEAREA_CONTEXT 0x9d
+// command: get areal detector (e2) variable
+#define CMD_GET_LANEAREA_VARIABLE 0xad
+// response: get areal detector (e2) variable
+#define RESPONSE_GET_LANEAREA_VARIABLE 0xbd
+// command: subscribe areal detector (e2) variable
+#define CMD_SUBSCRIBE_LANEAREA_VARIABLE 0xdd
+// response: subscribe areal detector (e2) variable
+#define RESPONSE_SUBSCRIBE_LANEAREA_VARIABLE 0xed
+
+// command: subscribe person context
+#define CMD_SUBSCRIBE_PERSON_CONTEXT 0x8e
+// response: subscribe person context
+#define RESPONSE_SUBSCRIBE_PERSON_CONTEXT 0x9e
+// command: get person variable
+#define CMD_GET_PERSON_VARIABLE 0xae
+// response: get person variable
+#define RESPONSE_GET_PERSON_VARIABLE 0xbe
+// command: set person variable
+#define CMD_SET_PERSON_VARIABLE 0xce
+// command: subscribe person variable
+#define CMD_SUBSCRIBE_PERSON_VARIABLE 0xde
+// response: subscribe person variable
+#define RESPONSE_SUBSCRIBE_PERSON_VARIABLE 0xee
+
 
 // ****************************************
 // POSITION REPRESENTATIONS
@@ -370,6 +406,45 @@
 // vehicle finished route during teleport
 #define REMOVE_TELEPORT_ARRIVED 0x04
 
+// ****************************************
+// PERSON/CONTAINER STAGES
+// ****************************************
+// person / container stopping
+#define STAGE_WAITING_FOR_DEPART 0x00
+// person / container stopping
+#define STAGE_WAITING 0x01
+// person walking / container transhiping
+#define STAGE_WALKING 0x02
+// person riding / container being transported
+#define STAGE_DRIVING 0x03
+
+// ****************************************
+// Stop Flags
+// ****************************************
+#define STOP_DEFAULT 0x00
+#define STOP_PARKING 0x01
+#define STOP_TRIGGERED 0x02
+#define STOP_CONTAINER_TRIGGERED 0x04
+#define STOP_BUS_STOP 0x08
+#define STOP_CONTAINER_STOP 0x10
+#define STOP_CHARGING_STATION 0x20
+#define STOP_PARKING_AREA 0x40
+
+// ****************************************
+// Departure Flags
+// ****************************************
+#define DEPARTFLAG_TRIGGERED -0x01
+#define DEPARTFLAG_CONTAINER_TRIGGERED -0x02
+#define DEPARTFLAG_NOW -0x03
+
+#define DEPARTFLAG_SPEED_RANDOM -0x02
+#define DEPARTFLAG_SPEED_MAX -0x03
+
+#define DEPARTFLAG_LANE_RANDOM -0x02
+#define DEPARTFLAG_LANE_FREE -0x03
+#define DEPARTFLAG_LANE_ALLOWED_FREE -0x04
+#define DEPARTFLAG_LANE_BEST_FREE -0x05
+#define DEPARTFLAG_LANE_FIRST_ALLOWED -0x06
 
 // ****************************************
 // VARIABLE TYPES (for CMD_GET_*_VARIABLE)
@@ -386,13 +461,16 @@
 // subscribe context variables (get: all)
 #define SURROUNDING_VARIABLES_SUBSCRIPTION 0x03
 
+// generic attributes (get/set: all)
+#define GENERIC_ATTRIBUTE 0x03
+
 // last step vehicle number (get: induction loops, multi-entry/multi-exit detector, lanes, edges)
 #define LAST_STEP_VEHICLE_NUMBER 0x10
 
 // last step vehicle number (get: induction loops, multi-entry/multi-exit detector, lanes, edges)
 #define LAST_STEP_MEAN_SPEED 0x11
 
-// last step vehicle number (get: induction loops, multi-entry/multi-exit detector, lanes, edges)
+// last step vehicle list (get: induction loops, multi-entry/multi-exit detector, lanes, edges)
 #define LAST_STEP_VEHICLE_ID_LIST 0x12
 
 // last step occupancy (get: induction loops, lanes, edges)
@@ -415,6 +493,9 @@
 
 // last step jam length in meters
 #define JAM_LENGTH_METERS 0x19
+
+// last step person list (get: edges)
+#define LAST_STEP_PERSON_ID_LIST 0x1a
 
 
 // traffic light states, encoded as rRgGyYoO tuple (get: traffic lights)
@@ -453,6 +534,8 @@
 // assumed time to next switch (get: traffic lights)
 #define TL_NEXT_SWITCH 0x2d
 
+// current state, using external signal names (get: traffic lights)
+#define TL_EXTERNAL_STATE 0x2e
 
 
 // outgoing link number (get: lanes)
@@ -470,6 +553,8 @@
 // list of not allowed vehicle classes (get&set: lanes)
 #define LANE_DISALLOWED 0x35
 
+// slope (get: edge, lane, vehicle, person)
+#define VAR_SLOPE 0x36
 
 // speed (get: vehicle)
 #define VAR_SPEED 0x40
@@ -477,13 +562,16 @@
 // maximum allowed/possible speed (get: vehicle types, lanes, set: edges, lanes)
 #define VAR_MAXSPEED 0x41
 
-// position (2D) (get: vehicle, poi, set: poi)
+// position (2D) (get: vehicle, poi, inductionloop, areadetector; set: poi)
 #define VAR_POSITION 0x42
+
+// position (3D) (get: vehicle, poi, set: poi)
+#define VAR_POSITION3D 0x39
 
 // angle (get: vehicle)
 #define VAR_ANGLE 0x43
 
-// angle (get: vehicle types, lanes, set: lanes)
+// angle (get: vehicle types, lanes, arealdetector, set: lanes)
 #define VAR_LENGTH 0x44
 
 // color (get: vehicles, vehicle types, polygons, pois)
@@ -522,7 +610,7 @@
 // road id (get: vehicles)
 #define VAR_ROAD_ID 0x50
 
-// lane id (get: vehicles)
+// lane id (get: vehicles, inductionloop, arealdetector)
 #define VAR_LANE_ID 0x51
 
 // lane index (get: vehicles)
@@ -568,7 +656,6 @@
 #define VAR_SPEED_DEVIATION 0x5f
 
 
-
 // speed without TraCI influence (get: vehicle)
 #define VAR_SPEED_WITHOUT_TRACI 0xb1
 
@@ -579,6 +666,7 @@
 #define VAR_SPEEDSETMODE 0xb3
 
 // move vehicle, VTD version (set: vehicle)
+#define MOVE_TO_XY 0xb4
 #define VAR_MOVE_TO_VTD 0xb4
 
 // is the vehicle stopped, and if so parked and/or triggered?
@@ -591,6 +679,26 @@
 // maximum speed regarding max speed on the current lane and speed factor (get: vehicle)
 #define VAR_ALLOWED_SPEED 0xb7
 
+// position (1D lateral position relative to center of the current lane) (get: vehicle)
+#define VAR_LANEPOSITION_LAT 0xb8
+
+// get/set prefered lateral alignment within the lane (vehicle)
+#define VAR_LATALIGNMENT 0xb9
+
+// get/set maximum lateral speed (vehicle, vtypes)
+#define VAR_MAXSPEED_LAT 0xba
+
+// get/set minimum lateral gap (vehicle, vtypes)
+#define VAR_MINGAP_LAT 0xbb
+
+// get/set vehicle height (vehicle, vtypes)
+#define VAR_HEIGHT 0xbc
+
+// get/set vehicle line
+#define VAR_LINE 0xbd
+
+// get/set vehicle via
+#define VAR_VIA 0xbe
 
 // current CO2 emission of a node (get: vehicle, lane, edge)
 #define VAR_CO2EMISSION 0x60
@@ -616,13 +724,26 @@
 // current person number (get: vehicle)
 #define VAR_PERSON_NUMBER 0x67
 
+// number of persons waiting at a defined bus stop (get: simulation)
 #define VAR_BUS_STOP_WAITING 0x67
 
-//current waiting time (get: vehicle, lane)
+// current leader together with gap (get: vehicle)
+#define VAR_LEADER 0x68
+
+// edge index in current route (get: vehicle)
+#define VAR_ROUTE_INDEX 0x69
+
+// current waiting time (get: vehicle, lane)
 #define VAR_WAITING_TIME 0x7a
+
+// upcoming traffic lights (get: vehicle)
+#define VAR_NEXT_TLS 0x70
 
 // current time step (get: simulation)
 #define VAR_TIME_STEP 0x70
+
+// current electricity consumption of a node (get: vehicle, lane, edge)
+#define VAR_ELECTRICITYCONSUMPTION 0x71
 
 // number of loaded vehicles (get: simulation)
 #define VAR_LOADED_VEHICLES_NUMBER 0x71
@@ -702,13 +823,17 @@
 // clears the simulation of all not inserted vehicles (set: simulation)
 #define CMD_CLEAR_PENDING_VEHICLES 0x94
 
+// triggers saving simulation state (set: simulation)
+#define CMD_SAVE_SIMSTATE 0x95
+
+// sets/retrieves abstract parameter
+#define VAR_PARAMETER 0x7e
 
 
-
-// add an instance (poi, polygon, vehicle, route)
+// add an instance (poi, polygon, vehicle, person, route)
 #define ADD 0x80
 
-// remove an instance (poi, polygon)
+// remove an instance (poi, polygon, vehicle, person)
 #define REMOVE 0x81
 
 // convert coordinates
@@ -717,8 +842,11 @@
 // distance between points or vehicles
 #define DISTANCE_REQUEST 0x83
 
-//the current driving distance
+// the current driving distance
 #define VAR_DISTANCE 0x84
+
+// add a fully specified instance (vehicle)
+#define ADD_FULL 0x85
 
 // force rerouting based on travel time (vehicles)
 #define CMD_REROUTE_TRAVELTIME 0x90
@@ -729,6 +857,23 @@
 // validates current route (vehicles)
 #define VAR_ROUTE_VALID 0x92
 
+// retrieve information regarding the current person/container stage
+#define VAR_STAGE 0xc0
+
+// retrieve information regarding the next edge including crossings and walkingAreas (pedestrians only)
+#define VAR_NEXT_EDGE 0xc1
+
+// retrieve information regarding the number of remaining stages
+#define VAR_STAGES_REMAINING 0xc2
+
+// retrieve the current vehicle id for the driving stage (person, container)
+#define VAR_VEHICLE 0xc3
+
+// append a person stage (person)
+#define APPEND_STAGE 0xc4
+
+// append a person stage (person)
+#define REMOVE_STAGE 0xc5
 
 // zoom
 #define VAR_VIEW_ZOOM 0xa0
@@ -747,76 +892,5 @@
 
 // track vehicle
 #define VAR_TRACK_VEHICLE 0xa6
-
-// get generic information
-#define VAR_GET_GENERIC_INFORMATION 0xe9
-
-// set generic information
-#define VAR_SET_GENERIC_INFORMATION 0xea
-
-// set CACC constant spacing
-#define VAR_SET_CACC_SPACING 0xeb
-
-// get CACC constant spacing
-#define VAR_GET_CACC_SPACING 0xec
-
-// get ACC computed acceleration when faked CACC controller is enabled
-#define VAR_GET_ACC_ACCELERATION 0xed
-
-// determine whether a vehicle has crashed or not
-#define VAR_GET_CRASHED 0xee
-
-// set a fixed acceleration to a vehicle controlled by CC/ACC/CACC
-#define VAR_SET_FIXED_ACCELERATION 0xef
-
-// get vehicle speed and acceleration, needed for example by the platoon leader (get: vehicle)
-#define VAR_GET_SPEED_AND_ACCELERATION 0xf0
-
-// set speed and acceleration of the platoon leader
-#define VAR_SET_LEADER_SPEED_AND_ACCELERATION 0xf1
-
-// get lane count for the street the vehicle is currently traveling
-#define VAR_GET_LANES_COUNT 0xf2
-
-// set the lane change action that the driver should perform as given by the platooning controller
-#define VAR_SET_LANE_CHANGE_ACTION 0xf3
-
-// set the cruise control desired speed
-#define VAR_SET_CC_DESIRED_SPEED 0xf4
-
-// set the currently active vehicle controller which can be either the driver, or the ACC or the CACC
-#define VAR_SET_ACTIVE_CONTROLLER 0xf5
-
-// get whether a cruise controller is installed in the car
-#define VAR_GET_CC_INSTALLED 0xf6
-
-// get radar data from the car
-#define VAR_GET_RADAR_DATA 0xf7
-
-// communicate with the cruise control to give him fake indications. this can be useful when you want
-// to advance a vehicle to a certain position, for example, for joining a platoon. clearly the ACC
-// must always take into consideration both fake and real data
-#define VAR_SET_CONTROLLER_FAKE_DATA 0xf8
-
-// get the distance that a car has to travel until it reaches the end of its route
-#define VAR_GET_DISTANCE_TO_END 0xf9
-
-// get the current lane change action
-#define VAR_GET_LANE_CHANGE_ACTION 0xfa
-
-// get the currently active vehicle controller
-#define VAR_GET_ACTIVE_CONTROLLER 0xfb
-
-// get the distance from the beginning of the route
-#define VAR_GET_DISTANCE_FROM_BEGIN 0xfc
-
-// set speed and acceleration of the preceding vehicle
-#define VAR_SET_PREC_SPEED_AND_ACCELERATION 0xfd
-
-// set vehicle to move to a fixed lane
-#define VAR_SET_FIXED_LANE 0xfe
-
-// set ACC headway time
-#define VAR_SET_ACC_HEADWAY_TIME 0xff
 
 #endif

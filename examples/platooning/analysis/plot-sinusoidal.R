@@ -1,12 +1,20 @@
 #load ggplot for quick and dirty plotting
 library(ggplot2)
 
+cntr = c(
+   "ACC (0.3 s)",
+   "ACC (1.2 s)",
+   "CACC",
+   "PLOEG",
+   "CONSENSUS",
+   "FLATBED"
+)
+
 #map controller id to name
 controller <- function(id, headway) {
-    ifelse(id == 0, ifelse(headway == 0.3, "ACC (0.3 s)", "ACC (1.2 s)"),
-        ifelse(id == 1, "CACC",
-            ifelse(id == 2, "PLOEG", "CONSENSUS")
-        )
+    ifelse(id == 0,
+        ifelse(headway < 1, cntr[1], cntr[2]),
+        cntr[id+2]
     )
 }
 

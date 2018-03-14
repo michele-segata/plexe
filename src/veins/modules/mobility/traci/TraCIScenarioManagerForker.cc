@@ -69,7 +69,13 @@ TraCIScenarioManagerForker::~TraCIScenarioManagerForker() {
 void TraCIScenarioManagerForker::initialize(int stage)
 {
 	if (stage == 1) {
-		commandLine = par("commandLine").stringValue();
+		useGui = par("useGui").boolValue();
+		sumoCommand = par("sumoCommand").stringValue();
+		sumoGuiCommand = par("sumoGuiCommand").stringValue();
+		std::string parameters = par("commandLine").stringValue();
+		std::stringstream commandLineStream;
+		commandLineStream << (useGui ? sumoGuiCommand : sumoCommand) << " " << parameters;
+		commandLine = commandLineStream.str();
 		configFile = par("configFile").stringValue();
 		seed = par("seed");
 		killServer();
@@ -78,6 +84,10 @@ void TraCIScenarioManagerForker::initialize(int stage)
 	if (stage == 1) {
 		startServer();
 	}
+}
+
+bool TraCIScenarioManagerForker::isGuiSimulation() {
+	return useGui;
 }
 
 void TraCIScenarioManagerForker::finish()

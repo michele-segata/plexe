@@ -42,10 +42,10 @@ void JoinManeuverScenario::initialize(int stage) {
 		protocol = FindModule<BaseProtocol*>::findSubModule(getParentModule());
 
 		//connect maneuver application to protocol
-		protocol->registerApplication(MANEUVER_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"));
+		protocol->registerApplication(MANEUVER_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"), gate("lowerControlIn"), gate("lowerControlOut"));
 		//we are also interested in receiving beacons: the joiner must compute
 		//its distance to the front vehicle while approaching it
-		protocol->registerApplication(BaseProtocol::BEACON_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"));
+		protocol->registerApplication(BaseProtocol::BEACON_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"), gate("lowerControlIn"), gate("lowerControlOut"));
 	}
 
 }
@@ -335,7 +335,8 @@ void JoinManeuverScenario::handleJoinerMsg(cMessage *msg) {
 					//activate faked CACC. this way we can approach the front car using data obtained through GPS
 					traciVehicle->setCACCConstantSpacing(15);
 					//we have no data so far, so for the moment just initialize with some fake data
-					traciVehicle->setControllerFakeData(15, vehicleData.speed, 0, vehicleData.speed, 0);
+					traciVehicle->setLeaderVehicleFakeData(0, 0, vehicleData.speed);
+					traciVehicle->setFrontVehicleFakeData(0, 0, vehicleData.speed, 15);
 					//set a CC speed higher than the platoon speed to approach it
 					traciVehicle->setCruiseControlDesiredSpeed(vehicleData.speed + 30/3.6);
 					traciVehicle->setActiveController(Plexe::FAKED_CACC);

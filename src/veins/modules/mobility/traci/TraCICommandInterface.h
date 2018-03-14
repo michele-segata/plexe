@@ -8,6 +8,8 @@
 #include "veins/modules/mobility/traci/TraCIColor.h"
 #include "veins/base/utils/Coord.h"
 
+#include "veins/modules/application/platooning/CC_Const.h"
+
 namespace Veins {
 
 class TraCIConnection;
@@ -31,6 +33,7 @@ class TraCICommandInterface
 
 		// Vehicle methods
 		bool addVehicle(std::string vehicleId, std::string vehicleTypeId, std::string routeId, simtime_t emitTime_st = -DEPART_NOW, double emitPosition = -DEPART_POS_BASE, double emitSpeed = -DEPART_SPEED_MAX, int8_t emitLane = -DEPART_LANE_BEST_FREE);
+		void executePlexeTimestep();
 		class Vehicle {
 			public:
 				Vehicle(TraCICommandInterface* traci, std::string nodeId) : traci(traci), nodeId(nodeId) {
@@ -54,6 +57,16 @@ class TraCICommandInterface
 				int32_t getLaneIndex();
 				std::string getTypeId();
 				bool changeVehicleRoute(const std::list<std::string>& roads);
+				void setLaneChangeMode(int mode);
+				void getLaneChangeState(int direction, int &state1, int &state2);
+				void changeLane(int lane, int duration);
+				double getLength();
+				void setParameter(const std::string &parameter, int value);
+				void setParameter(const std::string &parameter, double value);
+				void setParameter(const std::string &parameter, const std::string &value);
+				void getParameter(const std::string &parameter, int &value);
+				void getParameter(const std::string &parameter, double &value);
+				void getParameter(const std::string &parameter, std::string &value);
 				/**
 				 * Gets the total number of lanes on the edge the vehicle is currently traveling
 				 */
@@ -62,20 +75,19 @@ class TraCICommandInterface
 				 * Sets the data about the leader of the platoon. This data is usually received
 				 * by means of wireless communications
 				 */
+				void setLeaderVehicleData(double controllerAcceleration, double acceleration, double speed, double positionX, double positionY, double time);
 				void setPlatoonLeaderData(double leaderSpeed, double leaderAcceleration, double positionX, double positionY, double time);
 				/**
 				 * Sets the data about the preceding vehicle in the platoon. This data is usually
 				 * received by means of wireless communications
 				 */
+				void setFrontVehicleData(double controllerAcceleration, double acceleration, double speed, double positionX, double positionY, double time);
 				void setPrecedingVehicleData(double speed, double acceleration, double positionX, double positionY, double time);
 				/**
 				 * Gets the data about a vehicle. This can be used by a platoon leader in order to query for the acceleration
 				 * before sending the data to the followers
 				 */
 				void getVehicleData(double &speed, double &acceleration, double &controllerAcceleration, double &positionX, double &positionY, double &time);
-
-				void setGenericInformation(int type, const void* data, int length);
-				void getGenericInformation(int type, const void* params, int paramsLength, void *result);
 
 				/**
 				 * Set the cruise control desired speed
@@ -109,6 +121,18 @@ class TraCICommandInterface
 				double getCACCConstantSpacing();
 
 				/**
+				 * Sets all PATH's CACC and FAKED CACC parameters. Parameters set to negative values
+				 * will remain untouched
+				 */
+				void setPathCACCParameters(double omegaN=-1, double xi=-1, double c1=-1, double distance=-1);
+
+				/**
+				 * Sets all Ploeg's CACCparameters. Parameters set to negative values
+				 * will remain untouched
+				 */
+				void setPloegCACCParameters(double kp=-1, double kd=-1, double h=-1);
+
+				/**
 				 * Sets the headway time for the ACC
 				 *
 				 * @param vehicleId the id of the vehicle
@@ -134,37 +158,14 @@ class TraCICommandInterface
 				bool isCrashed();
 
 				/**
-				 * Tells whether the car has an ACC/CACC controller installed or not. Basically
-				 * it checks the the mobility model which is driving the car
-				 *
-				 */
-				bool isCruiseControllerInstalled();
-				/**
-				 * Tells to the CC mobility model the desired lane change action to be performed
-				 *
-				 * @param vehicleId the vehicle id to communicate the action to
-				 * @param action the action to be performed. this can be either:
-				 * 0 = driver choice: the application protocol wants to let the driver chose the lane
-				 * 1 = management lane: the application protocol wants the driver to move the car
-				 * to the management lane, i.e., the leftmost minus one
-				 * 2 = platooning lane: the application protocol wants the driver to move the car
-				 * to the platooning lane, i.e., the leftmost
-				 * 3 = stay there: the application protocol wants the driver to keep the car
-				 * into the platooning lane because the car is a part of a platoon
-				 */
-				void setLaneChangeAction(int action);
-
-				/**
-				 * Returns the currently set lane change action
-				 */
-				int getLaneChangeAction();
-
-				/**
 				 * Set a fixed lane a car should move to
 				 *
-				 * @param laneIndex lane to move to, where 0 indicates the rightmost
+				 * @param laneIndex lane to move to, where 0 indicates the rightmost.
+				 * @param safe whether changing lane should respect safety distance
+				 * or simply avoid collisions
+				 * Set the lane index to -1 to give control back to the human driver
 				 */
-				void setFixedLane(int laneIndex);
+				void setFixedLane(int8_t laneIndex, bool safe=false);
 
 				/**
 				 * Gets the data measured by the radar, i.e., distance and relative speed.
@@ -176,8 +177,11 @@ class TraCICommandInterface
 				 */
 				void getRadarMeasurements(double &distance, double &relativeSpeed);
 
-				void setControllerFakeData(double frontDistance, double frontSpeed, double frontAcceleration,
-				                    double leaderSpeed, double leaderAcceleration);
+				void setLeaderVehicleFakeData(double controllerAcceleration, double acceleration, double speed);
+				void setLeaderFakeData(double leaderSpeed, double leaderAcceleration);
+
+				void setFrontVehicleFakeData(double controllerAcceleration, double acceleration, double speed, double distance);
+				void setFrontFakeData(double frontDistance, double frontSpeed, double frontAcceleration);
 
 				/**
 				 * Gets the distance that a vehicle has to travel to reach the end of
@@ -200,11 +204,96 @@ class TraCICommandInterface
 				 * Returns the vehicle type of a vehicle
 				 */
 				std::string getVType();
+				/**
+				 * Sets data information about a vehicle in the same platoon
+				 */
+				void setVehicleData(const struct Plexe::VEHICLE_DATA *data);
+				/**
+				 * Gets data information about a vehicle in the same platoon, as stored by this car
+				 */
+				void getVehicleData(struct Plexe::VEHICLE_DATA *data, int index);
+				void getStoredVehicleData(struct Plexe::VEHICLE_DATA *data, int index);
+
+				/**
+				 * Determines whether PATH's and PLOEG's CACCs should use the controller
+				 * or the real acceleration when computing the control action
+				 * @param use if set to true, the vehicle will use the controller acceleration
+				 */
+				void useControllerAcceleration(bool use);
+
+				/**
+				 * If the vehicle is using the realistic engine model, this method
+				 * returns the current gear and the engine RPM
+				 * @param gear the current gear. if the realistic engine model is
+				 * not used, this field is set to -1
+				 * @param rpm the current engine rpm
+				 */
+				void getEngineData(int &gear, double &rpm);
+
+				/**
+				 * Activates or deactivates autofeeding, meaning that the user is not
+				 * simulating inter-vehicle communication, so the CACCs will
+				 * automatically take the required data from other vehicles automatically
+				 * @param enable: boolean to enable or disable auto feeding
+				 * @param leaderId: id of the leader vehicle. When disabling auto
+				 * feeding, this parameter can be an empty string
+				 * @param frontId: id of the front vehicle. When disabling auto
+				 * feeding, this parameter can be an empty string
+				 */
+				void enableAutoFeed(bool enable, std::string leaderId="", std::string frontId="");
+
+				/**
+				 * Activates or deactivates prediction, i.e., interpolation of missing
+				 * data for the control system
+				 * @param enable: enable or disable prediction
+				 */
+				void usePrediction(bool enable);
+
+				/**
+				 * Adds a platoon member to this vehicle, usually considered to be the
+				 * leader. Members are used to perform coordinated, whole-platoon lane
+				 * changes
+				 * @param memberId: sumo id of the member being added
+				 * @param position: position (0-based) of the vehicle
+				 */
+				void addPlatoonMember(std::string memberId, int position);
+
+				/**
+				 * Removes a platoon member from this vehicle, usually considered to be the
+				 * leader. Members are used to perform coordinated, whole-platoon lane
+				 * changes
+				 * @param memberId: sumo id of the member being removed
+				 */
+				void removePlatoonMember(std::string memberId);
+
+				/**
+				 * Enables/disables automatic, coordinated, whole-platoon lane changes.
+				 * This function should be invoked on the leader which decides whether
+				 * the platoon can gain speed by changing lane. The leader will then
+				 * check whether lane changing is possible and, in case, do so
+				 * @param enable: enable or disable automatic platoon lane changes
+				 */
+				void enableAutoLaneChanging(bool enable);
 
 			protected:
 				TraCICommandInterface* traci;
 				TraCIConnection* connection;
 				std::string nodeId;
+
+				/**
+				 * Tells to the CC mobility model the desired lane change action to be performed
+				 *
+				 * @param vehicleId the vehicle id to communicate the action to
+				 * @param action the action to be performed. this can be either:
+				 * 0 = driver choice: the application protocol wants to let the driver chose the lane
+				 * 1 = management lane: the application protocol wants the driver to move the car
+				 * to the management lane, i.e., the leftmost minus one
+				 * 2 = platooning lane: the application protocol wants the driver to move the car
+				 * to the platooning lane, i.e., the leftmost
+				 * 3 = stay there: the application protocol wants the driver to keep the car
+				 * into the platooning lane because the car is a part of a platoon
+				 */
+				void setLaneChangeAction(int action);
 		};
 		Vehicle vehicle(std::string nodeId) {
 			return Vehicle(this, nodeId);
@@ -366,6 +455,7 @@ class TraCICommandInterface
 				void setZoom(double zoom);
 				void setBoundary(Coord p1, Coord p2);
 				void takeScreenshot(std::string filename = "");
+				void trackVehicle(std::string vehicleId);
 
 			protected:
 				TraCICommandInterface* traci;
@@ -386,6 +476,15 @@ class TraCICommandInterface
 		int32_t genericGetInt(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId);
 		std::list<std::string> genericGetStringList(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId);
 		std::list<Coord> genericGetCoordList(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId);
+
+		typedef struct {
+			int lane;
+			bool safe;
+			bool wait;
+		} PlexeLaneChange;
+		typedef std::map<std::string, PlexeLaneChange> PlexeLaneChanges;
+		PlexeLaneChanges laneChanges;
+		void __changeLane(std::string veh, int current, int direction, bool safe=true);
 };
 
 }
