@@ -38,7 +38,7 @@ simple BBaseProtocol like BaseProtocol
         output upperLayerOut[10];
         input lowerControlIn;
         output lowerControlOut;
-        input upperControlIn;
-        output upperControlOut;
+        input upperControlIn[10];
+        output upperControlOut[10];
 
 }

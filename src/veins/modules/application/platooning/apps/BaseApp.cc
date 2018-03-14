@@ -61,7 +61,7 @@ void BaseApp::initialize(int stage) {
 		myId = positionHelper->getId();
 
 		//connect application to protocol
-		protocol->registerApplication(BaseProtocol::BEACON_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"));
+		protocol->registerApplication(BaseProtocol::BEACON_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"), gate("lowerControlIn"), gate("lowerControlOut"));
 
 		recordData = new cMessage("recordData");
 		//init statistics collection. round to 0.1 seconds

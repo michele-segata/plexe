@@ -46,6 +46,8 @@ void BaseProtocol::initialize(int stage) {
 		lowerLayerOut = findGate("lowerLayerOut");
 		minUpperId = gate("upperLayerIn", 0)->getId();
 		maxUpperId = gate("upperLayerIn", MAX_GATES_COUNT - 1)->getId();
+		minUpperControlId = gate("upperControlIn", 0)->getId();
+		maxUpperControlId = gate("upperControlIn", MAX_GATES_COUNT - 1)->getId();
 
 		//beaconing interval in seconds
 		beaconingInterval = SimTime(par("beaconingInterval").doubleValue());
@@ -244,7 +246,7 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 			//send the message to the applications responsible for it
 			UnicastMessage *duplicate = unicast->dup();
 			duplicate->encapsulate(enc->dup());
-			send(duplicate, i->second);
+			send(duplicate, std::get<1>(*i));
 		}
 	}
 
@@ -281,6 +283,8 @@ void BaseProtocol::receiveSignal(cComponent *source, simsignal_t signalID, bool 
 void BaseProtocol::handleMessage(cMessage *msg) {
 	if (msg->getArrivalGateId() >= minUpperId && msg->getArrivalGateId() <= maxUpperId)
 		handleUpperMsg(msg);
+	else if (msg->getArrivalGateId() >= minUpperControlId && msg->getArrivalGateId() <= maxUpperControlId)
+		handleUpperControl(msg);
 	else
 		BaseApplLayer::handleMessage(msg);
 }
@@ -316,7 +320,21 @@ void BaseProtocol::handleUpperControl(cMessage *msg) {
 void BaseProtocol::handleLowerControl(cMessage *msg) {
 	UnicastProtocolControlMessage *ctrl = dynamic_cast<UnicastProtocolControlMessage *>(msg);
 	if (ctrl) {
-		sendControlUp(ctrl);
+		UnicastMessage* unicast = dynamic_cast<UnicastMessage*>(ctrl->getEncapsulatedPacket());
+		if (unicast) {
+			//find the application responsible for this beacon
+			ApplicationMap::iterator app = apps.find(unicast->getKind());
+			if (app != apps.end() && app->second.size() != 0) {
+				AppList applications = app->second;
+				AppList::iterator i;
+				for (AppList::iterator i = applications.begin(); i != applications.end(); i++) {
+					//send the message to the applications responsible for it
+					std::cout << "sending control msg up\n";
+					send(ctrl->dup(), std::get<3>(*i));
+				}
+			}
+		}
+		delete ctrl;
 	}
 }
 
@@ -324,21 +342,30 @@ void BaseProtocol::messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicas
 	ASSERT2(false, "BaseProtocol::messageReceived() not overridden by subclass");
 }
 
-void BaseProtocol::registerApplication(int applicationId, cGate* appInputGate, cGate* appOutputGate) {
+void BaseProtocol::registerApplication(int applicationId, InputGate* appInputGate, OutputGate* appOutputGate,
+                                       ControlInputGate* appControlInputGate, ControlOutputGate* appControlOutputGate) {
 	if (usedGates == MAX_GATES_COUNT)
 		throw cRuntimeError("BaseProtocol: application with id=%d tried to register, but no space left", applicationId);
 	//connect gates, if not already connected. a gate might be already
 	//connected if an application is registering for multiple packet types
-	cGate *upperIn, *upperOut;
-	if (!appInputGate->isConnected() || !appOutputGate->isConnected()) {
-		if (appOutputGate->isConnected() || appOutputGate->isConnected())
-			throw cRuntimeError("BaseProtocol: the application should not be connected but one if its gates is connected");
+	cGate *upperIn, *upperOut, *upperCntIn, *upperCntOut;
+	if (!appInputGate->isConnected() || !appOutputGate->isConnected() ||
+	    !appControlInputGate->isConnected() || !appControlOutputGate->isConnected()) {
+		if (appInputGate->isConnected() || appOutputGate->isConnected() ||
+		    appControlInputGate->isConnected() || appControlOutputGate->isConnected())
+			throw cRuntimeError("BaseProtocol: the application should not be connected but one of its gates is connected");
 		upperOut = gate("upperLayerOut", usedGates);
 		upperOut->connectTo(appInputGate);
 		upperIn = gate("upperLayerIn", usedGates);
 		appOutputGate->connectTo(upperIn);
 		connections[appInputGate] = upperOut;
 		connections[appOutputGate] = upperIn;
+		upperCntOut = gate("upperControlOut", usedGates);
+		upperCntOut->connectTo(appControlInputGate);
+		upperCntIn = gate("upperControlIn", usedGates);
+		appControlOutputGate->connectTo(upperCntIn);
+		connections[appControlInputGate] = upperCntOut;
+		connections[appControlOutputGate] = upperCntIn;
 		usedGates++;
 	}
 	else {
@@ -352,9 +379,17 @@ void BaseProtocol::registerApplication(int applicationId, cGate* appInputGate, c
 		if (gate == connections.end())
 			throw cRuntimeError("BaseProtocol: gate should already be connected by not found in the connection list");
 		upperOut = gate->second;
+		gate = connections.find(appControlOutputGate);
+		if (gate == connections.end())
+			throw cRuntimeError("BaseProtocol: gate should already be connected by not found in the connection list");
+		upperCntIn = gate->second;
+		gate = connections.find(appControlInputGate);
+		if (gate == connections.end())
+			throw cRuntimeError("BaseProtocol: gate should already be connected by not found in the connection list");
+		upperCntOut = gate->second;
 	}
 	//save the mapping in the connection
-	apps[applicationId].push_back(AppInOut(upperIn, upperOut));
+	apps[applicationId].push_back(AppInOut(upperIn, upperOut, upperCntIn, upperCntOut));
 }
 
 BaseProtocol::~BaseProtocol() {

@@ -37,6 +37,6 @@ moduleinterface BaseProtocol extends IBaseApplLayer
      gates:
          input upperLayerIn[10];
          output upperLayerOut[10];
-         input upperControlIn;
-         output upperControlOut;
+         input upperControlIn[10];
+         output upperControlOut[10];
 }
