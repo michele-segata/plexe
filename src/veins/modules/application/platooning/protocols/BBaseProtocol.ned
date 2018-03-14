@@ -17,15 +17,28 @@
 
 package org.car2x.veins.modules.application.platooning.protocols;
 
-import org.car2x.veins.modules.application.platooning.protocols.BBaseProtocol;
+import org.car2x.veins.modules.application.platooning.protocols.BaseProtocol;
 
-//
-// Define static beaconing for platooning
-//
-simple SimplePlatooningBeaconing extends BBaseProtocol
+simple BBaseProtocol like BaseProtocol
 {
+
     parameters:
+        volatile double beaconingInterval @unit(seconds) = default(0.1s);
+        //priority (AC) for the messages. 0 = AC_BK, 3 = AC_VO
+        int priority;
+        //size of platooning messages
+        int packetSize;
+        int headerLength @unit("bit") = default(0bit);
         @display("i=block/network2");
-        @class(SimplePlatooningBeaconing);
+        @class(BBaseProtocol);
+    gates:
+        input lowerLayerIn;
+        output lowerLayerOut;
+        input upperLayerIn[10];
+        output upperLayerOut[10];
+        input lowerControlIn;
+        output lowerControlOut;
+        input upperControlIn;
+        output upperControlOut;
 
 }
