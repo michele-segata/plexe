@@ -158,20 +158,11 @@ void BaseApp::onPlatoonBeacon(PlatooningBeacon* pb) {
 		if (pb->getVehicleId() == positionHelper->getLeaderId()) {
 			traciVehicle->setLeaderVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(),
 				pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
-			traciVehicle->setLeaderVehicleFakeData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed());
 		}
 		//if the message comes from the vehicle in front
 		if (pb->getVehicleId() == positionHelper->getFrontId()) {
 			traciVehicle->setFrontVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(),
 				pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
-			//get front vehicle position
-			Coord frontPosition(pb->getPositionX(), pb->getPositionY(), 0);
-			//get my position
-			Veins::TraCICoord traciPosition = mobility->getManager()->omnet2traci(mobility->getCurrentPosition());
-			Coord position(traciPosition.x, traciPosition.y);
-			//compute distance
-			double distance = position.distance(frontPosition) - pb->getLength();
-			traciVehicle->setFrontVehicleFakeData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed(), distance);
 		}
 		//send data about every vehicle to the CACC. this is needed by the consensus controller
 		struct Plexe::VEHICLE_DATA vehicleData;
