@@ -28,10 +28,6 @@ class SimplePlatooningApp : public BaseApp
 		virtual void initialize(int stage);
 		virtual void finish();
 
-	protected:
-		virtual void onBeacon(WaveShortMessage* wsm);
-		virtual void onData(WaveShortMessage* wsm);
-
 	public:
 		SimplePlatooningApp() {}
 
