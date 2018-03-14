@@ -33,12 +33,7 @@ void SimplePlatooningApp::finish() {
 	BaseApp::finish();
 }
 
-void SimplePlatooningApp::onData(WaveShortMessage *wsm) {
-}
-
 void SimplePlatooningApp::handleSelfMsg(cMessage *msg) {
 	BaseApp::handleSelfMsg(msg);
 }
 
-void SimplePlatooningApp::onBeacon(WaveShortMessage* wsm) {
-}

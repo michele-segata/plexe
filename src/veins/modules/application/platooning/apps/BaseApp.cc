@@ -128,9 +128,6 @@ void BaseApp::handleLowerControl(cMessage *msg) {
 	delete msg;
 }
 
-void BaseApp::onData(WaveShortMessage *wsm) {
-}
-
 void BaseApp::sendUnicast(cPacket *msg, int destination) {
 	UnicastMessage *unicast = new UnicastMessage();
 	unicast->setDestination(destination);
@@ -153,9 +150,6 @@ void BaseApp::handleSelfMsg(cMessage *msg) {
 void BaseApp::stopSimulation() {
 	simulationCompleted = true;
 	endSimulation();
-}
-
-void BaseApp::onBeacon(WaveShortMessage* wsm) {
 }
 
 void BaseApp::onPlatoonBeacon(PlatooningBeacon* pb) {

@@ -40,10 +40,6 @@ class BaseApp : public BaseApplLayer
 		virtual void finish();
 
 	protected:
-		virtual void onBeacon(WaveShortMessage* wsm);
-		virtual void onData(WaveShortMessage* wsm);
-
-	protected:
 
 		//id of this vehicle
 		int myId;
