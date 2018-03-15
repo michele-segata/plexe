@@ -1,0 +1,15 @@
+[DEFAULT]
+defaultMap = default
+file = map-config
+
+[params]
+resdir = ../results
+
+[config]
+config = JoinManeuver
+out = JoinManeuver
+map    = %(defaultMap)s
+mapFile = %(file)s
+prefix = join
+merge = 1
+
