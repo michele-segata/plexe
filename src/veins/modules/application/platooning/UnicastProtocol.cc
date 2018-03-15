@@ -175,6 +175,7 @@ void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsu
 	else
 	{
 		queue.pop();
+		processNextPacket();
 	}
 
 }
