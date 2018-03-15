@@ -23,15 +23,8 @@
 class JoinApp : public BaseApp
 {
 
-	public:
-		virtual void initialize(int stage);
-		virtual void finish();
-
-	public:
+public:
 		JoinApp() {}
-
-	protected:
-		virtual void handleSelfMsg(cMessage *msg);
 
 		/**
 		 * Handles PlatoonBeacons

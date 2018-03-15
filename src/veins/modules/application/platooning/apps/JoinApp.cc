@@ -25,18 +25,6 @@
 
 Define_Module(JoinApp);
 
-void JoinApp::initialize(int stage) {
-	BaseApp::initialize(stage);
-}
-
-void JoinApp::finish() {
-	BaseApp::finish();
-}
-
-void JoinApp::handleSelfMsg(cMessage *msg) {
-	BaseApp::handleSelfMsg(msg);
-}
-
 void JoinApp::onPlatoonBeacon(PlatooningBeacon* pb) {
 	if (positionHelper->isInSamePlatoon(pb->getVehicleId())) {
 		//if the message comes from the leader
