@@ -32,13 +32,11 @@ moduleinterface BaseProtocol extends IBaseApplLayer
         int priority;// = default(0);
         //size of platooning messages
         int packetSize;// = default(25);
-        //send actual or controller-computed acceleration
-        bool useControllerAcceleration;
         @display("i=block/network2");
         @class(BaseProtocol);
      gates:
          input upperLayerIn[10];
          output upperLayerOut[10];
-         input upperControlIn;
-         output upperControlOut;
+         input upperControlIn[10];
+         output upperControlOut[10];
 }

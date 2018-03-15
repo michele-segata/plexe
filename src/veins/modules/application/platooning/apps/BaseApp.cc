@@ -61,7 +61,7 @@ void BaseApp::initialize(int stage) {
 		myId = positionHelper->getId();
 
 		//connect application to protocol
-		protocol->registerApplication(BaseProtocol::BEACON_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"));
+		protocol->registerApplication(BaseProtocol::BEACON_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"), gate("lowerControlIn"), gate("lowerControlOut"));
 
 		recordData = new cMessage("recordData");
 		//init statistics collection. round to 0.1 seconds
@@ -106,24 +106,26 @@ void BaseApp::handleLowerMsg(cMessage *msg) {
 
 			//if the message comes from the leader
 			if (epkt->getVehicleId() == positionHelper->getLeaderId()) {
-				traciVehicle->setPlatoonLeaderData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
+				traciVehicle->setLeaderVehicleData(epkt->getControllerAcceleration(), epkt->getAcceleration(),
+				    epkt->getSpeed(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
 			}
 			//if the message comes from the vehicle in front
 			if (epkt->getVehicleId() == positionHelper->getFrontId()) {
-				traciVehicle->setPrecedingVehicleData(epkt->getSpeed(), epkt->getAcceleration(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
+				traciVehicle->setFrontVehicleData(epkt->getControllerAcceleration(), epkt->getAcceleration(),
+				    epkt->getSpeed(), epkt->getPositionX(), epkt->getPositionY(), epkt->getTime());
 			}
 			//send data about every vehicle to the CACC. this is needed by the consensus controller
 			struct Plexe::VEHICLE_DATA vehicleData;
 			vehicleData.index = positionHelper->getMemberPosition(epkt->getVehicleId());
 			vehicleData.acceleration = epkt->getAcceleration();
-			//for now length is fixed to 4 meters. TODO: take it from sumo
-			vehicleData.length = 4;
+			vehicleData.length = epkt->getLength();
 			vehicleData.positionX = epkt->getPositionX();
 			vehicleData.positionY = epkt->getPositionY();
 			vehicleData.speed = epkt->getSpeed();
 			vehicleData.time = epkt->getTime();
+			vehicleData.u = epkt->getControllerAcceleration();
 			//send information to CACC
-			traciVehicle->setGenericInformation(CC_SET_VEHICLE_DATA, &vehicleData, sizeof(struct Plexe::VEHICLE_DATA));
+			traciVehicle->setVehicleData(&vehicleData);
 
 		}
 

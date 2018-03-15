@@ -38,8 +38,17 @@ moduleinterface BaseScenario extends IBaseApplLayer
         double ploegH @unit("s");
         double ploegKp;
         double ploegKd;
+        double flatbedKa;
+        double flatbedKv;
+        double flatbedKp;
+        double flatbedH;
+        double flatbedD;
         double myccKd;
         double myccKs;
+        //use the real or the controller acceleration for computing the acceleration
+        bool useControllerAcceleration;
+        //use prediction for computing missing data between successive beacons
+        bool usePrediction;
 
         //location of the file with vehicle parameters
         string vehicleFile;

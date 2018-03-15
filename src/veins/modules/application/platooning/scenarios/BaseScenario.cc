@@ -33,8 +33,15 @@ void BaseScenario::initialize(int stage) {
 		ploegH = par("ploegH").doubleValue();
 		ploegKp = par("ploegKp").doubleValue();
 		ploegKd = par("ploegKd").doubleValue();
+		flatbedKa = par("flatbedKa").doubleValue();
+		flatbedKv = par("flatbedKv").doubleValue();
+		flatbedKp = par("flatbedKp").doubleValue();
+		flatbedH = par("flatbedH").doubleValue();
+		flatbedD = par("flatbedD").doubleValue();
 		myccKd = par("myccKd").doubleValue();
 		myccKs = par("myccKs").doubleValue();
+		useControllerAcceleration = par("useControllerAcceleration").boolValue();
+		usePrediction = par("usePrediction").boolValue();
 
 		useRealisticEngine = par("useRealisticEngine").boolValue();
 		if (useRealisticEngine) {
@@ -55,6 +62,9 @@ void BaseScenario::initialize(int stage) {
 		}
 		else if (strcmp(strController, "CONSENSUS") == 0) {
 			controller = Plexe::CONSENSUS;
+		}
+		else if (strcmp(strController, "FLATBED") == 0) {
+			controller = Plexe::FLATBED;
 		}
 		else if (strcmp(strController, "MYCC") == 0) {
 			controller = Plexe::MYCC;
@@ -83,6 +93,11 @@ void BaseScenario::initialize(int stage) {
 		}
 		//set the current lane
 		traciVehicle->setFixedLane(positionHelper->getPlatoonLane());
+		traciVehicle->setSpeedMode(0);
+		traciVehicle->usePrediction(usePrediction);
+
+		if (positionHelper->getId() == 0)
+			traci->guiView("View #0").trackVehicle(mobility->getExternalId());
 	}
 
 }
@@ -96,49 +111,54 @@ void BaseScenario::handleSelfMsg(cMessage *msg) {
 
 void BaseScenario::initializeControllers() {
 	//engine lag
-	traciVehicle->setGenericInformation(CC_SET_ENGINE_TAU, &engineTau, sizeof(double));
+	traciVehicle->setParameter(CC_PAR_ENGINE_TAU, engineTau);
 	//PATH's CACC parameters
-	traciVehicle->setGenericInformation(CC_SET_CACC_C1, &caccC1, sizeof(double));
-	traciVehicle->setGenericInformation(CC_SET_CACC_OMEGA_N, &caccOmegaN, sizeof(double));
-	traciVehicle->setGenericInformation(CC_SET_CACC_XI, &caccXi, sizeof(double));
+	traciVehicle->setParameter(CC_PAR_CACC_C1, caccC1);
+	traciVehicle->setParameter(CC_PAR_CACC_OMEGA_N, caccOmegaN);
+	traciVehicle->setParameter(CC_PAR_CACC_XI, caccXi);
 	//Ploeg's parameters
-	traciVehicle->setGenericInformation(CC_SET_PLOEG_H, &ploegH, sizeof(double));
-	traciVehicle->setGenericInformation(CC_SET_PLOEG_KP, &ploegKp, sizeof(double));
-	traciVehicle->setGenericInformation(CC_SET_PLOEG_KD, &ploegKd, sizeof(double));
+	traciVehicle->setParameter(CC_PAR_PLOEG_H, ploegH);
+	traciVehicle->setParameter(CC_PAR_PLOEG_KP, ploegKp);
+	traciVehicle->setParameter(CC_PAR_PLOEG_KD, ploegKd);
+	//flatbed's parameters
+	traciVehicle->setParameter(CC_PAR_FLATBED_KA, flatbedKa);
+	traciVehicle->setParameter(CC_PAR_FLATBED_KV, flatbedKv);
+	traciVehicle->setParameter(CC_PAR_FLATBED_KP, flatbedKp);
+	traciVehicle->setParameter(CC_PAR_FLATBED_H, flatbedH);
+	traciVehicle->setParameter(CC_PAR_FLATBED_D, flatbedD);
+	traciVehicle->setParameter(CC_PAR_MYCC_KD, myccKd);
+	traciVehicle->setParameter(CC_PAR_MYCC_KS, myccKs);
 	//consensus parameters
-	int position = positionHelper->getPosition();
-	traciVehicle->setGenericInformation(CC_SET_VEHICLE_POSITION, &position, sizeof(int));
-	int nCars = positionHelper->getPlatoonSize();
-	traciVehicle->setGenericInformation(CC_SET_PLATOON_SIZE, &nCars, sizeof(int));
-	//mycc parameters
-	traciVehicle->setGenericInformation(CC_SET_MYCC_KD, &myccKd, sizeof(double));
-	traciVehicle->setGenericInformation(CC_SET_MYCC_KS, &myccKs, sizeof(double));
-
+	traciVehicle->setParameter(CC_PAR_VEHICLE_POSITION, positionHelper->getPosition());
+	traciVehicle->setParameter(CC_PAR_PLATOON_SIZE, positionHelper->getPlatoonSize());
+	//use of controller acceleration
+	traciVehicle->useControllerAcceleration(useControllerAcceleration);
 
 	Plexe::VEHICLE_DATA vehicleData;
 	//initialize own vehicle data
 	if (!positionHelper->isLeader()) {
 		//my position
 		vehicleData.index = positionHelper->getPosition();
-		//my length. TODO: take it from SUMO
-		vehicleData.length = 4;
+		//my length
+		vehicleData.length = traciVehicle->getLength();
 		//the rest is all dummy data
 		vehicleData.acceleration = 10;
 		vehicleData.positionX = 400000;
 		vehicleData.positionY = 0;
 		vehicleData.speed = 200;
 		vehicleData.time = simTime().dbl();
-		traciVehicle->setGenericInformation(CC_SET_VEHICLE_DATA, &vehicleData, sizeof(struct Plexe::VEHICLE_DATA));
+		vehicleData.u = 0;
+		traciVehicle->setVehicleData(&vehicleData);
 	}
 
 	if (useRealisticEngine) {
 		int engineModel = CC_ENGINE_MODEL_REALISTIC;
 		//the order is important
 		//1. let sumo instantiate the realistic engine model
-		traciVehicle->setGenericInformation(CC_SET_VEHICLE_ENGINE_MODEL, &engineModel, sizeof(engineModel));
+		traciVehicle->setParameter(CC_PAR_VEHICLE_ENGINE_MODEL, engineModel);
 		//2. tell the realistic engine model the location of the parameters file
-		traciVehicle->setGenericInformation(CC_SET_VEHICLES_FILE, vehicleFile.c_str(), vehicleFile.length() + 1);
+		traciVehicle->setParameter(CC_PAR_VEHICLES_FILE, vehicleFile);
 		//3. tell the realistic engine model which vehicle (in the specified parameters file) to use
-		traciVehicle->setGenericInformation(CC_SET_VEHICLE_MODEL, vehicleType.c_str(), vehicleType.length() + 1);
+		traciVehicle->setParameter(CC_PAR_VEHICLE_MODEL, vehicleType);
 	}
 }

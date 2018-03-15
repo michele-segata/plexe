@@ -27,6 +27,8 @@
 
 #include "veins/modules/application/platooning/utilities/BasePositionHelper.h"
 
+#include <tuple>
+
 //maximum number of upper layer apps that can connect (see .ned file)
 #define MAX_GATES_COUNT 10
 
@@ -69,6 +71,8 @@ class BaseProtocol : public BaseApplLayer {
 		int myId;
 		//sequence number of sent messages
 		int seq_n;
+		//vehicle length
+		double length;
 
 		//beaconing interval (i.e., update frequency)
 		SimTime beaconingInterval;
@@ -76,20 +80,20 @@ class BaseProtocol : public BaseApplLayer {
 		int priority;
 		//packet size of the platooning message
 		int packetSize;
-		//determine whether to send the actual acceleration or the one just computed by the controller
-		bool useControllerAcceleration;
 
 		//input/output gates from/to upper layer
 		int upperControlIn, upperControlOut, lowerLayerIn, lowerLayerOut;
 		//id range of input gates from upper layer
-		int minUpperId, maxUpperId;
+		int minUpperId, maxUpperId, minUpperControlId, maxUpperControlId;
 
 		//registered upper layer applications. this is a mapping between
 		//beacon id inside packets coming from upper layer and the gate they
 		//the application is connected to. convention: id, from app, to app
 		typedef cGate OutputGate;
 		typedef cGate InputGate;
-		typedef std::pair<InputGate*, OutputGate*> AppInOut;
+		typedef cGate ControlInputGate;
+		typedef cGate ControlOutputGate;
+		typedef std::tuple<InputGate*, OutputGate*, ControlInputGate*, ControlOutputGate*> AppInOut;
 		typedef std::vector<AppInOut> AppList;
 		typedef std::map<int, AppList> ApplicationMap;
 		ApplicationMap apps;
@@ -183,7 +187,8 @@ class BaseProtocol : public BaseApplLayer {
 		virtual void finish();
 
 		//register a higher level application by its id
-		void registerApplication(int applicationId, cGate* appInputGate, cGate* appOutputGate);
+		void registerApplication(int applicationId, InputGate* appInputGate, OutputGate* appOutputGate,
+                                 ControlInputGate* appControlInputGate, ControlOutputGate* appControlOutputGate);
 };
 
 #endif /* BASEPROTOCOL_H_ */
