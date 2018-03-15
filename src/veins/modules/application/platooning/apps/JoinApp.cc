@@ -28,15 +28,11 @@ Define_Module(JoinApp);
 void JoinApp::onPlatoonBeacon(PlatooningBeacon* pb) {
 	if (positionHelper->isInSamePlatoon(pb->getVehicleId())) {
 		//if the message comes from the leader
-		if (pb->getVehicleId() == positionHelper->getLeaderId()) {
-			traciVehicle->setLeaderVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(),
-				pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
+		if (pb->getVehicleId() == positionHelper->getLeaderId())
 			traciVehicle->setLeaderVehicleFakeData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed());
-		}
+
 		//if the message comes from the vehicle in front
 		if (pb->getVehicleId() == positionHelper->getFrontId()) {
-			traciVehicle->setFrontVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(),
-				pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
 			//get front vehicle position
 			Coord frontPosition(pb->getPositionX(), pb->getPositionY(), 0);
 			//get my position
@@ -46,18 +42,7 @@ void JoinApp::onPlatoonBeacon(PlatooningBeacon* pb) {
 			double distance = position.distance(frontPosition) - pb->getLength();
 			traciVehicle->setFrontVehicleFakeData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed(), distance);
 		}
-		//send data about every vehicle to the CACC. this is needed by the consensus controller
-		struct Plexe::VEHICLE_DATA vehicleData;
-		vehicleData.index = positionHelper->getMemberPosition(pb->getVehicleId());
-		vehicleData.acceleration = pb->getAcceleration();
-		vehicleData.length = pb->getLength();
-		vehicleData.positionX = pb->getPositionX();
-		vehicleData.positionY = pb->getPositionY();
-		vehicleData.speed = pb->getSpeed();
-		vehicleData.time = pb->getTime();
-		vehicleData.u = pb->getControllerAcceleration();
-		//send information to CACC
-		traciVehicle->setVehicleData(&vehicleData);
 	}
+	BaseApp::onPlatoonBeacon(pb);
 }
 
