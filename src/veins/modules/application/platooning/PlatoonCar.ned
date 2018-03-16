@@ -19,6 +19,8 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
+package org.car2x.veins.modules.application.platooning;
+
 import org.car2x.veins.base.modules.IBaseApplLayer;
 import org.car2x.veins.modules.application.platooning.utilities.BasePositionHelper;
 import org.car2x.veins.modules.application.platooning.scenarios.BaseScenario;
@@ -29,7 +31,7 @@ import org.car2x.veins.modules.mobility.traci.TraCIMobility;
 import org.car2x.veins.modules.nic.Nic80211p;
 
 
-module Car
+module PlatoonCar
 {
     parameters:
         string scenario_type;
