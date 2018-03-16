@@ -177,4 +177,5 @@ void BaseApp::onPlatoonBeacon(PlatooningBeacon* pb) {
 		//send information to CACC
 		traciVehicle->setVehicleData(&vehicleData);
 	}
+	delete pb;
 }
