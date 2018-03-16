@@ -27,7 +27,7 @@ import org.car2x.veins.modules.mobility.traci.TraCIBaseTrafficManager;
 import org.car2x.veins.modules.obstacle.ObstacleControl;
 import org.car2x.veins.modules.world.annotations.AnnotationManager;
 
-module Highway
+network Highway
 {
     parameters:
         double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)

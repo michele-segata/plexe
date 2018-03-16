@@ -1,6 +1,6 @@
 #default setup
 [default]
-module = scenario.node[*].appl
+module = Highway.node[*].appl
 names = nodeId,distance,relativeSpeed,speed,acceleration,controllerAcceleration
 2 = caccXi
 3 = caccOmegaN
