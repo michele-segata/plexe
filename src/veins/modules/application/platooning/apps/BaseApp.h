@@ -40,10 +40,6 @@ class BaseApp : public BaseApplLayer
 		virtual void finish();
 
 	protected:
-		virtual void onBeacon(WaveShortMessage* wsm);
-		virtual void onData(WaveShortMessage* wsm);
-
-	protected:
 
 		//id of this vehicle
 		int myId;
@@ -107,6 +103,10 @@ class BaseApp : public BaseApplLayer
 		virtual void handleSelfMsg(cMessage *msg);
 		virtual void handleLowerControl(cMessage *msg);
 
+		/**
+		 * Handles PlatoonBeacons
+		 */
+		virtual void onPlatoonBeacon(PlatooningBeacon* pb);
 };
 
 #endif /* BASEAPP_H_ */

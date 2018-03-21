@@ -81,6 +81,8 @@ class TraCIScenarioManager : public cSimpleModule
 			VEH_SIGNAL_EMERGENCY_YELLOW = 8192
 		};
 
+		static const std::string TRACI_INITIALIZED_SIGNAL_NAME;
+
 		TraCIScenarioManager();
 		~TraCIScenarioManager();
 		virtual int numInitStages() const { return std::max(cSimpleModule::numInitStages(), 2); }
@@ -101,7 +103,6 @@ class TraCIScenarioManager : public cSimpleModule
 			return hosts;
 		}
 
-
 		bool isTraciInitialized() {
 			return traciInitialized;
 		}
@@ -109,7 +110,6 @@ class TraCIScenarioManager : public cSimpleModule
 		simtime_t getUpdateInterval() {
 			return updateInterval;
 		}
-
 		/**
 		 * convert TraCI coordinates to OMNeT++ coordinates
 		 */
@@ -130,13 +130,6 @@ class TraCIScenarioManager : public cSimpleModule
 			return connection->omnet2traci(coords);
 		}
 
-		/**
-		 * returns whether simulation is running under gui or not
-		 */
-		virtual bool isGuiSimulation() {
-			return false;
-		}
-
 	protected:
 		bool traciInitialized;
 		bool debug; /**< whether to emit debug messages */
@@ -151,15 +144,30 @@ class TraCIScenarioManager : public cSimpleModule
 		std::string host;
 		int port;
 
-		cMessage* myAddVehicleTimer;
+		std::string trafficLightModuleType; /**< module type to be used in the simulation for each managed traffic light */
+		std::string trafficLightModuleName; /**< module name to be used in the simulation for each managed traffic light */
+		std::string trafficLightModuleDisplayString; /**< module displayString to be used in the simulation for each managed vehicle */
+		std::vector<std::string> trafficLightModuleIds; /**< list of traffic light module ids that is subscribed to (whitelist) */
 
+		uint32_t vehicleNameCounter;
+		cMessage* myAddVehicleTimer;
+		std::vector<std::string> vehicleTypeIds;
+		std::map<int, std::queue<std::string> > vehicleInsertQueue;
+		std::set<std::string> queuedVehicles;
+		std::vector<std::string> routeIds;
+		int vehicleRngIndex;
 		int numVehicles;
+
+		cRNG* mobRng;
 
 		bool autoShutdown; /**< Shutdown module as soon as no more vehicles are in the simulation */
 		double penetrationRate;
 		std::list<std::string> roiRoads; /**< which roads (e.g. "hwy1 hwy2") are considered to consitute the region of interest, if not empty */
 		std::list<std::pair<TraCICoord, TraCICoord> > roiRects; /**< which rectangles (e.g. "0,0-10,10 20,20-30,30) are considered to consitute the region of interest, if not empty */
 
+		double areaSum;
+
+		AnnotationManager* annotations;
 		TraCIConnection* connection;
 		TraCICommandInterface* commandIfc;
 
@@ -167,6 +175,7 @@ class TraCIScenarioManager : public cSimpleModule
 		std::map<std::string, cModule*> hosts; /**< vector of all hosts managed by us */
 		std::set<std::string> unEquippedHosts;
 		std::set<std::string> subscribedVehicles; /**< all vehicles we have already subscribed to */
+		std::map<std::string, cModule*> trafficLights; /**< vector of all traffic lights managed by us */
 		uint32_t activeVehicleCount; /**< number of vehicles, be it parking or driving **/
 		uint32_t parkingVehicleCount; /**< number of parking vehicles, derived from parking start/end events */
 		uint32_t drivingVehicleCount; /**< number of driving, as reported by sumo */
@@ -198,14 +207,14 @@ class TraCIScenarioManager : public cSimpleModule
 		bool isInRegionOfInterest(const TraCICoord& position, std::string road_id, double speed, double angle);
 
 		/**
-		 * convert TraCI angle to OMNeT++ angle (in rad)
+		 * adds a new vehicle to the queue which are tried to be inserted at the next SUMO time step;
 		 */
-		double traci2omnetAngle(double angle) const;
+		void insertNewVehicle();
 
 		/**
-		 * convert OMNeT++ angle (in rad) to TraCI angle
+		 * tries to add all vehicles in the vehicle queue to SUMO;
 		 */
-		double omnet2traciAngle(double angle) const;
+		void insertVehicles();
 
 		void subscribeToVehicleVariables(std::string vehicleId);
 		void unsubscribeFromVehicleVariables(std::string vehicleId);
@@ -213,6 +222,9 @@ class TraCIScenarioManager : public cSimpleModule
 		void processVehicleSubscription(std::string objectId, TraCIBuffer& buf);
 		void processSubcriptionResult(TraCIBuffer& buf);
 
+		void subscribeToTrafficLightVariables(std::string tlId);
+		void unsubscribeFromTrafficLightVariables(std::string tlId);
+		void processTrafficLightSubscription(std::string objectId, TraCIBuffer& buf);
 		/**
 		 * parses the vector of module types in ini file
 		 *
@@ -225,6 +237,8 @@ class TraCIScenarioManager : public cSimpleModule
 		 */
 		TypeMapping parseMappings(std::string parameter, std::string parameterName, bool allowEmpty = false);
 
+	private:
+		const omnetpp::simsignal_t traciInitializedSignal;
 };
 }
 

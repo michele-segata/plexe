@@ -1,0 +1,7 @@
+#default setup
+[default]
+module = Highway.node[*].appl
+names = nodeId,distance,relativeSpeed,speed,acceleration,controllerAcceleration
+2 = caccXi
+3 = caccOmegaN
+4 = runNumber
