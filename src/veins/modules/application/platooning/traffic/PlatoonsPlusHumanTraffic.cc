@@ -136,10 +136,7 @@ void PlatoonsPlusHumanTraffic::insertHumans() {
 
 }
 
-void PlatoonsPlusHumanTraffic::finish() {
-	TraCIBaseTrafficManager::finish();
-	if (insertPlatoonMessage) {
-		cancelAndDelete(insertPlatoonMessage);
-		insertPlatoonMessage = 0;
-	}
+PlatoonsPlusHumanTraffic::~PlatoonsPlusHumanTraffic() {
+	cancelAndDelete(insertPlatoonMessage);
+	insertPlatoonMessage = nullptr;
 }

@@ -26,10 +26,9 @@ class PlatoonsPlusHumanTraffic : public TraCIBaseTrafficManager
 	public:
 
 		virtual void initialize(int stage);
-		virtual void finish();
 
 		PlatoonsPlusHumanTraffic() {
-			insertPlatoonMessage = 0;
+			insertPlatoonMessage = nullptr;
 			platoonInsertDistance = 0;
 			platoonInsertHeadway = 0;
 			platoonInsertSpeed = 0;
@@ -41,6 +40,7 @@ class PlatoonsPlusHumanTraffic : public TraCIBaseTrafficManager
 			humanCars = 0;
 			humanLanes = 0;
 		}
+		virtual ~PlatoonsPlusHumanTraffic();
 
 	protected:
 

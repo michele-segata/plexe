@@ -36,10 +36,6 @@ void PositionHelper::initialize(int stage) {
 
 }
 
-void PositionHelper::finish() {
-	BasePositionHelper::finish();
-}
-
 int PositionHelper::getPosition() {
 	return position;
 }

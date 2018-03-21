@@ -28,7 +28,6 @@ class AutoLaneChangeScenario : public BaseScenario
 	public:
 
 		virtual void initialize(int stage);
-		virtual void finish();
 
 	protected:
 
@@ -44,10 +43,6 @@ class AutoLaneChangeScenario : public BaseScenario
 			leaderSpeed = 0;
 			appl = 0;
 		}
-
-	protected:
-
-		virtual void handleSelfMsg(cMessage *msg);
 
 };
 

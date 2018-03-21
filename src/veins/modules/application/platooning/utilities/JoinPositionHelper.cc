@@ -29,10 +29,6 @@ void JoinPositionHelper::initialize(int stage) {
 
 }
 
-void JoinPositionHelper::finish() {
-	BasePositionHelper::finish();
-}
-
 bool JoinPositionHelper::isInSamePlatoon(int vehicleId) {
 	return true;
 }

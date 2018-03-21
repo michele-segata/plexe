@@ -97,10 +97,6 @@ void BaseScenario::initialize(int stage) {
 
 }
 
-void BaseScenario::finish() {
-	BaseApplLayer::finish();
-}
-
 void BaseScenario::handleSelfMsg(cMessage *msg) {
 }
 

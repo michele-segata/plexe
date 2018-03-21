@@ -81,7 +81,3 @@ SlottedBeaconing::SlottedBeaconing()
 
 SlottedBeaconing::~SlottedBeaconing()
 {}
-
-void SlottedBeaconing::finish(){
-	BaseProtocol::finish();
-}

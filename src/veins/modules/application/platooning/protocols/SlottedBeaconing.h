@@ -37,7 +37,6 @@ class SlottedBeaconing : public BaseProtocol
 		virtual ~SlottedBeaconing();
 
 		virtual void initialize(int stage);
-		virtual void finish();
 };
 
 #endif /* SLOTTEDBEACONING_H_ */

@@ -26,7 +26,6 @@ class SinusoidalScenario : public BaseScenario
 	public:
 
 		virtual void initialize(int stage);
-		virtual void finish();
 
 	protected:
 
@@ -46,9 +45,10 @@ class SinusoidalScenario : public BaseScenario
 			leaderOscillationFrequency = 0;
 			oscillationAmplitude = 0;
 			leaderSpeed = 0;
-			changeSpeed = 0;
+			changeSpeed = nullptr;
 			startOscillating = SimTime(0);
 		}
+		virtual ~SinusoidalScenario();
 
 	protected:
 

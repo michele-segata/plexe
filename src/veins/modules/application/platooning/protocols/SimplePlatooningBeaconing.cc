@@ -50,7 +50,3 @@ SimplePlatooningBeaconing::SimplePlatooningBeaconing()
 
 SimplePlatooningBeaconing::~SimplePlatooningBeaconing()
 {}
-
-void SimplePlatooningBeaconing::finish(){
-	BaseProtocol::finish();
-}

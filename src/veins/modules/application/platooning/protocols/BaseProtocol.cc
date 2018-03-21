@@ -105,22 +105,11 @@ void BaseProtocol::initialize(int stage) {
 
 }
 
-void BaseProtocol::finish() {
-	if (sendBeacon) {
-		if (sendBeacon->isScheduled()) {
-			cancelEvent(sendBeacon);
-		}
-		delete sendBeacon;
-		sendBeacon = 0;
-	}
-	if (recordData) {
-		if (recordData->isScheduled()) {
-			cancelEvent(recordData);
-		}
-		delete recordData;
-		recordData = 0;
-	}
-	BaseApplLayer::finish();
+BaseProtocol::~BaseProtocol() {
+	cancelAndDelete(sendBeacon);
+	sendBeacon = nullptr;
+	cancelAndDelete(recordData);
+	recordData = nullptr;
 }
 
 void BaseProtocol::handleSelfMsg(cMessage *msg) {
@@ -391,7 +380,3 @@ void BaseProtocol::registerApplication(int applicationId, InputGate* appInputGat
 	//save the mapping in the connection
 	apps[applicationId].push_back(AppInOut(upperIn, upperOut, upperCntIn, upperCntOut));
 }
-
-BaseProtocol::~BaseProtocol() {
-}
-

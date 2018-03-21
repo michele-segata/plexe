@@ -56,10 +56,9 @@ void SinusoidalScenario::initialize(int stage) {
 
 }
 
-void SinusoidalScenario::finish() {
+SinusoidalScenario::~SinusoidalScenario() {
 	cancelAndDelete(changeSpeed);
-	changeSpeed = 0;
-	BaseScenario::finish();
+	changeSpeed = nullptr;
 }
 
 void SinusoidalScenario::handleSelfMsg(cMessage *msg) {

@@ -72,12 +72,11 @@ class HumanInterferingProtocol : public BaseApplLayer {
 		static const int INTERFERENCE_TYPE = 12349;
 
 		HumanInterferingProtocol() {
-			sendBeacon = 0;
+			sendBeacon = nullptr;
 		}
 		virtual ~HumanInterferingProtocol();
 
 		virtual void initialize(int stage);
-		virtual void finish();
 
 };
 

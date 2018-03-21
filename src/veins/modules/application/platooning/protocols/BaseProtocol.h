@@ -177,14 +177,13 @@ class BaseProtocol : public BaseApplLayer {
 		static const int BEACON_TYPE = 12345;
 
 		BaseProtocol() {
-			sendBeacon = 0;
-			recordData = 0;
+			sendBeacon = nullptr;
+			recordData = nullptr;
 			usedGates = 0;
 		}
 		virtual ~BaseProtocol();
 
 		virtual void initialize(int stage);
-		virtual void finish();
 
 		//register a higher level application by its id
 		void registerApplication(int applicationId, InputGate* appInputGate, OutputGate* appOutputGate,

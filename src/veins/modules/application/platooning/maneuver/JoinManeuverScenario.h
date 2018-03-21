@@ -83,7 +83,6 @@ class JoinManeuverScenario : public BaseScenario
 		static const int MANEUVER_TYPE = 12347;
 
 		virtual void initialize(int stage);
-		virtual void finish();
 
 	protected:
 		void sendUnicast(cPacket *msg, int destination);
@@ -92,8 +91,9 @@ class JoinManeuverScenario : public BaseScenario
 
 	public:
 		JoinManeuverScenario()	{
-			startManeuver = 0;
+			startManeuver = nullptr;
 		}
+		virtual ~JoinManeuverScenario();
 
 	protected:
 

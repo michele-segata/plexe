@@ -83,6 +83,7 @@ class BaseApp : public BaseApplLayer
 		BaseApp() {
 			recordData = 0;
 		}
+		virtual ~BaseApp();
 
 		/**
 		 * Sends a unicast message

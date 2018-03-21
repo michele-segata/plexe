@@ -123,15 +123,9 @@ void JoinManeuverScenario::prepareManeuverCars(int platoonLane) {
 
 }
 
-void JoinManeuverScenario::finish() {
-
-	if (startManeuver) {
-		cancelAndDelete(startManeuver);
-		startManeuver = 0;
-	}
-
-	BaseScenario::finish();
-
+JoinManeuverScenario::~JoinManeuverScenario() {
+	cancelAndDelete(startManeuver);
+	startManeuver = nullptr;
 }
 
 ManeuverMessage *JoinManeuverScenario::generateMessage() {

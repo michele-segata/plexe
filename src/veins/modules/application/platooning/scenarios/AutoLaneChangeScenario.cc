@@ -52,11 +52,3 @@ void AutoLaneChangeScenario::initialize(int stage) {
 	}
 
 }
-
-void AutoLaneChangeScenario::finish() {
-	BaseScenario::finish();
-}
-
-void AutoLaneChangeScenario::handleSelfMsg(cMessage *msg) {
-	BaseScenario::handleSelfMsg(msg);
-}

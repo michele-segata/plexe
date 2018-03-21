@@ -30,7 +30,6 @@ class DynamicPositionHelper : public BasePositionHelper
 	public:
 
 		virtual void initialize(int stage);
-		virtual void finish();
 
 		/**
 		 * Returns the position of this vehicle within the platoon

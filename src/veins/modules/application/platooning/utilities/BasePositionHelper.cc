@@ -35,10 +35,6 @@ void BasePositionHelper::initialize(int stage) {
 
 }
 
-void BasePositionHelper::finish() {
-	BaseApplLayer::finish();
-}
-
 std::string BasePositionHelper::getExternalId() {
 	return mobility->getExternalId();
 }

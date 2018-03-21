@@ -427,20 +427,13 @@ void UnicastProtocol::onData(WaveShortMessage* wsm)
 	ASSERT2(0, "onData invoke when handleLowerMsg() has been overridden");
 }
 
-void UnicastProtocol::finish()
-{
-	BaseWaveApplLayer::finish();
-}
-
 UnicastProtocol::UnicastProtocol()
 {
-	timeout = 0;
+	timeout = nullptr;
 }
 
 UnicastProtocol::~UnicastProtocol()
 {
-	if (timeout) {
-                cancelAndDelete(timeout);
-                timeout = nullptr;
-	}
+	cancelAndDelete(timeout);
+	timeout = nullptr;
 }

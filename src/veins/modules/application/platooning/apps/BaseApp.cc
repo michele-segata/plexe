@@ -73,13 +73,6 @@ void BaseApp::initialize(int stage) {
 
 void BaseApp::finish() {
 	BaseApplLayer::finish();
-	if (recordData) {
-		if (recordData->isScheduled()) {
-			cancelEvent(recordData);
-		}
-		delete recordData;
-		recordData = 0;
-	}
 	if (!crashHappened && !simulationCompleted) {
 		if (traciVehicle->isCrashed()) {
 			crashHappened = true;
@@ -87,6 +80,11 @@ void BaseApp::finish() {
 			endSimulation();
 		}
 	}
+}
+
+BaseApp::~BaseApp() {
+	cancelAndDelete(recordData);
+	recordData = nullptr;
 }
 
 void BaseApp::handleLowerMsg(cMessage *msg) {

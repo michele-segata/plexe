@@ -29,10 +29,6 @@ void DynamicPositionHelper::initialize(int stage) {
 
 }
 
-void DynamicPositionHelper::finish() {
-	BasePositionHelper::finish();
-}
-
 int DynamicPositionHelper::getPosition() {
 	int platoonId = getPlatoonId();
 	return positions.positions.find(platoonId)->second.find(myId)->second;

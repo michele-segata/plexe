@@ -28,7 +28,6 @@ class AccelerateAndBrakeScenario : public BaseScenario
 	public:
 
 		virtual void initialize(int stage);
-		virtual void finish();
 
 	protected:
 
@@ -54,12 +53,13 @@ class AccelerateAndBrakeScenario : public BaseScenario
 			leaderSpeed = 0;
 			acceleration = 0;
 			brakingDeceleration = 0;
-			startAccelerationMsg = 0;
-			startBrakingMsg = 0;
+			startAccelerationMsg = nullptr;
+			startBrakingMsg = nullptr;
 			startAccelerating = SimTime(0);
 			startBraking = SimTime(0);
 			appl = 0;
 		}
+		virtual ~AccelerateAndBrakeScenario();
 
 	protected:
 

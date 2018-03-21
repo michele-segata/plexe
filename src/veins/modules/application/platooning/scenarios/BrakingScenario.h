@@ -28,7 +28,6 @@ class BrakingScenario : public BaseScenario
 	public:
 
 		virtual void initialize(int stage);
-		virtual void finish();
 
 	protected:
 
@@ -47,10 +46,11 @@ class BrakingScenario : public BaseScenario
 		BrakingScenario() {
 			leaderSpeed = 0;
 			brakingDeceleration = 0;
-			changeSpeed = 0;
+			changeSpeed = nullptr;
 			startBraking = SimTime(0);
 			appl = 0;
 		}
+		virtual ~BrakingScenario();
 
 	protected:
 

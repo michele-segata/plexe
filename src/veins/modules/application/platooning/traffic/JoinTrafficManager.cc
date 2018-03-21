@@ -47,9 +47,7 @@ void JoinTrafficManager::insertJoiner() {
 	automated.lane = 2;
 	addVehicleToQueue(0, automated);
 }
-
-void JoinTrafficManager::finish() {
-	PlatoonsTrafficManager::finish();
+ JoinTrafficManager::~JoinTrafficManager() {
 	cancelAndDelete(insertJoinerMessage);
-	insertJoinerMessage = 0;
+	insertJoinerMessage = nullptr;
 }

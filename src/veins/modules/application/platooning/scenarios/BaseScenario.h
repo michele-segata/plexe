@@ -32,7 +32,6 @@ class BaseScenario : public BaseApplLayer
 	public:
 
 		virtual void initialize(int stage);
-		virtual void finish();
 
 	protected:
 

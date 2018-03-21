@@ -79,15 +79,9 @@ void HumanInterferingProtocol::initialize(int stage) {
 
 }
 
-void HumanInterferingProtocol::finish() {
-	if (sendBeacon) {
-		if (sendBeacon->isScheduled()) {
-			cancelEvent(sendBeacon);
-		}
-		delete sendBeacon;
-		sendBeacon = 0;
-	}
-	BaseApplLayer::finish();
+HumanInterferingProtocol::~HumanInterferingProtocol() {
+	cancelAndDelete(sendBeacon);
+	sendBeacon = nullptr;
 }
 
 void HumanInterferingProtocol::handleSelfMsg(cMessage *msg) {
@@ -125,7 +119,3 @@ void HumanInterferingProtocol::sendInterferingMessage() {
 void HumanInterferingProtocol::handleLowerMsg(cMessage *msg) {
 	delete msg;
 }
-
-HumanInterferingProtocol::~HumanInterferingProtocol() {
-}
-

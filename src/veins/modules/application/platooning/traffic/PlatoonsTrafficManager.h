@@ -26,10 +26,9 @@ class PlatoonsTrafficManager : public TraCIBaseTrafficManager
 	public:
 
 		virtual void initialize(int stage);
-		virtual void finish();
 
 		PlatoonsTrafficManager() {
-			insertPlatoonMessage = 0;
+			insertPlatoonMessage = nullptr;
 			platoonInsertDistance = 0;
 			platoonInsertHeadway = 0;
 			platoonInsertSpeed = 0;
@@ -39,6 +38,7 @@ class PlatoonsTrafficManager : public TraCIBaseTrafficManager
 			nCars = 0;
 			nLanes = 0;
 		}
+		virtual ~PlatoonsTrafficManager();
 
 	protected:
 
