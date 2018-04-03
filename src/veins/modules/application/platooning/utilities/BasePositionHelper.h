@@ -29,7 +29,7 @@ class BasePositionHelper : public BaseApplLayer
 
 	public:
 
-		virtual void initialize(int stage);
+		virtual void initialize(int stage) override;
 
 		/**
 		 * Returns the traci external id of this car

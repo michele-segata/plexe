@@ -36,8 +36,8 @@ class BaseApp : public BaseApplLayer
 
 	public:
 
-		virtual void initialize(int stage);
-		virtual void finish();
+		virtual void initialize(int stage) override;
+		virtual void finish() override;
 
 	protected:
 
@@ -100,9 +100,9 @@ class BaseApp : public BaseApplLayer
 
 	protected:
 
-		virtual void handleLowerMsg(cMessage *msg);
-		virtual void handleSelfMsg(cMessage *msg);
-		virtual void handleLowerControl(cMessage *msg);
+		virtual void handleLowerMsg(cMessage *msg) override;
+		virtual void handleSelfMsg(cMessage *msg) override;
+		virtual void handleLowerControl(cMessage *msg) override;
 
 		/**
 		 * Handles PlatoonBeacons

@@ -29,54 +29,54 @@ class DynamicPositionHelper : public BasePositionHelper
 
 	public:
 
-		virtual void initialize(int stage);
+		virtual void initialize(int stage) override;
 
 		/**
 		 * Returns the position of this vehicle within the platoon
 		 */
-		virtual int getPosition();
+		virtual int getPosition() override;
 
 		/**
 		 * Returns the id of the i-th vehicle of the own platoon
 		 */
-		virtual int getMemberId(int position);
+		virtual int getMemberId(int position) override;
 
 		/**
 		 * Returns the position of a vehicle of the own platoon
 		 */
-		virtual int getMemberPosition(int vehicleId);
+		virtual int getMemberPosition(int vehicleId) override;
 
 		/**
 		 * Returns the id of the leader of the own platoon
 		 */
-		virtual int getLeaderId();
+		virtual int getLeaderId() override;
 
 		/**
 		 * Returns whether this vehicle is the leader of the platoon
 		 */
-		virtual bool isLeader();
+		virtual bool isLeader() override;
 
 		/**
 		 * Returns the id of the vehicle in front of me
 		 */
-		virtual int getFrontId();
+		virtual int getFrontId() override;
 
 		/**
 		 * Returns the id of the platoon
 		 */
-		virtual int getPlatoonId();
+		virtual int getPlatoonId() override;
 
 		/**
 		 * Returns the lane the platoon is traveling on
 		 */
-		virtual int getPlatoonLane();
+		virtual int getPlatoonLane() override;
 
 		/**
 		 * Returns whether a vehicle is part of my platoon
 		 */
-		virtual bool isInSamePlatoon(int vehicleId);
+		virtual bool isInSamePlatoon(int vehicleId) override;
 
-		virtual int getPlatoonSize();
+		virtual int getPlatoonSize() override;
 
 	public:
 
