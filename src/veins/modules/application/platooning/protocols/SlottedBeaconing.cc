@@ -23,7 +23,7 @@ Define_Module(SlottedBeaconing)
 void SlottedBeaconing::initialize(int stage) {
 	BaseProtocol::initialize(stage);
 
-	if (stage == 0) {
+	if (stage == 1) {
 
 		int positionInPlatoon = positionHelper->getPosition();
 		//one beacon interval is divided into 'platoonSize' slots
