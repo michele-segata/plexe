@@ -29,7 +29,7 @@ public:
 		/**
 		 * Handles PlatoonBeacons
 		 */
-		virtual void onPlatoonBeacon(PlatooningBeacon* pb) override;
+		virtual void onPlatoonBeacon(const PlatooningBeacon* pb) override;
 };
 
 #endif /* JOINAPP_H_ */

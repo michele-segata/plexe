@@ -150,7 +150,7 @@ void BaseApp::stopSimulation() {
 	endSimulation();
 }
 
-void BaseApp::onPlatoonBeacon(PlatooningBeacon* pb) {
+void BaseApp::onPlatoonBeacon(const PlatooningBeacon* pb) {
 	if (positionHelper->isInSamePlatoon(pb->getVehicleId())) {
 		//if the message comes from the leader
 		if (pb->getVehicleId() == positionHelper->getLeaderId()) {

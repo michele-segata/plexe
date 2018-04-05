@@ -107,7 +107,7 @@ class BaseApp : public BaseApplLayer
 		/**
 		 * Handles PlatoonBeacons
 		 */
-		virtual void onPlatoonBeacon(PlatooningBeacon* pb);
+		virtual void onPlatoonBeacon(const PlatooningBeacon* pb);
 };
 
 #endif /* BASEAPP_H_ */

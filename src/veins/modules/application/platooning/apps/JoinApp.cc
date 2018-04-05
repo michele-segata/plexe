@@ -25,7 +25,7 @@
 
 Define_Module(JoinApp);
 
-void JoinApp::onPlatoonBeacon(PlatooningBeacon* pb) {
+void JoinApp::onPlatoonBeacon(const PlatooningBeacon* pb) {
 	if (positionHelper->isInSamePlatoon(pb->getVehicleId())) {
 		//if the message comes from the leader
 		if (pb->getVehicleId() == positionHelper->getLeaderId())
