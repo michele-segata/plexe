@@ -135,6 +135,7 @@ class BaseProtocol : public BaseApplLayer {
 		virtual void handleMessage(cMessage *msg) override;
 
 		//signal handler
+		using BaseApplLayer::receiveSignal;
 		void receiveSignal(cComponent *source, simsignal_t signalID, bool v, cObject *details) override;
 		void receiveSignal(cComponent *source, simsignal_t signalID, bool v) {
 			receiveSignal(source, signalID, v, 0);
