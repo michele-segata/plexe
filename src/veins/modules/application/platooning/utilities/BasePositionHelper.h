@@ -196,26 +196,20 @@ class BasePositionHelper : public BaseApplLayer
 		int platoonLane;
 
 	public:
-		BasePositionHelper() {
-			mobility = 0;
-			traci = 0;
-			traciVehicle = 0;
-			myId = INVALID_PLATOON_ID;
-			nLanes = -1;
-			platoonSize = -1;
-			nCars = -1;
-			highestId = -1;
-			leaderId = INVALID_PLATOON_ID;
-			frontId = INVALID_PLATOON_ID;
-			position = -1;
-			nCars = -1;
-			platoonSize = -1;
-			nLanes = -1;
-			leader = false;
-			platoonId = INVALID_PLATOON_ID;
-			platoonLane = -1;
-		}
-
+		BasePositionHelper() : mobility(nullptr),
+			traci(nullptr),
+			traciVehicle(nullptr),
+			myId(INVALID_PLATOON_ID),
+			nLanes(-1),
+			platoonSize(-1),
+			nCars(-1),
+			highestId(-1),
+			leaderId(INVALID_PLATOON_ID),
+			frontId(INVALID_PLATOON_ID),
+			position(-1),
+			leader(false),
+			platoonId(INVALID_PLATOON_ID),
+			platoonLane(-1) {}
 };
 
 #endif
