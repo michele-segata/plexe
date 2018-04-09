@@ -24,13 +24,13 @@ DynamicPositionManager &DynamicPositionManager::getInstance() {
 	return instance;
 }
 
-void DynamicPositionManager::addVehicleToPlatoon(int vehicleId, int position, int platoonId) {
+void DynamicPositionManager::addVehicleToPlatoon(const int vehicleId, const int position, const int platoonId) {
 	platoons[platoonId][position] = vehicleId;
 	positions[platoonId][vehicleId] = position;
 	vehToPlatoons[vehicleId] = platoonId;
 }
 
-void DynamicPositionManager::removeVehicleFromPlatoon(int vehicleId) {
+void DynamicPositionManager::removeVehicleFromPlatoon(const int vehicleId) {
 	auto pId = vehToPlatoons.find(vehicleId);
 	if (pId != vehToPlatoons.end()) {
 		auto platoon = platoons.find(pId->second);

@@ -34,56 +34,56 @@ class DynamicPositionHelper : public BasePositionHelper
 		/**
 		 * Returns the position of this vehicle within the platoon
 		 */
-		virtual int getPosition() override;
+		virtual int getPosition() const override;
 
 		/**
 		 * Returns the id of the i-th vehicle of the own platoon
 		 */
-		virtual int getMemberId(int position) override;
+		virtual int getMemberId(int position) const override;
 
 		/**
 		 * Returns the position of a vehicle of the own platoon
 		 */
-		virtual int getMemberPosition(int vehicleId) override;
+		virtual int getMemberPosition(int vehicleId) const override;
 
 		/**
 		 * Returns the id of the leader of the own platoon
 		 */
-		virtual int getLeaderId() override;
+		virtual int getLeaderId() const override;
 
 		/**
 		 * Returns whether this vehicle is the leader of the platoon
 		 */
-		virtual bool isLeader() override;
+		virtual bool isLeader() const override;
 
 		/**
 		 * Returns the id of the vehicle in front of me
 		 */
-		virtual int getFrontId() override;
+		virtual int getFrontId() const override;
 
 		/**
 		 * Returns the id of the platoon
 		 */
-		virtual int getPlatoonId() override;
+		virtual int getPlatoonId() const override;
 
 		/**
 		 * Returns the lane the platoon is traveling on
 		 */
-		virtual int getPlatoonLane() override;
+		virtual int getPlatoonLane() const override;
 
 		/**
 		 * Returns whether a vehicle is part of my platoon
 		 */
-		virtual bool isInSamePlatoon(int vehicleId) override;
+		virtual bool isInSamePlatoon(int vehicleId) const override;
 
-		virtual int getPlatoonSize() override;
+		virtual int getPlatoonSize() const override;
 
 	public:
 
 		void addVehicleToPlatoon(int vehicleId, int position, int platoonId);
 		void removeVehicleFromPlatoon(int vehicleId, int position, int platoonId);
 
-		static int getIdFromExternalId(std::string externalId);
+		static int getIdFromExternalId(const std::string externalId);
 
 	public:
 		DynamicPositionHelper() : BasePositionHelper(), positions(DynamicPositionManager::getInstance()) {

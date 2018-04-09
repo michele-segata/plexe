@@ -36,75 +36,75 @@ void PositionHelper::initialize(int stage) {
 
 }
 
-int PositionHelper::getPosition() {
+int PositionHelper::getPosition() const {
 	return position;
 }
 
-int PositionHelper::getMemberId(int position) {
+int PositionHelper::getMemberId(const int position) const {
 	return leaderId + position * nLanes;
 }
 
-int PositionHelper::getMemberPosition(int vehicleId) {
+int PositionHelper::getMemberPosition(const int vehicleId) const {
 	return (vehicleId - leaderId) / nLanes;
 }
 
-int PositionHelper::getLeaderId() {
+int PositionHelper::getLeaderId() const {
 	return leaderId;
 }
 
-bool PositionHelper::isLeader() {
+bool PositionHelper::isLeader() const {
 	return leader;
 }
 
-int PositionHelper::getFrontId() {
+int PositionHelper::getFrontId() const {
 	return frontId;
 }
 
-int PositionHelper::getPlatoonId() {
+int PositionHelper::getPlatoonId() const {
 	return platoonId;
 }
 
-int PositionHelper::getPlatoonLane() {
+int PositionHelper::getPlatoonLane() const {
 	return platoonLane;
 }
 
-bool PositionHelper::isInSamePlatoon(int vehicleId) {
+bool PositionHelper::isInSamePlatoon(const int vehicleId) const {
 	return platoonId == getPlatoonNumber(vehicleId, nLanes, platoonSize);
 }
 
-int PositionHelper::getIdFromExternalId(std::string externalId) {
+int PositionHelper::getIdFromExternalId(const std::string externalId) {
 	int dotIndex = externalId.find_last_of('.');
 	std::string strId = externalId.substr(dotIndex + 1);
 	return strtol(strId.c_str(), 0, 10);
 }
 
-bool PositionHelper::isLeader(int vehicleId, int nLanes, int platoonSize) {
+bool PositionHelper::isLeader(const int vehicleId, const int nLanes, const int platoonSize) {
 	return (vehicleId / nLanes) % platoonSize == 0;
 }
-int PositionHelper::getPlatoonNumber(int vehicleId, int nLanes, int platoonSize) {
+int PositionHelper::getPlatoonNumber(const int vehicleId, const int nLanes, const int platoonSize) {
 	return getPlatoonColumn(vehicleId, nLanes, platoonSize) * nLanes + getPlatoonLane(vehicleId, nLanes);
 }
-int PositionHelper::getPlatoonLane(int vehicleId, int nLanes) {
+int PositionHelper::getPlatoonLane(const int vehicleId, const int nLanes) {
 	return vehicleId % nLanes;
 }
-int PositionHelper::getPlatoonColumn(int vehicleId, int nLanes, int platoonSize) {
+int PositionHelper::getPlatoonColumn(const int vehicleId, const int nLanes, const int platoonSize) {
 	return vehicleId / (nLanes * platoonSize);
 }
-int PositionHelper::getPlatoonLeader(int vehicleId, int nLanes, int platoonSize) {
+int PositionHelper::getPlatoonLeader(const int vehicleId, const int nLanes, const int platoonSize) {
 	return getPlatoonColumn(vehicleId, nLanes, platoonSize) * nLanes * platoonSize + getPlatoonLane(getPlatoonNumber(vehicleId, nLanes, platoonSize), nLanes);
 }
-int PositionHelper::getFrontVehicle(int vehicleId, int nLanes, int platoonSize) {
+int PositionHelper::getFrontVehicle(const int vehicleId, const int nLanes, const int platoonSize) {
 	if (getPlatoonLeader(vehicleId, nLanes, platoonSize) == vehicleId)
 		return -1;
 	else
 		return vehicleId - nLanes;
 }
-bool PositionHelper::isInSamePlatoon(int vehicleId, int myId, int nLanes, int platoonSize) {
+bool PositionHelper::isInSamePlatoon(const int vehicleId, const int myId, const int nLanes, const int platoonSize) {
 	return getPlatoonNumber(vehicleId, nLanes, platoonSize) == getPlatoonNumber(myId, nLanes, platoonSize);
 }
-bool PositionHelper::isFrontVehicle(int vehicleId, int myId, int nLanes, int platoonSize) {
+bool PositionHelper::isFrontVehicle(const int vehicleId, const int myId, const int nLanes, const int platoonSize) {
 	return getFrontVehicle(myId, nLanes, platoonSize) == vehicleId;
 }
-int PositionHelper::getPositionInPlatoon(int vehicleId, int nLanes, int platoonSize) {
+int PositionHelper::getPositionInPlatoon(const int vehicleId, const int nLanes, const int platoonSize) {
 	return (vehicleId - getPlatoonLeader(vehicleId, nLanes, platoonSize)) / nLanes;
 }

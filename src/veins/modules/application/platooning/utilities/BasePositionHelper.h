@@ -34,72 +34,72 @@ class BasePositionHelper : public BaseApplLayer
 		/**
 		 * Returns the traci external id of this car
 		 */
-		std::string getExternalId();
+		std::string getExternalId() const;
 
 		/**
 		 * Returns the numeric id of this car
 		 */
-		virtual int getId();
+		virtual int getId() const;
 
 		/**
 		 * Returns the highest id among all platooning cars
 		 */
-		virtual int getHighestId();
+		virtual int getHighestId() const;
 
 		/**
 		 * Returns the position of this vehicle within the platoon
 		 */
-		virtual int getPosition();
+		virtual int getPosition() const;
 
 		/**
 		 * Returns the id of the i-th vehicle of the own platoon
 		 */
-		virtual int getMemberId(int position);
+		virtual int getMemberId(int position) const;
 
 		/**
 		 * Returns the position of a vehicle of the own platoon
 		 */
-		virtual int getMemberPosition(int vehicleId);
+		virtual int getMemberPosition(int vehicleId) const;
 
 		/**
 		 * Returns the id of the leader of the own platoon
 		 */
-		virtual int getLeaderId();
+		virtual int getLeaderId() const;
 
 		/**
 		 * Returns whether this vehicle is the leader of the platoon
 		 */
-		virtual bool isLeader();
+		virtual bool isLeader() const;
 
 		/**
 		 * Returns the id of the vehicle in front of me
 		 */
-		virtual int getFrontId();
+		virtual int getFrontId() const;
 
 		/**
 		 * Returns the id of the platoon
 		 */
-		virtual int getPlatoonId();
+		virtual int getPlatoonId() const;
 
 		/**
 		 * Returns the lane the platoon is traveling on
 		 */
-		virtual int getPlatoonLane();
+		virtual int getPlatoonLane() const;
 
 		/**
 		 * Returns whether a vehicle is part of my platoon
 		 */
-		virtual bool isInSamePlatoon(int vehicleId);
+		virtual bool isInSamePlatoon(int vehicleId) const;
 
 		/**
 		 * Returns the total number of lanes
 		 */
-		virtual int getLanesCount();
+		virtual int getLanesCount() const;
 
 		/**
 		 * Returns the platoon size
 		 */
-		virtual int getPlatoonSize();
+		virtual int getPlatoonSize() const;
 
 		/**
 		 * Sets the id of this car

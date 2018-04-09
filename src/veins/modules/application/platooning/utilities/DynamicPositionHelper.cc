@@ -29,50 +29,50 @@ void DynamicPositionHelper::initialize(int stage) {
 
 }
 
-int DynamicPositionHelper::getPosition() {
+int DynamicPositionHelper::getPosition() const {
 	int platoonId = getPlatoonId();
 	return positions.positions.find(platoonId)->second.find(myId)->second;
 }
 
-int DynamicPositionHelper::getMemberId(int position) {
+int DynamicPositionHelper::getMemberId(const int position) const {
 	int platoonId = getPlatoonId();
 	return positions.platoons.find(platoonId)->second.find(position)->second;
 }
 
-int DynamicPositionHelper::getMemberPosition(int vehicleId) {
+int DynamicPositionHelper::getMemberPosition(const int vehicleId) const {
 	int platoonId = getPlatoonId();
 	return positions.positions.find(platoonId)->second.find(vehicleId)->second;
 }
 
-int DynamicPositionHelper::getLeaderId() {
+int DynamicPositionHelper::getLeaderId() const {
 	return getMemberId(0);
 }
 
-bool DynamicPositionHelper::isLeader() {
+bool DynamicPositionHelper::isLeader() const {
 	return getPosition() == 0;
 }
 
-int DynamicPositionHelper::getFrontId() {
+int DynamicPositionHelper::getFrontId() const {
 	return getMemberId(getPosition() - 1);
 }
 
-int DynamicPositionHelper::getPlatoonId() {
+int DynamicPositionHelper::getPlatoonId() const {
 	return positions.vehToPlatoons.find(myId)->second;
 }
 
-int DynamicPositionHelper::getPlatoonLane() {
+int DynamicPositionHelper::getPlatoonLane() const {
 	return 0;
 }
 
-bool DynamicPositionHelper::isInSamePlatoon(int vehicleId) {
+bool DynamicPositionHelper::isInSamePlatoon(const int vehicleId) const {
 	return positions.vehToPlatoons.find(vehicleId)->second == getPlatoonId();
 }
 
-int DynamicPositionHelper::getPlatoonSize() {
+int DynamicPositionHelper::getPlatoonSize() const {
 	return positions.platoons.find(getPlatoonId())->second.size();
 }
 
-int DynamicPositionHelper::getIdFromExternalId(std::string externalId) {
+int DynamicPositionHelper::getIdFromExternalId(const std::string externalId) {
 	int dotIndex = externalId.find_last_of('.');
 	std::string strId = externalId.substr(dotIndex + 1);
 	return strtol(strId.c_str(), 0, 10);
