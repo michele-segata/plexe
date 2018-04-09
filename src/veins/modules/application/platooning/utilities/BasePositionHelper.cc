@@ -66,6 +66,10 @@ int BasePositionHelper::getFrontId() const {
 		return frontId;
 }
 
+int BasePositionHelper::getBackId() const {
+	return backId;
+}
+
 int BasePositionHelper::getMemberId(const int position) const {
 	return -1;
 }
@@ -116,6 +120,10 @@ void BasePositionHelper::setIsLeader(const bool isLeader) {
 
 void BasePositionHelper::setFrontId(const int id) {
 	frontId = id;
+}
+
+void BasePositionHelper::setBackId(const int id) {
+	backId = id;
 }
 
 void BasePositionHelper::setPlatoonId(const int id) {

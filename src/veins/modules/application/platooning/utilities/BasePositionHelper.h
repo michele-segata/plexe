@@ -77,6 +77,11 @@ class BasePositionHelper : public BaseApplLayer
 		virtual int getFrontId() const;
 
 		/**
+		 * Retuns the id of the vehicle in the back of me
+		 */
+		virtual int getBackId() const;
+
+		/**
 		 * Returns the id of the platoon
 		 */
 		virtual int getPlatoonId() const;
@@ -142,6 +147,11 @@ class BasePositionHelper : public BaseApplLayer
 		virtual void setFrontId(int id);
 
 		/**
+		 * Set the id of the vehicle in the back of me
+		 */
+		virtual void setBackId(int id);
+
+		/**
 		 * Sets the id of the platoon
 		 */
 		virtual void setPlatoonId(int id);
@@ -186,6 +196,8 @@ class BasePositionHelper : public BaseApplLayer
 		int leaderId;
 		//id of the vehicle in front of me
 		int frontId;
+		//id of the vehicle in the back of me
+		int backId;
 		//my position within the platoon
 		int position;
 		//is this car a leader?
@@ -206,6 +218,7 @@ class BasePositionHelper : public BaseApplLayer
 			highestId(-1),
 			leaderId(INVALID_PLATOON_ID),
 			frontId(INVALID_PLATOON_ID),
+			backId(INVALID_PLATOON_ID),
 			position(-1),
 			leader(false),
 			platoonId(INVALID_PLATOON_ID),
