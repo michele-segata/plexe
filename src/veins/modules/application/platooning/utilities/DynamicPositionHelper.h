@@ -76,6 +76,9 @@ class DynamicPositionHelper : public BasePositionHelper
 		 */
 		virtual bool isInSamePlatoon(int vehicleId) const override;
 
+		/**
+		 * Returns the platoon size
+		 */
 		virtual int getPlatoonSize() const override;
 
 	public:
