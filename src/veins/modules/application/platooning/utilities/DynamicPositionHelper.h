@@ -81,6 +81,16 @@ class DynamicPositionHelper : public BasePositionHelper
 		 */
 		virtual int getPlatoonSize() const override;
 
+		/**
+		 * Returns the platoon formation
+		 */
+		virtual const std::vector<int> &getPlatoonFormation() const override;
+
+		/**
+		 * Updates the platoon formation
+		 */
+		virtual void setPlatoonFormation(const std::vector<int>& formation) override;
+
 	public:
 
 		void addVehicleToPlatoon(int vehicleId, int position, int platoonId) {
@@ -97,6 +107,7 @@ class DynamicPositionHelper : public BasePositionHelper
 
 	protected:
 		DynamicPositionManager &positions;
+		mutable std::vector<int> formationCache;
 
 };
 

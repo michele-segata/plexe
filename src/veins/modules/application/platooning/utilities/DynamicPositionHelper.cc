@@ -17,6 +17,8 @@
 
 #include "veins/modules/application/platooning/utilities/DynamicPositionHelper.h"
 
+#include <algorithm>
+
 Define_Module(DynamicPositionHelper);
 
 void DynamicPositionHelper::initialize(int stage) {
@@ -70,6 +72,23 @@ bool DynamicPositionHelper::isInSamePlatoon(const int vehicleId) const {
 
 int DynamicPositionHelper::getPlatoonSize() const {
 	return positions.platoons.find(getPlatoonId())->second.size();
+}
+
+const std::vector<int> &DynamicPositionHelper::getPlatoonFormation() const {
+	auto m = positions.platoons.find(getPlatoonId())->second;
+	// we do not need to sort the vehicles by their position,
+	// since the map<pos, id> is sorted by default by its key (i.e. pos)
+	formationCache.resize(m.size());
+	std::transform(m.begin(), m.end(), formationCache.begin(),
+            [](const decltype(m)::value_type &p) { return p.second; });
+	return formationCache;
+}
+
+void DynamicPositionHelper::setPlatoonFormation(const std::vector<int>& formation) {
+	positions.platoons.find(getPlatoonId())->second.clear();
+	for (unsigned i = 0; i < formation.size(); i++) {
+		addVehicleToPlatoon(formation[i], i, getPlatoonId());
+	}
 }
 
 int DynamicPositionHelper::getIdFromExternalId(const std::string externalId) {

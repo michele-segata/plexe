@@ -141,3 +141,11 @@ void BasePositionHelper::setLanesCount(const int lanes) {
 void BasePositionHelper::setPlatoonSize(const int size) {
 	platoonSize = size;
 }
+
+const std::vector<int> &BasePositionHelper::getPlatoonFormation() const {
+	throw cRuntimeError("not implemented in base class");
+}
+
+void BasePositionHelper::setPlatoonFormation(const std::vector<int>& formation) {
+	throw cRuntimeError("not implemented in base class");
+}

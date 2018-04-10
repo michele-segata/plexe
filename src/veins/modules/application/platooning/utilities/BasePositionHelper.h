@@ -176,6 +176,16 @@ class BasePositionHelper : public BaseApplLayer
 		 */
 		virtual void setPlatoonSize(int size);
 
+		/**
+		 * Returns the platoon formation
+		 */
+		virtual const std::vector<int> &getPlatoonFormation() const;
+
+		/**
+		 * Sets the platoon formation
+		 */
+		virtual void setPlatoonFormation(const std::vector<int>& formation);
+
 	protected:
 
 		Veins::TraCIMobility* mobility;
