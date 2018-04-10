@@ -129,6 +129,12 @@ class TraCICommandInterface
 				 * Set the cruise control desired speed
 				 */
 				void setCruiseControlDesiredSpeed(double desiredSpeed);
+
+				/**
+				 * Returns the cruise control desired speed
+				 */
+				const double getCruiseControlDesiredSpeed();
+
 				/**
 				 * Set the currently active controller, which can be either the driver, the ACC or
 				 * the CACC. CC is not mentioned because CC and ACC work together

@@ -952,6 +952,12 @@ void TraCICommandInterface::Vehicle::setCruiseControlDesiredSpeed(double desired
 	setParameter(PAR_CC_DESIRED_SPEED, desiredSpeed);
 }
 
+const double TraCICommandInterface::Vehicle::getCruiseControlDesiredSpeed() {
+	double desiredSpeed;
+	getParameter(PAR_CC_DESIRED_SPEED, desiredSpeed);
+	return desiredSpeed;
+}
+
 void TraCICommandInterface::Vehicle::setActiveController(int activeController) {
 	setParameter(PAR_ACTIVE_CONTROLLER, activeController);
 }
