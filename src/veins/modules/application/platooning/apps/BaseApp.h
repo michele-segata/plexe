@@ -37,7 +37,6 @@ class BaseApp : public BaseApplLayer
 	public:
 
 		virtual void initialize(int stage) override;
-		virtual void finish() override;
 
 	protected:
 
@@ -53,13 +52,6 @@ class BaseApp : public BaseApplLayer
 
 		//lower layer protocol
 		BaseProtocol *protocol;
-
-		//time at which simulation should stop
-		SimTime simulationDuration;
-		//determine whether there has been a vehicle collision in the simulation. shared by all
-		static bool crashHappened;
-		//determine whether simulation correctly terminated
-		static bool simulationCompleted;
 
 		/**
 		 * Log data about vehicle
@@ -92,11 +84,6 @@ class BaseApp : public BaseApplLayer
 		 * @param destination id of the destination
 		 */
 		void sendUnicast(cPacket *msg, int destination);
-
-		/**
-		 * Stops the simulation. Can be invoked by other classes
-		 */
-		void stopSimulation();
 
 	protected:
 

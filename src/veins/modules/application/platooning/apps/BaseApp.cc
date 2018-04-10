@@ -23,9 +23,6 @@
 
 #include "veins/modules/application/platooning/protocols/BaseProtocol.h"
 
-bool BaseApp::crashHappened = false;
-bool BaseApp::simulationCompleted = false;
-
 Define_Module(BaseApp);
 
 void BaseApp::initialize(int stage) {
@@ -33,8 +30,6 @@ void BaseApp::initialize(int stage) {
 	BaseApplLayer::initialize(stage);
 
 	if (stage == 0) {
-		//when to stop simulation (after communications started)
-		simulationDuration = SimTime(par("simulationDuration").longValue());
 		//set names for output vectors
 		//distance from front vehicle
 		distanceOut.setName("distance");
@@ -69,17 +64,6 @@ void BaseApp::initialize(int stage) {
 		scheduleAt(rounded, recordData);
 	}
 
-}
-
-void BaseApp::finish() {
-	BaseApplLayer::finish();
-	if (!crashHappened && !simulationCompleted) {
-		if (traciVehicle->isCrashed()) {
-			crashHappened = true;
-			logVehicleData(true);
-			endSimulation();
-		}
-	}
 }
 
 BaseApp::~BaseApp() {
@@ -135,19 +119,11 @@ void BaseApp::sendUnicast(cPacket *msg, int destination) {
 
 void BaseApp::handleSelfMsg(cMessage *msg) {
 	if (msg == recordData) {
-		//check for simulation end. let the first vehicle check
-		if (myId == 0 && simTime() > simulationDuration)
-			stopSimulation();
 		//log mobility data
-		logVehicleData();
+		logVehicleData(traciVehicle->isCrashed());
 		//re-schedule next event
 		scheduleAt(simTime() + SimTime(100, SIMTIME_MS), recordData);
 	}
-}
-
-void BaseApp::stopSimulation() {
-	simulationCompleted = true;
-	endSimulation();
 }
 
 void BaseApp::onPlatoonBeacon(const PlatooningBeacon* pb) {

@@ -22,10 +22,6 @@ import org.car2x.veins.base.modules.IBaseApplLayer;
 moduleinterface BaseApp extends IBaseApplLayer
 {
     parameters:
-        //duration of simulation
-        double simulationDuration @unit("s");
-
         @display("i=block/app2");
         @class(BaseApp);
-
 }
