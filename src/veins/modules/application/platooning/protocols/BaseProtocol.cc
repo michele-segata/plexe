@@ -318,7 +318,6 @@ void BaseProtocol::handleLowerControl(cMessage *msg) {
 				AppList::iterator i;
 				for (AppList::iterator i = applications.begin(); i != applications.end(); i++) {
 					//send the message to the applications responsible for it
-					std::cout << "sending control msg up\n";
 					send(ctrl->dup(), std::get<3>(*i));
 				}
 			}
