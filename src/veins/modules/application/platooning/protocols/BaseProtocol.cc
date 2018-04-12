@@ -147,9 +147,6 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 	//vehicle's data to be included in the message
 	double speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime;
 
-	//actual packets
-	UnicastMessage *unicast;
-	PlatooningBeacon *pkt;
 	//get information about the vehicle via traci
 	traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
 	//get current vehicle position
@@ -159,16 +156,15 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 	double veinsTime = simTime().dbl();
 
 	Coord position(coords.x, coords.y, 0);
-	double time = veinsTime;
 
 	//create and send beacon
-	unicast = new UnicastMessage("", BEACON_TYPE);
+	UnicastMessage *unicast = new UnicastMessage("", BEACON_TYPE);
 	unicast->setDestination(-1);
 	unicast->setPriority(priority);
 	unicast->setChannel(Channels::CCH);
 
 	//create platooning beacon with data about the car
-	pkt = new PlatooningBeacon();
+	PlatooningBeacon *pkt = new PlatooningBeacon();
 	pkt->setControllerAcceleration(controllerAcceleration);
 	pkt->setAcceleration(acceleration);
 	pkt->setSpeed(speed);
@@ -176,7 +172,7 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 	pkt->setPositionX(position.x);
 	pkt->setPositionY(position.y);
 	//set the time to now
-	pkt->setTime(time);
+	pkt->setTime(veinsTime);
 	pkt->setLength(length);
 	//i generated the message, i send it
 	pkt->setRelayerId(myId);
@@ -192,16 +188,12 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 
 void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 
-	PlatooningBeacon *epkt;
-
 	ASSERT2(unicast, "received a frame not of type UnicastMessage");
 
-	cPacket *enc = unicast->decapsulate();
+	cPacket *enc = unicast->getEncapsulatedPacket();
 	ASSERT2(enc, "received a UnicastMessage with nothing inside");
 
-	epkt = dynamic_cast<PlatooningBeacon *>(enc);
-
-	if (epkt) {
+	if (PlatooningBeacon *epkt = dynamic_cast<PlatooningBeacon *>(enc)) {
 
 		//invoke messageReceived() method of subclass
 		messageReceived(epkt, unicast);
@@ -233,14 +225,10 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 		AppList::iterator i;
 		for (AppList::iterator i = applications.begin(); i != applications.end(); i++) {
 			//send the message to the applications responsible for it
-			UnicastMessage *duplicate = unicast->dup();
-			duplicate->encapsulate(enc->dup());
-			send(duplicate, std::get<1>(*i));
+			send(unicast->dup(), std::get<1>(*i));
 		}
 	}
-
-	delete enc;
-
+	delete unicast;
 }
 
 void BaseProtocol::receiveSignal(cComponent *source, simsignal_t signalID, bool v, cObject *details) {
@@ -279,20 +267,11 @@ void BaseProtocol::handleMessage(cMessage *msg) {
 }
 
 void BaseProtocol::handleLowerMsg(cMessage *msg) {
-
-	UnicastMessage *unicast;
-
-	unicast = dynamic_cast<UnicastMessage *>(msg);
-	handleUnicastMsg(unicast);
-	delete unicast;
-
+	handleUnicastMsg(check_and_cast<UnicastMessage *>(msg));
 }
 
 void BaseProtocol::handleUpperMsg(cMessage *msg) {
-	UnicastMessage *unicast;
-	unicast = dynamic_cast<UnicastMessage *>(msg);
-	assert(unicast);
-	sendDown(msg);
+	sendDown(check_and_cast<UnicastMessage*>(msg));
 }
 
 void BaseProtocol::handleUpperControl(cMessage *msg) {
