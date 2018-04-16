@@ -89,9 +89,13 @@ void BaseProtocol::initialize(int stage) {
 	if (stage == 1) {
 		//get traci interface
 		mobility = Veins::TraCIMobilityAccess().get(getParentModule());
+		ASSERT(mobility);
 		traci = mobility->getCommandInterface();
+		ASSERT(traci);
 		traciVehicle = mobility->getVehicleCommandInterface();
+		ASSERT(traciVehicle);
 		positionHelper = FindModule<BasePositionHelper*>::findSubModule(getParentModule());
+		ASSERT(positionHelper);
 
 		//this is the id of the vehicle. used also as network address
 		myId = positionHelper->getId();

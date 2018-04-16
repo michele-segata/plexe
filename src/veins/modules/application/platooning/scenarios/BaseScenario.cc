@@ -72,8 +72,11 @@ void BaseScenario::initialize(int stage) {
 
 	if (stage == 1) {
 		mobility = Veins::TraCIMobilityAccess().get(getParentModule());
+		ASSERT(mobility);
 		traci = mobility->getCommandInterface();
+		ASSERT(traci);
 		traciVehicle = mobility->getVehicleCommandInterface();
+		ASSERT(traciVehicle);
 		positionHelper = FindModule<BasePositionHelper*>::findSubModule(getParentModule());
 		initializeControllers();
 
