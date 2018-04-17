@@ -67,13 +67,13 @@ class SimpleTimerModule : public omnetpp::cSimpleModule
 			/**
 			 * Test whether the given time is a valid occurence.
 			 */
-			bool validOccurence(const simtime_t &time) const {
+			bool validOccurence(const omnetpp::simtime_t &time) const {
 				return start <= time && (end < 0 || end >= time);
 			}
 
-			simtime_t start; ///< Time of the Timer's first occurence.
-			simtime_t end; ///< Last possible time a Timer will trigger. Negative values encode never-ending Timers.
-			simtime_t period; ///< Time between events.
+			omnetpp::simtime_t start; ///< Time of the Timer's first occurence.
+			omnetpp::simtime_t end; ///< Last possible time a Timer will trigger. Negative values encode never-ending Timers.
+			omnetpp::simtime_t period; ///< Time between events.
 			std::function<void()> callback; ///< The function to be called when the Timer is triggered.
 		};
 
@@ -100,7 +100,7 @@ class SimpleTimerModule : public omnetpp::cSimpleModule
 		 * @param time Time at which the Timer triggers.
 		 * @param time_interpretation Flag to indicate the semantics of the given time, see TimeScope.
 		 */
-		const Timer addOneshotTimer(const std::string &name, std::function<void()> callback, simtime_t time, TimeInterpretation time_interpretation=TimeInterpretation::RELATIVE_TIME);
+		const Timer addOneshotTimer(const std::string &name, std::function<void()> callback, omnetpp::simtime_t time, TimeInterpretation time_interpretation=TimeInterpretation::RELATIVE_TIME);
 
 		/**
 		 * Creates a Timer which will be triggered n-times.
@@ -112,7 +112,7 @@ class SimpleTimerModule : public omnetpp::cSimpleModule
 		 * @param start Time at which the Timer triggers first. Negative values will set start to the current simulation time plus one period.
 		 * @param time_interpretation Flag to indicate the semantics of the given time, see TimeScope.
 		 */
-		const Timer addRepeatingTimer(const std::string &name, std::function<void()> callback, simtime_t period, unsigned count, simtime_t start=-1, TimeInterpretation time_interpretation=TimeInterpretation::RELATIVE_TIME);
+		const Timer addRepeatingTimer(const std::string &name, std::function<void()> callback, omnetpp::simtime_t period, unsigned count, omnetpp::simtime_t start=-1, TimeInterpretation time_interpretation=TimeInterpretation::RELATIVE_TIME);
 
 		/**
 		 * Creates a Timer which will be triggered repeatedly in a specified interval.
@@ -124,7 +124,7 @@ class SimpleTimerModule : public omnetpp::cSimpleModule
 		 * @param end Time at which the Timer triggers latest. Negative values indicate open-ended Timers.
 		 * @param time_interpretation Flag to indicate the semantics of the given time, see TimeScope.
 		 */
-		const Timer addRepeatingTimer(const std::string &name, std::function<void()> callback, simtime_t period, simtime_t start=-1, simtime_t end=-1, TimeInterpretation time_interpretation=TimeInterpretation::RELATIVE_TIME);
+		const Timer addRepeatingTimer(const std::string &name, std::function<void()> callback, omnetpp::simtime_t period, omnetpp::simtime_t start=-1, omnetpp::simtime_t end=-1, TimeInterpretation time_interpretation=TimeInterpretation::RELATIVE_TIME);
 
 		/**
 		 * Cancels the Timer which is specified by the given TimerMessage and prevents any further executions.

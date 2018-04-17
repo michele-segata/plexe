@@ -49,11 +49,11 @@ void SimpleTimerModule::handleMessage(cMessage *message) {
 	}
 }
 
-const SimpleTimerModule::Timer SimpleTimerModule::addOneshotTimer(const std::string &name, const std::function<void()> callback, const simtime_t time, const TimeInterpretation time_interpretation) {
+const SimpleTimerModule::Timer SimpleTimerModule::addOneshotTimer(const std::string &name, const std::function<void()> callback, const omnetpp::simtime_t time, const TimeInterpretation time_interpretation) {
 	return addRepeatingTimer(name, callback, 1, 1, time, time_interpretation);
 }
 
-const SimpleTimerModule::Timer SimpleTimerModule::addRepeatingTimer(const std::string &name, const std::function<void()> callback, const simtime_t period, const unsigned count, simtime_t start, const TimeInterpretation time_interpretation) {
+const SimpleTimerModule::Timer SimpleTimerModule::addRepeatingTimer(const std::string &name, const std::function<void()> callback, const omnetpp::simtime_t period, const unsigned count, omnetpp::simtime_t start, const TimeInterpretation time_interpretation) {
 	ASSERT(count > 0);
 	if (start < 0) {
 		start = simTime() + period;
@@ -64,7 +64,7 @@ const SimpleTimerModule::Timer SimpleTimerModule::addRepeatingTimer(const std::s
 	return addRepeatingTimer(name, callback, period, start, end, TimeInterpretation::ABSOLUTE_TIME);
 }
 
-const SimpleTimerModule::Timer SimpleTimerModule::addRepeatingTimer(const std::string &name, const std::function<void()> callback, const simtime_t period, simtime_t start, simtime_t end, const TimeInterpretation time_interpretation) {
+const SimpleTimerModule::Timer SimpleTimerModule::addRepeatingTimer(const std::string &name, const std::function<void()> callback, const omnetpp::simtime_t period, omnetpp::simtime_t start, omnetpp::simtime_t end, const TimeInterpretation time_interpretation) {
 	if (start < 0) {
 		start = simTime() + period;
 	} else if (time_interpretation == TimeInterpretation::RELATIVE_TIME) {
