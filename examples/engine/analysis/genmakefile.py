@@ -19,6 +19,15 @@ import sys
 import ConfigParser
 
 
+CONFIG = 0
+MAP = 1
+MAPFILE = 2
+PREFIX = 3
+OUT = 4
+MERGE = 5
+OUTTYPE = 6
+
+
 class multidict(dict):
     _unique = 0
 
@@ -71,7 +80,13 @@ for s in cfg.sections():
         if not cfg.has_option(s, "prefix"):
             print("section " + s + " misses prefix name")
             sys.exit(1)
-        configs.append([cfg.get(s, "config"), cfg.get(s, "map"), cfg.get(s, "mapFile"), cfg.get(s, "prefix"), cfg.get(s, "out"), cfg.get(s, "merge")])
+        out_type = "Rdata"
+        if cfg.has_option(s, "type"):
+            out_type = cfg.get(s, "type")
+            if out_type not in ['csv', 'Rdata']:
+                print("output type should either be 'csv' or 'Rdata'")
+                sys.exit(1)
+        configs.append([cfg.get(s, "config"), cfg.get(s, "map"), cfg.get(s, "mapFile"), cfg.get(s, "prefix"), cfg.get(s, "out"), cfg.get(s, "merge"), out_type])
 
 
 def getSpaces(string, length):
@@ -81,8 +96,8 @@ def getSpaces(string, length):
 def getLonger(configs):
     longer = 0
     for c in configs:
-        if len(c[4]) > longer:
-            longer = len(c[4])
+        if len(c[OUT]) > longer:
+            longer = len(c[OUT])
     # longer + 5 (_DATA)
     return longer + 5
 
@@ -101,39 +116,40 @@ print("")
 longer = getLonger(configs)
 
 for c in configs:
-    print("# match all .vec files for the " + c[0] + " config")
-    print(c[4].upper() + getSpaces(c[4], longer) + " = $(wildcard $(RESDIR)/" + c[0] + "*.vec)")
-    print("# change suffix from .vec to .Rdata and add the " + c[3] + " prefix")
-    print(c[4].upper() + "_DATA" + getSpaces(c[4] + "_DATA", longer) + " = $(" + c[4].upper() + ":$(RESDIR)/%.vec=$(RESDIR)/" + c[3] + ".%.Rdata)")
+    print("# match all .vec files for the " + c[CONFIG] + " config")
+    print(c[OUT].upper() + getSpaces(c[OUT], longer) + " = $(wildcard $(RESDIR)/" + c[CONFIG] + "*.vec)")
+    print("# change suffix from .vec to ." + c[OUTTYPE] + " and add the " + c[PREFIX] + " prefix")
+    print(c[OUT].upper() + "_DATA" + getSpaces(c[OUT] + "_DATA", longer) + " = $(" + c[OUT].upper() + ":$(RESDIR)/%.vec=$(RESDIR)/" + c[PREFIX] + ".%." + c[OUTTYPE] + ")")
 
 print("")
 print("# vector index files and Rdata files")
 print("VCI = $(VECTOR:%.vec=%.vci)")
 print("RDATA = $(VECTOR:%.vec=%.Rdata)")
+print("CSV = $(VECTOR:%.vec=%.csv)")
 
 print("")
 print("# all make targets")
 sys.stdout.write("all: ")
 for c in configs:
-    sys.stdout.write(c[4] + ".Rdata ")
+    sys.stdout.write(c[OUT] + "." + c[OUTTYPE] + " ")
 print("")
 print("")
 
 for c in configs:
-    print("# to make " + c[4] + ".Rdata we need to merge all files starting with " + c[3] + "." + c[0])
-    print("# before this, check that all " + c[4].upper() + "_DATA files have been processed")
-    print("$(RESDIR)/" + c[4] + ".Rdata: $(" + c[4].upper() + "_DATA)")
-    if c[5] == '1':
-        print("\tRscript $(MERGESCRIPT) $(RESDIR)/ " + c[3] + "." + c[0] + " $(notdir $@) " + c[2] + " " + c[1])
+    print("# to make " + c[OUT] + "." + c[OUTTYPE] + " we need to merge all files starting with " + c[PREFIX] + "." + c[CONFIG])
+    print("# before this, check that all " + c[OUT].upper() + "_DATA files have been processed")
+    print("$(RESDIR)/" + c[OUT] + "." + c[OUTTYPE] + ": $(" + c[OUT].upper() + "_DATA)")
+    if c[MERGE] == '1':
+        print("\tRscript $(MERGESCRIPT) $(RESDIR)/ " + c[PREFIX] + "." + c[CONFIG] + " $(notdir $@) " + c[MAPFILE] + " " + c[MAP] + " " + c[OUTTYPE])
     else:
         print("\tRscript $(MERGESCRIPT)")
-    print(c[4] + ".Rdata: $(RESDIR)/" + c[4] + ".Rdata")
+    print(c[OUT] + "." + c[OUTTYPE] + ": $(RESDIR)/" + c[OUT] + "." + c[OUTTYPE])
     print("")
 
 for c in configs:
-    print("# to make all " + c[3] + ".*.Rdata files we need to run the generic parser")
-    print(c[3] + ".%.Rdata: %.vec %.vci")
-    print("\tRscript generic-parser.R $< " + c[2] + " " + c[1] + " " + c[3])
+    print("# to make all " + c[PREFIX] + ".*." + c[OUTTYPE] + " files we need to run the generic parser")
+    print(c[PREFIX] + ".%." + c[OUTTYPE] + ": %.vec %.vci")
+    print("\tRscript generic-parser.R $< " + c[MAPFILE] + " " + c[MAP] + " " + c[PREFIX] + " " + c[OUTTYPE])
     print("")
 
 print("# if vec files are not indexed, index them")

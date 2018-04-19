@@ -26,16 +26,20 @@ args <- commandArgs(trailingOnly = T)
 #3: map config configuration
 #4: output file prefix
 
-if (length(args) != 4) {
-	stop("generic-parse.R requires 4 parameters")
+if (length(args) < 4) {
+	stop("generic-parse.R requires at least 4 parameters")
 }
 infile  <- args[1]
 mapfile <- args[2]
 config  <- args[3]
 prefix  <- args[4]
+outtype <- "Rdata"
+if (length(args) == 5) {
+	outtype  <- args[5]
+}
 
 outfile <- paste(dirname(infile), '/', prefix, '.', basename(infile), sep='')
-outfile <- gsub(".vec", ".Rdata", outfile)
+outfile <- gsub(".vec", paste(".", outtype, sep=''), outfile)
 
 #load map file
 map <- parse.map(mapfile)
@@ -60,6 +64,10 @@ toclean <- subset(toclean, eval(parse(text=condition)))
 gc()
 runData <- toclean
 
-save(runData, file=outfile)
+if (outtype == "Rdata") {
+	save(runData, file=outfile)
+} else {
+	write.csv(runData, file=outfile, row.names=F)
+}
 
 warnings()
