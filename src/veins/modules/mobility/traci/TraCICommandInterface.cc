@@ -1001,6 +1001,12 @@ void TraCICommandInterface::Vehicle::setACCHeadwayTime(double headway) {
 	setParameter(PAR_ACC_HEADWAY_TIME, headway);
 }
 
+double TraCICommandInterface::Vehicle::getACCHeadwayTime() {
+	double headway;
+	getParameter(PAR_ACC_HEADWAY_TIME, headway);
+	return headway;
+}
+
 void TraCICommandInterface::Vehicle::setFixedAcceleration(int activate, double acceleration) {
 	ParBuffer buf;
 	buf << activate << acceleration;

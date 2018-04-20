@@ -183,6 +183,13 @@ class TraCICommandInterface
 				void setACCHeadwayTime(double headway);
 
 				/**
+				 * Returns the headway time for the ACC
+				 *
+				 * @return double headway time
+				 */
+				double getACCHeadwayTime();
+
+				/**
 				 * Enables/disables a fixed acceleration
 				 *
 				 * @param vehicleId the id of the vehicle
