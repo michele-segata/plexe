@@ -124,12 +124,16 @@ class BasePositionHelper : public BaseApplLayer
 		/**
 		 * Sets the id of the i-th vehicle of the own platoon
 		 */
-		virtual void setMemberId(int position) {};
+		virtual void setMemberId(int position, int id) {
+			throw cRuntimeError("Not implemented in base class!");
+		}
 
 		/**
 		 * Sets the position of a vehicle of the own platoon
 		 */
-		virtual void setMemberPosition(int vehicleId) {};
+		virtual void setMemberPosition(int vehicleId, int position) {
+			throw cRuntimeError("Not implemented in base class!");
+		}
 
 		/**
 		 * Sets the id of the leader of the own platoon
