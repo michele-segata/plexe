@@ -91,6 +91,14 @@ void DynamicPositionHelper::setPlatoonFormation(const std::vector<int>& formatio
 	}
 }
 
+void DynamicPositionHelper::addVehicleToPlatoon(int vehicleId, int position, int platoonId) {
+	positions.addVehicleToPlatoon(vehicleId, position, platoonId);
+}
+
+void DynamicPositionHelper::removeVehicleFromPlatoon(int vehicleId, int position, int platoonId) {
+	positions.removeVehicleFromPlatoon(vehicleId, position, platoonId);
+}
+
 int DynamicPositionHelper::getIdFromExternalId(const std::string externalId) {
 	int dotIndex = externalId.find_last_of('.');
 	std::string strId = externalId.substr(dotIndex + 1);

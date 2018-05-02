@@ -93,12 +93,9 @@ class DynamicPositionHelper : public BasePositionHelper
 
 	public:
 
-		void addVehicleToPlatoon(int vehicleId, int position, int platoonId) {
-			positions.addVehicleToPlatoon(vehicleId, position, platoonId);
-		}
-		void removeVehicleFromPlatoon(int vehicleId, int position, int platoonId) {
-			positions.removeVehicleFromPlatoon(vehicleId, position, platoonId);
-		}
+		void addVehicleToPlatoon(int vehicleId, int position, int platoonId);
+
+		void removeVehicleFromPlatoon(int vehicleId, int position, int platoonId);
 
 		static int getIdFromExternalId(const std::string externalId);
 
