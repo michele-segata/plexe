@@ -70,10 +70,13 @@ class BaseApp : public BaseApplLayer
 
 		//messages for scheduleAt
 		cMessage *recordData;
+		//message to stop the simulation in case of collision
+		cMessage *stopSimulation;
 
 	public:
 		BaseApp() {
 			recordData = 0;
+			stopSimulation = nullptr;
 		}
 		virtual ~BaseApp();
 

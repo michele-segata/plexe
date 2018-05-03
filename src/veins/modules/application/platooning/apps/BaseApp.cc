@@ -69,6 +69,8 @@ void BaseApp::initialize(int stage) {
 BaseApp::~BaseApp() {
 	cancelAndDelete(recordData);
 	recordData = nullptr;
+	cancelAndDelete(stopSimulation);
+	stopSimulation = nullptr;
 }
 
 void BaseApp::handleLowerMsg(cMessage *msg) {
@@ -92,8 +94,11 @@ void BaseApp::logVehicleData(bool crashed) {
 	double distance, relSpeed, acceleration, speed, controllerAcceleration, posX, posY, time;
 	traciVehicle->getRadarMeasurements(distance, relSpeed);
 	traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, posX, posY, time);
-	if (crashed)
+	if (crashed) {
 		distance = 0;
+		stopSimulation = new cMessage("stopSimulation");
+		scheduleAt(simTime() + SimTime(1, SIMTIME_MS), stopSimulation);
+	}
 	//write data to output files
 	distanceOut.record(distance);
 	relSpeedOut.record(relSpeed);
@@ -123,6 +128,9 @@ void BaseApp::handleSelfMsg(cMessage *msg) {
 		logVehicleData(traciVehicle->isCrashed());
 		//re-schedule next event
 		scheduleAt(simTime() + SimTime(100, SIMTIME_MS), recordData);
+	}
+	if (msg == stopSimulation) {
+		endSimulation();
 	}
 }
 
