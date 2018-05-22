@@ -393,6 +393,7 @@ void UnicastProtocol::handleSelfMsg(cMessage *msg)
 			currentMsg = 0;
 			nAttempts = 0;
 
+			processNextPacket(); // start transmissions again after send fail
 		}
 
 	}
