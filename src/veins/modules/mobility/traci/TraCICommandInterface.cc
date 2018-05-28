@@ -914,6 +914,15 @@ void TraCICommandInterface::Vehicle::getVehicleData(double &speed, double &accel
 	buf >> speed >> acceleration >> controllerAcceleration >> positionX >> positionY >> time;
 }
 
+void TraCICommandInterface::Vehicle::getVehicleData(Plexe::VEHICLE_DATA *data) {
+	std::string v;
+	getParameter(PAR_SPEED_AND_ACCELERATION, v);
+	ParBuffer buf(v);
+	buf >> data->speed >> data->acceleration >> data->u >>
+	       data->positionX >> data->positionY >> data->time >> data->speedX >>
+	       data->speedY >> data->angle;
+}
+
 double TraCICommandInterface::Vehicle::getACCAcceleration() {
 	double v;
 	getParameter(PAR_ACC_ACCELERATION, v);
@@ -1146,8 +1155,9 @@ std::string TraCICommandInterface::Vehicle::getVType() {
 void TraCICommandInterface::Vehicle::setVehicleData(const struct Plexe::VEHICLE_DATA *data) {
 	ParBuffer buf;
 	buf << data->index << data->speed << data->acceleration <<
-	            data->positionX << data->positionY << data->time <<
-	            data->length;
+	       data->positionX << data->positionY << data->time <<
+	       data->length << data->u <<
+	       data->speedX << data->speedY << data->angle;
 	setParameter(CC_PAR_VEHICLE_DATA, buf.str());
 }
 
@@ -1159,12 +1169,8 @@ void TraCICommandInterface::Vehicle::getStoredVehicleData(struct Plexe::VEHICLE_
 	ParBuffer outBuf(v);
 	outBuf >> data->index >> data->speed >> data->acceleration >>
 	          data->positionX >> data->positionY >> data->time >>
-	          data->length >> data->u;
-}
-
-void TraCICommandInterface::Vehicle::getVehicleData(struct Plexe::VEHICLE_DATA *data, int index) {
-	std::cout << "getVehicleData() is deprecated and will be removed. Please use getStoredVehicleData()\n";
-	getStoredVehicleData(data, index);
+	          data->length >> data->u >> data->speedX >> data->speedY >>
+	          data->angle;
 }
 
 void TraCICommandInterface::Vehicle::useControllerAcceleration(bool use) {

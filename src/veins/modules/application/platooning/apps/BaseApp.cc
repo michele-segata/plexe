@@ -91,9 +91,10 @@ void BaseApp::handleLowerMsg(cMessage *msg) {
 
 void BaseApp::logVehicleData(bool crashed) {
 	//get distance and relative speed w.r.t. front vehicle
-	double distance, relSpeed, acceleration, speed, controllerAcceleration, posX, posY, time;
+	double distance, relSpeed;
+	Plexe::VEHICLE_DATA data;
 	traciVehicle->getRadarMeasurements(distance, relSpeed);
-	traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, posX, posY, time);
+	traciVehicle->getVehicleData(&data);
 	if (crashed) {
 		distance = 0;
 		stopSimulation = new cMessage("stopSimulation");
@@ -103,12 +104,11 @@ void BaseApp::logVehicleData(bool crashed) {
 	distanceOut.record(distance);
 	relSpeedOut.record(relSpeed);
 	nodeIdOut.record(myId);
-	accelerationOut.record(acceleration);
-	controllerAccelerationOut.record(controllerAcceleration);
-	speedOut.record(mobility->getCurrentSpeed().x);
-	Coord pos = mobility->getPositionAt(simTime());
-	posxOut.record(pos.x);
-	posyOut.record(pos.y);
+	accelerationOut.record(data.acceleration);
+	controllerAccelerationOut.record(data.u);
+	speedOut.record(data.speed);
+	posxOut.record(data.positionX);
+	posyOut.record(data.positionY);
 }
 
 void BaseApp::handleLowerControl(cMessage *msg) {
@@ -156,6 +156,9 @@ void BaseApp::onPlatoonBeacon(const PlatooningBeacon* pb) {
 		vehicleData.speed = pb->getSpeed();
 		vehicleData.time = pb->getTime();
 		vehicleData.u = pb->getControllerAcceleration();
+		vehicleData.speedX = pb->getSpeedX();
+		vehicleData.speedY = pb->getSpeedY();
+		vehicleData.angle = pb->getAngle();
 		//send information to CACC
 		traciVehicle->setVehicleData(&vehicleData);
 	}
