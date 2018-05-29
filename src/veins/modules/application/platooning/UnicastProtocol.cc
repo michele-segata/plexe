@@ -153,7 +153,7 @@ void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsu
 	unicast->encapsulate(msg);
 
 	WaveShortMessage *wsm = new WaveShortMessage();
-	populateWSM(wsm, 0, unicast->getSequenceNumber());
+	populateWSM(wsm, -1, unicast->getSequenceNumber());
 	wsm->setChannelNumber(channel);
 	wsm->setUserPriority(priority);
 	wsm->encapsulate(unicast);
@@ -194,7 +194,7 @@ void UnicastProtocol::sendAck(const UnicastMessage *msg)
 	unicast->setType(ACK);
 
 	WaveShortMessage *wsm = new WaveShortMessage();
-	populateWSM(wsm, 0, msg->getSequenceNumber());
+	populateWSM(wsm, -1, msg->getSequenceNumber());
 	wsm->setChannelNumber(msg->getChannel());
 	wsm->setUserPriority(msg->getPriority());
 	wsm->encapsulate(unicast);
@@ -206,7 +206,7 @@ void UnicastProtocol::resendMessage()
 {
 
 	WaveShortMessage *wsm = new WaveShortMessage();
-	populateWSM(wsm, 0, currentMsg->getSequenceNumber());
+	populateWSM(wsm, -1, currentMsg->getSequenceNumber());
 	wsm->setChannelNumber(currentMsg->getChannel());
 	wsm->setUserPriority(currentMsg->getPriority());
 	wsm->encapsulate(currentMsg->dup());

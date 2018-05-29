@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2011 David Eckhoff <eckhoff@cs.fau.de>
+// Copyright (C) 2015-2018 Dominik Buse <dbuse@mail.uni-paderborn.de>
 //
 // Documentation for these modules is at http://veins.car2x.org/
 //
@@ -18,33 +18,21 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-#ifndef MAC80211PTOPHY11PINTERFACE_H_
-#define MAC80211PTOPHY11PINTERFACE_H_
+#include "veins/modules/world/traci/trafficLight/logics/SimpleLogic.h"
 
-#include "veins/base/phyLayer/MacToPhyInterface.h"
+using Veins::TraCITrafficLightSimpleLogic;
 
-/**
- * @brief
- * Interface of PhyLayer80211p exposed to Mac1609_4.
- *
- * @author Christopher Saloman
- * @author David Eckhoff
- *
- * @ingroup phyLayer
- */
-class Mac80211pToPhy11pInterface {
-	public:
-		enum BasePhyMessageKinds {
-			CHANNEL_IDLE,
-			CHANNEL_BUSY,
-		};
+Define_Module(Veins::TraCITrafficLightSimpleLogic);
 
-	public:
-		virtual void changeListeningFrequency(double freq) = 0;
-		virtual void setCCAThreshold(double ccaThreshold_dBm) = 0;
-		virtual void notifyMacAboutRxStart(bool enable) = 0;
-		virtual void requestChannelStatusIfIdle() = 0;
-		virtual ~Mac80211pToPhy11pInterface() {};
-};
+void TraCITrafficLightSimpleLogic::handleApplMsg(cMessage *msg) {
+	delete msg; // just drop it
+}
 
-#endif /* MAC80211PTOPHY11PINTERFACE_H_ */
+
+void TraCITrafficLightSimpleLogic::handleTlIfMsg(TraCITrafficLightMessage *tlMsg) {
+	delete tlMsg; // just drop it
+}
+
+void TraCITrafficLightSimpleLogic::handlePossibleSwitch() {
+	// do nothing - just let it happen
+}

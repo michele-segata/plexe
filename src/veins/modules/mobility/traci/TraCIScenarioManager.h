@@ -150,7 +150,6 @@ class TraCIScenarioManager : public cSimpleModule
 		std::vector<std::string> trafficLightModuleIds; /**< list of traffic light module ids that is subscribed to (whitelist) */
 
 		uint32_t vehicleNameCounter;
-		cMessage* myAddVehicleTimer;
 		std::vector<std::string> vehicleTypeIds;
 		std::map<int, std::queue<std::string> > vehicleInsertQueue;
 		std::set<std::string> queuedVehicles;
@@ -185,8 +184,6 @@ class TraCIScenarioManager : public cSimpleModule
 
 		BaseWorldUtility* world;
 		BaseConnectionManager* cc;
-
-		uint32_t getCurrentTimeMs(); /**< get current simulation time (in ms) */
 
 		void executeOneTimestep(); /**< read and execute all commands for the next timestep */
 
