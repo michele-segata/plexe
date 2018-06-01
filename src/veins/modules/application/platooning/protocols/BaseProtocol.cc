@@ -149,17 +149,9 @@ void BaseProtocol::handleSelfMsg(cMessage *msg) {
 void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 
 	//vehicle's data to be included in the message
-	double speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime;
-
+	Plexe::VEHICLE_DATA data;
 	//get information about the vehicle via traci
-	traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
-	//get current vehicle position
-	Coord veinsPosition = mobility->getPositionAt(simTime());
-	//transform veins position into sumo position
-	Veins::TraCICoord coords = mobility->getManager()->omnet2traci(veinsPosition);
-	double veinsTime = simTime().dbl();
-
-	Coord position(coords.x, coords.y, 0);
+	traciVehicle->getVehicleData(&data);
 
 	//create and send beacon
 	UnicastMessage *unicast = new UnicastMessage("", BEACON_TYPE);
@@ -169,15 +161,18 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 
 	//create platooning beacon with data about the car
 	PlatooningBeacon *pkt = new PlatooningBeacon();
-	pkt->setControllerAcceleration(controllerAcceleration);
-	pkt->setAcceleration(acceleration);
-	pkt->setSpeed(speed);
+	pkt->setControllerAcceleration(data.u);
+	pkt->setAcceleration(data.acceleration);
+	pkt->setSpeed(data.speed);
 	pkt->setVehicleId(myId);
-	pkt->setPositionX(position.x);
-	pkt->setPositionY(position.y);
+	pkt->setPositionX(data.positionX);
+	pkt->setPositionY(data.positionY);
 	//set the time to now
-	pkt->setTime(veinsTime);
+	pkt->setTime(data.time);
 	pkt->setLength(length);
+	pkt->setSpeedX(data.speedX);
+	pkt->setSpeedY(data.speedY);
+	pkt->setAngle(data.angle);
 	//i generated the message, i send it
 	pkt->setRelayerId(myId);
 	pkt->setKind(BEACON_TYPE);

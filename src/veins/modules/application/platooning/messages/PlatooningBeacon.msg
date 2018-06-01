@@ -28,4 +28,7 @@ packet PlatooningBeacon {
 	double time = 0;
 	int sequenceNumber = 0;
 	double length = 0;
+	double speedX = 0;
+	double speedY = 0;
+	double angle = 0;
 }
