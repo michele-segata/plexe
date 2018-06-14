@@ -30,6 +30,8 @@ void BaseScenario::initialize(int stage) {
 		caccOmegaN = par("caccOmegaN").doubleValue();
 		caccC1 = par("caccC1").doubleValue();
 		engineTau = par("engineTau").doubleValue();
+		uMin = par("uMin").doubleValue();
+		uMax = par("uMax").doubleValue();
 		ploegH = par("ploegH").doubleValue();
 		ploegKp = par("ploegKp").doubleValue();
 		ploegKd = par("ploegKd").doubleValue();
@@ -106,6 +108,8 @@ void BaseScenario::handleSelfMsg(cMessage *msg) {
 void BaseScenario::initializeControllers() {
 	//engine lag
 	traciVehicle->setParameter(CC_PAR_ENGINE_TAU, engineTau);
+	traciVehicle->setParameter(CC_PAR_UMIN, uMin);
+	traciVehicle->setParameter(CC_PAR_UMAX, uMax);
 	//PATH's CACC parameters
 	traciVehicle->setParameter(CC_PAR_CACC_C1, caccC1);
 	traciVehicle->setParameter(CC_PAR_CACC_OMEGA_N, caccOmegaN);

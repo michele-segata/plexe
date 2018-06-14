@@ -39,6 +39,8 @@ simple BBaseScenario like BaseScenario
         double caccOmegaN @unit("Hz") = default(0.2Hz);
         double caccC1 = default(0.5);
         double engineTau @unit("s") = default(0.5s);
+        double uMin @unit("mpsps") = default(-1e6 mpsps);
+        double uMax @unit("mpsps") = default(1e6 mpsps);
         double ploegH @unit("s") = default(0.5s);
         double ploegKp = default(0.2);
         double ploegKd = default(0.7);
