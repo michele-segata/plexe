@@ -290,7 +290,7 @@ void UnicastProtocol::handleAckMessage(const UnicastMessage *ack)
 	if (currentMsg == 0)
 	{
 		//we have received an ack we were not waiting for. do nothing
-		DBG_APP << "unexpected ACK";
+		EV_DEBUG << "unexpected ACK";
 	}
 	else
 	{
