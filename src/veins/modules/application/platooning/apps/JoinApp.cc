@@ -20,7 +20,6 @@
 #include "veins/modules/messages/WaveShortMessage_m.h"
 #include "veins/base/messages/MacPkt_m.h"
 #include "veins/modules/mac/ieee80211p/Mac1609_4.h"
-
 #include "veins/modules/application/platooning/protocols/BaseProtocol.h"
 
 Define_Module(JoinApp);

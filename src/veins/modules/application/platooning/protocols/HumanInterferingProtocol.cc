@@ -18,7 +18,6 @@
 #include "veins/modules/application/platooning/protocols/HumanInterferingProtocol.h"
 
 #include "veins/modules/application/platooning/messages/InterferingBeacon_m.h"
-
 #include "veins/modules/messages/PhyControlMessage_m.h"
 
 Define_Module(HumanInterferingProtocol)
