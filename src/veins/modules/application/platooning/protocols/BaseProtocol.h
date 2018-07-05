@@ -32,7 +32,7 @@
 //maximum number of upper layer apps that can connect (see .ned file)
 #define MAX_GATES_COUNT 10
 
-class BaseProtocol : public BaseApplLayer {
+class BaseProtocol : public Veins::BaseApplLayer {
 
 	private:
 

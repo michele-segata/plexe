@@ -29,7 +29,7 @@
 
 #include "veins/modules/mac/ieee80211p/Mac1609_4.h"
 
-class HumanInterferingProtocol : public BaseApplLayer {
+class HumanInterferingProtocol : public Veins::BaseApplLayer {
 
 	private:
 
@@ -52,7 +52,7 @@ class HumanInterferingProtocol : public BaseApplLayer {
 		Veins::TraCICommandInterface::Vehicle *traciVehicle;
 
 		//pointer to the mac layer
-		Mac1609_4 *mac;
+		Veins::Mac1609_4 *mac;
 
 		//messages for scheduleAt
 		cMessage *sendBeacon;

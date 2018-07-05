@@ -24,7 +24,7 @@
 
 #define INVALID_PLATOON_ID -99
 
-class BasePositionHelper : public BaseApplLayer
+class BasePositionHelper : public Veins::BaseApplLayer
 {
 
 	public:

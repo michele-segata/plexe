@@ -26,7 +26,7 @@
 
 #include "veins/modules/application/platooning/utilities/BasePositionHelper.h"
 
-class BaseScenario : public BaseApplLayer
+class BaseScenario : public Veins::BaseApplLayer
 {
 
 	public:
