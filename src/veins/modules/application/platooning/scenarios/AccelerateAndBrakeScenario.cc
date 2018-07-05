@@ -17,6 +17,8 @@
 
 #include "veins/modules/application/platooning/scenarios/AccelerateAndBrakeScenario.h"
 
+using namespace Veins;
+
 Define_Module(AccelerateAndBrakeScenario);
 
 void AccelerateAndBrakeScenario::initialize(int stage) {

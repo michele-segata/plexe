@@ -17,6 +17,8 @@
 
 #include "veins/modules/application/platooning/utilities/BasePositionHelper.h"
 
+using namespace Veins;
+
 Define_Module(BasePositionHelper);
 
 void BasePositionHelper::initialize(int stage) {

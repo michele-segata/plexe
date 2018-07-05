@@ -19,6 +19,8 @@
 
 #include "veins/modules/mac/ieee80211p/Mac1609_4.h"
 
+using namespace Veins;
+
 Define_Module(BaseProtocol)
 
 //set signals for channel busy and collisions

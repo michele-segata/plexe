@@ -17,6 +17,8 @@
 
 #include "veins/modules/application/platooning/maneuver/JoinManeuverScenario.h"
 
+using namespace Veins;
+
 Define_Module(JoinManeuverScenario);
 
 void JoinManeuverScenario::initialize(int stage) {

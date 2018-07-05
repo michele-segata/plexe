@@ -17,6 +17,8 @@
 
 #include "veins/modules/application/platooning/scenarios/BrakingScenario.h"
 
+using namespace Veins;
+
 Define_Module(BrakingScenario);
 
 void BrakingScenario::initialize(int stage) {

@@ -17,6 +17,8 @@
 
 #include "veins/modules/mobility/traci/TraCIBaseTrafficManager.h"
 
+using namespace Veins;
+
 Define_Module(TraCIBaseTrafficManager);
 
 void TraCIBaseTrafficManager::initialize(int stage) {

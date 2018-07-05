@@ -20,6 +20,8 @@
 #include "veins/modules/application/platooning/messages/InterferingBeacon_m.h"
 #include "veins/modules/messages/PhyControlMessage_m.h"
 
+using namespace Veins;
+
 Define_Module(HumanInterferingProtocol)
 
 void HumanInterferingProtocol::initialize(int stage) {

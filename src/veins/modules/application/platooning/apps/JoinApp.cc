@@ -22,6 +22,8 @@
 #include "veins/modules/mac/ieee80211p/Mac1609_4.h"
 #include "veins/modules/application/platooning/protocols/BaseProtocol.h"
 
+using namespace Veins;
+
 Define_Module(JoinApp);
 
 void JoinApp::onPlatoonBeacon(const PlatooningBeacon* pb) {

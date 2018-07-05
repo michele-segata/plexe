@@ -17,6 +17,8 @@
 
 #include "veins/modules/application/platooning/scenarios/BaseScenario.h"
 
+using namespace Veins;
+
 Define_Module(BaseScenario);
 
 void BaseScenario::initialize(int stage) {
