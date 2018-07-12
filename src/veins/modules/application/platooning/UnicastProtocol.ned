@@ -49,6 +49,11 @@ simple UnicastProtocol extends BaseWaveApplLayer
         @class(UnicastProtocol);
         @display("i=msg/mail");
 
+        @signal[droppedExceededAttempts](type=bool);
+        @statistic[droppedExceededAttempts](title="DroppedExceededAttempts"; source=constant1(droppedExceededAttempts); record=count,vector?);
+        @signal[transmissionAttempts](type=long);
+        @statistic[transmissionAttempts](title="TransmissionAttempts"; source=transmissionAttempts; record=mean,vector);
+
     gates:
         //control input/output from/to the upper layer. can be
         //used for example to set the mac layer address

@@ -94,6 +94,9 @@ class UnicastProtocol : public BaseWaveApplLayer
 		int upperLayerIn, upperLayerOut, upperControlIn, upperControlOut;
 
 	public:
+		static const omnetpp::simsignal_t sigDroppedExceededAttempts;
+		static const omnetpp::simsignal_t sigTransmissionAttempts;
+
 		virtual void initialize(int stage);
 
 	protected:
