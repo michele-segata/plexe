@@ -168,7 +168,7 @@ void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsu
 	if (destination != -1)
 	{
 		currentMsg = unicast->dup();
-		nAttempts = 0;
+		nAttempts = 1;
 		scheduleAt(simTime() + SimTime(ackTimeout), timeout);
 	}
 	//if we are sending a broadcast, delete the packet from the queue
