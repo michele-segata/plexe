@@ -59,7 +59,11 @@ int DynamicPositionHelper::getFrontId() const {
 }
 
 int DynamicPositionHelper::getPlatoonId() const {
-	return positions.vehToPlatoons.find(myId)->second;
+	auto i = positions.vehToPlatoons.find(myId);
+	if (i == positions.vehToPlatoons.end())
+		return -1;
+	int platoonId = i->second;
+	return platoonId;
 }
 
 int DynamicPositionHelper::getPlatoonLane() const {
@@ -67,7 +71,12 @@ int DynamicPositionHelper::getPlatoonLane() const {
 }
 
 bool DynamicPositionHelper::isInSamePlatoon(const int vehicleId) const {
-	return positions.vehToPlatoons.find(vehicleId)->second == getPlatoonId();
+	auto i = positions.vehToPlatoons.find(vehicleId);
+	if (i == positions.vehToPlatoons.end())
+		return false;
+	if (i->second == -1)
+		return false;
+	return i->second == getPlatoonId();
 }
 
 int DynamicPositionHelper::getPlatoonSize() const {
