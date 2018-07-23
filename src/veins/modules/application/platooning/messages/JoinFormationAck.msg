@@ -16,20 +16,17 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-cplusplus {{
-    /** message type for maneuver messages */
-    static const int MANEUVER_TYPE = 12347;
-}}
+cplusplus{{
+#include "ManeuverMessage_m.h"
+}};
 
-// General message for an arbitrary maneuver to holds common information.
-// Only children of this message should be initialized.
-packet ManeuverMessage {
-    // id of the originator of this message
-    int vehicleId;
-    // id of the platoon this message is about
-    int platoonId;
-    // id of the destination of this message
-    int destinationId;
-    // sumo external id of the sender
-    string externalId;
+packet ManeuverMessage;
+
+// Response to a JoinPlatoon.
+// Is sent from the joiner to the leader of the Platoon.
+// Confirms the joiner joined the Platoon successful at the given position.
+packet JoinFormationAck extends ManeuverMessage {
+    double platoonSpeed;
+    int platoonLane;
+    int newPlatoonFormation[];
 }

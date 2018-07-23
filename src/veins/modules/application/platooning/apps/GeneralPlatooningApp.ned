@@ -1,5 +1,6 @@
 //
 // Copyright (C) 2012-2016 Michele Segata <segata@ccs-labs.org>
+// Copyright (c) 2018 Julian Heinovski <julian.heinovski@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -19,16 +20,20 @@ package org.car2x.veins.modules.application.platooning.apps;
 
 import org.car2x.veins.modules.application.platooning.apps.BaseApp;
 
-simple JoinApp like BaseApp
-{
-    parameters:
-        int headerLength @unit("bit") = default(0 bit);
-        @display("i=block/app2");
-        @class(JoinApp);
-    gates:
-        input lowerLayerIn;
-        output lowerLayerOut;
-        input lowerControlIn;
-        output lowerControlOut;
-}
+simple GeneralPlatooningApp like BaseApp {
 
+parameters:
+
+    // implementation of the join maneuver to be used
+    string joinManeuver;
+
+    int headerLength @unit("bit") = default(0 bit);
+    @display("i=block/app2");
+    @class(GeneralPlatooningApp);
+
+gates:
+    input lowerLayerIn;
+    output lowerLayerOut;
+    input lowerControlIn;
+    output lowerControlOut;
+}

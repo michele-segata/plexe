@@ -15,13 +15,13 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-package org.car2x.veins.modules.application.platooning.maneuver;
+#include "veins/modules/application/platooning/maneuver/Maneuver.h"
+#include "veins/modules/application/platooning/apps/GeneralPlatooningApp.h"
 
-import org.car2x.veins.modules.application.platooning.scenarios.BBaseScenario;
-
-simple JoinManeuverScenario extends BBaseScenario
-{
-    parameters:
-        @display("i=block/app2");
-        @class(JoinManeuverScenario);
+Maneuver::Maneuver(GeneralPlatooningApp *app) {
+	this->app = app;
+	this->positionHelper = app->getPositionHelper();
+	this->mobility = app->getMobility();
+	this->traci = app->getTraci();
+	this->traciVehicle = app->getTraciVehicle();
 }

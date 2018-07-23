@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2012-2016 Michele Segata <segata@ccs-labs.org>
+// Copyright (c) 2018 Julian Heinovski <julian.heinovski@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -15,22 +16,18 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-#ifndef JOINAPP_H_
-#define JOINAPP_H_
+cplusplus{{
+#include "ManeuverMessage_m.h"
+}};
 
-#include "veins/modules/application/platooning/apps/BaseApp.h"
+packet ManeuverMessage;
 
-class JoinApp : public BaseApp
-{
-
-public:
-		JoinApp() {}
-
-		/**
-		 * Handles PlatoonBeacons
-		 */
-		virtual void onPlatoonBeacon(const PlatooningBeacon* pb) override;
-};
-
-#endif /* JOINAPP_H_ */
-
+// Request to move the correct position.
+// Is sent from the leader of the Platoon to an accepted joiner.
+// Needs a successful JoinResponse to be sent be before.
+// Contains information about the Platoon and the position to join.
+packet MoveToPosition extends ManeuverMessage {
+    double platoonSpeed;
+    int platoonLane;
+    int newPlatoonFormation[];
+}
