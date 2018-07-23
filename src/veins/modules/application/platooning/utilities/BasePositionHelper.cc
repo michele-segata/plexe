@@ -86,6 +86,10 @@ int BasePositionHelper::getPlatoonLane() const {
 	return platoonLane;
 }
 
+double BasePositionHelper::getPlatoonSpeed() const {
+	return platoonSpeed;
+}
+
 bool BasePositionHelper::isInSamePlatoon(const int vehicleId) const {
 	return false;
 }
@@ -132,6 +136,10 @@ void BasePositionHelper::setPlatoonId(const int id) {
 
 void BasePositionHelper::setPlatoonLane(const int lane) {
 	platoonLane = lane;
+}
+
+void BasePositionHelper::setPlatoonSpeed(double speed) {
+	platoonSpeed = speed;
 }
 
 void BasePositionHelper::setLanesCount(const int lanes) {

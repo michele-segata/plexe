@@ -92,6 +92,11 @@ class BasePositionHelper : public BaseApplLayer
 		virtual int getPlatoonLane() const;
 
 		/**
+		 * Returns the speed the platoons is cruising at
+		 */
+		virtual double getPlatoonSpeed() const;
+
+		/**
 		 * Returns whether a vehicle is part of my platoon
 		 */
 		virtual bool isInSamePlatoon(int vehicleId) const;
@@ -166,6 +171,11 @@ class BasePositionHelper : public BaseApplLayer
 		virtual void setPlatoonLane(int lane);
 
 		/**
+		 * Sets the cruising speed of this platoon
+		 */
+		virtual void setPlatoonSpeed(double speed);
+
+		/**
 		 * Sets whether a vehicle is part of my platoon
 		 */
 		virtual void setIsInSamePlatoon(int vehicleId, bool inSamePlatoon) {};
@@ -220,6 +230,8 @@ class BasePositionHelper : public BaseApplLayer
 		int platoonId;
 		//lane of this car's platoon
 		int platoonLane;
+		//speed of the platoon
+		double platoonSpeed;
 
 	public:
 		BasePositionHelper() : mobility(nullptr),
@@ -236,7 +248,8 @@ class BasePositionHelper : public BaseApplLayer
 			position(-1),
 			leader(false),
 			platoonId(INVALID_PLATOON_ID),
-			platoonLane(-1) {}
+			platoonLane(-1),
+			platoonSpeed(-1) {}
 };
 
 #endif
