@@ -3,6 +3,8 @@
 
 #include "veins/base/utils/MiXiMDefs.h"
 
+namespace Veins {
+
 /**
  * @brief Provides method templates to find omnet modules.
  *
@@ -22,7 +24,7 @@ class FindModule
 		static T findSubModule(const cModule *const top)
 		{
 			for (cModule::SubmoduleIterator i(top); !i.end(); i++) {
-				cModule *const sub = SUBMODULE_ITERATOR_TO_MODULE(i);
+				cModule *const sub = *i;
 				// this allows also a return type of read only pointer: const cModule *const
 				T dCastRet = dynamic_cast<T>(sub);
 				if (dCastRet != NULL)
@@ -97,5 +99,7 @@ class AccessModuleWrap
 			return pModule;
 		}
 };
+
+} // namespace Veins
 
 #endif

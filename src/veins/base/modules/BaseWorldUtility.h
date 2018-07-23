@@ -24,6 +24,8 @@
 #include "veins/base/utils/MiXiMDefs.h"
 #include "veins/base/utils/Coord.h"
 
+namespace Veins {
+
 /**
  * @brief Provides information and utility methods for the whole simulation.
  *
@@ -41,7 +43,7 @@ protected:
 	 **/
     Coord playgroundSize;
 
-    /** @brief Should the playground be treatend as a torus?*/
+    /** @brief Should the playground be treated as a torus?*/
     bool useTorusFlag;
 
     /** @brief Should the world be 2-dimensional? */
@@ -116,5 +118,7 @@ public:
     	return airFrameId++;
     }
  };
+
+} // namespace Veins
 
 #endif

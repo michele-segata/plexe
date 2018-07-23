@@ -18,21 +18,15 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-#include "veins/modules/world/traci/trafficLight/logics/SimpleLogic.h"
+package org.car2x.veins.modules.world.traci.trafficLight.logics;
 
-using Veins::TraCITrafficLightSimpleLogic;
+import org.car2x.veins.base.modules.ITrafficLightLogic;
 
-Define_Module(Veins::TraCITrafficLightSimpleLogic);
-
-void TraCITrafficLightSimpleLogic::handleApplMsg(cMessage *msg) {
-	delete msg; // just drop it
-}
-
-
-void TraCITrafficLightSimpleLogic::handleTlIfMsg(TraCITrafficLightMessage *tlMsg) {
-	delete tlMsg; // just drop it
-}
-
-void TraCITrafficLightSimpleLogic::handlePossibleSwitch() {
-	// do nothing - just let it happen
+simple TraCITrafficLightSimpleLogic like ITrafficLightLogic {
+	parameters:
+		@class(Veins::TraCITrafficLightSimpleLogic);
+		@display("i=block/classifier");
+	gates:
+		inout interface;
+		inout applLayer;
 }
