@@ -14,7 +14,7 @@
 #
 # Copyright (C) 2016 Bastian Bloessl <bloessl@ccs-labs.org>
 # Copyright (C) 2016 Michele Segata <segata@ccs-labs.org>
-
+library(data.table)
 source('generic-parsing-util.R')
 
 args <- commandArgs(trailingOnly = T)
@@ -23,10 +23,14 @@ if (length(args) != 0) {
 
 	res.folder <- args[1]
 
-	files <- list.files(res.folder, pattern=paste('^', args[2], "_.*\\.Rdata", sep=""))
 	outfile <- paste(res.folder, args[3], sep="")
 	mapfile <- args[4]
 	config <- args[5]
+	outtype = "Rdata"
+	if (length(args) == 6) {
+		outtype = args[6]
+	}
+	files <- list.files(res.folder, pattern=paste('^', args[2], "_.*\\.", outtype, sep=""))
 
 	#get maps from mapfile
 	map <- parse.map(mapfile)
@@ -42,16 +46,29 @@ if (length(args) != 0) {
 
 	allData <- data.frame()
 
-	for(f in 1:length(files)) {
-		cat("[", f, "/", length(files), "] current file", files[f], "\n")
-		load(files[f])
-		params <- get.params(files[f], map[[config]]$fields, suffix=".Rdata")
-		runData <- cbind(runData, params)
-		allData <- rbind(allData, runData)
-		rm(runData)
-		gc()
+	multmerge = function(files) {
+		i <- 1
+		datalist = lapply(files, function(x) {
+			cat("[", i, "/", length(files), "] current file", x, "\n")
+			i <<- i + 1
+			if (outtype == "Rdata") {
+				load(x)
+			} else {
+				runData <- read.csv(x)
+			}
+			params <- get.params(x, map[[config]]$fields, suffix=paste(".", outtype, sep=""))
+			runData <- cbind(runData, params)
+			runData
+		})
+		cat("Merging...\n")
+		rbindlist(datalist)
 	}
-
-	save(allData, file=outfile)
+	allData = multmerge(files)
+	cat("Saving to", outfile, "...\n")
+	if (outtype == "Rdata") {
+		save(allData, file=outfile)
+	} else {
+		write.csv(allData, file=outfile, row.names=F)
+	}
 
 }

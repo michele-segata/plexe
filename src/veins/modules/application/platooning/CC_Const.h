@@ -68,6 +68,9 @@ struct VEHICLE_DATA {
     double time;         //time at which such information was read from vehicle's sensors
     double length;       //vehicle length
     double u;            //controller acceleration
+    double speedX;       //vehicle speed on the X axis
+    double speedY;       //vehicle speed on the Y axis
+    double angle;        //vehicle angle in radians
 };
 
 #define MAX_N_CARS 8
@@ -92,6 +95,9 @@ struct VEHICLE_DATA {
 #define CC_PAR_CACC_OMEGA_N              "ccon"    //omega_n
 #define CC_PAR_CACC_C1                   "ccc1"    //C1
 #define CC_PAR_ENGINE_TAU                "cctau"   //engine time constant
+
+#define CC_PAR_UMIN                      "ccumin"  //lower saturation for u
+#define CC_PAR_UMAX                      "ccumax"  //upper saturation for u
 
 #define CC_PAR_PLOEG_H                   "ccph"    //time headway of ploeg's CACC
 #define CC_PAR_PLOEG_KP                  "ccpkp"   //kp parameter of ploeg's CACC

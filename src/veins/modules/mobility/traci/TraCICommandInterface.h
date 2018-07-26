@@ -122,13 +122,26 @@ class TraCICommandInterface
 				/**
 				 * Gets the data about a vehicle. This can be used by a platoon leader in order to query for the acceleration
 				 * before sending the data to the followers
+				 * This method is deprecated. getVehicleData with a struct parameter should be used instead
 				 */
 				void getVehicleData(double &speed, double &acceleration, double &controllerAcceleration, double &positionX, double &positionY, double &time);
+
+				/**
+				 * Gets the data about a vehicle. This can be used by a platoon leader in order to query for the acceleration
+				 * before sending the data to the followers
+				 */
+				void getVehicleData(Plexe::VEHICLE_DATA *data);
 
 				/**
 				 * Set the cruise control desired speed
 				 */
 				void setCruiseControlDesiredSpeed(double desiredSpeed);
+
+				/**
+				 * Returns the cruise control desired speed
+				 */
+				const double getCruiseControlDesiredSpeed();
+
 				/**
 				 * Set the currently active controller, which can be either the driver, the ACC or
 				 * the CACC. CC is not mentioned because CC and ACC work together
@@ -175,6 +188,13 @@ class TraCICommandInterface
 				 * @param headway the headway time in seconds
 				 */
 				void setACCHeadwayTime(double headway);
+
+				/**
+				 * Returns the headway time for the ACC
+				 *
+				 * @return double headway time
+				 */
+				double getACCHeadwayTime();
 
 				/**
 				 * Enables/disables a fixed acceleration
@@ -247,7 +267,6 @@ class TraCICommandInterface
 				/**
 				 * Gets data information about a vehicle in the same platoon, as stored by this car
 				 */
-				void getVehicleData(struct Plexe::VEHICLE_DATA *data, int index);
 				void getStoredVehicleData(struct Plexe::VEHICLE_DATA *data, int index);
 
 				/**
@@ -504,6 +523,9 @@ class TraCICommandInterface
 				void setZoom(double zoom);
 				void setBoundary(Coord p1, Coord p2);
 				void takeScreenshot(std::string filename = "");
+				/**
+				 * Track the vehicle identified by vehicleId in the Sumo GUI.
+				 */
 				void trackVehicle(std::string vehicleId);
 
 			protected:

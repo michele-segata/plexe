@@ -95,7 +95,6 @@ class UnicastProtocol : public BaseWaveApplLayer
 
 	public:
 		virtual void initialize(int stage);
-		virtual void finish();
 
 	protected:
 		virtual void onBeacon(WaveShortMessage* wsm);

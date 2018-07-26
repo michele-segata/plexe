@@ -100,10 +100,7 @@ void PlatoonsTrafficManager::insertPlatoons() {
 
 }
 
-void PlatoonsTrafficManager::finish() {
-	TraCIBaseTrafficManager::finish();
-	if (insertPlatoonMessage) {
-		cancelAndDelete(insertPlatoonMessage);
-		insertPlatoonMessage = 0;
-	}
+PlatoonsTrafficManager::~PlatoonsTrafficManager() {
+	cancelAndDelete(insertPlatoonMessage);
+	insertPlatoonMessage = nullptr;
 }

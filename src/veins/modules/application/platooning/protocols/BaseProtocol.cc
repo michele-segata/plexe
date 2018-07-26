@@ -89,9 +89,13 @@ void BaseProtocol::initialize(int stage) {
 	if (stage == 1) {
 		//get traci interface
 		mobility = Veins::TraCIMobilityAccess().get(getParentModule());
+		ASSERT(mobility);
 		traci = mobility->getCommandInterface();
+		ASSERT(traci);
 		traciVehicle = mobility->getVehicleCommandInterface();
+		ASSERT(traciVehicle);
 		positionHelper = FindModule<BasePositionHelper*>::findSubModule(getParentModule());
+		ASSERT(positionHelper);
 
 		//this is the id of the vehicle. used also as network address
 		myId = positionHelper->getId();
@@ -105,22 +109,11 @@ void BaseProtocol::initialize(int stage) {
 
 }
 
-void BaseProtocol::finish() {
-	if (sendBeacon) {
-		if (sendBeacon->isScheduled()) {
-			cancelEvent(sendBeacon);
-		}
-		delete sendBeacon;
-		sendBeacon = 0;
-	}
-	if (recordData) {
-		if (recordData->isScheduled()) {
-			cancelEvent(recordData);
-		}
-		delete recordData;
-		recordData = 0;
-	}
-	BaseApplLayer::finish();
+BaseProtocol::~BaseProtocol() {
+	cancelAndDelete(sendBeacon);
+	sendBeacon = nullptr;
+	cancelAndDelete(recordData);
+	recordData = nullptr;
 }
 
 void BaseProtocol::handleSelfMsg(cMessage *msg) {
@@ -156,39 +149,30 @@ void BaseProtocol::handleSelfMsg(cMessage *msg) {
 void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 
 	//vehicle's data to be included in the message
-	double speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime;
-
-	//actual packets
-	UnicastMessage *unicast;
-	PlatooningBeacon *pkt;
+	Plexe::VEHICLE_DATA data;
 	//get information about the vehicle via traci
-	traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, sumoPosX, sumoPosY, sumoTime);
-	//get current vehicle position
-	Coord veinsPosition = mobility->getPositionAt(simTime());
-	//transform veins position into sumo position
-	Veins::TraCICoord coords = mobility->getManager()->omnet2traci(veinsPosition);
-	double veinsTime = simTime().dbl();
-
-	Coord position(coords.x, coords.y, 0);
-	double time = veinsTime;
+	traciVehicle->getVehicleData(&data);
 
 	//create and send beacon
-	unicast = new UnicastMessage("", BEACON_TYPE);
+	UnicastMessage *unicast = new UnicastMessage("", BEACON_TYPE);
 	unicast->setDestination(-1);
 	unicast->setPriority(priority);
 	unicast->setChannel(Channels::CCH);
 
 	//create platooning beacon with data about the car
-	pkt = new PlatooningBeacon();
-	pkt->setControllerAcceleration(controllerAcceleration);
-	pkt->setAcceleration(acceleration);
-	pkt->setSpeed(speed);
+	PlatooningBeacon *pkt = new PlatooningBeacon();
+	pkt->setControllerAcceleration(data.u);
+	pkt->setAcceleration(data.acceleration);
+	pkt->setSpeed(data.speed);
 	pkt->setVehicleId(myId);
-	pkt->setPositionX(position.x);
-	pkt->setPositionY(position.y);
+	pkt->setPositionX(data.positionX);
+	pkt->setPositionY(data.positionY);
 	//set the time to now
-	pkt->setTime(time);
+	pkt->setTime(data.time);
 	pkt->setLength(length);
+	pkt->setSpeedX(data.speedX);
+	pkt->setSpeedY(data.speedY);
+	pkt->setAngle(data.angle);
 	//i generated the message, i send it
 	pkt->setRelayerId(myId);
 	pkt->setKind(BEACON_TYPE);
@@ -203,16 +187,12 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
 
 void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 
-	PlatooningBeacon *epkt;
-
 	ASSERT2(unicast, "received a frame not of type UnicastMessage");
 
-	cPacket *enc = unicast->decapsulate();
+	cPacket *enc = unicast->getEncapsulatedPacket();
 	ASSERT2(enc, "received a UnicastMessage with nothing inside");
 
-	epkt = dynamic_cast<PlatooningBeacon *>(enc);
-
-	if (epkt) {
+	if (PlatooningBeacon *epkt = dynamic_cast<PlatooningBeacon *>(enc)) {
 
 		//invoke messageReceived() method of subclass
 		messageReceived(epkt, unicast);
@@ -244,14 +224,10 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 		AppList::iterator i;
 		for (AppList::iterator i = applications.begin(); i != applications.end(); i++) {
 			//send the message to the applications responsible for it
-			UnicastMessage *duplicate = unicast->dup();
-			duplicate->encapsulate(enc->dup());
-			send(duplicate, std::get<1>(*i));
+			send(unicast->dup(), std::get<1>(*i));
 		}
 	}
-
-	delete enc;
-
+	delete unicast;
 }
 
 void BaseProtocol::receiveSignal(cComponent *source, simsignal_t signalID, bool v, cObject *details) {
@@ -290,20 +266,11 @@ void BaseProtocol::handleMessage(cMessage *msg) {
 }
 
 void BaseProtocol::handleLowerMsg(cMessage *msg) {
-
-	UnicastMessage *unicast;
-
-	unicast = dynamic_cast<UnicastMessage *>(msg);
-	handleUnicastMsg(unicast);
-	delete unicast;
-
+	handleUnicastMsg(check_and_cast<UnicastMessage *>(msg));
 }
 
 void BaseProtocol::handleUpperMsg(cMessage *msg) {
-	UnicastMessage *unicast;
-	unicast = dynamic_cast<UnicastMessage *>(msg);
-	assert(unicast);
-	sendDown(msg);
+	sendDown(check_and_cast<UnicastMessage*>(msg));
 }
 
 void BaseProtocol::handleUpperControl(cMessage *msg) {
@@ -329,7 +296,6 @@ void BaseProtocol::handleLowerControl(cMessage *msg) {
 				AppList::iterator i;
 				for (AppList::iterator i = applications.begin(); i != applications.end(); i++) {
 					//send the message to the applications responsible for it
-					std::cout << "sending control msg up\n";
 					send(ctrl->dup(), std::get<3>(*i));
 				}
 			}
@@ -391,7 +357,3 @@ void BaseProtocol::registerApplication(int applicationId, InputGate* appInputGat
 	//save the mapping in the connection
 	apps[applicationId].push_back(AppInOut(upperIn, upperOut, upperCntIn, upperCntOut));
 }
-
-BaseProtocol::~BaseProtocol() {
-}
-

@@ -24,6 +24,7 @@
 #include <assert.h>
 #include <omnetpp.h>
 #include <queue>
+#include <memory>
 #include <stdint.h>
 #include "veins/base/modules/BaseLayer.h"
 #include "veins/base/phyLayer/MacToPhyControlInfo.h"
@@ -33,6 +34,8 @@
 #include "veins/base/utils/FindModule.h"
 #include "veins/modules/messages/Mac80211Pkt_m.h"
 #include "veins/modules/messages/WaveShortMessage_m.h"
+#include "veins/modules/messages/AckTimeOutMessage_m.h"
+#include "veins/modules/messages/Mac80211Ack_m.h"
 #include "veins/base/modules/BaseMacLayer.h"
 
 #include "veins/modules/utility/ConstsPhy.h"
@@ -45,6 +48,7 @@
  * @author Christoph Sommer : features and bug fixes
  * @author Michele Segata : features and bug fixes
  * @author Stefan Joerer : features and bug fixes
+ * @author Gurjashan Pannu: features (unicast model)
  * @author Christopher Saloman: initial version
  *
  * @ingroup macLayer
@@ -80,35 +84,35 @@ class Mac1609_4 : public BaseMacLayer,
 						int cwCur; //current contention window
 						int64_t currentBackoff; //current Backoff value for this queue
 						bool txOP;
+						int ssrc; // station short retry count
+						int slrc; // station long retry count
+						bool waitForAck; // true if the queue is waiting for an acknowledgment for unicast
+						unsigned long waitOnUnicastID; // unique id of unicast on which station is waiting
+						AckTimeOutMessage* ackTimeOut; // timer for retransmission on receiving no ACK
 
-						EDCAQueue() {	};
-						EDCAQueue(int aifsn,int cwMin, int cwMax, t_access_category ac):aifsn(aifsn),cwMin(cwMin),cwMax(cwMax),cwCur(cwMin),currentBackoff(0),txOP(false) {
-						};
+						EDCAQueue() {}
+						EDCAQueue(int aifsn,int cwMin, int cwMax, t_access_category ac);
+						~EDCAQueue();
 				};
 
-				EDCA(cModule *owner, t_channel channelType,int maxQueueLength = 0):owner(owner),maxQueueSize(maxQueueLength),channelType(channelType) {
-					statsNumInternalContention = 0;
-					statsNumBackoff = 0;
-					statsSlotsBackoff = 0;
-				};
-				const cObject *getThisPtr() const  {return NULL;}
-				const char *getClassName() const {return "Mac1609_4::EDCA"; }
+				EDCA(cSimpleModule *owner, t_channel channelType, int maxQueueLength = 0);
+				~EDCA();
+				const cObject *getThisPtr() const  { return nullptr; }
+				const char *getClassName() const { return "Mac1609_4::EDCA"; }
 				void createQueue(int aifsn, int cwMin, int cwMax,t_access_category);
 				int queuePacket(t_access_category AC,WaveShortMessage* cmsg);
 				void backoff(t_access_category ac);
 				simtime_t startContent(simtime_t idleSince, bool guardActive);
 				void stopContent(bool allowBackoff, bool generateTxOp);
-				void postTransmit(t_access_category);
+				void postTransmit(t_access_category, WaveShortMessage* wsm, bool useAcks);
 				void revokeTxOPs();
-
-				void cleanUp();
 
 				/** @brief return the next packet to send, send all lower Queues into backoff */
 				WaveShortMessage* initiateTransmit(simtime_t idleSince);
 
 			public:
-				cModule *owner;
-				std::map<t_access_category,EDCAQueue> myQueues;
+				cSimpleModule *owner;
+				std::map<t_access_category, EDCAQueue> myQueues;
 				uint32_t maxQueueSize;
 				simtime_t lastStart; //when we started the last contention;
 				t_channel channelType;
@@ -123,7 +127,8 @@ class Mac1609_4 : public BaseMacLayer,
 		};
 
 	public:
-		~Mac1609_4() { };
+		Mac1609_4() : nextChannelSwitch(nullptr), nextMacEvent(nullptr) {}
+		~Mac1609_4();
 
 		/**
 		 * @brief return true if alternate access is enabled
@@ -187,6 +192,8 @@ class Mac1609_4 : public BaseMacLayer,
 		/** @brief Set a state for the channel selecting operation.*/
 		void setActiveChannel(t_channel state);
 
+		void sendFrame(Mac80211Pkt* frame, omnetpp::simtime_t delay, double frequency, uint64_t datarate, double txPower_mW);
+
 		simtime_t timeLeftInSlot() const;
 		simtime_t timeLeftTillGuardOver() const;
 
@@ -206,6 +213,11 @@ class Mac1609_4 : public BaseMacLayer,
 
 		simtime_t getFrameDuration(int payloadLengthBits, enum PHY_MCS mcs = MCS_DEFAULT) const;
 
+		void sendAck(int recpAddress, unsigned long wsmId);
+		void handleUnicast(std::unique_ptr<WaveShortMessage> wsm);
+		void handleAck(const Mac80211Ack* ack);
+		void handleAckTimeOut(AckTimeOutMessage* ackTimeOutMsg);
+		void handleRetransmit(t_access_category ac);
 	protected:
 		/** @brief Self message to indicate that the current channel shall be switched.*/
 		cMessage* nextChannelSwitch;
@@ -223,6 +235,12 @@ class Mac1609_4 : public BaseMacLayer,
 		/** @brief access category of last sent packet */
 		t_access_category lastAC;
 
+		/** @brief pointer to last sent packet */
+		WaveShortMessage* lastWSM;
+
+		/** @brief pointer to last sent mac frame */
+		std::unique_ptr<Mac80211Pkt> lastMac;
+
 		/** @brief Stores the frequencies in Hz that are associated to the channel numbers.*/
 		std::map<int,double> frequency;
 
@@ -231,7 +249,7 @@ class Mac1609_4 : public BaseMacLayer,
 		bool useSCH;
 		int mySCH;
 
-		std::map<t_channel,EDCA*> myEDCA;
+		std::map<t_channel, std::unique_ptr<EDCA>> myEDCA;
 
 		bool idleChannel;
 
@@ -239,6 +257,7 @@ class Mac1609_4 : public BaseMacLayer,
 		long statsReceivedPackets;
 		long statsReceivedBroadcasts;
 		long statsSentPackets;
+		long statsSentAcks;
 		long statsTXRXLostPackets;
 		long statsSNIRLostPackets;
 		long statsDroppedPackets;
@@ -262,6 +281,24 @@ class Mac1609_4 : public BaseMacLayer,
 
 		/** @brief Id for debug messages */
 		std::string myId;
+
+		bool useAcks;
+		double ackErrorRate;
+		int dot11RTSThreshold;
+		int dot11ShortRetryLimit;
+		int dot11LongRetryLimit;
+		int ackLength;
+
+		// indicates rx start within the period of ACK timeout
+		bool rxStartIndication;
+
+		// An ack is sent after SIFS irrespective of the channel state
+		cMessage* stopIgnoreChannelStateMsg;
+		bool ignoreChannelState;
+
+		// Dont start contention immediately after finishing unicast TX. Wait until ack timeout/ ack Rx
+		bool waitUntilAckRXorTimeout;
+		std::set<unsigned long> handledUnicastToApp;
 
 		Mac80211pToPhy11pInterface* phy11p;
 

@@ -56,12 +56,11 @@ void AccelerateAndBrakeScenario::initialize(int stage) {
 
 }
 
-void AccelerateAndBrakeScenario::finish() {
+AccelerateAndBrakeScenario::~AccelerateAndBrakeScenario() {
 	cancelAndDelete(startAccelerationMsg);
-	startAccelerationMsg = 0;
+	startAccelerationMsg = nullptr;
 	cancelAndDelete(startBrakingMsg);
-	startBrakingMsg = 0;
-	BaseScenario::finish();
+	startBrakingMsg = nullptr;
 }
 
 void AccelerateAndBrakeScenario::handleSelfMsg(cMessage *msg) {

@@ -25,14 +25,13 @@ class JoinPositionHelper : public BasePositionHelper
 
 	public:
 
-		virtual void initialize(int stage);
-		virtual void finish();
+		virtual void initialize(int stage) override;
 
-		virtual bool isInSamePlatoon(int vehicleId);
+		virtual bool isInSamePlatoon(const int vehicleId) const override;
 
 	public:
 
-		static int getIdFromExternalId(std::string externalId);
+		static int getIdFromExternalId(const std::string externalId);
 
 		JoinPositionHelper() : BasePositionHelper() {
 		}

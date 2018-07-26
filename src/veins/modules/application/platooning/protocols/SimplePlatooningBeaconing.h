@@ -32,7 +32,6 @@ class SimplePlatooningBeaconing : public BaseProtocol
 		virtual ~SimplePlatooningBeaconing();
 
 		virtual void initialize(int stage);
-		virtual void finish();
 };
 
 #endif /* SIMPLEPLATOONINGBEACONING_H_ */

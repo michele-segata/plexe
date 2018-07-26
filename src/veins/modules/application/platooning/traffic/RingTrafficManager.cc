@@ -96,11 +96,3 @@ void RingTrafficManager::scenarioLoaded() {
 	}
 
 }
-
-void RingTrafficManager::handleSelfMsg(cMessage *msg) {
-	TraCIBaseTrafficManager::handleSelfMsg(msg);
-}
-
-void RingTrafficManager::finish() {
-	TraCIBaseTrafficManager::finish();
-}

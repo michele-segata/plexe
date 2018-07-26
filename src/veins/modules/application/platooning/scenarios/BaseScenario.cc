@@ -30,6 +30,8 @@ void BaseScenario::initialize(int stage) {
 		caccOmegaN = par("caccOmegaN").doubleValue();
 		caccC1 = par("caccC1").doubleValue();
 		engineTau = par("engineTau").doubleValue();
+		uMin = par("uMin").doubleValue();
+		uMax = par("uMax").doubleValue();
 		ploegH = par("ploegH").doubleValue();
 		ploegKp = par("ploegKp").doubleValue();
 		ploegKd = par("ploegKd").doubleValue();
@@ -77,8 +79,11 @@ void BaseScenario::initialize(int stage) {
 
 	if (stage == 1) {
 		mobility = Veins::TraCIMobilityAccess().get(getParentModule());
+		ASSERT(mobility);
 		traci = mobility->getCommandInterface();
+		ASSERT(traci);
 		traciVehicle = mobility->getVehicleCommandInterface();
+		ASSERT(traciVehicle);
 		positionHelper = FindModule<BasePositionHelper*>::findSubModule(getParentModule());
 		initializeControllers();
 
@@ -102,16 +107,14 @@ void BaseScenario::initialize(int stage) {
 
 }
 
-void BaseScenario::finish() {
-	BaseApplLayer::finish();
-}
-
 void BaseScenario::handleSelfMsg(cMessage *msg) {
 }
 
 void BaseScenario::initializeControllers() {
 	//engine lag
 	traciVehicle->setParameter(CC_PAR_ENGINE_TAU, engineTau);
+	traciVehicle->setParameter(CC_PAR_UMIN, uMin);
+	traciVehicle->setParameter(CC_PAR_UMAX, uMax);
 	//PATH's CACC parameters
 	traciVehicle->setParameter(CC_PAR_CACC_C1, caccC1);
 	traciVehicle->setParameter(CC_PAR_CACC_OMEGA_N, caccOmegaN);

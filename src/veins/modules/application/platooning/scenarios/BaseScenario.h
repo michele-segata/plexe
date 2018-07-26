@@ -32,7 +32,6 @@ class BaseScenario : public BaseApplLayer
 	public:
 
 		virtual void initialize(int stage);
-		virtual void finish();
 
 	protected:
 
@@ -57,6 +56,7 @@ class BaseScenario : public BaseApplLayer
 		double caccOmegaN;
 		double caccC1;
 		double engineTau;
+		double uMin, uMax;
 		double ploegH;
 		double ploegKp;
 		double ploegKd;

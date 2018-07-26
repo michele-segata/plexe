@@ -36,8 +36,7 @@ class BaseApp : public BaseApplLayer
 
 	public:
 
-		virtual void initialize(int stage);
-		virtual void finish();
+		virtual void initialize(int stage) override;
 
 	protected:
 
@@ -53,13 +52,6 @@ class BaseApp : public BaseApplLayer
 
 		//lower layer protocol
 		BaseProtocol *protocol;
-
-		//time at which simulation should stop
-		SimTime simulationDuration;
-		//determine whether there has been a vehicle collision in the simulation. shared by all
-		static bool crashHappened;
-		//determine whether simulation correctly terminated
-		static bool simulationCompleted;
 
 		/**
 		 * Log data about vehicle
@@ -78,11 +70,15 @@ class BaseApp : public BaseApplLayer
 
 		//messages for scheduleAt
 		cMessage *recordData;
+		//message to stop the simulation in case of collision
+		cMessage *stopSimulation;
 
 	public:
 		BaseApp() {
 			recordData = 0;
+			stopSimulation = nullptr;
 		}
+		virtual ~BaseApp();
 
 		/**
 		 * Sends a unicast message
@@ -92,21 +88,16 @@ class BaseApp : public BaseApplLayer
 		 */
 		void sendUnicast(cPacket *msg, int destination);
 
-		/**
-		 * Stops the simulation. Can be invoked by other classes
-		 */
-		void stopSimulation();
-
 	protected:
 
-		virtual void handleLowerMsg(cMessage *msg);
-		virtual void handleSelfMsg(cMessage *msg);
-		virtual void handleLowerControl(cMessage *msg);
+		virtual void handleLowerMsg(cMessage *msg) override;
+		virtual void handleSelfMsg(cMessage *msg) override;
+		virtual void handleLowerControl(cMessage *msg) override;
 
 		/**
 		 * Handles PlatoonBeacons
 		 */
-		virtual void onPlatoonBeacon(PlatooningBeacon* pb);
+		virtual void onPlatoonBeacon(const PlatooningBeacon* pb);
 };
 
 #endif /* BASEAPP_H_ */

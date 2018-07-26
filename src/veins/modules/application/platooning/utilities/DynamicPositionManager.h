@@ -36,8 +36,11 @@ class DynamicPositionManager
 
 	public:
 
-		void addVehicleToPlatoon(int vehicleId, int position, int platoonId);
-		void removeVehicleFromPlatoon(int vehicleId);
+		void addVehicleToPlatoon(const int vehicleId, const int position, const int platoonId);
+		void removeVehicleFromPlatoon(const int vehicleId);
+		void removeVehicleFromPlatoon(const int vehicleId, const int position, const int platoonId) {
+			removeVehicleFromPlatoon(vehicleId);
+		}
 		void printPlatoons();
 
 		static DynamicPositionManager &getInstance();

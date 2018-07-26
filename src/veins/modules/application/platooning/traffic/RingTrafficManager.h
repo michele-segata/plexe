@@ -27,7 +27,6 @@ class RingTrafficManager : public TraCIBaseTrafficManager
 	public:
 
 		virtual void initialize(int stage);
-		virtual void finish();
 		virtual void scenarioLoaded();
 
 		RingTrafficManager() : platoonSize(0), nPlatoons(0),
@@ -58,7 +57,6 @@ class RingTrafficManager : public TraCIBaseTrafficManager
 		//sumo vehicle type of platooning cars
 		std::string platooningVType;
 		cPar *platoonInsertSpeed;
-		virtual void handleSelfMsg(cMessage *msg);
 
 		typedef struct {
 			int size;

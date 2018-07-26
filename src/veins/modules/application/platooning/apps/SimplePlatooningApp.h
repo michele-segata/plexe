@@ -24,16 +24,7 @@ class SimplePlatooningApp : public BaseApp
 {
 
 	public:
-
-		virtual void initialize(int stage);
-		virtual void finish();
-
-	public:
 		SimplePlatooningApp() {}
-
-	protected:
-
-		virtual void handleSelfMsg(cMessage *msg);
 
 };
 

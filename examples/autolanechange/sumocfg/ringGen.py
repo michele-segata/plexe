@@ -16,6 +16,33 @@ import argparse
 import math
 import subprocess
 import sys
+from elementtree.ElementTree import parse
+
+
+def get_segment_length(r, edges):
+    return 2 * r * math.sin(math.pi / edges)
+
+
+def get_half_circle_lane_length(r, edges, n_lanes, lane, lane_width):
+    center = n_lanes - 1 + 0.5
+    add_radius = (lane - center) * lane_width
+    segment_length = get_segment_length(r + add_radius, edges)
+    return segment_length * edges / 2
+
+
+def fix_net_file(net_file, r, edges, n_lanes, lane_width):
+    xml = parse(net_file)
+    lanes = xml.findall("edge/lane")
+    for l in lanes:
+        if l.get("id")[:4] in ["edg1", "edg2"]:
+            edge, lane = l.get("id").split("_")
+            lane = int(lane)
+            length = get_half_circle_lane_length(r, edges, n_lanes, lane,
+                                                 lane_width)
+            l.set("length", str(length))
+    with open(net_file, "w") as out_file:
+        xml.write(out_file)
+
 
 # Parser for retrieving command arguments
 parser = argparse.ArgumentParser(description="Create a circular road to be "
@@ -136,10 +163,11 @@ print ("Building net file..."),
 
 # Launch SUMO command netconvert to create the network from nod end edg files
 status = 0
+net_file = args.name + ".net.xml"
 try:
     status = subprocess.call(["netconvert", "-e", args.name + ".edg.xml",
-                              "-n", args.name + ".nod.xml", "-o", args.name +
-                              ".net.xml"])
+                              "-n", args.name + ".nod.xml", "-o", net_file,
+                              "--precision", "6"])
 except OSError as e:
     print ("Error in launching SUMO netconvert, is SUMO bin folder present in"
            "your system PATH?")
@@ -173,5 +201,9 @@ with open(args.name + ".add.xml", "w") as additional_file:
 
 print ("OK")
 
-print("Network length -> %f" % (side * args.edges))
+fix_net_file(net_file, args.radius, args.edges, args.lanes, 3.2)
+length = get_half_circle_lane_length(args.radius, args.edges, args.lanes, 0,
+                                     3.2)
+
+print("Network length -> %f" % (length * 2))
 print ("Success.")

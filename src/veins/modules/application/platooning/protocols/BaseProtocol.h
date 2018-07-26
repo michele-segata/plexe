@@ -114,28 +114,29 @@ class BaseProtocol : public BaseApplLayer {
 		 * BaseProtocol which then calls the startCommunications method. Also statistics are handled
 		 * by BaseProtocol and are recorder periodically.
 		 */
-		virtual void handleSelfMsg(cMessage *msg);
+		virtual void handleSelfMsg(cMessage *msg) override;
 
 		//TODO: implement method and pass info to upper layer (bogus platooning) as it is (msg)
-		virtual void handleLowerMsg(cMessage *msg);
+		virtual void handleLowerMsg(cMessage *msg) override;
 
 		//handle unicast messages coming from above layers
-		virtual void handleUpperMsg(cMessage *msg);
+		virtual void handleUpperMsg(cMessage *msg) override;
 
 		//handle control messages coming from above
-		virtual void handleUpperControl(cMessage *msg);
+		virtual void handleUpperControl(cMessage *msg) override;
 
 		//handle control messages coming from below
-		virtual void handleLowerControl(cMessage *msg);
+		virtual void handleLowerControl(cMessage *msg) override;
 
 		//handles and application layer message
 		void handleUnicastMsg(UnicastMessage *unicast);
 
 		//override handleMessage to manager upper layer gate array
-		virtual void handleMessage(cMessage *msg);
+		virtual void handleMessage(cMessage *msg) override;
 
 		//signal handler
-		void receiveSignal(cComponent *source, simsignal_t signalID, bool v, cObject *details);
+		using BaseApplLayer::receiveSignal;
+		void receiveSignal(cComponent *source, simsignal_t signalID, bool v, cObject *details) override;
 		void receiveSignal(cComponent *source, simsignal_t signalID, bool v) {
 			receiveSignal(source, signalID, v, 0);
 		}
@@ -177,14 +178,13 @@ class BaseProtocol : public BaseApplLayer {
 		static const int BEACON_TYPE = 12345;
 
 		BaseProtocol() {
-			sendBeacon = 0;
-			recordData = 0;
+			sendBeacon = nullptr;
+			recordData = nullptr;
 			usedGates = 0;
 		}
 		virtual ~BaseProtocol();
 
-		virtual void initialize(int stage);
-		virtual void finish();
+		virtual void initialize(int stage) override;
 
 		//register a higher level application by its id
 		void registerApplication(int applicationId, InputGate* appInputGate, OutputGate* appOutputGate,

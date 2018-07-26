@@ -58,10 +58,9 @@ void BrakingScenario::initialize(int stage) {
 
 }
 
-void BrakingScenario::finish() {
+BrakingScenario::~BrakingScenario() {
 	cancelAndDelete(changeSpeed);
-	changeSpeed = 0;
-	BaseScenario::finish();
+	changeSpeed = nullptr;
 }
 
 void BrakingScenario::handleSelfMsg(cMessage *msg) {

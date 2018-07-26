@@ -52,7 +52,7 @@ void PlatoonsPlusHumanTraffic::scenarioLoaded() {
 	human.id = findVehicleTypeIndex(humanVType);
 	human.lane = -1;
 	human.position = 0;
-	human.speed = platoonInsertSpeed/3.6;
+	human.speed = platoonInsertSpeed/3.6 - 0.01;
 }
 
 void PlatoonsPlusHumanTraffic::handleSelfMsg(cMessage *msg) {
@@ -136,10 +136,7 @@ void PlatoonsPlusHumanTraffic::insertHumans() {
 
 }
 
-void PlatoonsPlusHumanTraffic::finish() {
-	TraCIBaseTrafficManager::finish();
-	if (insertPlatoonMessage) {
-		cancelAndDelete(insertPlatoonMessage);
-		insertPlatoonMessage = 0;
-	}
+PlatoonsPlusHumanTraffic::~PlatoonsPlusHumanTraffic() {
+	cancelAndDelete(insertPlatoonMessage);
+	insertPlatoonMessage = nullptr;
 }

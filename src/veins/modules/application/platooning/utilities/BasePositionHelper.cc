@@ -35,105 +35,117 @@ void BasePositionHelper::initialize(int stage) {
 
 }
 
-void BasePositionHelper::finish() {
-	BaseApplLayer::finish();
-}
-
-std::string BasePositionHelper::getExternalId() {
+std::string BasePositionHelper::getExternalId() const {
 	return mobility->getExternalId();
 }
 
-int BasePositionHelper::getId() {
+int BasePositionHelper::getId() const {
 	return myId;
 }
 
-int BasePositionHelper::getHighestId() {
+int BasePositionHelper::getHighestId() const {
 	return highestId;
 }
 
-int BasePositionHelper::getPosition() {
+int BasePositionHelper::getPosition() const {
 	return position;
 }
 
-int BasePositionHelper::getLeaderId() {
+int BasePositionHelper::getLeaderId() const {
 	return leaderId;
 }
 
-bool BasePositionHelper::isLeader() {
+bool BasePositionHelper::isLeader() const {
 	return getLeaderId() == myId;
 }
 
-int BasePositionHelper::getFrontId() {
+int BasePositionHelper::getFrontId() const {
 	if (isLeader())
 		return -1;
 	else
 		return frontId;
 }
 
-int BasePositionHelper::getMemberId(int position) {
+int BasePositionHelper::getBackId() const {
+	return backId;
+}
+
+int BasePositionHelper::getMemberId(const int position) const {
 	return -1;
 }
 
-int BasePositionHelper::getMemberPosition(int vehicleId) {
+int BasePositionHelper::getMemberPosition(const int vehicleId) const {
 	return -1;
 }
 
-int BasePositionHelper::getPlatoonId() {
+int BasePositionHelper::getPlatoonId() const {
 	return platoonId;
 }
 
-int BasePositionHelper::getPlatoonLane() {
+int BasePositionHelper::getPlatoonLane() const {
 	return platoonLane;
 }
 
-bool BasePositionHelper::isInSamePlatoon(int vehicleId) {
+bool BasePositionHelper::isInSamePlatoon(const int vehicleId) const {
 	return false;
 }
 
-int BasePositionHelper::getLanesCount() {
+int BasePositionHelper::getLanesCount() const {
 	return nLanes;
 }
 
-int BasePositionHelper::getPlatoonSize() {
+int BasePositionHelper::getPlatoonSize() const {
 	return platoonSize;
 }
 
-void BasePositionHelper::setId(int id) {
+void BasePositionHelper::setId(const int id) {
 	myId = id;
 }
 
-void BasePositionHelper::setHighestId(int id) {
+void BasePositionHelper::setHighestId(const int id) {
 	highestId = id;
 }
 
-void BasePositionHelper::setPosition(int position) {
+void BasePositionHelper::setPosition(const int position) {
 	this->position = position;
 }
 
-void BasePositionHelper::setLeaderId(int id) {
+void BasePositionHelper::setLeaderId(const int id) {
 	leaderId = id;
 }
 
-void BasePositionHelper::setIsLeader(bool isLeader) {
+void BasePositionHelper::setIsLeader(const bool isLeader) {
 	leader = isLeader;
 }
 
-void BasePositionHelper::setFrontId(int id) {
+void BasePositionHelper::setFrontId(const int id) {
 	frontId = id;
 }
 
-void BasePositionHelper::setPlatoonId(int id) {
+void BasePositionHelper::setBackId(const int id) {
+	backId = id;
+}
+
+void BasePositionHelper::setPlatoonId(const int id) {
 	platoonId = id;
 }
 
-void BasePositionHelper::setPlatoonLane(int lane) {
+void BasePositionHelper::setPlatoonLane(const int lane) {
 	platoonLane = lane;
 }
 
-void BasePositionHelper::setLanesCount(int lanes) {
+void BasePositionHelper::setLanesCount(const int lanes) {
 	nLanes = lanes;
 }
 
-void BasePositionHelper::setPlatoonSize(int size) {
+void BasePositionHelper::setPlatoonSize(const int size) {
 	platoonSize = size;
+}
+
+const std::vector<int> &BasePositionHelper::getPlatoonFormation() const {
+	throw cRuntimeError("not implemented in base class");
+}
+
+void BasePositionHelper::setPlatoonFormation(const std::vector<int>& formation) {
+	throw cRuntimeError("not implemented in base class");
 }

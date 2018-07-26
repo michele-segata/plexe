@@ -26,11 +26,11 @@ class JoinTrafficManager : public PlatoonsTrafficManager
 	public:
 
 		virtual void initialize(int stage);
-		virtual void finish();
 
 		JoinTrafficManager() : PlatoonsTrafficManager() {
 			insertJoinerMessage = 0;
 		}
+		virtual ~JoinTrafficManager();
 
 	protected:
 

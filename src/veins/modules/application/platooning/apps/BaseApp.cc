@@ -23,9 +23,6 @@
 
 #include "veins/modules/application/platooning/protocols/BaseProtocol.h"
 
-bool BaseApp::crashHappened = false;
-bool BaseApp::simulationCompleted = false;
-
 Define_Module(BaseApp);
 
 void BaseApp::initialize(int stage) {
@@ -33,8 +30,6 @@ void BaseApp::initialize(int stage) {
 	BaseApplLayer::initialize(stage);
 
 	if (stage == 0) {
-		//when to stop simulation (after communications started)
-		simulationDuration = SimTime(par("simulationDuration").longValue());
 		//set names for output vectors
 		//distance from front vehicle
 		distanceOut.setName("distance");
@@ -71,22 +66,11 @@ void BaseApp::initialize(int stage) {
 
 }
 
-void BaseApp::finish() {
-	BaseApplLayer::finish();
-	if (recordData) {
-		if (recordData->isScheduled()) {
-			cancelEvent(recordData);
-		}
-		delete recordData;
-		recordData = 0;
-	}
-	if (!crashHappened && !simulationCompleted) {
-		if (traciVehicle->isCrashed()) {
-			crashHappened = true;
-			logVehicleData(true);
-			endSimulation();
-		}
-	}
+BaseApp::~BaseApp() {
+	cancelAndDelete(recordData);
+	recordData = nullptr;
+	cancelAndDelete(stopSimulation);
+	stopSimulation = nullptr;
 }
 
 void BaseApp::handleLowerMsg(cMessage *msg) {
@@ -107,21 +91,24 @@ void BaseApp::handleLowerMsg(cMessage *msg) {
 
 void BaseApp::logVehicleData(bool crashed) {
 	//get distance and relative speed w.r.t. front vehicle
-	double distance, relSpeed, acceleration, speed, controllerAcceleration, posX, posY, time;
+	double distance, relSpeed;
+	Plexe::VEHICLE_DATA data;
 	traciVehicle->getRadarMeasurements(distance, relSpeed);
-	traciVehicle->getVehicleData(speed, acceleration, controllerAcceleration, posX, posY, time);
-	if (crashed)
+	traciVehicle->getVehicleData(&data);
+	if (crashed) {
 		distance = 0;
+		stopSimulation = new cMessage("stopSimulation");
+		scheduleAt(simTime() + SimTime(1, SIMTIME_MS), stopSimulation);
+	}
 	//write data to output files
 	distanceOut.record(distance);
 	relSpeedOut.record(relSpeed);
 	nodeIdOut.record(myId);
-	accelerationOut.record(acceleration);
-	controllerAccelerationOut.record(controllerAcceleration);
-	speedOut.record(mobility->getCurrentSpeed().x);
-	Coord pos = mobility->getPositionAt(simTime());
-	posxOut.record(pos.x);
-	posyOut.record(pos.y);
+	accelerationOut.record(data.acceleration);
+	controllerAccelerationOut.record(data.u);
+	speedOut.record(data.speed);
+	posxOut.record(data.positionX);
+	posyOut.record(data.positionY);
 }
 
 void BaseApp::handleLowerControl(cMessage *msg) {
@@ -137,22 +124,17 @@ void BaseApp::sendUnicast(cPacket *msg, int destination) {
 
 void BaseApp::handleSelfMsg(cMessage *msg) {
 	if (msg == recordData) {
-		//check for simulation end. let the first vehicle check
-		if (myId == 0 && simTime() > simulationDuration)
-			stopSimulation();
 		//log mobility data
-		logVehicleData();
+		logVehicleData(traciVehicle->isCrashed());
 		//re-schedule next event
 		scheduleAt(simTime() + SimTime(100, SIMTIME_MS), recordData);
 	}
+	if (msg == stopSimulation) {
+		endSimulation();
+	}
 }
 
-void BaseApp::stopSimulation() {
-	simulationCompleted = true;
-	endSimulation();
-}
-
-void BaseApp::onPlatoonBeacon(PlatooningBeacon* pb) {
+void BaseApp::onPlatoonBeacon(const PlatooningBeacon* pb) {
 	if (positionHelper->isInSamePlatoon(pb->getVehicleId())) {
 		//if the message comes from the leader
 		if (pb->getVehicleId() == positionHelper->getLeaderId()) {
@@ -174,6 +156,9 @@ void BaseApp::onPlatoonBeacon(PlatooningBeacon* pb) {
 		vehicleData.speed = pb->getSpeed();
 		vehicleData.time = pb->getTime();
 		vehicleData.u = pb->getControllerAcceleration();
+		vehicleData.speedX = pb->getSpeedX();
+		vehicleData.speedY = pb->getSpeedY();
+		vehicleData.angle = pb->getAngle();
 		//send information to CACC
 		traciVehicle->setVehicleData(&vehicleData);
 	}

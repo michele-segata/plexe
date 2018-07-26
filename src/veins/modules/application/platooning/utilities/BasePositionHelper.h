@@ -29,78 +29,82 @@ class BasePositionHelper : public BaseApplLayer
 
 	public:
 
-		virtual void initialize(int stage);
-		virtual void finish();
+		virtual void initialize(int stage) override;
 
 		/**
 		 * Returns the traci external id of this car
 		 */
-		std::string getExternalId();
+		std::string getExternalId() const;
 
 		/**
 		 * Returns the numeric id of this car
 		 */
-		virtual int getId();
+		virtual int getId() const;
 
 		/**
 		 * Returns the highest id among all platooning cars
 		 */
-		virtual int getHighestId();
+		virtual int getHighestId() const;
 
 		/**
 		 * Returns the position of this vehicle within the platoon
 		 */
-		virtual int getPosition();
+		virtual int getPosition() const;
 
 		/**
 		 * Returns the id of the i-th vehicle of the own platoon
 		 */
-		virtual int getMemberId(int position);
+		virtual int getMemberId(int position) const;
 
 		/**
 		 * Returns the position of a vehicle of the own platoon
 		 */
-		virtual int getMemberPosition(int vehicleId);
+		virtual int getMemberPosition(int vehicleId) const;
 
 		/**
 		 * Returns the id of the leader of the own platoon
 		 */
-		virtual int getLeaderId();
+		virtual int getLeaderId() const;
 
 		/**
 		 * Returns whether this vehicle is the leader of the platoon
 		 */
-		virtual bool isLeader();
+		virtual bool isLeader() const;
 
 		/**
 		 * Returns the id of the vehicle in front of me
 		 */
-		virtual int getFrontId();
+		virtual int getFrontId() const;
+
+		/**
+		 * Retuns the id of the vehicle in the back of me
+		 */
+		virtual int getBackId() const;
 
 		/**
 		 * Returns the id of the platoon
 		 */
-		virtual int getPlatoonId();
+		virtual int getPlatoonId() const;
 
 		/**
 		 * Returns the lane the platoon is traveling on
 		 */
-		virtual int getPlatoonLane();
+		virtual int getPlatoonLane() const;
 
 		/**
 		 * Returns whether a vehicle is part of my platoon
 		 */
-		virtual bool isInSamePlatoon(int vehicleId);
+		virtual bool isInSamePlatoon(int vehicleId) const;
 
 		/**
 		 * Returns the total number of lanes
 		 */
-		virtual int getLanesCount();
+		virtual int getLanesCount() const;
 
 		/**
 		 * Returns the platoon size
 		 */
-		virtual int getPlatoonSize();
+		virtual int getPlatoonSize() const;
 
 		/**
 		 * Sets the id of this car
@@ -120,12 +124,16 @@ class BasePositionHelper : public BaseApplLayer
 		/**
 		 * Sets the id of the i-th vehicle of the own platoon
 		 */
-		virtual void setMemberId(int position) {};
+		virtual void setMemberId(int position, int id) {
+			throw cRuntimeError("Not implemented in base class!");
+		}
 
 		/**
 		 * Sets the position of a vehicle of the own platoon
 		 */
-		virtual void setMemberPosition(int vehicleId) {};
+		virtual void setMemberPosition(int vehicleId, int position) {
+			throw cRuntimeError("Not implemented in base class!");
+		}
 
 		/**
 		 * Sets the id of the leader of the own platoon
@@ -141,6 +149,11 @@ class BasePositionHelper : public BaseApplLayer
 		 * Sets the id of the vehicle in front of me
 		 */
 		virtual void setFrontId(int id);
+
+		/**
+		 * Set the id of the vehicle in the back of me
+		 */
+		virtual void setBackId(int id);
 
 		/**
 		 * Sets the id of the platoon
@@ -167,6 +180,16 @@ class BasePositionHelper : public BaseApplLayer
 		 */
 		virtual void setPlatoonSize(int size);
 
+		/**
+		 * Returns the platoon formation
+		 */
+		virtual const std::vector<int> &getPlatoonFormation() const;
+
+		/**
+		 * Sets the platoon formation
+		 */
+		virtual void setPlatoonFormation(const std::vector<int>& formation);
+
 	protected:
 
 		Veins::TraCIMobility* mobility;
@@ -187,6 +210,8 @@ class BasePositionHelper : public BaseApplLayer
 		int leaderId;
 		//id of the vehicle in front of me
 		int frontId;
+		//id of the vehicle in the back of me
+		int backId;
 		//my position within the platoon
 		int position;
 		//is this car a leader?
@@ -197,26 +222,21 @@ class BasePositionHelper : public BaseApplLayer
 		int platoonLane;
 
 	public:
-		BasePositionHelper() {
-			mobility = 0;
-			traci = 0;
-			traciVehicle = 0;
-			myId = INVALID_PLATOON_ID;
-			nLanes = -1;
-			platoonSize = -1;
-			nCars = -1;
-			highestId = -1;
-			leaderId = INVALID_PLATOON_ID;
-			frontId = INVALID_PLATOON_ID;
-			position = -1;
-			nCars = -1;
-			platoonSize = -1;
-			nLanes = -1;
-			leader = false;
-			platoonId = INVALID_PLATOON_ID;
-			platoonLane = -1;
-		}
-
+		BasePositionHelper() : mobility(nullptr),
+			traci(nullptr),
+			traciVehicle(nullptr),
+			myId(INVALID_PLATOON_ID),
+			nLanes(-1),
+			platoonSize(-1),
+			nCars(-1),
+			highestId(-1),
+			leaderId(INVALID_PLATOON_ID),
+			frontId(INVALID_PLATOON_ID),
+			backId(INVALID_PLATOON_ID),
+			position(-1),
+			leader(false),
+			platoonId(INVALID_PLATOON_ID),
+			platoonLane(-1) {}
 };
 
 #endif
