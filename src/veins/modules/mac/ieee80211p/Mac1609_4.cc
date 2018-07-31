@@ -1,5 +1,6 @@
 //
 // Copyright (C) 2016 David Eckhoff <david.eckhoff@fau.de>
+// Copyright (C) 2018 Fabian Bronner <fabian.bronner@ccs-labs.org>
 //
 // Documentation for these modules is at http://veins.car2x.org/
 //
@@ -26,20 +27,18 @@
 #include "veins/modules/messages/PhyControlMessage_m.h"
 #include "veins/modules/messages/AckTimeOutMessage_m.h"
 
+using namespace Veins;
+
 using std::unique_ptr;
 using omnetpp::simtime_t;
 using omnetpp::simTime;
 
-#if OMNETPP_VERSION >= 0x500
 #define OWNER owner->
-#else
-#define OWNER
-#endif
 
 #define DBG_MAC EV
 //#define DBG_MAC std::cerr << "[" << simTime().raw() << "] " << myId << " "
 
-Define_Module(Mac1609_4);
+Define_Module(Veins::Mac1609_4);
 
 void Mac1609_4::initialize(int stage) {
 	BaseMacLayer::initialize(stage);
@@ -84,9 +83,18 @@ void Mac1609_4::initialize(int stage) {
 		frequency.insert(std::pair<int, double>(Channels::SCH4, 5.91e9));
 		frequency.insert(std::pair<int, double>(Channels::HPPS, 5.92e9));
 
+		//Initialize spectrum for signal representation here
+		Freqs freqs;
+		for(auto channel : frequency) {
+			freqs.push_back(channel.second - 5e6);
+			freqs.push_back(channel.second);
+			freqs.push_back(channel.second + 5e6);
+		}
+		overallSpectrum = Spectrum::getInstance(freqs);
+
 		//create two edca systems
 
-		myEDCA[type_CCH] = std::unique_ptr<EDCA>(new EDCA(this, type_CCH,par("queueSize").longValue()));
+		myEDCA[type_CCH] = std::unique_ptr<EDCA>(new EDCA(this, type_CCH,par("queueSize")));
 		myEDCA[type_CCH]->myId = myId;
 		myEDCA[type_CCH]->myId.append(" CCH");
 		myEDCA[type_CCH]->createQueue(2,(((CWMIN_11P+1)/4)-1),(((CWMIN_11P +1)/2)-1),AC_VO);
@@ -94,7 +102,7 @@ void Mac1609_4::initialize(int stage) {
 		myEDCA[type_CCH]->createQueue(6,CWMIN_11P,CWMAX_11P,AC_BE);
 		myEDCA[type_CCH]->createQueue(9,CWMIN_11P,CWMAX_11P,AC_BK);
 
-		myEDCA[type_SCH] = std::unique_ptr<EDCA>(new EDCA(this, type_SCH,par("queueSize").longValue()));
+		myEDCA[type_SCH] = std::unique_ptr<EDCA>(new EDCA(this, type_SCH,par("queueSize")));
 		myEDCA[type_SCH]->myId = myId;
 		myEDCA[type_SCH]->myId.append(" SCH");
 		myEDCA[type_SCH]->createQueue(2,(((CWMIN_11P+1)/4)-1),(((CWMIN_11P +1)/2)-1),AC_VO);
@@ -106,7 +114,8 @@ void Mac1609_4::initialize(int stage) {
 		if (useSCH) {
 			if (useAcks) throw cRuntimeError("Unicast model does not support channel switching");
 			//set the initial service channel
-			switch (par("serviceChannel").longValue()) {
+			int serviceChannel = par("serviceChannel");
+			switch (serviceChannel) {
 				case 1: mySCH = Channels::SCH1; break;
 				case 2: mySCH = Channels::SCH2; break;
 				case 3: mySCH = Channels::SCH3; break;
@@ -498,23 +507,21 @@ void Mac1609_4::attachSignal(Mac80211Pkt* mac, simtime_t startTime, double frequ
 }
 
 Signal* Mac1609_4::createSignal(simtime_t start, simtime_t length, double power, uint64_t bitrate, double frequency) {
-	simtime_t end = start + length;
-	//create signal with start at current simtime and passed length
-	Signal* s = new Signal(start, length);
 
-	//create and set tx power mapping
-	ConstMapping* txPowerMapping = createSingleFrequencyMapping(start, end, frequency, 5.0e6, power);
-	s->setTransmissionPower(txPowerMapping);
+	Signal* s = new Signal(overallSpectrum, start, length);
 
-	Mapping* bitrateMapping = MappingUtils::createMapping(DimensionSet::timeDomain(), Mapping::STEPS);
+	size_t freqIndex = s->getSpectrum()->indexOf(frequency);
 
-	Argument pos(start);
-	bitrateMapping->setValue(pos, bitrate);
+	(*s)[freqIndex-1] = power;
+	(*s)[freqIndex] = power;
+	(*s)[freqIndex+1] = power;
 
-	pos.setTime(phyHeaderLength / bitrate);
-	bitrateMapping->setValue(pos, bitrate);
+	s->setBitrate(bitrate);
 
-	s->setBitrate(bitrateMapping);
+	s->setDataStart(freqIndex-1);
+	s->setDataEnd(freqIndex+1);
+
+	s->setCenterFrequencyIndex(freqIndex);
 
 	return s;
 }

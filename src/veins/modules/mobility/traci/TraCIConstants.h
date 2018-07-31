@@ -848,6 +848,9 @@
 // add a fully specified instance (vehicle)
 #define ADD_FULL 0x85
 
+// the accumulated waiting time (vehicle)
+#define VAR_WAITING_TIME_ACCUMULATED 0x87
+
 // force rerouting based on travel time (vehicles)
 #define CMD_REROUTE_TRAVELTIME 0x90
 

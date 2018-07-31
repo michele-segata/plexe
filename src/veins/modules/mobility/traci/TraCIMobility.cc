@@ -24,6 +24,8 @@
 
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 
+using namespace Veins;
+
 using Veins::TraCIMobility;
 
 Define_Module(Veins::TraCIMobility);
@@ -232,6 +234,7 @@ void TraCIMobility::changePosition()
 }
 
 void TraCIMobility::changeParkingState(bool newState) {
+	Enter_Method_Silent();
 	isParking = newState;
 	emit(parkingStateChangedSignal, this);
 }

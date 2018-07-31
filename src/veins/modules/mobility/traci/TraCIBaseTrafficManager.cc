@@ -15,7 +15,9 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-#include "TraCIBaseTrafficManager.h"
+#include "veins/modules/mobility/traci/TraCIBaseTrafficManager.h"
+
+using namespace Veins;
 
 Define_Module(TraCIBaseTrafficManager);
 

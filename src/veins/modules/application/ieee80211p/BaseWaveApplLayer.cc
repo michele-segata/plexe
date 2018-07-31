@@ -20,6 +20,15 @@
 
 #include "veins/modules/application/ieee80211p/BaseWaveApplLayer.h"
 
+//#define DBG_APP std::cerr << "[" << simTime().raw() << "] " << getParentModule()->getFullPath() << " "
+
+#ifndef DBG_APP
+#define DBG_APP EV
+#endif
+
+
+using namespace Veins;
+
 const simsignalwrap_t BaseWaveApplLayer::mobilityStateChangedSignal = simsignalwrap_t(MIXIM_SIGNAL_MOBILITY_CHANGE_NAME);
 const simsignalwrap_t BaseWaveApplLayer::parkingStateChangedSignal = simsignalwrap_t(TRACI_SIGNAL_PARKING_CHANGE_NAME);
 
@@ -50,18 +59,17 @@ void BaseWaveApplLayer::initialize(int stage) {
         myId = getParentModule()->getId();
 
         //read parameters
-        headerLength = par("headerLength").longValue();
+        headerLength = par("headerLength");
         sendBeacons = par("sendBeacons").boolValue();
-        beaconLengthBits = par("beaconLengthBits").longValue();
-        beaconUserPriority = par("beaconUserPriority").longValue();
+        beaconLengthBits = par("beaconLengthBits");
+        beaconUserPriority = par("beaconUserPriority");
         beaconInterval =  par("beaconInterval");
 
-        dataLengthBits = par("dataLengthBits").longValue();
+        dataLengthBits = par("dataLengthBits");
         dataOnSch = par("dataOnSch").boolValue();
-        dataUserPriority = par("dataUserPriority").longValue();
+        dataUserPriority = par("dataUserPriority");
 
         wsaInterval = par("wsaInterval").doubleValue();
-        communicateWhileParked = par("communicateWhileParked").boolValue();
         currentOfferedServiceId = -1;
 
         isParked = false;
@@ -162,7 +170,6 @@ void BaseWaveApplLayer::populateWSM(WaveShortMessage* wsm, int rcvId, int serial
 
     if (BasicSafetyMessage* bsm = dynamic_cast<BasicSafetyMessage*>(wsm) ) {
         bsm->setSenderPos(curPosition);
-        bsm->setSenderPos(curPosition);
         bsm->setSenderSpeed(curSpeed);
         bsm->setPsid(-1);
         bsm->setChannelNumber(Channels::CCH);
@@ -200,17 +207,7 @@ void BaseWaveApplLayer::handlePositionUpdate(cObject* obj) {
 }
 
 void BaseWaveApplLayer::handleParkingUpdate(cObject* obj) {
-    //this code should only run when used with TraCI
     isParked = mobility->getParkingState();
-    if (communicateWhileParked == false) {
-        if (isParked == true) {
-            (FindModule<BaseConnectionManager*>::findGlobalModule())->unregisterNic(this->getParentModule()->getSubmodule("nic"));
-        }
-        else {
-            Coord pos = mobility->getCurrentPosition();
-            (FindModule<BaseConnectionManager*>::findGlobalModule())->registerNic(this->getParentModule()->getSubmodule("nic"), (ChannelAccess*) this->getParentModule()->getSubmodule("nic")->getSubmodule("phy80211p"), &pos);
-        }
-    }
 }
 
 void BaseWaveApplLayer::handleLowerMsg(cMessage* msg) {
@@ -306,8 +303,6 @@ void BaseWaveApplLayer::sendDelayedDown(cMessage* msg, simtime_t delay) {
 }
 
 void BaseWaveApplLayer::checkAndTrackPacket(cMessage* msg) {
-    if (isParked && !communicateWhileParked) error("Attempted to transmit a message while parked, but this is forbidden by current configuration");
-
     if (dynamic_cast<BasicSafetyMessage*>(msg)) {
         DBG_APP << "sending down a BSM" << std::endl;
         generatedBSMs++;

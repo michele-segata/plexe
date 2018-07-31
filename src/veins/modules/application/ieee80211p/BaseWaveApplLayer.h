@@ -32,17 +32,13 @@
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 #include "veins/modules/mobility/traci/TraCICommandInterface.h"
 
+namespace Veins {
+
 using Veins::TraCIMobility;
 using Veins::TraCICommandInterface;
 using Veins::AnnotationManager;
 using Veins::TraCIMobilityAccess;
 using Veins::AnnotationManagerAccess;
-
-//#define DBG_APP std::cerr << "[" << simTime().raw() << "] " << getParentModule()->getFullPath() << " "
-
-#ifndef DBG_APP
-#define DBG_APP EV
-#endif
 
 /**
  * @brief
@@ -152,7 +148,6 @@ class BaseWaveApplLayer : public BaseApplLayer {
 
         /* support for parking currently only works with TraCI */
         bool isParked;
-        bool communicateWhileParked;
 
         /* BSM (beacon) settings */
         uint32_t beaconLengthBits;
@@ -189,5 +184,7 @@ class BaseWaveApplLayer : public BaseApplLayer {
         cMessage* sendBeaconEvt;
         cMessage* sendWSAEvt;
 };
+
+} // namespace Veins
 
 #endif /* BASEWAVEAPPLLAYER_H_ */

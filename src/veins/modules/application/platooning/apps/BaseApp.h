@@ -31,7 +31,7 @@
 
 class BaseProtocol;
 
-class BaseApp : public BaseApplLayer
+class BaseApp : public Veins::BaseApplLayer
 {
 
 	public:

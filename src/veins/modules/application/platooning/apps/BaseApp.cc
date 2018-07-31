@@ -23,6 +23,8 @@
 
 #include "veins/modules/application/platooning/protocols/BaseProtocol.h"
 
+using namespace Veins;
+
 Define_Module(BaseApp);
 
 void BaseApp::initialize(int stage) {

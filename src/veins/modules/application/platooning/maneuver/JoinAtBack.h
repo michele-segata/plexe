@@ -27,6 +27,8 @@
 #include "veins/modules/mobility/traci/TraCIConstants.h"
 #include "veins/base/utils/Coord.h"
 
+using namespace Veins;
+
 class JoinAtBack: public JoinManeuver {
 
 public:

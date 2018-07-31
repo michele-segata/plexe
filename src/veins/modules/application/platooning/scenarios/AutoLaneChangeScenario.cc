@@ -17,6 +17,8 @@
 
 #include "veins/modules/application/platooning/scenarios/AutoLaneChangeScenario.h"
 
+using namespace Veins;
+
 Define_Module(AutoLaneChangeScenario);
 
 void AutoLaneChangeScenario::initialize(int stage) {

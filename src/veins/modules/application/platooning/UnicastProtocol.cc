@@ -21,7 +21,13 @@
 #include "veins/base/phyLayer/PhyToMacControlInfo.h"
 #include "veins/modules/phy/DeciderResult80211.h"
 
+using omnetpp::simsignal_t;
+using namespace Veins;
+
 Define_Module(UnicastProtocol);
+
+const simsignal_t UnicastProtocol::sigDroppedExceededAttempts = registerSignal("droppedExceededAttempts");
+const simsignal_t UnicastProtocol::sigTransmissionAttempts = registerSignal("transmissionAttempts");
 
 void UnicastProtocol::initialize(int stage)
 {
@@ -168,7 +174,7 @@ void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsu
 	if (destination != -1)
 	{
 		currentMsg = unicast->dup();
-		nAttempts = 0;
+		nAttempts = 1;
 		scheduleAt(simTime() + SimTime(ackTimeout), timeout);
 	}
 	//if we are sending a broadcast, delete the packet from the queue
@@ -285,7 +291,7 @@ void UnicastProtocol::handleAckMessage(const UnicastMessage *ack)
 	if (currentMsg == 0)
 	{
 		//we have received an ack we were not waiting for. do nothing
-		DBG_APP << "unexpected ACK";
+		EV_DEBUG << "unexpected ACK";
 	}
 	else
 	{
@@ -303,6 +309,8 @@ void UnicastProtocol::handleAckMessage(const UnicastMessage *ack)
 			return;
 
 		ASSERT2(msgDestination == ackSource && msgSequence == ackSequence, "received a wrong ACK");
+
+		emit(sigTransmissionAttempts, nAttempts);
 
 		//we've got the ack. stop timeout timer
 		if (timeout->isScheduled())
@@ -378,6 +386,7 @@ void UnicastProtocol::handleSelfMsg(cMessage *msg)
 		}
 		else
 		{
+			emit(sigDroppedExceededAttempts, true);
 
 			//we tried maxAttempts time with no success. discard the
 			//message and tell the error to the application

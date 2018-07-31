@@ -39,7 +39,7 @@ enum ControlMessageCommand
 	FULL_QUEUE
 };
 
-class UnicastProtocol : public BaseWaveApplLayer
+class UnicastProtocol : public Veins::BaseWaveApplLayer
 {
 
 	protected:
@@ -94,11 +94,14 @@ class UnicastProtocol : public BaseWaveApplLayer
 		int upperLayerIn, upperLayerOut, upperControlIn, upperControlOut;
 
 	public:
+		static const omnetpp::simsignal_t sigDroppedExceededAttempts;
+		static const omnetpp::simsignal_t sigTransmissionAttempts;
+
 		virtual void initialize(int stage);
 
 	protected:
-		virtual void onBeacon(WaveShortMessage* wsm);
-		virtual void onData(WaveShortMessage* wsm);
+		virtual void onBeacon(Veins::WaveShortMessage* wsm);
+		virtual void onData(Veins::WaveShortMessage* wsm);
 
 	protected:
 
