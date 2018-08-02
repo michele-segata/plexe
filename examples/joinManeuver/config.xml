@@ -4,6 +4,7 @@
         <AnalogueModel type="SimplePathlossModel" thresholding="true">
             <parameter name="alpha" type="double" value="2.0"/>
             <parameter name="carrierFrequency" type="double" value="5.890e+9"/>
+        </AnalogueModel>
     <!--<AnalogueModel type="TwoRayInterferenceModel">
             <parameter name="DielectricConstant" type="double" value="1.02"/>
         </AnalogueModel>
