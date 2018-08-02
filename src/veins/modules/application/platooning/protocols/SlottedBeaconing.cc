@@ -17,10 +17,10 @@
 
 #include "SlottedBeaconing.h"
 
-
 Define_Module(SlottedBeaconing)
 
-void SlottedBeaconing::initialize(int stage) {
+    void SlottedBeaconing::initialize(int stage)
+{
     BaseProtocol::initialize(stage);
 
     if (stage == 1) {
@@ -38,12 +38,11 @@ void SlottedBeaconing::initialize(int stage) {
             SimTime beginTime = SimTime(uniform(0.001, 1.0));
             scheduleAt(simTime() + beaconingInterval + beginTime, sendBeacon);
         }
-
     }
-
 }
 
-void SlottedBeaconing::handleSelfMsg(cMessage *msg) {
+void SlottedBeaconing::handleSelfMsg(cMessage* msg)
+{
 
     BaseProtocol::handleSelfMsg(msg);
 
@@ -54,10 +53,10 @@ void SlottedBeaconing::handleSelfMsg(cMessage *msg) {
         //delete this event and synchronize on the beacon of the leader
         scheduleAt(simTime() + beaconingInterval, sendBeacon);
     }
-
 }
 
-void SlottedBeaconing::messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicast) {
+void SlottedBeaconing::messageReceived(PlatooningBeacon* pkt, UnicastMessage* unicast)
+{
 
     int senderId = pkt->getVehicleId();
 
@@ -71,13 +70,13 @@ void SlottedBeaconing::messageReceived(PlatooningBeacon *pkt, UnicastMessage *un
         }
 
         scheduleAt(simTime() + slotTime, sendBeacon);
-
     }
-
 }
 
 SlottedBeaconing::SlottedBeaconing()
-{}
+{
+}
 
 SlottedBeaconing::~SlottedBeaconing()
-{}
+{
+}

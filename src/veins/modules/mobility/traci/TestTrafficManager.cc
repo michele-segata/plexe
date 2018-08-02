@@ -19,7 +19,8 @@
 
 Define_Module(TestTrafficManager);
 
-void TestTrafficManager::initialize(int stage) {
+void TestTrafficManager::initialize(int stage)
+{
 
     TraCIBaseTrafficManager::initialize(stage);
 
@@ -28,22 +29,21 @@ void TestTrafficManager::initialize(int stage) {
         generateVehicle = new cMessage("generateVehicle");
 
         scheduleAt(simTime() + SimTime(0.1), generateVehicle);
-
     }
-
 }
 
-void TestTrafficManager::handleSelfMsg(cMessage *msg) {
+void TestTrafficManager::handleSelfMsg(cMessage* msg)
+{
 
     TraCIBaseTrafficManager::handleSelfMsg(msg);
 
     if (msg == generateVehicle) {
         insertNewVehicle();
     }
-
 }
 
-void TestTrafficManager::insertNewVehicle() {
+void TestTrafficManager::insertNewVehicle()
+{
     int vehTypeId = 0;
     int routeId = 0;
     int i;
@@ -58,7 +58,8 @@ void TestTrafficManager::insertNewVehicle() {
     }
 }
 
-void TestTrafficManager::finish() {
+void TestTrafficManager::finish()
+{
     TraCIBaseTrafficManager::finish();
     if (generateVehicle) {
         cancelAndDelete(generateVehicle);

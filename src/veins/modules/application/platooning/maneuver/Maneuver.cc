@@ -18,7 +18,8 @@
 #include "veins/modules/application/platooning/maneuver/Maneuver.h"
 #include "veins/modules/application/platooning/apps/GeneralPlatooningApp.h"
 
-Maneuver::Maneuver(GeneralPlatooningApp *app) {
+Maneuver::Maneuver(GeneralPlatooningApp* app)
+{
     this->app = app;
     this->positionHelper = app->getPositionHelper();
     this->mobility = app->getMobility();

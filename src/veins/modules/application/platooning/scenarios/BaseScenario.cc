@@ -21,7 +21,8 @@ using namespace Veins;
 
 Define_Module(BaseScenario);
 
-void BaseScenario::initialize(int stage) {
+void BaseScenario::initialize(int stage)
+{
 
     BaseApplLayer::initialize(stage);
 
@@ -51,7 +52,7 @@ void BaseScenario::initialize(int stage) {
             vehicleType = par("vehicleType").stdstringValue();
         }
 
-        const char *strController = par("controller").stringValue();
+        const char* strController = par("controller").stringValue();
         //for now we have only two possibilities
         if (strcmp(strController, "ACC") == 0) {
             controller = Plexe::ACC;
@@ -71,7 +72,6 @@ void BaseScenario::initialize(int stage) {
         else {
             throw cRuntimeError("Invalid controller selected");
         }
-
     }
 
     if (stage == 1) {
@@ -101,13 +101,14 @@ void BaseScenario::initialize(int stage) {
         if (positionHelper->getId() == 0)
             traci->guiView("View #0").trackVehicle(mobility->getExternalId());
     }
-
 }
 
-void BaseScenario::handleSelfMsg(cMessage *msg) {
+void BaseScenario::handleSelfMsg(cMessage* msg)
+{
 }
 
-void BaseScenario::initializeControllers() {
+void BaseScenario::initializeControllers()
+{
     //engine lag
     traciVehicle->setParameter(CC_PAR_ENGINE_TAU, engineTau);
     traciVehicle->setParameter(CC_PAR_UMIN, uMin);

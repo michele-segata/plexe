@@ -21,7 +21,8 @@ using namespace Veins;
 
 Define_Module(TraCIBaseTrafficManager);
 
-void TraCIBaseTrafficManager::initialize(int stage) {
+void TraCIBaseTrafficManager::initialize(int stage)
+{
 
     cSimpleModule::initialize(stage);
 
@@ -51,11 +52,10 @@ void TraCIBaseTrafficManager::initialize(int stage) {
         insertVehiclesTrigger = new cMessage("insertVehiclesTrigger");
         scheduleAt(simTime() + manager->getUpdateInterval(), insertVehiclesTrigger);
     }
-
-
 }
 
-void TraCIBaseTrafficManager::handleSelfMsg(cMessage *msg) {
+void TraCIBaseTrafficManager::handleSelfMsg(cMessage* msg)
+{
 
     if (msg == insertVehiclesTrigger) {
 
@@ -66,23 +66,25 @@ void TraCIBaseTrafficManager::handleSelfMsg(cMessage *msg) {
         scheduleAt(simTime() + manager->getUpdateInterval(), insertVehiclesTrigger);
         return;
     }
-
 }
 
-void TraCIBaseTrafficManager::handleMessage(cMessage *msg) {
+void TraCIBaseTrafficManager::handleMessage(cMessage* msg)
+{
     if (msg->isSelfMessage()) {
         handleSelfMsg(msg);
     }
 }
 
-void TraCIBaseTrafficManager::finish() {
+void TraCIBaseTrafficManager::finish()
+{
     if (insertVehiclesTrigger) {
         cancelAndDelete(insertVehiclesTrigger);
         insertVehiclesTrigger = 0;
     }
 }
 
-int TraCIBaseTrafficManager::findVehicleTypeIndex(std::string vehType) {
+int TraCIBaseTrafficManager::findVehicleTypeIndex(std::string vehType)
+{
 
     unsigned int i;
 
@@ -93,19 +95,19 @@ int TraCIBaseTrafficManager::findVehicleTypeIndex(std::string vehType) {
     }
 
     return -1;
-
 }
 
-void TraCIBaseTrafficManager::loadSumoScenario() {
+void TraCIBaseTrafficManager::loadSumoScenario()
+{
 
     commandInterface = manager->getCommandInterface();
 
     //get all the vehicle types
-    if(vehicleTypeIds.size()==0) {
+    if (vehicleTypeIds.size() == 0) {
         std::list<std::string> vehTypes = commandInterface->getVehicleTypeIds();
         EV << "Having currently " << vehTypes.size() << " vehicle types" << std::endl;
         for (std::list<std::string>::const_iterator i = vehTypes.begin(); i != vehTypes.end(); ++i) {
-            if(i->compare("DEFAULT_VEHTYPE")!=0) {
+            if (i->compare("DEFAULT_VEHTYPE") != 0) {
                 EV << "found vehType " << (*i) << std::endl;
                 vehicleTypeIds.push_back(*i);
                 //set counter of vehicles for this vehicle type to 0
@@ -114,7 +116,7 @@ void TraCIBaseTrafficManager::loadSumoScenario() {
         }
     }
     //get all roads
-    if(roadIds.size()==0) {
+    if (roadIds.size() == 0) {
         std::list<std::string> roads = commandInterface->getRoadIds();
         EV << "Having currently " << roads.size() << " roads in the scenario" << std::endl;
         for (std::list<std::string>::const_iterator i = roads.begin(); i != roads.end(); ++i) {
@@ -123,7 +125,7 @@ void TraCIBaseTrafficManager::loadSumoScenario() {
         }
     }
     //get all lanes
-    if(laneIds.size()==0) {
+    if (laneIds.size() == 0) {
         std::list<std::string> lanes = commandInterface->getLaneIds();
         EV << "Having currently " << lanes.size() << " lanes in the scenario" << std::endl;
         for (std::list<std::string>::const_iterator i = lanes.begin(); i != lanes.end(); ++i) {
@@ -134,7 +136,7 @@ void TraCIBaseTrafficManager::loadSumoScenario() {
         }
     }
     //get all routes
-    if(routeIds.size()==0) {
+    if (routeIds.size() == 0) {
         std::list<std::string> routes = commandInterface->getRouteIds();
         EV << "Having currently " << routes.size() << " routes in the scenario" << std::endl;
         for (std::list<std::string>::const_iterator i = routes.begin(); i != routes.end(); ++i) {
@@ -149,10 +151,10 @@ void TraCIBaseTrafficManager::loadSumoScenario() {
     }
     //inform inheriting classes that scenario is loaded
     scenarioLoaded();
-
 }
 
-void TraCIBaseTrafficManager::insertVehicles() {
+void TraCIBaseTrafficManager::insertVehicles()
+{
 
     //if not already done, load all roads, all vehicle types, etc...
     if (!initScenario) {
@@ -186,12 +188,12 @@ void TraCIBaseTrafficManager::insertVehicles() {
                     //if we did not manager to insert a car on any lane, then this route is full and we can just stop
                     //TODO: this is not true if we want to insert a vehicle not at the beginning of the route. fix this
                     break;
-                } else {
+                }
+                else {
                     EV << "successful inserted " << veh.str() << std::endl;
                     vi = i->second.erase(vi);
                     vehiclesCount[v.id] = vehiclesCount[v.id] + 1;
                 }
-
             }
             else {
 
@@ -212,12 +214,12 @@ void TraCIBaseTrafficManager::insertVehicles() {
                         break;
                     }
                 }
-
             }
         }
     }
 }
 
-void TraCIBaseTrafficManager::addVehicleToQueue(int routeId, struct Vehicle v) {
+void TraCIBaseTrafficManager::addVehicleToQueue(int routeId, struct Vehicle v)
+{
     vehicleInsertQueue[routeId].push_back(v);
 }

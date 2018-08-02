@@ -21,7 +21,8 @@ using namespace Veins;
 
 Define_Module(SimpleScenario);
 
-void SimpleScenario::initialize(int stage) {
+void SimpleScenario::initialize(int stage)
+{
 
     BaseScenario::initialize(stage);
 

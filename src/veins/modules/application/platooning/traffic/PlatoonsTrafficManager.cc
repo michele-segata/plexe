@@ -19,7 +19,8 @@
 
 Define_Module(PlatoonsTrafficManager);
 
-void PlatoonsTrafficManager::initialize(int stage) {
+void PlatoonsTrafficManager::initialize(int stage)
+{
 
     TraCIBaseTrafficManager::initialize(stage);
 
@@ -36,29 +37,29 @@ void PlatoonsTrafficManager::initialize(int stage) {
         platooningVType = par("platooningVType").stdstringValue();
         insertPlatoonMessage = new cMessage("");
         scheduleAt(platoonInsertTime, insertPlatoonMessage);
-
     }
-
 }
 
-void PlatoonsTrafficManager::scenarioLoaded() {
+void PlatoonsTrafficManager::scenarioLoaded()
+{
     automated.id = findVehicleTypeIndex(platooningVType);
     automated.lane = -1;
     automated.position = 0;
-    automated.speed = platoonInsertSpeed/3.6;
+    automated.speed = platoonInsertSpeed / 3.6;
 }
 
-void PlatoonsTrafficManager::handleSelfMsg(cMessage *msg) {
+void PlatoonsTrafficManager::handleSelfMsg(cMessage* msg)
+{
 
     TraCIBaseTrafficManager::handleSelfMsg(msg);
 
     if (msg == insertPlatoonMessage) {
         insertPlatoons();
     }
-
 }
 
-void PlatoonsTrafficManager::insertPlatoons() {
+void PlatoonsTrafficManager::insertPlatoons()
+{
 
     //compute intervehicle distance
     double distance = platoonInsertSpeed / 3.6 * platoonInsertHeadway + platoonInsertDistance;
@@ -72,13 +73,13 @@ void PlatoonsTrafficManager::insertPlatoons() {
     double totalLength = nPlatoons * platoonLength + (nPlatoons - 1) * platoonDistance;
 
     //for each lane, we create an offset to have misaligned platoons
-    double *laneOffset = new double[nLanes];
+    double* laneOffset = new double[nLanes];
     for (int l = 0; l < nLanes; l++)
         laneOffset[l] = uniform(0, 20);
 
     double currentPos = totalLength;
     int currentCar = 0;
-    for (int i = 0; i < nCars/nLanes; i++) {
+    for (int i = 0; i < nCars / nLanes; i++) {
         for (int l = 0; l < nLanes; l++) {
             automated.position = currentPos + laneOffset[l];
             automated.lane = l;
@@ -96,11 +97,11 @@ void PlatoonsTrafficManager::insertPlatoons() {
         }
     }
 
-    delete [] laneOffset;
-
+    delete[] laneOffset;
 }
 
-PlatoonsTrafficManager::~PlatoonsTrafficManager() {
+PlatoonsTrafficManager::~PlatoonsTrafficManager()
+{
     cancelAndDelete(insertPlatoonMessage);
     insertPlatoonMessage = nullptr;
 }

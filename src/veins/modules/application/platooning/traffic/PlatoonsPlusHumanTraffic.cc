@@ -19,7 +19,8 @@
 
 Define_Module(PlatoonsPlusHumanTraffic);
 
-void PlatoonsPlusHumanTraffic::initialize(int stage) {
+void PlatoonsPlusHumanTraffic::initialize(int stage)
+{
 
     TraCIBaseTrafficManager::initialize(stage);
 
@@ -39,23 +40,23 @@ void PlatoonsPlusHumanTraffic::initialize(int stage) {
         humanVType = par("humanVType").stdstringValue();
         insertPlatoonMessage = new cMessage("");
         scheduleAt(platoonInsertTime, insertPlatoonMessage);
-
     }
-
 }
 
-void PlatoonsPlusHumanTraffic::scenarioLoaded() {
+void PlatoonsPlusHumanTraffic::scenarioLoaded()
+{
     automated.id = findVehicleTypeIndex(platooningVType);
     automated.lane = -1;
     automated.position = 0;
-    automated.speed = platoonInsertSpeed/3.6;
+    automated.speed = platoonInsertSpeed / 3.6;
     human.id = findVehicleTypeIndex(humanVType);
     human.lane = -1;
     human.position = 0;
-    human.speed = platoonInsertSpeed/3.6 - 0.01;
+    human.speed = platoonInsertSpeed / 3.6 - 0.01;
 }
 
-void PlatoonsPlusHumanTraffic::handleSelfMsg(cMessage *msg) {
+void PlatoonsPlusHumanTraffic::handleSelfMsg(cMessage* msg)
+{
 
     TraCIBaseTrafficManager::handleSelfMsg(msg);
 
@@ -63,10 +64,10 @@ void PlatoonsPlusHumanTraffic::handleSelfMsg(cMessage *msg) {
         insertPlatoons();
         insertHumans();
     }
-
 }
 
-void PlatoonsPlusHumanTraffic::insertPlatoons() {
+void PlatoonsPlusHumanTraffic::insertPlatoons()
+{
 
     //compute intervehicle distance
     double distance = platoonInsertSpeed / 3.6 * platoonInsertHeadway + platoonInsertDistance;
@@ -80,13 +81,13 @@ void PlatoonsPlusHumanTraffic::insertPlatoons() {
     double totalLength = nPlatoons * platoonLength + (nPlatoons - 1) * platoonDistance;
 
     //for each lane, we create an offset to have misaligned platoons
-    double *laneOffset = new double[nLanes];
+    double* laneOffset = new double[nLanes];
     for (int l = 0; l < nLanes; l++)
         laneOffset[l] = uniform(0, 20);
 
     double currentPos = totalLength;
     int currentCar = 0;
-    for (int i = 0; i < nCars/nLanes; i++) {
+    for (int i = 0; i < nCars / nLanes; i++) {
         for (int l = 0; l < nLanes; l++) {
             automated.position = currentPos + laneOffset[l];
             automated.lane = l;
@@ -104,11 +105,11 @@ void PlatoonsPlusHumanTraffic::insertPlatoons() {
         }
     }
 
-    delete [] laneOffset;
-
+    delete[] laneOffset;
 }
 
-void PlatoonsPlusHumanTraffic::insertHumans() {
+void PlatoonsPlusHumanTraffic::insertHumans()
+{
 
     //keep 50 m between human vehicles (random number)
     double distance = 50;
@@ -118,25 +119,25 @@ void PlatoonsPlusHumanTraffic::insertHumans() {
     double totalLength = carsPerLane * (4 + distance);
 
     //for each lane, we create an offset to have misaligned platoons
-    double *laneOffset = new double[humanLanes];
+    double* laneOffset = new double[humanLanes];
     for (int l = 0; l < humanLanes; l++)
         laneOffset[l] = uniform(0, 20);
 
     double currentPos = totalLength;
     for (int i = 0; i < carsPerLane; i++) {
         for (int l = nLanes; l < humanLanes + nLanes; l++) {
-            human.position = currentPos + laneOffset[l-nLanes];
+            human.position = currentPos + laneOffset[l - nLanes];
             human.lane = l;
             addVehicleToQueue(0, human);
         }
         currentPos -= (4 + distance);
     }
 
-    delete [] laneOffset;
-
+    delete[] laneOffset;
 }
 
-PlatoonsPlusHumanTraffic::~PlatoonsPlusHumanTraffic() {
+PlatoonsPlusHumanTraffic::~PlatoonsPlusHumanTraffic()
+{
     cancelAndDelete(insertPlatoonMessage);
     insertPlatoonMessage = nullptr;
 }

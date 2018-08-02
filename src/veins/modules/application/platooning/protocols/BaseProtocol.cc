@@ -23,11 +23,12 @@ using namespace Veins;
 
 Define_Module(BaseProtocol)
 
-//set signals for channel busy and collisions
-const simsignalwrap_t BaseProtocol::sigChannelBusy = simsignalwrap_t("sigChannelBusy");
+    //set signals for channel busy and collisions
+    const simsignalwrap_t BaseProtocol::sigChannelBusy = simsignalwrap_t("sigChannelBusy");
 const simsignalwrap_t BaseProtocol::sigCollision = simsignalwrap_t("sigCollision");
 
-void BaseProtocol::initialize(int stage) {
+void BaseProtocol::initialize(int stage)
+{
 
     BaseApplLayer::initialize(stage);
 
@@ -85,7 +86,6 @@ void BaseProtocol::initialize(int stage) {
         //init statistics collection. round to second
         SimTime rounded = SimTime(floor(simTime().dbl() + 1), SIMTIME_S);
         scheduleAt(rounded, recordData);
-
     }
 
     if (stage == 1) {
@@ -103,22 +103,23 @@ void BaseProtocol::initialize(int stage) {
         myId = positionHelper->getId();
         length = traciVehicle->getLength();
         //tell the unicast protocol below which mac address to use via control message
-        UnicastProtocolControlMessage *setMacAddress = new UnicastProtocolControlMessage("");
+        UnicastProtocolControlMessage* setMacAddress = new UnicastProtocolControlMessage("");
         setMacAddress->setControlCommand(SET_MAC_ADDRESS);
         setMacAddress->setCommandValue(myId);
         send(setMacAddress, lowerControlOut);
     }
-
 }
 
-BaseProtocol::~BaseProtocol() {
+BaseProtocol::~BaseProtocol()
+{
     cancelAndDelete(sendBeacon);
     sendBeacon = nullptr;
     cancelAndDelete(recordData);
     recordData = nullptr;
 }
 
-void BaseProtocol::handleSelfMsg(cMessage *msg) {
+void BaseProtocol::handleSelfMsg(cMessage* msg)
+{
 
     if (msg == recordData) {
 
@@ -143,12 +144,11 @@ void BaseProtocol::handleSelfMsg(cMessage *msg) {
         nCollisions = 0;
 
         scheduleAt(simTime() + SimTime(1, SIMTIME_S), recordData);
-
     }
-
 }
 
-void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
+void BaseProtocol::sendPlatooningMessage(int destinationAddress)
+{
 
     //vehicle's data to be included in the message
     Plexe::VEHICLE_DATA data;
@@ -156,13 +156,13 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
     traciVehicle->getVehicleData(&data);
 
     //create and send beacon
-    UnicastMessage *unicast = new UnicastMessage("", BEACON_TYPE);
+    UnicastMessage* unicast = new UnicastMessage("", BEACON_TYPE);
     unicast->setDestination(-1);
     unicast->setPriority(priority);
     unicast->setChannel(Channels::CCH);
 
     //create platooning beacon with data about the car
-    PlatooningBeacon *pkt = new PlatooningBeacon();
+    PlatooningBeacon* pkt = new PlatooningBeacon();
     pkt->setControllerAcceleration(data.u);
     pkt->setAcceleration(data.acceleration);
     pkt->setSpeed(data.speed);
@@ -184,17 +184,17 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress) {
     //put platooning beacon into the message for the UnicastProtocol
     unicast->encapsulate(pkt);
     sendDown(unicast);
-
 }
 
-void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
+void BaseProtocol::handleUnicastMsg(UnicastMessage* unicast)
+{
 
     ASSERT2(unicast, "received a frame not of type UnicastMessage");
 
-    cPacket *enc = unicast->getEncapsulatedPacket();
+    cPacket* enc = unicast->getEncapsulatedPacket();
     ASSERT2(enc, "received a UnicastMessage with nothing inside");
 
-    if (PlatooningBeacon *epkt = dynamic_cast<PlatooningBeacon *>(enc)) {
+    if (PlatooningBeacon* epkt = dynamic_cast<PlatooningBeacon*>(enc)) {
 
         //invoke messageReceived() method of subclass
         messageReceived(epkt, unicast);
@@ -206,7 +206,6 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
                 leaderDelayIdOut.record(myId);
             }
             lastLeaderMsgTime = simTime();
-
         }
         if (positionHelper->getFrontId() == epkt->getVehicleId()) {
             //check if this is at least the second message we have received
@@ -216,7 +215,6 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
             }
             lastFrontMsgTime = simTime();
         }
-
     }
 
     //find the application responsible for this beacon
@@ -232,7 +230,8 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
     delete unicast;
 }
 
-void BaseProtocol::receiveSignal(cComponent *source, simsignal_t signalID, bool v, cObject *details) {
+void BaseProtocol::receiveSignal(cComponent* source, simsignal_t signalID, bool v, cObject* details)
+{
 
     Enter_Method_Silent();
     if (signalID == sigChannelBusy) {
@@ -255,10 +254,10 @@ void BaseProtocol::receiveSignal(cComponent *source, simsignal_t signalID, bool 
         collision();
         nCollisions++;
     }
-
 }
 
-void BaseProtocol::handleMessage(cMessage *msg) {
+void BaseProtocol::handleMessage(cMessage* msg)
+{
     if (msg->getArrivalGateId() >= minUpperId && msg->getArrivalGateId() <= maxUpperId)
         handleUpperMsg(msg);
     else if (msg->getArrivalGateId() >= minUpperControlId && msg->getArrivalGateId() <= maxUpperControlId)
@@ -267,16 +266,19 @@ void BaseProtocol::handleMessage(cMessage *msg) {
         BaseApplLayer::handleMessage(msg);
 }
 
-void BaseProtocol::handleLowerMsg(cMessage *msg) {
-    handleUnicastMsg(check_and_cast<UnicastMessage *>(msg));
+void BaseProtocol::handleLowerMsg(cMessage* msg)
+{
+    handleUnicastMsg(check_and_cast<UnicastMessage*>(msg));
 }
 
-void BaseProtocol::handleUpperMsg(cMessage *msg) {
+void BaseProtocol::handleUpperMsg(cMessage* msg)
+{
     sendDown(check_and_cast<UnicastMessage*>(msg));
 }
 
-void BaseProtocol::handleUpperControl(cMessage *msg) {
-    UnicastProtocolControlMessage *ctrl = dynamic_cast<UnicastProtocolControlMessage *>(msg);
+void BaseProtocol::handleUpperControl(cMessage* msg)
+{
+    UnicastProtocolControlMessage* ctrl = dynamic_cast<UnicastProtocolControlMessage*>(msg);
     if (ctrl) {
         if (ctrl->getControlCommand() == SET_MAC_ADDRESS) {
             //set id to be the address we want to set to the NIC card
@@ -286,8 +288,9 @@ void BaseProtocol::handleUpperControl(cMessage *msg) {
     }
 }
 
-void BaseProtocol::handleLowerControl(cMessage *msg) {
-    UnicastProtocolControlMessage *ctrl = dynamic_cast<UnicastProtocolControlMessage *>(msg);
+void BaseProtocol::handleLowerControl(cMessage* msg)
+{
+    UnicastProtocolControlMessage* ctrl = dynamic_cast<UnicastProtocolControlMessage*>(msg);
     if (ctrl) {
         UnicastMessage* unicast = dynamic_cast<UnicastMessage*>(ctrl->getEncapsulatedPacket());
         if (unicast) {
@@ -306,12 +309,14 @@ void BaseProtocol::handleLowerControl(cMessage *msg) {
     }
 }
 
-void BaseProtocol::messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicast) {
+void BaseProtocol::messageReceived(PlatooningBeacon* pkt, UnicastMessage* unicast)
+{
     ASSERT2(false, "BaseProtocol::messageReceived() not overridden by subclass");
 }
 
 void BaseProtocol::registerApplication(int applicationId, InputGate* appInputGate, OutputGate* appOutputGate,
-                                       ControlInputGate* appControlInputGate, ControlOutputGate* appControlOutputGate) {
+                                       ControlInputGate* appControlInputGate, ControlOutputGate* appControlOutputGate)
+{
     if (usedGates == MAX_GATES_COUNT)
         throw cRuntimeError("BaseProtocol: application with id=%d tried to register, but no space left", applicationId);
     //connect gates, if not already connected. a gate might be already

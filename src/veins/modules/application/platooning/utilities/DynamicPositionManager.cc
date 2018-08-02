@@ -19,18 +19,21 @@
 
 #include <iostream>
 
-DynamicPositionManager &DynamicPositionManager::getInstance() {
+DynamicPositionManager& DynamicPositionManager::getInstance()
+{
     static DynamicPositionManager instance;
     return instance;
 }
 
-void DynamicPositionManager::addVehicleToPlatoon(const int vehicleId, const int position, const int platoonId) {
+void DynamicPositionManager::addVehicleToPlatoon(const int vehicleId, const int position, const int platoonId)
+{
     platoons[platoonId][position] = vehicleId;
     positions[platoonId][vehicleId] = position;
     vehToPlatoons[vehicleId] = platoonId;
 }
 
-void DynamicPositionManager::removeVehicleFromPlatoon(const int vehicleId) {
+void DynamicPositionManager::removeVehicleFromPlatoon(const int vehicleId)
+{
     auto pId = vehToPlatoons.find(vehicleId);
     if (pId != vehToPlatoons.end()) {
         auto platoon = platoons.find(pId->second);
@@ -38,17 +41,18 @@ void DynamicPositionManager::removeVehicleFromPlatoon(const int vehicleId) {
         auto pPosition = positions.find(pId->second);
         int pos = pPosition->second.find(vehicleId)->second;
         for (int i = pos; i < size - 1; i++) {
-            auto oldPos = platoon->second.find(i+1);
+            auto oldPos = platoon->second.find(i + 1);
             platoons[pId->second][i] = oldPos->second;
             positions[pId->second][oldPos->second] = i;
         }
-        platoon->second.erase(platoon->second.find(size-1));
+        platoon->second.erase(platoon->second.find(size - 1));
         pPosition->second.erase(pPosition->second.find(vehicleId));
         vehToPlatoons.erase(pId);
     }
 }
 
-void DynamicPositionManager::printPlatoons() {
+void DynamicPositionManager::printPlatoons()
+{
     for (auto i = platoons.begin(); i != platoons.end(); i++) {
         std::cout << "Platoon " << i->first << ":\n";
         for (auto j = i->second.begin(); j != i->second.end(); j++) {

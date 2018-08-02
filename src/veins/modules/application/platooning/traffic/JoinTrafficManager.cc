@@ -19,7 +19,8 @@
 
 Define_Module(JoinTrafficManager);
 
-void JoinTrafficManager::initialize(int stage) {
+void JoinTrafficManager::initialize(int stage)
+{
 
     PlatoonsTrafficManager::initialize(stage);
 
@@ -27,27 +28,27 @@ void JoinTrafficManager::initialize(int stage) {
 
         insertJoinerMessage = new cMessage("");
         scheduleAt(platoonInsertTime + SimTime(5), insertJoinerMessage);
-
     }
-
 }
 
-void JoinTrafficManager::handleSelfMsg(cMessage *msg) {
+void JoinTrafficManager::handleSelfMsg(cMessage* msg)
+{
 
     PlatoonsTrafficManager::handleSelfMsg(msg);
 
     if (msg == insertJoinerMessage) {
         insertJoiner();
     }
-
 }
 
-void JoinTrafficManager::insertJoiner() {
+void JoinTrafficManager::insertJoiner()
+{
     automated.position = 0;
     automated.lane = 2;
     addVehicleToQueue(0, automated);
 }
- JoinTrafficManager::~JoinTrafficManager() {
+JoinTrafficManager::~JoinTrafficManager()
+{
     cancelAndDelete(insertJoinerMessage);
     insertJoinerMessage = nullptr;
 }

@@ -27,7 +27,8 @@ using namespace Veins;
 
 Define_Module(BaseApp);
 
-void BaseApp::initialize(int stage) {
+void BaseApp::initialize(int stage)
+{
 
     BaseApplLayer::initialize(stage);
 
@@ -65,33 +66,35 @@ void BaseApp::initialize(int stage) {
         SimTime rounded = SimTime(floor(simTime().dbl() * 1000 + 100), SIMTIME_MS);
         scheduleAt(rounded, recordData);
     }
-
 }
 
-BaseApp::~BaseApp() {
+BaseApp::~BaseApp()
+{
     cancelAndDelete(recordData);
     recordData = nullptr;
     cancelAndDelete(stopSimulation);
     stopSimulation = nullptr;
 }
 
-void BaseApp::handleLowerMsg(cMessage *msg) {
+void BaseApp::handleLowerMsg(cMessage* msg)
+{
     UnicastMessage* unicast = check_and_cast<UnicastMessage*>(msg);
 
-    cPacket *enc = unicast->decapsulate();
+    cPacket* enc = unicast->decapsulate();
     ASSERT2(enc, "received a UnicastMessage with nothing inside");
 
     if (enc->getKind() == BaseProtocol::BEACON_TYPE) {
-        onPlatoonBeacon(check_and_cast<PlatooningBeacon *>(enc));
-    } else {
+        onPlatoonBeacon(check_and_cast<PlatooningBeacon*>(enc));
+    }
+    else {
         error("received unknown message type");
     }
 
     delete unicast;
 }
 
-
-void BaseApp::logVehicleData(bool crashed) {
+void BaseApp::logVehicleData(bool crashed)
+{
     //get distance and relative speed w.r.t. front vehicle
     double distance, relSpeed;
     Plexe::VEHICLE_DATA data;
@@ -113,18 +116,21 @@ void BaseApp::logVehicleData(bool crashed) {
     posyOut.record(data.positionY);
 }
 
-void BaseApp::handleLowerControl(cMessage *msg) {
+void BaseApp::handleLowerControl(cMessage* msg)
+{
     delete msg;
 }
 
-void BaseApp::sendUnicast(cPacket *msg, int destination) {
-    UnicastMessage *unicast = new UnicastMessage();
+void BaseApp::sendUnicast(cPacket* msg, int destination)
+{
+    UnicastMessage* unicast = new UnicastMessage();
     unicast->setDestination(destination);
     unicast->encapsulate(msg);
     sendDown(unicast);
 }
 
-void BaseApp::handleSelfMsg(cMessage *msg) {
+void BaseApp::handleSelfMsg(cMessage* msg)
+{
     if (msg == recordData) {
         //log mobility data
         logVehicleData(traciVehicle->isCrashed());
@@ -136,17 +142,18 @@ void BaseApp::handleSelfMsg(cMessage *msg) {
     }
 }
 
-void BaseApp::onPlatoonBeacon(const PlatooningBeacon* pb) {
+void BaseApp::onPlatoonBeacon(const PlatooningBeacon* pb)
+{
     if (positionHelper->isInSamePlatoon(pb->getVehicleId())) {
         //if the message comes from the leader
         if (pb->getVehicleId() == positionHelper->getLeaderId()) {
             traciVehicle->setLeaderVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(),
-                pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
+                                               pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
         }
         //if the message comes from the vehicle in front
         if (pb->getVehicleId() == positionHelper->getFrontId()) {
             traciVehicle->setFrontVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(),
-                pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
+                                              pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
         }
         //send data about every vehicle to the CACC. this is needed by the consensus controller
         struct Plexe::VEHICLE_DATA vehicleData;

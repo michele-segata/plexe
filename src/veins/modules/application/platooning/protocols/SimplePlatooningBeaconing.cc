@@ -19,7 +19,8 @@
 
 Define_Module(SimplePlatooningBeaconing)
 
-void SimplePlatooningBeaconing::initialize(int stage) {
+    void SimplePlatooningBeaconing::initialize(int stage)
+{
     BaseProtocol::initialize(stage);
 
     if (stage == 0) {
@@ -30,7 +31,8 @@ void SimplePlatooningBeaconing::initialize(int stage) {
     }
 }
 
-void SimplePlatooningBeaconing::handleSelfMsg(cMessage *msg) {
+void SimplePlatooningBeaconing::handleSelfMsg(cMessage* msg)
+{
 
     BaseProtocol::handleSelfMsg(msg);
 
@@ -38,15 +40,17 @@ void SimplePlatooningBeaconing::handleSelfMsg(cMessage *msg) {
         sendPlatooningMessage(-1);
         scheduleAt(simTime() + beaconingInterval, sendBeacon);
     }
-
 }
 
-void SimplePlatooningBeaconing::messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicast) {
+void SimplePlatooningBeaconing::messageReceived(PlatooningBeacon* pkt, UnicastMessage* unicast)
+{
     //nothing to do for static beaconing
 }
 
 SimplePlatooningBeaconing::SimplePlatooningBeaconing()
-{}
+{
+}
 
 SimplePlatooningBeaconing::~SimplePlatooningBeaconing()
-{}
+{
+}

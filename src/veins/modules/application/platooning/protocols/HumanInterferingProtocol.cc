@@ -24,7 +24,8 @@ using namespace Veins;
 
 Define_Module(HumanInterferingProtocol)
 
-void HumanInterferingProtocol::initialize(int stage) {
+    void HumanInterferingProtocol::initialize(int stage)
+{
 
     BaseApplLayer::initialize(stage);
 
@@ -43,10 +44,10 @@ void HumanInterferingProtocol::initialize(int stage) {
         traciVehicle = mobility->getVehicleCommandInterface();
 
         //get pointer to mac
-        mac = FindModule<Mac1609_4 *>::findSubModule(getParentModule());
+        mac = FindModule<Mac1609_4*>::findSubModule(getParentModule());
 
         //tell the unicast protocol below which mac address to use via control message
-        UnicastProtocolControlMessage *setMacAddress = new UnicastProtocolControlMessage("");
+        UnicastProtocolControlMessage* setMacAddress = new UnicastProtocolControlMessage("");
         setMacAddress->setControlCommand(SET_MAC_ADDRESS);
         //set a mac address not interfering with platooning vehicles
         setMacAddress->setCommandValue(getParentModule()->getIndex() + 1e6);
@@ -67,7 +68,6 @@ void HumanInterferingProtocol::initialize(int stage) {
         //init messages for scheduleAt
         sendBeacon = new cMessage("sendBeacon");
         scheduleAt(simTime() + uniform(0, beaconingInterval), sendBeacon);
-
     }
 
     if (stage == 1) {
@@ -77,36 +77,38 @@ void HumanInterferingProtocol::initialize(int stage) {
         mac->setTxPower(txPower);
         mac->setMCS(getMCS(bitrate, BW_OFDM_10_MHZ));
     }
-
 }
 
-HumanInterferingProtocol::~HumanInterferingProtocol() {
+HumanInterferingProtocol::~HumanInterferingProtocol()
+{
     cancelAndDelete(sendBeacon);
     sendBeacon = nullptr;
 }
 
-void HumanInterferingProtocol::handleSelfMsg(cMessage *msg) {
+void HumanInterferingProtocol::handleSelfMsg(cMessage* msg)
+{
     if (msg == sendBeacon) {
         sendInterferingMessage();
         scheduleAt(simTime() + beaconingInterval, sendBeacon);
     }
 }
 
-void HumanInterferingProtocol::sendInterferingMessage() {
+void HumanInterferingProtocol::sendInterferingMessage()
+{
 
     //create and send beacon
-    UnicastMessage *unicast = new UnicastMessage("", INTERFERENCE_TYPE);
+    UnicastMessage* unicast = new UnicastMessage("", INTERFERENCE_TYPE);
     unicast->setDestination(-1);
     unicast->setPriority(priority);
     unicast->setChannel(Channels::CCH);
 
     //create platooning beacon with data about the car
-    InterferingBeacon *pkt = new InterferingBeacon();
+    InterferingBeacon* pkt = new InterferingBeacon();
     pkt->setKind(INTERFERENCE_TYPE);
     pkt->setByteLength(packetSize);
 
     //METHOD 2: setting tx power and bitrate on a per frame basis
-    PhyControlMessage *ctrl = new PhyControlMessage();
+    PhyControlMessage* ctrl = new PhyControlMessage();
     ctrl->setTxPower_mW(txPower);
     ctrl->setMcs(getMCS(bitrate, BW_OFDM_10_MHZ));
     pkt->setControlInfo(ctrl);
@@ -114,9 +116,9 @@ void HumanInterferingProtocol::sendInterferingMessage() {
     //put platooning beacon into the message for the UnicastProtocol
     unicast->encapsulate(pkt);
     sendDown(unicast);
-
 }
 
-void HumanInterferingProtocol::handleLowerMsg(cMessage *msg) {
+void HumanInterferingProtocol::handleLowerMsg(cMessage* msg)
+{
     delete msg;
 }

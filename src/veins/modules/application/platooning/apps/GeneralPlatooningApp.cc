@@ -27,7 +27,8 @@ using namespace Veins;
 
 Define_Module(GeneralPlatooningApp);
 
-void GeneralPlatooningApp::initialize(int stage) {
+void GeneralPlatooningApp::initialize(int stage)
+{
     BaseApp::initialize(stage);
 
     if (stage == 1) {
@@ -44,11 +45,13 @@ void GeneralPlatooningApp::initialize(int stage) {
     }
 }
 
-bool GeneralPlatooningApp::isJoinAllowed() const {
+bool GeneralPlatooningApp::isJoinAllowed() const
+{
     return ((role == PlatoonRole::LEADER || role == PlatoonRole::NONE) && !inManeuver);
 }
 
-void GeneralPlatooningApp::startJoinManeuver(int platoonId, int leaderId, int position) {
+void GeneralPlatooningApp::startJoinManeuver(int platoonId, int leaderId, int position)
+{
     ASSERT(getPlatoonRole() == PlatoonRole::NONE);
     ASSERT(!isInManeuver());
 
@@ -57,40 +60,44 @@ void GeneralPlatooningApp::startJoinManeuver(int platoonId, int leaderId, int po
     params.leaderId = leaderId;
     params.position = position;
     joinManeuver->startManeuver(&params);
-
 }
 
-void GeneralPlatooningApp::sendUnicast(cPacket *msg, int destination) {
+void GeneralPlatooningApp::sendUnicast(cPacket* msg, int destination)
+{
     Enter_Method_Silent();
     take(msg);
-    UnicastMessage *unicast = new UnicastMessage("UnicastMessage", msg->getKind());
+    UnicastMessage* unicast = new UnicastMessage("UnicastMessage", msg->getKind());
     unicast->setDestination(destination);
     unicast->setChannel(Channels::CCH);
     unicast->encapsulate(msg);
     sendDown(unicast);
 }
 
-void GeneralPlatooningApp::handleLowerMsg(cMessage *msg) {
-    UnicastMessage *unicast = check_and_cast<UnicastMessage *>(msg);
+void GeneralPlatooningApp::handleLowerMsg(cMessage* msg)
+{
+    UnicastMessage* unicast = check_and_cast<UnicastMessage*>(msg);
 
-    cPacket *enc = unicast->getEncapsulatedPacket();
+    cPacket* enc = unicast->getEncapsulatedPacket();
     ASSERT2(enc, "received a UnicastMessage with nothing inside");
 
     if (enc->getKind() == MANEUVER_TYPE) {
-        ManeuverMessage *mm = check_and_cast<ManeuverMessage *>(unicast->decapsulate());
-        if (UpdatePlatoonFormation *msg = dynamic_cast<UpdatePlatoonFormation *>(mm)) {
+        ManeuverMessage* mm = check_and_cast<ManeuverMessage*>(unicast->decapsulate());
+        if (UpdatePlatoonFormation* msg = dynamic_cast<UpdatePlatoonFormation*>(mm)) {
             handleUpdatePlatoonFormation(msg);
             delete msg;
-        } else {
+        }
+        else {
             onManeuverMessage(mm);
         }
         delete unicast;
-    } else {
+    }
+    else {
         BaseApp::handleLowerMsg(msg);
     }
 }
 
-void GeneralPlatooningApp::handleUpdatePlatoonFormation(const UpdatePlatoonFormation *msg) {
+void GeneralPlatooningApp::handleUpdatePlatoonFormation(const UpdatePlatoonFormation* msg)
+{
     if (getPlatoonRole() != PlatoonRole::FOLLOWER)
         return;
     if (msg->getPlatoonId() != positionHelper->getPlatoonId())
@@ -106,24 +113,28 @@ void GeneralPlatooningApp::handleUpdatePlatoonFormation(const UpdatePlatoonForma
     positionHelper->setPlatoonFormation(f);
 }
 
-void GeneralPlatooningApp::setPlatoonRole(PlatoonRole r) {
+void GeneralPlatooningApp::setPlatoonRole(PlatoonRole r)
+{
     role = r;
 }
 
-void GeneralPlatooningApp::onPlatoonBeacon(const PlatooningBeacon *pb) {
+void GeneralPlatooningApp::onPlatoonBeacon(const PlatooningBeacon* pb)
+{
     joinManeuver->onPlatoonBeacon(pb);
     // maintain platoon
     BaseApp::onPlatoonBeacon(pb);
 }
 
-void GeneralPlatooningApp::onManeuverMessage(ManeuverMessage *mm) {
+void GeneralPlatooningApp::onManeuverMessage(ManeuverMessage* mm)
+{
     joinManeuver->onManeuverMessage(mm);
     delete mm;
 }
 
-void GeneralPlatooningApp::fillManeuverMessage(ManeuverMessage *msg, int vehicleId,
+void GeneralPlatooningApp::fillManeuverMessage(ManeuverMessage* msg, int vehicleId,
                                                std::string externalId, int platoonId,
-                                               int destinationId) {
+                                               int destinationId)
+{
     msg->setKind(MANEUVER_TYPE);
     msg->setVehicleId(vehicleId);
     msg->setExternalId(externalId.c_str());
@@ -131,12 +142,13 @@ void GeneralPlatooningApp::fillManeuverMessage(ManeuverMessage *msg, int vehicle
     msg->setDestinationId(destinationId);
 }
 
-UpdatePlatoonFormation *
+UpdatePlatoonFormation*
 GeneralPlatooningApp::createUpdatePlatoonFormation(int vehicleId, std::string externalId,
                                                    int platoonId, int destinationId,
                                                    double platoonSpeed, int platoonLane,
-                                                   const std::vector<int> &platoonFormation) {
-    UpdatePlatoonFormation *msg = new UpdatePlatoonFormation("UpdatePlatoonFormation");
+                                                   const std::vector<int>& platoonFormation)
+{
+    UpdatePlatoonFormation* msg = new UpdatePlatoonFormation("UpdatePlatoonFormation");
     fillManeuverMessage(msg, vehicleId, externalId, platoonId, destinationId);
     msg->setPlatoonSpeed(platoonSpeed);
     msg->setPlatoonLane(platoonLane);
@@ -147,6 +159,7 @@ GeneralPlatooningApp::createUpdatePlatoonFormation(int vehicleId, std::string ex
     return msg;
 }
 
-GeneralPlatooningApp::~GeneralPlatooningApp() {
+GeneralPlatooningApp::~GeneralPlatooningApp()
+{
     delete joinManeuver;
 }

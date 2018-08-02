@@ -21,7 +21,8 @@ using namespace Veins;
 
 Define_Module(AutoLaneChangeScenario);
 
-void AutoLaneChangeScenario::initialize(int stage) {
+void AutoLaneChangeScenario::initialize(int stage)
+{
 
     BaseScenario::initialize(stage);
 
@@ -50,7 +51,5 @@ void AutoLaneChangeScenario::initialize(int stage) {
             traciVehicle->enableAutoFeed(true, ssl.str(), ss.str());
             traciVehicle->setCruiseControlDesiredSpeed(mobility->getSpeed() + 10);
         }
-
     }
-
 }

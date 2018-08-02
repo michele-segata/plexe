@@ -21,7 +21,8 @@ using namespace Veins;
 
 Define_Module(BrakingScenario);
 
-void BrakingScenario::initialize(int stage) {
+void BrakingScenario::initialize(int stage)
+{
 
     BaseScenario::initialize(stage);
 
@@ -55,17 +56,17 @@ void BrakingScenario::initialize(int stage) {
             //to the leader when it is accelerating
             traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed + 10);
         }
-
     }
-
 }
 
-BrakingScenario::~BrakingScenario() {
+BrakingScenario::~BrakingScenario()
+{
     cancelAndDelete(changeSpeed);
     changeSpeed = nullptr;
 }
 
-void BrakingScenario::handleSelfMsg(cMessage *msg) {
+void BrakingScenario::handleSelfMsg(cMessage* msg)
+{
     BaseScenario::handleSelfMsg(msg);
     if (msg == changeSpeed)
         traciVehicle->setFixedAcceleration(1, -brakingDeceleration);

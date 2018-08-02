@@ -19,7 +19,8 @@
 
 Define_Module(JoinManeuverScenario);
 
-void JoinManeuverScenario::initialize(int stage) {
+void JoinManeuverScenario::initialize(int stage)
+{
 
     BaseScenario::initialize(stage);
 
@@ -27,82 +28,83 @@ void JoinManeuverScenario::initialize(int stage) {
         app = FindModule<GeneralPlatooningApp*>::findSubModule(getParentModule());
         prepareManeuverCars(0);
     }
-
 }
 
-void JoinManeuverScenario::setupFormation() {
+void JoinManeuverScenario::setupFormation()
+{
     std::vector<int> formation;
     for (int i = 0; i < 4; i++)
         formation.push_back(i);
     positionHelper->setPlatoonFormation(formation);
 }
 
-void JoinManeuverScenario::prepareManeuverCars(int platoonLane) {
+void JoinManeuverScenario::prepareManeuverCars(int platoonLane)
+{
 
     switch (positionHelper->getId()) {
 
-        case 0: {
-            //this is the leader
-            traciVehicle->setCruiseControlDesiredSpeed(100.0 / 3.6);
-            traciVehicle->setActiveController(Plexe::ACC);
-            traciVehicle->setFixedLane(platoonLane);
+    case 0: {
+        //this is the leader
+        traciVehicle->setCruiseControlDesiredSpeed(100.0 / 3.6);
+        traciVehicle->setActiveController(Plexe::ACC);
+        traciVehicle->setFixedLane(platoonLane);
 
-            positionHelper->setIsLeader(true);
-            positionHelper->setPlatoonLane(platoonLane);
-            positionHelper->setPlatoonSpeed(100 / 3.6);
-            positionHelper->setPlatoonId(positionHelper->getId());
-            setupFormation();
+        positionHelper->setIsLeader(true);
+        positionHelper->setPlatoonLane(platoonLane);
+        positionHelper->setPlatoonSpeed(100 / 3.6);
+        positionHelper->setPlatoonId(positionHelper->getId());
+        setupFormation();
 
-            break;
-        }
-
-        case 1:
-        case 2:
-        case 3: {
-            //these are the followers which are already in the platoon
-            traciVehicle->setCruiseControlDesiredSpeed(130.0 / 3.6);
-            traciVehicle->setActiveController(Plexe::CACC);
-            traciVehicle->setFixedLane(platoonLane);
-
-            positionHelper->setIsLeader(false);
-            positionHelper->setPlatoonLane(platoonLane);
-            positionHelper->setPlatoonSpeed(100 / 3.6);
-            positionHelper->setPlatoonId(positionHelper->getLeaderId());
-            setupFormation();
-
-            break;
-        }
-
-        case 4: {
-            //this is the car which will join
-            traciVehicle->setCruiseControlDesiredSpeed(100/3.6);
-            traciVehicle->setFixedLane(2);
-            traciVehicle->setActiveController(Plexe::ACC);
-
-            positionHelper->setPlatoonId(-1);
-            positionHelper->setIsLeader(false);
-            positionHelper->setPlatoonLane(-1);
-
-            //after 30 seconds of simulation, start the maneuver
-            startManeuver = new cMessage();
-            scheduleAt(simTime() + SimTime(10), startManeuver);
-            break;
-        }
+        break;
     }
 
+    case 1:
+    case 2:
+    case 3: {
+        //these are the followers which are already in the platoon
+        traciVehicle->setCruiseControlDesiredSpeed(130.0 / 3.6);
+        traciVehicle->setActiveController(Plexe::CACC);
+        traciVehicle->setFixedLane(platoonLane);
+
+        positionHelper->setIsLeader(false);
+        positionHelper->setPlatoonLane(platoonLane);
+        positionHelper->setPlatoonSpeed(100 / 3.6);
+        positionHelper->setPlatoonId(positionHelper->getLeaderId());
+        setupFormation();
+
+        break;
+    }
+
+    case 4: {
+        //this is the car which will join
+        traciVehicle->setCruiseControlDesiredSpeed(100 / 3.6);
+        traciVehicle->setFixedLane(2);
+        traciVehicle->setActiveController(Plexe::ACC);
+
+        positionHelper->setPlatoonId(-1);
+        positionHelper->setIsLeader(false);
+        positionHelper->setPlatoonLane(-1);
+
+        //after 30 seconds of simulation, start the maneuver
+        startManeuver = new cMessage();
+        scheduleAt(simTime() + SimTime(10), startManeuver);
+        break;
+    }
+    }
 }
 
-JoinManeuverScenario::~JoinManeuverScenario() {
+JoinManeuverScenario::~JoinManeuverScenario()
+{
     cancelAndDelete(startManeuver);
     startManeuver = nullptr;
 }
 
-void JoinManeuverScenario::handleSelfMsg(cMessage *msg) {
+void JoinManeuverScenario::handleSelfMsg(cMessage* msg)
+{
 
     //this takes car of feeding data into CACC and reschedule the self message
     BaseScenario::handleSelfMsg(msg);
 
     if (msg == startManeuver)
         app->startJoinManeuver(0, 0, -1);
-
 }

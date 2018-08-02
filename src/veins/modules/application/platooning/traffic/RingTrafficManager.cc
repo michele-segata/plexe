@@ -19,7 +19,8 @@
 
 Define_Module(RingTrafficManager);
 
-void RingTrafficManager::initialize(int stage) {
+void RingTrafficManager::initialize(int stage)
+{
 
     TraCIBaseTrafficManager::initialize(stage);
 
@@ -31,10 +32,10 @@ void RingTrafficManager::initialize(int stage) {
     platoonInsertHeadway = par("platoonInsertHeadway").doubleValue();
     platoonLeaderHeadway = par("platoonLeaderHeadway").doubleValue();
     platooningVType = par("platooningVType").stdstringValue();
-
 }
 
-void RingTrafficManager::scenarioLoaded() {
+void RingTrafficManager::scenarioLoaded()
+{
 
     int vehTypeId = findVehicleTypeIndex("vtypeauto");
     struct Vehicle automated;
@@ -94,5 +95,4 @@ void RingTrafficManager::scenarioLoaded() {
             injectedPlatoons++;
         }
     }
-
 }

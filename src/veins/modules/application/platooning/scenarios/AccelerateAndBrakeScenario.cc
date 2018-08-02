@@ -21,7 +21,8 @@ using namespace Veins;
 
 Define_Module(AccelerateAndBrakeScenario);
 
-void AccelerateAndBrakeScenario::initialize(int stage) {
+void AccelerateAndBrakeScenario::initialize(int stage)
+{
 
     BaseScenario::initialize(stage);
 
@@ -53,19 +54,19 @@ void AccelerateAndBrakeScenario::initialize(int stage) {
         //schedule messages
         scheduleAt(startAccelerating, startAccelerationMsg);
         scheduleAt(startBraking, startBrakingMsg);
-
     }
-
 }
 
-AccelerateAndBrakeScenario::~AccelerateAndBrakeScenario() {
+AccelerateAndBrakeScenario::~AccelerateAndBrakeScenario()
+{
     cancelAndDelete(startAccelerationMsg);
     startAccelerationMsg = nullptr;
     cancelAndDelete(startBrakingMsg);
     startBrakingMsg = nullptr;
 }
 
-void AccelerateAndBrakeScenario::handleSelfMsg(cMessage *msg) {
+void AccelerateAndBrakeScenario::handleSelfMsg(cMessage* msg)
+{
     BaseScenario::handleSelfMsg(msg);
     if (msg == startAccelerationMsg)
         traciVehicle->setFixedAcceleration(1, acceleration);

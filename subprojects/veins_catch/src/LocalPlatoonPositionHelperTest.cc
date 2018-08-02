@@ -3,159 +3,197 @@
 #include "veins/modules/application/platooning/utilities/LocalPlatoonPositionHelper.h"
 
 SCENARIO("Tests the LocalPlatoonPositionHelper",
-         "[LocalPlatoonPositionHelper]") {
+         "[LocalPlatoonPositionHelper]")
+{
 
-    GIVEN("An uninitialized LocalPlatoonPositionHelper") {
-        LocalPlatoonPositionHelper *lpph = nullptr;
+    GIVEN("An uninitialized LocalPlatoonPositionHelper")
+    {
+        LocalPlatoonPositionHelper* lpph = nullptr;
         lpph = new LocalPlatoonPositionHelper();
         REQUIRE(lpph != nullptr);
 
         // independent from platoon formation
 
-        WHEN("The vehicle id was not set") {
-            THEN("The vehicle id has an invalid value") {
+        WHEN("The vehicle id was not set")
+        {
+            THEN("The vehicle id has an invalid value")
+            {
                 REQUIRE(lpph->getId() == INVALID_VEHICLE_ID);
             }
         }
 
-        WHEN("The vehicle id was set") {
+        WHEN("The vehicle id was set")
+        {
             int id = 42;
             lpph->setId(id);
-            THEN("The vehicle id has this value") {
+            THEN("The vehicle id has this value")
+            {
                 REQUIRE(lpph->getId() == id);
             }
         }
 
-        WHEN("The vehicle id was set again") {
+        WHEN("The vehicle id was set again")
+        {
             int id = 42;
             lpph->setId(id);
             lpph->setId(id + 1);
-            THEN("The vehicle id still has the old value") {
+            THEN("The vehicle id still has the old value")
+            {
                 REQUIRE(lpph->getId() == id);
             }
         }
 
-        WHEN("The platoon id was not set") {
-            THEN("The platoon id has an invalid value") {
+        WHEN("The platoon id was not set")
+        {
+            THEN("The platoon id has an invalid value")
+            {
                 REQUIRE(lpph->getPlatoonId() == INVALID_PLATOON_ID);
             }
         }
 
-        WHEN("The platoon id was set") {
+        WHEN("The platoon id was set")
+        {
             int id = 42;
             lpph->setPlatoonId(id);
-            THEN("The platoon id has this value") {
+            THEN("The platoon id has this value")
+            {
                 REQUIRE(lpph->getPlatoonId() == id);
             }
         }
 
-        WHEN("The platoon lane was not set") {
-            THEN("The platoon lane has an invalid value") {
+        WHEN("The platoon lane was not set")
+        {
+            THEN("The platoon lane has an invalid value")
+            {
                 REQUIRE(lpph->getPlatoonLane() == INVALID_LANE_ID);
             }
         }
 
-        WHEN("The platoon lane was set") {
+        WHEN("The platoon lane was set")
+        {
             int lane = 42;
             lpph->setPlatoonLane(lane);
-            THEN("The platoon lane has this value") {
+            THEN("The platoon lane has this value")
+            {
                 REQUIRE(lpph->getPlatoonLane() == lane);
             }
         }
 
-        WHEN("The platoon speed was not set") {
-            THEN("The platoon speed has an invalid value") {
+        WHEN("The platoon speed was not set")
+        {
+            THEN("The platoon speed has an invalid value")
+            {
                 REQUIRE(lpph->getPlatoonSpeed() == INVALID_SPEED);
             }
         }
 
-        WHEN("The platoon speed was set") {
+        WHEN("The platoon speed was set")
+        {
             double speed = 42;
             lpph->setPlatoonSpeed(speed);
-            THEN("The platoon speed has this value") {
+            THEN("The platoon speed has this value")
+            {
                 REQUIRE(lpph->getPlatoonSpeed() == speed);
             }
         }
 
         // platoon formation was not set (indepenedet from id)
 
-        WHEN("The platoon formation was not set") {
+        WHEN("The platoon formation was not set")
+        {
 
-            THEN("The platoon has size 0") {
+            THEN("The platoon has size 0")
+            {
                 REQUIRE(lpph->getPlatoonSize() == 0);
             }
 
-            THEN("The platoon formation is empty") {
+            THEN("The platoon formation is empty")
+            {
                 REQUIRE(lpph->getPlatoonFormation().empty());
             }
 
-            THEN("The leader vehicle id has an invalid value") {
+            THEN("The leader vehicle id has an invalid value")
+            {
                 REQUIRE(lpph->getLeaderId() == INVALID_VEHICLE_ID);
             }
 
-            THEN("The last vehicle id has an invalid value") {
+            THEN("The last vehicle id has an invalid value")
+            {
                 REQUIRE(lpph->getLastVehicleId() == INVALID_VEHICLE_ID);
             }
 
             THEN("The id of the member with index 42 has an invalid "
-                 "value") {
+                 "value")
+            {
                 REQUIRE(lpph->getMemberId(42) == INVALID_VEHICLE_ID);
             }
 
             THEN("The position of the member with id 42 has an invalid "
-                 "value") {
+                 "value")
+            {
                 REQUIRE(lpph->getMemberPosition(42) == INVALID_POSITION);
             }
 
             THEN("An arbitrary vehicle (e.g. id 42) is not in the same "
-                 "platoon") {
+                 "platoon")
+            {
                 REQUIRE(!lpph->isInSamePlatoon(42));
             }
         }
 
         // platoon formation was set (independet from id)
 
-        WHEN("The platoon formation was set") {
+        WHEN("The platoon formation was set")
+        {
 
             std::vector<int> f({0, 1, 2, 3});
             lpph->setPlatoonFormation(f);
 
-            THEN("The platoon has the corresponding size") {
+            THEN("The platoon has the corresponding size")
+            {
                 REQUIRE(lpph->getPlatoonSize() == f.size());
             }
 
-            THEN("The platoon formation is not empty") {
+            THEN("The platoon formation is not empty")
+            {
                 REQUIRE(!lpph->getPlatoonFormation().empty());
             }
 
-            THEN("The leader vehicle id is the first value") {
+            THEN("The leader vehicle id is the first value")
+            {
                 REQUIRE(lpph->getLeaderId() == f.at(0));
             }
 
-            THEN("The last vehicle id has the correct value") {
+            THEN("The last vehicle id has the correct value")
+            {
                 REQUIRE(lpph->getLastVehicleId() == f.at(3));
             }
 
             THEN("The id of the member with index 42 has an invalid "
-                 "value") {
+                 "value")
+            {
                 REQUIRE(lpph->getMemberId(42) == INVALID_VEHICLE_ID);
             }
 
             THEN("The position of the member with id 42 has an invalid "
-                 "value") {
+                 "value")
+            {
                 REQUIRE(lpph->getMemberPosition(42) == INVALID_POSITION);
             }
 
-            THEN("The id of the member with index 3 has the correct value") {
+            THEN("The id of the member with index 3 has the correct value")
+            {
                 REQUIRE(lpph->getMemberId(3) == f.at(3));
             }
 
-            THEN("The position of the member with id 3 has the correct value") {
+            THEN("The position of the member with id 3 has the correct value")
+            {
                 REQUIRE(lpph->getMemberPosition(3) == 3);
             }
 
             THEN("An arbitrary vehicle (e.g. id 42) is not in the same "
-                 "platoon") {
+                 "platoon")
+            {
                 REQUIRE(!lpph->isInSamePlatoon(42));
             }
         }
@@ -163,94 +201,114 @@ SCENARIO("Tests the LocalPlatoonPositionHelper",
         // platoon formation was not set and id was not set (dependent on id)
 
         WHEN("The vehicle id was not set and the platoon formation was not "
-             "set") {
+             "set")
+        {
 
-            THEN("This vehicle is not the leader") {
+            THEN("This vehicle is not the leader")
+            {
                 REQUIRE(!lpph->isLeader());
             }
 
-            THEN("The front vehicle id has an invalid value") {
+            THEN("The front vehicle id has an invalid value")
+            {
                 REQUIRE(lpph->getFrontId() == INVALID_VEHICLE_ID);
             }
 
-            THEN("The back vehicle id has an invalid value") {
+            THEN("The back vehicle id has an invalid value")
+            {
                 REQUIRE(lpph->getBackId() == INVALID_VEHICLE_ID);
             }
 
-            THEN("The vehicle position has an invalid value") {
+            THEN("The vehicle position has an invalid value")
+            {
                 REQUIRE(lpph->getPosition() == INVALID_POSITION);
             }
         }
 
         // platoon formation was not set and id was set (dependent on id)
 
-        WHEN("The vehicle id was set and the platoon formation was not set") {
+        WHEN("The vehicle id was set and the platoon formation was not set")
+        {
 
             lpph->setId(2);
 
-            THEN("This vehicle is not the leader") {
+            THEN("This vehicle is not the leader")
+            {
                 REQUIRE(!lpph->isLeader());
             }
 
-            THEN("The front vehicle id has an invalid value") {
+            THEN("The front vehicle id has an invalid value")
+            {
                 REQUIRE(lpph->getFrontId() == INVALID_VEHICLE_ID);
             }
 
-            THEN("The back vehicle id has an invalid value") {
+            THEN("The back vehicle id has an invalid value")
+            {
                 REQUIRE(lpph->getBackId() == INVALID_VEHICLE_ID);
             }
 
-            THEN("The vehicle position has an invalid value") {
+            THEN("The vehicle position has an invalid value")
+            {
                 REQUIRE(lpph->getPosition() == INVALID_POSITION);
             }
         }
 
         // platoon formation was set and id was not set (dependent on id)
 
-        WHEN("The vehicle id was not set and the platoon formation was set") {
+        WHEN("The vehicle id was not set and the platoon formation was set")
+        {
 
             std::vector<int> f({0, 1, 2, 3});
             lpph->setPlatoonFormation(f);
 
-            THEN("This vehicle is not the leader") {
+            THEN("This vehicle is not the leader")
+            {
                 REQUIRE(!lpph->isLeader());
             }
 
-            THEN("The front vehicle id has an invalid value") {
+            THEN("The front vehicle id has an invalid value")
+            {
                 REQUIRE(lpph->getFrontId() == INVALID_VEHICLE_ID);
             }
 
-            THEN("The back vehicle id has an invalid value") {
+            THEN("The back vehicle id has an invalid value")
+            {
                 REQUIRE(lpph->getBackId() == INVALID_VEHICLE_ID);
             }
 
-            THEN("The vehicle position has an invalid value") {
+            THEN("The vehicle position has an invalid value")
+            {
                 REQUIRE(lpph->getPosition() == INVALID_POSITION);
             }
         }
 
         // platoon formation was not set and id was set (dependent on id)
 
-        WHEN("The vehicle id was set and the platoon formation was not set") {
+        WHEN("The vehicle id was set and the platoon formation was not set")
+        {
 
             lpph->setId(2);
 
             std::vector<int> f({0, 1, 2, 3});
             lpph->setPlatoonFormation(f);
 
-            THEN("This vehicle is not the leader") {
+            THEN("This vehicle is not the leader")
+            {
                 REQUIRE(!lpph->isLeader());
             }
 
-            THEN("The front vehicle id has the correct value") {
+            THEN("The front vehicle id has the correct value")
+            {
                 REQUIRE(lpph->getFrontId() == f.at(1));
             }
 
-            THEN("The back vehicle id has the correct value") {
+            THEN("The back vehicle id has the correct value")
+            {
                 REQUIRE(lpph->getBackId() == f.at(3));
             }
 
-            THEN("The vehicle position has the correct value") {
+            THEN("The vehicle position has the correct value")
+            {
                 REQUIRE(lpph->getPosition() == 2);
             }
         }

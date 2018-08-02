@@ -19,7 +19,8 @@
 
 Define_Module(SinusoidalScenario);
 
-void SinusoidalScenario::initialize(int stage) {
+void SinusoidalScenario::initialize(int stage)
+{
 
     BaseScenario::initialize(stage);
 
@@ -51,24 +52,23 @@ void SinusoidalScenario::initialize(int stage) {
             //to the leader when it is accelerating
             traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed + 2 * oscillationAmplitude);
         }
-
     }
-
 }
 
-SinusoidalScenario::~SinusoidalScenario() {
+SinusoidalScenario::~SinusoidalScenario()
+{
     cancelAndDelete(changeSpeed);
     changeSpeed = nullptr;
 }
 
-void SinusoidalScenario::handleSelfMsg(cMessage *msg) {
+void SinusoidalScenario::handleSelfMsg(cMessage* msg)
+{
     BaseScenario::handleSelfMsg(msg);
     if (msg == changeSpeed) {
         traciVehicle->setCruiseControlDesiredSpeed(
             leaderSpeed +
             oscillationAmplitude *
-            sin(2 * M_PI * (simTime() - startOscillating).dbl() * leaderOscillationFrequency)
-        );
+                sin(2 * M_PI * (simTime() - startOscillating).dbl() * leaderOscillationFrequency));
         scheduleAt(simTime() + SimTime(0.1), changeSpeed);
     }
 }
