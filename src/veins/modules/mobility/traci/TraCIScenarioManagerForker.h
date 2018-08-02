@@ -51,7 +51,7 @@ class TraCIScenarioManagerForker : public TraCIScenarioManager
 		virtual void initialize(int stage);
 		virtual void finish();
 
-		virtual bool isGuiSimulation();
+		virtual bool isGuiSimulation() override;
 
 	protected:
 

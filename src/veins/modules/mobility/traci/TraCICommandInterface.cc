@@ -768,11 +768,10 @@ void TraCICommandInterface::GuiView::takeScreenshot(std::string filename) {
 void TraCICommandInterface::GuiView::trackVehicle(std::string vehicleId) {
 	TraCIScenarioManager *manager = FindModule<TraCIScenarioManager*>::findGlobalModule();
 	// don't send gui commands when gui is not active or sumo will crash
-	try {
+	if (manager->isGuiSimulation()) {
 		TraCIBuffer buf = connection->query(CMD_SET_GUI_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(VAR_TRACK_VEHICLE) << viewId << static_cast<uint8_t>(TYPE_STRING) << vehicleId);
 		ASSERT(buf.eof());
 	}
-	catch (cRuntimeError &e) {}
 }
 
 std::string TraCICommandInterface::genericGetString(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId) {
