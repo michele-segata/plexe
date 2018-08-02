@@ -23,16 +23,16 @@
 
 class SimpleScenario : public BaseScenario
 {
-	public:
-		virtual void initialize(int stage);
-	protected:
-		//leader average speed
-		double leaderSpeed;
-		//application layer, used to stop the simulation
-		BaseApp *appl;
+    public:
+        virtual void initialize(int stage);
+    protected:
+        //leader average speed
+        double leaderSpeed;
+        //application layer, used to stop the simulation
+        BaseApp *appl;
 
-	public:
-		SimpleScenario() : leaderSpeed(0), appl(nullptr) {};
+    public:
+        SimpleScenario() : leaderSpeed(0), appl(nullptr) {};
 };
 
 #endif

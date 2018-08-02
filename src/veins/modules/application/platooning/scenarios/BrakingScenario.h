@@ -25,36 +25,36 @@
 class BrakingScenario : public BaseScenario
 {
 
-	public:
+    public:
 
-		virtual void initialize(int stage);
+        virtual void initialize(int stage);
 
-	protected:
+    protected:
 
-		//leader average speed
-		double leaderSpeed;
-		//braking intensity in m/s/s
-		double brakingDeceleration;
-		//message used to tell the leader to start braking
-		cMessage *changeSpeed;
-		//start braking time
-		SimTime startBraking;
-		//application layer, used to stop the simulation
-		BaseApp *appl;
+        //leader average speed
+        double leaderSpeed;
+        //braking intensity in m/s/s
+        double brakingDeceleration;
+        //message used to tell the leader to start braking
+        cMessage *changeSpeed;
+        //start braking time
+        SimTime startBraking;
+        //application layer, used to stop the simulation
+        BaseApp *appl;
 
-	public:
-		BrakingScenario() {
-			leaderSpeed = 0;
-			brakingDeceleration = 0;
-			changeSpeed = nullptr;
-			startBraking = SimTime(0);
-			appl = 0;
-		}
-		virtual ~BrakingScenario();
+    public:
+        BrakingScenario() {
+            leaderSpeed = 0;
+            brakingDeceleration = 0;
+            changeSpeed = nullptr;
+            startBraking = SimTime(0);
+            appl = 0;
+        }
+        virtual ~BrakingScenario();
 
-	protected:
+    protected:
 
-		virtual void handleSelfMsg(cMessage *msg);
+        virtual void handleSelfMsg(cMessage *msg);
 
 };
 

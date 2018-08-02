@@ -32,10 +32,10 @@
 
 /** possible roles of this vehicle */
 enum class PlatoonRole : size_t {
-	NONE,     ///< The vehicle is not in a Platoon
-	LEADER,   ///< The vehicle is the leader of its Platoon
-	FOLLOWER, ///< The vehicle is a normal follower in its Platoon
-	JOINER    ///< The vehicle is in the process of joining a Platoon
+    NONE,     ///< The vehicle is not in a Platoon
+    LEADER,   ///< The vehicle is the leader of its Platoon
+    FOLLOWER, ///< The vehicle is a normal follower in its Platoon
+    JOINER    ///< The vehicle is in the process of joining a Platoon
 };
 
 /**
@@ -57,134 +57,134 @@ class GeneralPlatooningApp : public BaseApp {
 
 public:
 
-	/** c'tor for GeneralPlatooningApp */
-	GeneralPlatooningApp() : inManeuver(false), role(PlatoonRole::NONE), joinManeuver(nullptr) {}
+    /** c'tor for GeneralPlatooningApp */
+    GeneralPlatooningApp() : inManeuver(false), role(PlatoonRole::NONE), joinManeuver(nullptr) {}
 
-	/** d'tor for GeneralPlatooningApp */
-	virtual ~GeneralPlatooningApp();
+    /** d'tor for GeneralPlatooningApp */
+    virtual ~GeneralPlatooningApp();
 
-	/**
-	 * Returns the role of this car in the platoon
-	 *
-	 * @return PlatoonRole the role in the platoon
-	 * @see PlatoonRole
-	 */
-	const PlatoonRole &getPlatoonRole() const { return role; }
+    /**
+     * Returns the role of this car in the platoon
+     *
+     * @return PlatoonRole the role in the platoon
+     * @see PlatoonRole
+     */
+    const PlatoonRole &getPlatoonRole() const { return role; }
 
-	/**
-	 * Sets the role of this car in the platoon
-	 *
-	 * @param PlatoonRole r the role in the platoon
-	 * @see PlatoonRole
-	 */
-	void setPlatoonRole(PlatoonRole r);
+    /**
+     * Sets the role of this car in the platoon
+     *
+     * @param PlatoonRole r the role in the platoon
+     * @see PlatoonRole
+     */
+    void setPlatoonRole(PlatoonRole r);
 
-	/** override from BaseApp */
-	virtual void initialize(int stage) override;
+    /** override from BaseApp */
+    virtual void initialize(int stage) override;
 
-	/**
-	 * Request start of JoinManeuver to leader
-	 * @param int platoonId the id of the platoon to join
-	 * @param int leaderId the id of the leader of the platoon to join
-	 * @param int position the position where the vehicle should join.
-	 * Depending on the implementation, this parameter might be ignored
-	 */
-	void startJoinManeuver(int platoonId, int leaderId, int position);
+    /**
+     * Request start of JoinManeuver to leader
+     * @param int platoonId the id of the platoon to join
+     * @param int leaderId the id of the leader of the platoon to join
+     * @param int position the position where the vehicle should join.
+     * Depending on the implementation, this parameter might be ignored
+     */
+    void startJoinManeuver(int platoonId, int leaderId, int position);
 
-	/** Abort join maneuver */
-	void abortJoinManeuver();
+    /** Abort join maneuver */
+    void abortJoinManeuver();
 
-	/**
-	 * Returns whether this car is in a maneuver
-	 * @return bool true, if this car is in a maneuver, else false
-	 */
-	bool isInManeuver() const { return inManeuver; }
+    /**
+     * Returns whether this car is in a maneuver
+     * @return bool true, if this car is in a maneuver, else false
+     */
+    bool isInManeuver() const { return inManeuver; }
 
-	/**
-	 * Set whether this car is in a maneuver
-	 * @param bool b whether this car is in a maneuver
-	 */
-	void setInManeuver(bool b = true) { inManeuver = b; }
+    /**
+     * Set whether this car is in a maneuver
+     * @param bool b whether this car is in a maneuver
+     */
+    void setInManeuver(bool b = true) { inManeuver = b; }
 
-	BasePositionHelper *getPositionHelper() { return positionHelper; }
-	Veins::TraCIMobility *getMobility() { return mobility; }
-	Veins::TraCICommandInterface *getTraci() { return traci; }
-	Veins::TraCICommandInterface::Vehicle *getTraciVehicle() { return traciVehicle; }
+    BasePositionHelper *getPositionHelper() { return positionHelper; }
+    Veins::TraCIMobility *getMobility() { return mobility; }
+    Veins::TraCICommandInterface *getTraci() { return traci; }
+    Veins::TraCICommandInterface::Vehicle *getTraciVehicle() { return traciVehicle; }
 
-	/**
-	 * Sends a unicast message
-	 *
-	 * @param cPacket msg message to be encapsulated into the unicast
-	 * message
-	 * @param int destination of the message
-	 */
-	virtual void sendUnicast(cPacket *msg, int destination);
+    /**
+     * Sends a unicast message
+     *
+     * @param cPacket msg message to be encapsulated into the unicast
+     * message
+     * @param int destination of the message
+     */
+    virtual void sendUnicast(cPacket *msg, int destination);
 
-	/**
-	 * Fills members of a ManeuverMessage
-	 *
-	 * @param msg ManeuverMessage the message to be filled
-	 * @param int vehicleId the id of the sending vehicle
-	 * @param int platoonId the id of the platoon of the sending vehicle
-	 * @param int destinationId the id of the destination
-	 */
-	void fillManeuverMessage(ManeuverMessage *msg, int vehicleId,
-	                         std::string externalId, int platoonId,
-	                         int destinationId);
+    /**
+     * Fills members of a ManeuverMessage
+     *
+     * @param msg ManeuverMessage the message to be filled
+     * @param int vehicleId the id of the sending vehicle
+     * @param int platoonId the id of the platoon of the sending vehicle
+     * @param int destinationId the id of the destination
+     */
+    void fillManeuverMessage(ManeuverMessage *msg, int vehicleId,
+                             std::string externalId, int platoonId,
+                             int destinationId);
 
-	/**
-	 * Creates a UpdatePlatoonFormation message
-	 *
-	 * @param int vehicleId the id of the sending vehicle
-	 * @param int platoonId the id of the platoon of the sending vehicle
-	 * @param int destinationId the id of the destination
-	 * @param int platoonSpeed the speed of the platoon
-	 * @param int platoonLane the id of the lane of the platoon
-	 * @param std::vector<int> platoonFormation the new platoon formation
-	 */
-	UpdatePlatoonFormation *
-	createUpdatePlatoonFormation(int vehicleId, std::string externalId,
-	                             int platoonId, int destinationId,
-	                             double platoonSpeed, int platoonLane,
-	                             const std::vector<int> &platoonFormation);
+    /**
+     * Creates a UpdatePlatoonFormation message
+     *
+     * @param int vehicleId the id of the sending vehicle
+     * @param int platoonId the id of the platoon of the sending vehicle
+     * @param int destinationId the id of the destination
+     * @param int platoonSpeed the speed of the platoon
+     * @param int platoonLane the id of the lane of the platoon
+     * @param std::vector<int> platoonFormation the new platoon formation
+     */
+    UpdatePlatoonFormation *
+    createUpdatePlatoonFormation(int vehicleId, std::string externalId,
+                                 int platoonId, int destinationId,
+                                 double platoonSpeed, int platoonLane,
+                                 const std::vector<int> &platoonFormation);
 
-	/**
-	 * Handles a UpdatePlatoonFormation in the context of this
-	 * application
-	 *
-	 * @param UpdatePlatoonFormation msg to handle
-	 */
-	virtual void handleUpdatePlatoonFormation(const UpdatePlatoonFormation *msg);
+    /**
+     * Handles a UpdatePlatoonFormation in the context of this
+     * application
+     *
+     * @param UpdatePlatoonFormation msg to handle
+     */
+    virtual void handleUpdatePlatoonFormation(const UpdatePlatoonFormation *msg);
 
-	bool isJoinAllowed() const;
+    bool isJoinAllowed() const;
 
 protected:
 
-	/** override this method of BaseApp. we want to handle it ourself */
-	virtual void handleLowerMsg(cMessage *msg) override;
+    /** override this method of BaseApp. we want to handle it ourself */
+    virtual void handleLowerMsg(cMessage *msg) override;
 
-	/**
-	 * Handles PlatoonBeacons
-	 *
-	 * @param PlatooningBeacon pb to handle
-	 */
-	virtual void onPlatoonBeacon(const PlatooningBeacon *pb) override;
+    /**
+     * Handles PlatoonBeacons
+     *
+     * @param PlatooningBeacon pb to handle
+     */
+    virtual void onPlatoonBeacon(const PlatooningBeacon *pb) override;
 
-	/**
-	 * Handles ManeuverMessages
-	 *
-	 * @param ManeuverMessage mm to handle
-	 */
-	virtual void onManeuverMessage(ManeuverMessage *mm);
+    /**
+     * Handles ManeuverMessages
+     *
+     * @param ManeuverMessage mm to handle
+     */
+    virtual void onManeuverMessage(ManeuverMessage *mm);
 
-	/** am i in a maneuver? */
-	bool inManeuver;
+    /** am i in a maneuver? */
+    bool inManeuver;
 
 private:
-	/** the role of this vehicle */
-	PlatoonRole role;
-	/** join maneuver implementation */
-	JoinManeuver *joinManeuver;
+    /** the role of this vehicle */
+    PlatoonRole role;
+    /** join maneuver implementation */
+    JoinManeuver *joinManeuver;
 
 };
 

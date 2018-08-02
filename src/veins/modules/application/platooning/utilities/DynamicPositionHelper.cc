@@ -23,93 +23,93 @@ Define_Module(DynamicPositionHelper);
 
 void DynamicPositionHelper::initialize(int stage) {
 
-	BasePositionHelper::initialize(stage);
+    BasePositionHelper::initialize(stage);
 
-	if (stage == 0) {
-		myId = getIdFromExternalId(getExternalId());
-	}
+    if (stage == 0) {
+        myId = getIdFromExternalId(getExternalId());
+    }
 
 }
 
 int DynamicPositionHelper::getPosition() const {
-	int platoonId = getPlatoonId();
-	return positions.positions.find(platoonId)->second.find(myId)->second;
+    int platoonId = getPlatoonId();
+    return positions.positions.find(platoonId)->second.find(myId)->second;
 }
 
 int DynamicPositionHelper::getMemberId(const int position) const {
-	int platoonId = getPlatoonId();
-	return positions.platoons.find(platoonId)->second.find(position)->second;
+    int platoonId = getPlatoonId();
+    return positions.platoons.find(platoonId)->second.find(position)->second;
 }
 
 int DynamicPositionHelper::getMemberPosition(const int vehicleId) const {
-	int platoonId = getPlatoonId();
-	return positions.positions.find(platoonId)->second.find(vehicleId)->second;
+    int platoonId = getPlatoonId();
+    return positions.positions.find(platoonId)->second.find(vehicleId)->second;
 }
 
 int DynamicPositionHelper::getLeaderId() const {
-	return getMemberId(0);
+    return getMemberId(0);
 }
 
 bool DynamicPositionHelper::isLeader() const {
-	return getPosition() == 0;
+    return getPosition() == 0;
 }
 
 int DynamicPositionHelper::getFrontId() const {
-	return getMemberId(getPosition() - 1);
+    return getMemberId(getPosition() - 1);
 }
 
 int DynamicPositionHelper::getPlatoonId() const {
-	auto i = positions.vehToPlatoons.find(myId);
-	if (i == positions.vehToPlatoons.end())
-		return -1;
-	int platoonId = i->second;
-	return platoonId;
+    auto i = positions.vehToPlatoons.find(myId);
+    if (i == positions.vehToPlatoons.end())
+        return -1;
+    int platoonId = i->second;
+    return platoonId;
 }
 
 int DynamicPositionHelper::getPlatoonLane() const {
-	return 0;
+    return 0;
 }
 
 bool DynamicPositionHelper::isInSamePlatoon(const int vehicleId) const {
-	auto i = positions.vehToPlatoons.find(vehicleId);
-	if (i == positions.vehToPlatoons.end())
-		return false;
-	if (i->second == -1)
-		return false;
-	return i->second == getPlatoonId();
+    auto i = positions.vehToPlatoons.find(vehicleId);
+    if (i == positions.vehToPlatoons.end())
+        return false;
+    if (i->second == -1)
+        return false;
+    return i->second == getPlatoonId();
 }
 
 int DynamicPositionHelper::getPlatoonSize() const {
-	return positions.platoons.find(getPlatoonId())->second.size();
+    return positions.platoons.find(getPlatoonId())->second.size();
 }
 
 const std::vector<int> &DynamicPositionHelper::getPlatoonFormation() const {
-	auto m = positions.platoons.find(getPlatoonId())->second;
-	// we do not need to sort the vehicles by their position,
-	// since the map<pos, id> is sorted by default by its key (i.e. pos)
-	formationCache.resize(m.size());
-	std::transform(m.begin(), m.end(), formationCache.begin(),
+    auto m = positions.platoons.find(getPlatoonId())->second;
+    // we do not need to sort the vehicles by their position,
+    // since the map<pos, id> is sorted by default by its key (i.e. pos)
+    formationCache.resize(m.size());
+    std::transform(m.begin(), m.end(), formationCache.begin(),
             [](const decltype(m)::value_type &p) { return p.second; });
-	return formationCache;
+    return formationCache;
 }
 
 void DynamicPositionHelper::setPlatoonFormation(const std::vector<int>& formation) {
-	positions.platoons.find(getPlatoonId())->second.clear();
-	for (unsigned i = 0; i < formation.size(); i++) {
-		addVehicleToPlatoon(formation[i], i, getPlatoonId());
-	}
+    positions.platoons.find(getPlatoonId())->second.clear();
+    for (unsigned i = 0; i < formation.size(); i++) {
+        addVehicleToPlatoon(formation[i], i, getPlatoonId());
+    }
 }
 
 void DynamicPositionHelper::addVehicleToPlatoon(int vehicleId, int position, int platoonId) {
-	positions.addVehicleToPlatoon(vehicleId, position, platoonId);
+    positions.addVehicleToPlatoon(vehicleId, position, platoonId);
 }
 
 void DynamicPositionHelper::removeVehicleFromPlatoon(int vehicleId, int position, int platoonId) {
-	positions.removeVehicleFromPlatoon(vehicleId, position, platoonId);
+    positions.removeVehicleFromPlatoon(vehicleId, position, platoonId);
 }
 
 int DynamicPositionHelper::getIdFromExternalId(const std::string externalId) {
-	int dotIndex = externalId.find_last_of('.');
-	std::string strId = externalId.substr(dotIndex + 1);
-	return strtol(strId.c_str(), 0, 10);
+    int dotIndex = externalId.find_last_of('.');
+    std::string strId = externalId.substr(dotIndex + 1);
+    return strtol(strId.c_str(), 0, 10);
 }

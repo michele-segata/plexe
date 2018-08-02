@@ -26,37 +26,37 @@
 class JoinManeuverScenario : public BaseScenario
 {
 
-	protected:
+    protected:
 
-		//message used to start the maneuver
-		cMessage *startManeuver;
-		//pointer to protocol
-		GeneralPlatooningApp *app;
+        //message used to start the maneuver
+        cMessage *startManeuver;
+        //pointer to protocol
+        GeneralPlatooningApp *app;
 
-	public:
+    public:
 
-		static const int MANEUVER_TYPE = 12347;
+        static const int MANEUVER_TYPE = 12347;
 
-		virtual void initialize(int stage) override;
+        virtual void initialize(int stage) override;
 
-	protected:
-		void sendUnicast(cPacket *msg, int destination);
+    protected:
+        void sendUnicast(cPacket *msg, int destination);
 
-	private:
+    private:
 
-	public:
-		JoinManeuverScenario()	{
-			startManeuver = nullptr;
-			app = nullptr;
-		}
-		virtual ~JoinManeuverScenario();
+    public:
+        JoinManeuverScenario()    {
+            startManeuver = nullptr;
+            app = nullptr;
+        }
+        virtual ~JoinManeuverScenario();
 
-	protected:
+    protected:
 
-		virtual void handleSelfMsg(cMessage *msg) override;
+        virtual void handleSelfMsg(cMessage *msg) override;
 
-		void prepareManeuverCars(int platoonLane);
-		void setupFormation();
+        void prepareManeuverCars(int platoonLane);
+        void setupFormation();
 
 };
 

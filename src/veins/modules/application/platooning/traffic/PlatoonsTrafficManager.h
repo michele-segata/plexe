@@ -23,53 +23,53 @@
 class PlatoonsTrafficManager : public TraCIBaseTrafficManager
 {
 
-	public:
+    public:
 
-		virtual void initialize(int stage);
+        virtual void initialize(int stage);
 
-		PlatoonsTrafficManager() {
-			insertPlatoonMessage = nullptr;
-			platoonInsertDistance = 0;
-			platoonInsertHeadway = 0;
-			platoonInsertSpeed = 0;
-			platoonInsertTime = SimTime(0);
-			platoonLeaderHeadway = 0;
-			platoonSize = 0;
-			nCars = 0;
-			nLanes = 0;
-		}
-		virtual ~PlatoonsTrafficManager();
+        PlatoonsTrafficManager() {
+            insertPlatoonMessage = nullptr;
+            platoonInsertDistance = 0;
+            platoonInsertHeadway = 0;
+            platoonInsertSpeed = 0;
+            platoonInsertTime = SimTime(0);
+            platoonLeaderHeadway = 0;
+            platoonSize = 0;
+            nCars = 0;
+            nLanes = 0;
+        }
+        virtual ~PlatoonsTrafficManager();
 
-	protected:
+    protected:
 
-		//this is used to start traffic generation
-		cMessage *insertPlatoonMessage;
+        //this is used to start traffic generation
+        cMessage *insertPlatoonMessage;
 
-		void insertPlatoons();
+        void insertPlatoons();
 
-		virtual void handleSelfMsg(cMessage *msg);
+        virtual void handleSelfMsg(cMessage *msg);
 
-		SimTime platoonInsertTime;
-		double platoonInsertSpeed;
-		//vehicles to be inserted
-		struct Vehicle automated;
+        SimTime platoonInsertTime;
+        double platoonInsertSpeed;
+        //vehicles to be inserted
+        struct Vehicle automated;
 
-		//total number of vehicles to be injected
-		int nCars;
-		//vehicles per platoon
-		int platoonSize;
-		//number of lanes
-		int nLanes;
-		//insert distance
-		double platoonInsertDistance;
-		//insert headway
-		double platoonInsertHeadway;
-		//headway for leader vehicles
-		double platoonLeaderHeadway;
-		//sumo vehicle type of platooning cars
-		std::string platooningVType;
+        //total number of vehicles to be injected
+        int nCars;
+        //vehicles per platoon
+        int platoonSize;
+        //number of lanes
+        int nLanes;
+        //insert distance
+        double platoonInsertDistance;
+        //insert headway
+        double platoonInsertHeadway;
+        //headway for leader vehicles
+        double platoonLeaderHeadway;
+        //sumo vehicle type of platooning cars
+        std::string platooningVType;
 
-		virtual void scenarioLoaded();
+        virtual void scenarioLoaded();
 
 };
 

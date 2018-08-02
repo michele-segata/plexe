@@ -34,70 +34,70 @@ class BaseProtocol;
 class BaseApp : public Veins::BaseApplLayer
 {
 
-	public:
+    public:
 
-		virtual void initialize(int stage) override;
+        virtual void initialize(int stage) override;
 
-	protected:
+    protected:
 
-		//id of this vehicle
-		int myId;
+        //id of this vehicle
+        int myId;
 
-		Veins::TraCIMobility* mobility;
-		Veins::TraCICommandInterface *traci;
-		Veins::TraCICommandInterface::Vehicle *traciVehicle;
+        Veins::TraCIMobility* mobility;
+        Veins::TraCICommandInterface *traci;
+        Veins::TraCICommandInterface::Vehicle *traciVehicle;
 
-		//determines position and role of each vehicle
-		BasePositionHelper *positionHelper;
+        //determines position and role of each vehicle
+        BasePositionHelper *positionHelper;
 
-		//lower layer protocol
-		BaseProtocol *protocol;
+        //lower layer protocol
+        BaseProtocol *protocol;
 
-		/**
-		 * Log data about vehicle
-		 */
-		virtual void logVehicleData(bool crashed = false);
+        /**
+         * Log data about vehicle
+         */
+        virtual void logVehicleData(bool crashed = false);
 
-		//output vectors for mobility stats
-		//id of the vehicle
-		cOutVector nodeIdOut;
-		//distance and relative speed
-		cOutVector distanceOut, relSpeedOut;
-		//speed and position
-		cOutVector speedOut, posxOut, posyOut;
-		//real acceleration and controller acceleration
-		cOutVector accelerationOut, controllerAccelerationOut;
+        //output vectors for mobility stats
+        //id of the vehicle
+        cOutVector nodeIdOut;
+        //distance and relative speed
+        cOutVector distanceOut, relSpeedOut;
+        //speed and position
+        cOutVector speedOut, posxOut, posyOut;
+        //real acceleration and controller acceleration
+        cOutVector accelerationOut, controllerAccelerationOut;
 
-		//messages for scheduleAt
-		cMessage *recordData;
-		//message to stop the simulation in case of collision
-		cMessage *stopSimulation;
+        //messages for scheduleAt
+        cMessage *recordData;
+        //message to stop the simulation in case of collision
+        cMessage *stopSimulation;
 
-	public:
-		BaseApp() {
-			recordData = 0;
-			stopSimulation = nullptr;
-		}
-		virtual ~BaseApp();
+    public:
+        BaseApp() {
+            recordData = 0;
+            stopSimulation = nullptr;
+        }
+        virtual ~BaseApp();
 
-		/**
-		 * Sends a unicast message
-		 *
-		 * @param msg message to be encapsulated into the unicast message
-		 * @param destination id of the destination
-		 */
-		void sendUnicast(cPacket *msg, int destination);
+        /**
+         * Sends a unicast message
+         *
+         * @param msg message to be encapsulated into the unicast message
+         * @param destination id of the destination
+         */
+        void sendUnicast(cPacket *msg, int destination);
 
-	protected:
+    protected:
 
-		virtual void handleLowerMsg(cMessage *msg) override;
-		virtual void handleSelfMsg(cMessage *msg) override;
-		virtual void handleLowerControl(cMessage *msg) override;
+        virtual void handleLowerMsg(cMessage *msg) override;
+        virtual void handleSelfMsg(cMessage *msg) override;
+        virtual void handleLowerControl(cMessage *msg) override;
 
-		/**
-		 * Handles PlatoonBeacons
-		 */
-		virtual void onPlatoonBeacon(const PlatooningBeacon* pb);
+        /**
+         * Handles PlatoonBeacons
+         */
+        virtual void onPlatoonBeacon(const PlatooningBeacon* pb);
 };
 
 #endif /* BASEAPP_H_ */

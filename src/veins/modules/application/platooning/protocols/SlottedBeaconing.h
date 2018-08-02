@@ -22,21 +22,21 @@
 
 class SlottedBeaconing : public BaseProtocol
 {
-	protected:
+    protected:
 
-		virtual void handleSelfMsg(cMessage *msg);
-		virtual void messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicast);
+        virtual void handleSelfMsg(cMessage *msg);
+        virtual void messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicast);
 
-		//number of the slot where we should send our message
-		int slotNumber;
-		//time after the message received from the leader at which we should send (i.e., slot time)
-		SimTime slotTime;
+        //number of the slot where we should send our message
+        int slotNumber;
+        //time after the message received from the leader at which we should send (i.e., slot time)
+        SimTime slotTime;
 
-	public:
-		SlottedBeaconing();
-		virtual ~SlottedBeaconing();
+    public:
+        SlottedBeaconing();
+        virtual ~SlottedBeaconing();
 
-		virtual void initialize(int stage);
+        virtual void initialize(int stage);
 };
 
 #endif /* SLOTTEDBEACONING_H_ */

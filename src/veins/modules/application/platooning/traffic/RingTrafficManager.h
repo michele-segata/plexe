@@ -24,46 +24,46 @@
 class RingTrafficManager : public TraCIBaseTrafficManager
 {
 
-	public:
+    public:
 
-		virtual void initialize(int stage);
-		virtual void scenarioLoaded();
+        virtual void initialize(int stage);
+        virtual void scenarioLoaded();
 
-		RingTrafficManager() : platoonSize(0), nPlatoons(0),
-		                       injectedCars(0), injectedPlatoons(0),
-		                       positions(DynamicPositionManager::getInstance()) {
-			platoonInsertDistance = 0;
-			platoonInsertHeadway = 0;
-			platoonInsertSpeed = 0;
-			platoonLeaderHeadway = 0;
-			nLanes = 0;
-		}
+        RingTrafficManager() : platoonSize(0), nPlatoons(0),
+                               injectedCars(0), injectedPlatoons(0),
+                               positions(DynamicPositionManager::getInstance()) {
+            platoonInsertDistance = 0;
+            platoonInsertHeadway = 0;
+            platoonInsertSpeed = 0;
+            platoonLeaderHeadway = 0;
+            nLanes = 0;
+        }
 
-	protected:
+    protected:
 
-		cPar *platoonSize;
-		int nPlatoons;
-		int injectedCars;
-		int injectedPlatoons;
-		DynamicPositionManager &positions;
-		//number of lanes
-		int nLanes;
-		//insert distance
-		double platoonInsertDistance;
-		//insert headway
-		double platoonInsertHeadway;
-		//headway for leader vehicles
-		double platoonLeaderHeadway;
-		//sumo vehicle type of platooning cars
-		std::string platooningVType;
-		cPar *platoonInsertSpeed;
+        cPar *platoonSize;
+        int nPlatoons;
+        int injectedCars;
+        int injectedPlatoons;
+        DynamicPositionManager &positions;
+        //number of lanes
+        int nLanes;
+        //insert distance
+        double platoonInsertDistance;
+        //insert headway
+        double platoonInsertHeadway;
+        //headway for leader vehicles
+        double platoonLeaderHeadway;
+        //sumo vehicle type of platooning cars
+        std::string platooningVType;
+        cPar *platoonInsertSpeed;
 
-		typedef struct {
-			int size;
-			double speed;
-			double length;
-			double distanceToFront;
-		} Platoon;
+        typedef struct {
+            int size;
+            double speed;
+            double length;
+            double distanceToFront;
+        } Platoon;
 
 };
 

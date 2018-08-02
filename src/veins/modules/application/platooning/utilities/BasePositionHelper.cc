@@ -23,139 +23,139 @@ Define_Module(BasePositionHelper);
 
 void BasePositionHelper::initialize(int stage) {
 
-	BaseApplLayer::initialize(stage);
+    BaseApplLayer::initialize(stage);
 
-	if (stage == 0) {
-		mobility = Veins::TraCIMobilityAccess().get(getParentModule());
-		traci = mobility->getCommandInterface();
-		traciVehicle = mobility->getVehicleCommandInterface();
-		nLanes = par("nLanes").longValue();
-		platoonSize = par("platoonSize").longValue();
-		nCars = par("nCars").longValue();
-		highestId = nCars - 1;
-	}
+    if (stage == 0) {
+        mobility = Veins::TraCIMobilityAccess().get(getParentModule());
+        traci = mobility->getCommandInterface();
+        traciVehicle = mobility->getVehicleCommandInterface();
+        nLanes = par("nLanes").longValue();
+        platoonSize = par("platoonSize").longValue();
+        nCars = par("nCars").longValue();
+        highestId = nCars - 1;
+    }
 
 }
 
 std::string BasePositionHelper::getExternalId() const {
-	return mobility->getExternalId();
+    return mobility->getExternalId();
 }
 
 int BasePositionHelper::getId() const {
-	return myId;
+    return myId;
 }
 
 int BasePositionHelper::getHighestId() const {
-	return highestId;
+    return highestId;
 }
 
 int BasePositionHelper::getPosition() const {
-	return position;
+    return position;
 }
 
 int BasePositionHelper::getLeaderId() const {
-	return leaderId;
+    return leaderId;
 }
 
 bool BasePositionHelper::isLeader() const {
-	return getLeaderId() == myId;
+    return getLeaderId() == myId;
 }
 
 int BasePositionHelper::getFrontId() const {
-	if (isLeader())
-		return -1;
-	else
-		return frontId;
+    if (isLeader())
+        return -1;
+    else
+        return frontId;
 }
 
 int BasePositionHelper::getBackId() const {
-	return backId;
+    return backId;
 }
 
 int BasePositionHelper::getMemberId(const int position) const {
-	return -1;
+    return -1;
 }
 
 int BasePositionHelper::getMemberPosition(const int vehicleId) const {
-	return -1;
+    return -1;
 }
 
 int BasePositionHelper::getPlatoonId() const {
-	return platoonId;
+    return platoonId;
 }
 
 int BasePositionHelper::getPlatoonLane() const {
-	return platoonLane;
+    return platoonLane;
 }
 
 double BasePositionHelper::getPlatoonSpeed() const {
-	return platoonSpeed;
+    return platoonSpeed;
 }
 
 bool BasePositionHelper::isInSamePlatoon(const int vehicleId) const {
-	return false;
+    return false;
 }
 
 int BasePositionHelper::getLanesCount() const {
-	return nLanes;
+    return nLanes;
 }
 
 int BasePositionHelper::getPlatoonSize() const {
-	return platoonSize;
+    return platoonSize;
 }
 
 void BasePositionHelper::setId(const int id) {
-	myId = id;
+    myId = id;
 }
 
 void BasePositionHelper::setHighestId(const int id) {
-	highestId = id;
+    highestId = id;
 }
 
 void BasePositionHelper::setPosition(const int position) {
-	this->position = position;
+    this->position = position;
 }
 
 void BasePositionHelper::setLeaderId(const int id) {
-	leaderId = id;
+    leaderId = id;
 }
 
 void BasePositionHelper::setIsLeader(const bool isLeader) {
-	leader = isLeader;
+    leader = isLeader;
 }
 
 void BasePositionHelper::setFrontId(const int id) {
-	frontId = id;
+    frontId = id;
 }
 
 void BasePositionHelper::setBackId(const int id) {
-	backId = id;
+    backId = id;
 }
 
 void BasePositionHelper::setPlatoonId(const int id) {
-	platoonId = id;
+    platoonId = id;
 }
 
 void BasePositionHelper::setPlatoonLane(const int lane) {
-	platoonLane = lane;
+    platoonLane = lane;
 }
 
 void BasePositionHelper::setPlatoonSpeed(double speed) {
-	platoonSpeed = speed;
+    platoonSpeed = speed;
 }
 
 void BasePositionHelper::setLanesCount(const int lanes) {
-	nLanes = lanes;
+    nLanes = lanes;
 }
 
 void BasePositionHelper::setPlatoonSize(const int size) {
-	platoonSize = size;
+    platoonSize = size;
 }
 
 const std::vector<int> &BasePositionHelper::getPlatoonFormation() const {
-	throw cRuntimeError("not implemented in base class");
+    throw cRuntimeError("not implemented in base class");
 }
 
 void BasePositionHelper::setPlatoonFormation(const std::vector<int>& formation) {
-	throw cRuntimeError("not implemented in base class");
+    throw cRuntimeError("not implemented in base class");
 }

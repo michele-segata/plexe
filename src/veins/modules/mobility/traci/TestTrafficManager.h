@@ -23,22 +23,22 @@
 class TestTrafficManager : public TraCIBaseTrafficManager
 {
 
-	public:
+    public:
 
-		virtual void initialize(int stage);
-		virtual void finish();
+        virtual void initialize(int stage);
+        virtual void finish();
 
-		TestTrafficManager() {
-			generateVehicle = 0;
-		}
+        TestTrafficManager() {
+            generateVehicle = 0;
+        }
 
-	protected:
+    protected:
 
-		cMessage *generateVehicle;
+        cMessage *generateVehicle;
 
-		void insertNewVehicle();
+        void insertNewVehicle();
 
-		virtual void handleSelfMsg(cMessage *msg);
+        virtual void handleSelfMsg(cMessage *msg);
 
 };
 

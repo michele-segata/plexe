@@ -19,9 +19,9 @@
 #include "veins/modules/application/platooning/apps/GeneralPlatooningApp.h"
 
 Maneuver::Maneuver(GeneralPlatooningApp *app) {
-	this->app = app;
-	this->positionHelper = app->getPositionHelper();
-	this->mobility = app->getMobility();
-	this->traci = app->getTraci();
-	this->traciVehicle = app->getTraciVehicle();
+    this->app = app;
+    this->positionHelper = app->getPositionHelper();
+    this->mobility = app->getMobility();
+    this->traci = app->getTraci();
+    this->traciVehicle = app->getTraciVehicle();
 }

@@ -21,10 +21,10 @@ Define_Module(SumoTrafficManager);
 
 void SumoTrafficManager::initialize(int stage) {
 
-	TraCIBaseTrafficManager::initialize(stage);
+    TraCIBaseTrafficManager::initialize(stage);
 
 }
 
 void SumoTrafficManager::finish() {
-	TraCIBaseTrafficManager::finish();
+    TraCIBaseTrafficManager::finish();
 }

@@ -28,13 +28,13 @@
 class SumoTrafficManager : public TraCIBaseTrafficManager
 {
 
-	public:
+    public:
 
-		virtual void initialize(int stage);
-		virtual void finish();
+        virtual void initialize(int stage);
+        virtual void finish();
 
-	public:
-		SumoTrafficManager() {}
+    public:
+        SumoTrafficManager() {}
 
 };
 

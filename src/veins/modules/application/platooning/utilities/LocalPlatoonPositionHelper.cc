@@ -20,15 +20,15 @@
 Define_Module(LocalPlatoonPositionHelper);
 
 void LocalPlatoonPositionHelper::initialize(int stage) {
-	BasePositionHelper::initialize(stage);
+    BasePositionHelper::initialize(stage);
 
-	if (stage == 1) {
-		myId = getIdFromExternalId(getExternalId());
-	}
+    if (stage == 1) {
+        myId = getIdFromExternalId(getExternalId());
+    }
 }
 
 int LocalPlatoonPositionHelper::getIdFromExternalId(const std::string externalId) {
-	int dotIndex = externalId.find_last_of('.');
-	std::string strId = externalId.substr(dotIndex + 1);
-	return std::stol(strId.c_str(), 0, 10);
+    int dotIndex = externalId.find_last_of('.');
+    std::string strId = externalId.substr(dotIndex + 1);
+    return std::stol(strId.c_str(), 0, 10);
 }

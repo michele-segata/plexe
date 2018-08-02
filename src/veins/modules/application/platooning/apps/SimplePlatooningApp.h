@@ -23,8 +23,8 @@
 class SimplePlatooningApp : public BaseApp
 {
 
-	public:
-		SimplePlatooningApp() {}
+    public:
+        SimplePlatooningApp() {}
 
 };
 

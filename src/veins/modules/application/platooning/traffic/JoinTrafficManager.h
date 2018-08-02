@@ -23,22 +23,22 @@
 class JoinTrafficManager : public PlatoonsTrafficManager
 {
 
-	public:
+    public:
 
-		virtual void initialize(int stage);
+        virtual void initialize(int stage);
 
-		JoinTrafficManager() : PlatoonsTrafficManager() {
-			insertJoinerMessage = 0;
-		}
-		virtual ~JoinTrafficManager();
+        JoinTrafficManager() : PlatoonsTrafficManager() {
+            insertJoinerMessage = 0;
+        }
+        virtual ~JoinTrafficManager();
 
-	protected:
+    protected:
 
-		cMessage *insertJoinerMessage;
+        cMessage *insertJoinerMessage;
 
-		void insertJoiner();
+        void insertJoiner();
 
-		virtual void handleSelfMsg(cMessage *msg);
+        virtual void handleSelfMsg(cMessage *msg);
 
 };
 

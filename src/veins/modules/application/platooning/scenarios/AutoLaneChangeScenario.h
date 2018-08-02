@@ -25,24 +25,24 @@
 class AutoLaneChangeScenario : public BaseScenario
 {
 
-	public:
+    public:
 
-		virtual void initialize(int stage);
+        virtual void initialize(int stage);
 
-	protected:
+    protected:
 
-		//leader average speed
-		double leaderSpeed;
-		//application layer, used to stop the simulation
-		BaseApp *appl;
-		//sumo vehicle type of plaotoning cars
-		std::string platooningVType;
+        //leader average speed
+        double leaderSpeed;
+        //application layer, used to stop the simulation
+        BaseApp *appl;
+        //sumo vehicle type of plaotoning cars
+        std::string platooningVType;
 
-	public:
-		AutoLaneChangeScenario() {
-			leaderSpeed = 0;
-			appl = 0;
-		}
+    public:
+        AutoLaneChangeScenario() {
+            leaderSpeed = 0;
+            appl = 0;
+        }
 
 };
 

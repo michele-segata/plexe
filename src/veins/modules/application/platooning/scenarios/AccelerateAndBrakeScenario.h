@@ -25,45 +25,45 @@
 class AccelerateAndBrakeScenario : public BaseScenario
 {
 
-	public:
+    public:
 
-		virtual void initialize(int stage);
+        virtual void initialize(int stage);
 
-	protected:
+    protected:
 
-		//leader average speed
-		double leaderSpeed;
-		//acceleration in m/s/s
-		double acceleration;
-		//braking intensity in m/s/s
-		double brakingDeceleration;
-		//message used to tell the car to start accelerating
-		cMessage *startAccelerationMsg;
-		//message used to tell the car to start braking
-		cMessage *startBrakingMsg;
-		//start accelerating time
-		SimTime startAccelerating;
-		//start braking time
-		SimTime startBraking;
-		//application layer, used to stop the simulation
-		BaseApp *appl;
+        //leader average speed
+        double leaderSpeed;
+        //acceleration in m/s/s
+        double acceleration;
+        //braking intensity in m/s/s
+        double brakingDeceleration;
+        //message used to tell the car to start accelerating
+        cMessage *startAccelerationMsg;
+        //message used to tell the car to start braking
+        cMessage *startBrakingMsg;
+        //start accelerating time
+        SimTime startAccelerating;
+        //start braking time
+        SimTime startBraking;
+        //application layer, used to stop the simulation
+        BaseApp *appl;
 
-	public:
-		AccelerateAndBrakeScenario() {
-			leaderSpeed = 0;
-			acceleration = 0;
-			brakingDeceleration = 0;
-			startAccelerationMsg = nullptr;
-			startBrakingMsg = nullptr;
-			startAccelerating = SimTime(0);
-			startBraking = SimTime(0);
-			appl = 0;
-		}
-		virtual ~AccelerateAndBrakeScenario();
+    public:
+        AccelerateAndBrakeScenario() {
+            leaderSpeed = 0;
+            acceleration = 0;
+            brakingDeceleration = 0;
+            startAccelerationMsg = nullptr;
+            startBrakingMsg = nullptr;
+            startAccelerating = SimTime(0);
+            startBraking = SimTime(0);
+            appl = 0;
+        }
+        virtual ~AccelerateAndBrakeScenario();
 
-	protected:
+    protected:
 
-		virtual void handleSelfMsg(cMessage *msg);
+        virtual void handleSelfMsg(cMessage *msg);
 
 };
 
