@@ -27,7 +27,7 @@ args <- commandArgs(trailingOnly = T)
 #4: output file prefix
 
 if (length(args) < 4) {
-	stop("generic-parse.R requires at least 4 parameters")
+    stop("generic-parse.R requires at least 4 parameters")
 }
 infile  <- args[1]
 mapfile <- args[2]
@@ -35,7 +35,7 @@ config  <- args[3]
 prefix  <- args[4]
 outtype <- "Rdata"
 if (length(args) == 5) {
-	outtype  <- args[5]
+    outtype  <- args[5]
 }
 
 outfile <- paste(dirname(infile), '/', prefix, '.', basename(infile), sep='')
@@ -45,7 +45,7 @@ outfile <- gsub(".vec", paste(".", outtype, sep=''), outfile)
 map <- parse.map(mapfile)
 #check whether required config exists
 if (is.null(map[[config]])) {
-	stop("required config", config, "does not exist in", mapfile)
+    stop("required config", config, "does not exist in", mapfile)
 }
 #get simulation parameters
 params <- get.params(infile, map[[config]]$fields)
@@ -65,9 +65,9 @@ gc()
 runData <- toclean
 
 if (outtype == "Rdata") {
-	save(runData, file=outfile)
+    save(runData, file=outfile)
 } else {
-	write.csv(runData, file=outfile, row.names=F)
+    write.csv(runData, file=outfile, row.names=F)
 }
 
 warnings()

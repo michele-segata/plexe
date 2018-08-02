@@ -21,18 +21,20 @@
 #include "veins/modules/application/platooning/scenarios/BaseScenario.h"
 #include "veins/modules/application/platooning/apps/BaseApp.h"
 
-class SimpleScenario : public BaseScenario
-{
-	public:
-		virtual void initialize(int stage);
-	protected:
-		//leader average speed
-		double leaderSpeed;
-		//application layer, used to stop the simulation
-		BaseApp *appl;
+class SimpleScenario : public BaseScenario {
+public:
+    virtual void initialize(int stage);
 
-	public:
-		SimpleScenario() : leaderSpeed(0), appl(nullptr) {};
+protected:
+    //leader average speed
+    double leaderSpeed;
+    //application layer, used to stop the simulation
+    BaseApp* appl;
+
+public:
+    SimpleScenario()
+        : leaderSpeed(0)
+        , appl(nullptr){};
 };
 
 #endif

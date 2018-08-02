@@ -20,12 +20,12 @@
 
 #include "veins/modules/application/platooning/apps/BaseApp.h"
 
-class SimplePlatooningApp : public BaseApp
-{
+class SimplePlatooningApp : public BaseApp {
 
-	public:
-		SimplePlatooningApp() {}
-
+public:
+    SimplePlatooningApp()
+    {
+    }
 };
 
 #endif /* SIMPLEPLATOONINGAPP_H_ */

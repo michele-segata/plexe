@@ -22,28 +22,25 @@
 
 #include "veins/modules/application/platooning/apps/BaseApp.h"
 
-class AutoLaneChangeScenario : public BaseScenario
-{
+class AutoLaneChangeScenario : public BaseScenario {
 
-	public:
+public:
+    virtual void initialize(int stage);
 
-		virtual void initialize(int stage);
+protected:
+    //leader average speed
+    double leaderSpeed;
+    //application layer, used to stop the simulation
+    BaseApp* appl;
+    //sumo vehicle type of plaotoning cars
+    std::string platooningVType;
 
-	protected:
-
-		//leader average speed
-		double leaderSpeed;
-		//application layer, used to stop the simulation
-		BaseApp *appl;
-		//sumo vehicle type of plaotoning cars
-		std::string platooningVType;
-
-	public:
-		AutoLaneChangeScenario() {
-			leaderSpeed = 0;
-			appl = 0;
-		}
-
+public:
+    AutoLaneChangeScenario()
+    {
+        leaderSpeed = 0;
+        appl = 0;
+    }
 };
 
 #endif

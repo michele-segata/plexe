@@ -19,22 +19,24 @@
 
 Define_Module(JoinPositionHelper);
 
-void JoinPositionHelper::initialize(int stage) {
+void JoinPositionHelper::initialize(int stage)
+{
 
-	BasePositionHelper::initialize(stage);
+    BasePositionHelper::initialize(stage);
 
-	if (stage == 0) {
-		myId = getIdFromExternalId(getExternalId());
-	}
-
+    if (stage == 0) {
+        myId = getIdFromExternalId(getExternalId());
+    }
 }
 
-bool JoinPositionHelper::isInSamePlatoon(const int vehicleId) const {
-	return true;
+bool JoinPositionHelper::isInSamePlatoon(const int vehicleId) const
+{
+    return true;
 }
 
-int JoinPositionHelper::getIdFromExternalId(const std::string externalId) {
-	int dotIndex = externalId.find_last_of('.');
-	std::string strId = externalId.substr(dotIndex + 1);
-	return strtol(strId.c_str(), 0, 10);
+int JoinPositionHelper::getIdFromExternalId(const std::string externalId)
+{
+    int dotIndex = externalId.find_last_of('.');
+    std::string strId = externalId.substr(dotIndex + 1);
+    return strtol(strId.c_str(), 0, 10);
 }

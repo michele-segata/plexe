@@ -9,8 +9,6 @@ doc/doxy
 doc/neddoc
 
 /run
-/debug
-/memcheck
 
 /out
 
@@ -32,6 +30,7 @@ subprojects/veins_catch/src/*.dylib
 subprojects/veins_catch/src/*.so
 subprojects/veins_catch/src/Makefile
 subprojects/veins_catch/src/veins_catch
+subprojects/veins_catch/src/veins_catch_dbg
 
 subprojects/veins_inet/src/Makefile
 subprojects/veins_inet/src/*.so
@@ -41,8 +40,6 @@ subprojects/veins_inet/src/**/*_m.h
 subprojects/veins_inet/src/**/*_m.cc
 subprojects/veins_inet/out
 subprojects/veins_inet/run
-subprojects/veins_inet/debug
-subprojects/veins_inet/memcheck
 subprojects/veins_inet/examples/**/results
 subprojects/veins_inet/examples/**/.tkenvrc
 subprojects/veins_inet/examples/**/.qtenvrc

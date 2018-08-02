@@ -18,6 +18,6 @@
 package org.car2x.veins.modules.mobility.traci;
 
 simple SumoTrafficManager like TraCIBaseTrafficManager {
-	parameters:
-	    @class(SumoTrafficManager);
+    parameters:
+        @class(SumoTrafficManager);
 }

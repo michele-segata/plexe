@@ -17,38 +17,39 @@
 
 #include "veins/modules/application/platooning/scenarios/AutoLaneChangeScenario.h"
 
+using namespace Veins;
+
 Define_Module(AutoLaneChangeScenario);
 
-void AutoLaneChangeScenario::initialize(int stage) {
+void AutoLaneChangeScenario::initialize(int stage)
+{
 
-	BaseScenario::initialize(stage);
+    BaseScenario::initialize(stage);
 
-	if (stage == 0)
-		//get pointer to application
-		appl = FindModule<BaseApp*>::findSubModule(getParentModule());
+    if (stage == 0)
+        //get pointer to application
+        appl = FindModule<BaseApp*>::findSubModule(getParentModule());
 
-	if (stage == 1) {
-		platooningVType = par("platooningVType").stdstringValue();
+    if (stage == 1) {
+        platooningVType = par("platooningVType").stdstringValue();
 
-		traciVehicle->setFixedLane(traciVehicle->getLaneIndex(), false);
-		traciVehicle->setSpeedMode(0);
-		if (positionHelper->isLeader()) {
-			for (int i = 1; i < positionHelper->getPlatoonSize(); i++) {
-				std::stringstream ss;
-				ss << platooningVType << "." << positionHelper->getMemberId(i);
-				traciVehicle->addPlatoonMember(ss.str(), i);
-			}
-			traciVehicle->enableAutoLaneChanging(true);
-			traciVehicle->setCruiseControlDesiredSpeed(mobility->getSpeed());
-		}
-		else {
-			std::stringstream ssl, ss;
-			ssl << platooningVType << "." << positionHelper->getLeaderId();
-			ss << platooningVType << "." << positionHelper->getFrontId();
-			traciVehicle->enableAutoFeed(true, ssl.str(), ss.str());
-			traciVehicle->setCruiseControlDesiredSpeed(mobility->getSpeed() + 10);
-		}
-
-	}
-
+        traciVehicle->setFixedLane(traciVehicle->getLaneIndex(), false);
+        traciVehicle->setSpeedMode(0);
+        if (positionHelper->isLeader()) {
+            for (int i = 1; i < positionHelper->getPlatoonSize(); i++) {
+                std::stringstream ss;
+                ss << platooningVType << "." << positionHelper->getMemberId(i);
+                traciVehicle->addPlatoonMember(ss.str(), i);
+            }
+            traciVehicle->enableAutoLaneChanging(true);
+            traciVehicle->setCruiseControlDesiredSpeed(mobility->getSpeed());
+        }
+        else {
+            std::stringstream ssl, ss;
+            ssl << platooningVType << "." << positionHelper->getLeaderId();
+            ss << platooningVType << "." << positionHelper->getFrontId();
+            traciVehicle->enableAutoFeed(true, ssl.str(), ss.str());
+            traciVehicle->setCruiseControlDesiredSpeed(mobility->getSpeed() + 10);
+        }
+    }
 }

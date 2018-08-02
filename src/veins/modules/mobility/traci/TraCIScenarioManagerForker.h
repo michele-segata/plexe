@@ -42,40 +42,37 @@
  *
  */
 namespace Veins {
-class TraCIScenarioManagerForker : public TraCIScenarioManager
-{
-	public:
+class TraCIScenarioManagerForker : public TraCIScenarioManager {
+public:
+    TraCIScenarioManagerForker();
+    virtual ~TraCIScenarioManagerForker();
+    virtual void initialize(int stage);
+    virtual void finish();
 
-		TraCIScenarioManagerForker();
-		virtual ~TraCIScenarioManagerForker();
-		virtual void initialize(int stage);
-		virtual void finish();
+    virtual bool isGuiSimulation() override;
 
-		virtual bool isGuiSimulation();
+protected:
+    bool useGui;
+    std::string sumoCommand; // command line to run sumo (no gui)
+    std::string sumoGuiCommand; // command line to run sumo (with gui)
+    std::string commandLine; /**< command line parameters for running TraCI server (substituting $configFile, $seed, $port) */
+    std::string configFile; /**< substitution for $configFile parameter */
+    int seed; /**< substitution for $seed parameter (-1: current run number) */
 
-	protected:
+    TraCILauncher* server;
 
-		bool useGui;
-		std::string sumoCommand; // command line to run sumo (no gui)
-		std::string sumoGuiCommand; // command line to run sumo (with gui)
-		std::string commandLine; /**< command line parameters for running TraCI server (substituting $configFile, $seed, $port) */
-		std::string configFile; /**< substitution for $configFile parameter */
-		int seed; /**< substitution for $seed parameter (-1: current run number) */
-
-		TraCILauncher* server;
-
-		virtual void startServer();
-		virtual void killServer();
+    virtual void startServer();
+    virtual void killServer();
 };
 }
 
 namespace Veins {
-class TraCIScenarioManagerForkerAccess
-{
-	public:
-		TraCIScenarioManagerForker* get() {
-			return FindModule<TraCIScenarioManagerForker*>::findGlobalModule();
-		};
+class TraCIScenarioManagerForkerAccess {
+public:
+    TraCIScenarioManagerForker* get()
+    {
+        return FindModule<TraCIScenarioManagerForker*>::findGlobalModule();
+    };
 };
 }
 

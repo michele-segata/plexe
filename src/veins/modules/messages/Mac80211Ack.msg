@@ -19,8 +19,11 @@
 //
 
 cplusplus {{
-	#include "veins/modules/messages/Mac80211Pkt_m.h"
+    #include "veins/modules/messages/Mac80211Pkt_m.h"
 }}
+
+namespace Veins;
+
 class Mac80211Pkt;
 
 packet Mac80211Ack extends Mac80211Pkt {

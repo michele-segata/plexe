@@ -20,40 +20,36 @@
 
 #include "veins/modules/application/platooning/scenarios/BaseScenario.h"
 
-class SinusoidalScenario : public BaseScenario
-{
+class SinusoidalScenario : public BaseScenario {
 
-	public:
+public:
+    virtual void initialize(int stage);
 
-		virtual void initialize(int stage);
+protected:
+    //frequency at which the leader speed is oscillating
+    double leaderOscillationFrequency;
+    //oscillation amplitude
+    double oscillationAmplitude;
+    //leader average speed
+    double leaderSpeed;
+    //message used to tell the leader to continuously change its desired speed
+    cMessage* changeSpeed;
+    //start oscillation time
+    SimTime startOscillating;
 
-	protected:
+public:
+    SinusoidalScenario()
+    {
+        leaderOscillationFrequency = 0;
+        oscillationAmplitude = 0;
+        leaderSpeed = 0;
+        changeSpeed = nullptr;
+        startOscillating = SimTime(0);
+    }
+    virtual ~SinusoidalScenario();
 
-		//frequency at which the leader speed is oscillating
-		double leaderOscillationFrequency;
-		//oscillation amplitude
-		double oscillationAmplitude;
-		//leader average speed
-		double leaderSpeed;
-		//message used to tell the leader to continuously change its desired speed
-		cMessage *changeSpeed;
-		//start oscillation time
-		SimTime startOscillating;
-
-	public:
-		SinusoidalScenario() {
-			leaderOscillationFrequency = 0;
-			oscillationAmplitude = 0;
-			leaderSpeed = 0;
-			changeSpeed = nullptr;
-			startOscillating = SimTime(0);
-		}
-		virtual ~SinusoidalScenario();
-
-	protected:
-
-		virtual void handleSelfMsg(cMessage *msg);
-
+protected:
+    virtual void handleSelfMsg(cMessage* msg);
 };
 
 #endif

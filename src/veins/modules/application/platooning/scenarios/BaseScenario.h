@@ -26,73 +26,69 @@
 
 #include "veins/modules/application/platooning/utilities/BasePositionHelper.h"
 
-class BaseScenario : public BaseApplLayer
-{
+class BaseScenario : public Veins::BaseApplLayer {
 
-	public:
+public:
+    virtual void initialize(int stage);
 
-		virtual void initialize(int stage);
+protected:
+    //traci interfaces
+    Veins::TraCIMobility* mobility;
+    Veins::TraCICommandInterface* traci;
+    Veins::TraCICommandInterface::Vehicle* traciVehicle;
 
-	protected:
+    //determines position and role of each vehicle
+    BasePositionHelper* positionHelper;
 
-		//traci interfaces
-		Veins::TraCIMobility* mobility;
-		Veins::TraCICommandInterface *traci;
-		Veins::TraCICommandInterface::Vehicle *traciVehicle;
+    //controller used by followers
+    enum Plexe::ACTIVE_CONTROLLER controller;
 
-		//determines position and role of each vehicle
-		BasePositionHelper *positionHelper;
+    //list of various controller parameters
+    //headway time to be used for the ACC
+    double accHeadway;
+    //headway time for ACC of leaders
+    double leaderHeadway;
+    //cacc and engine related parameters
+    double caccXi;
+    double caccOmegaN;
+    double caccC1;
+    double engineTau;
+    double uMin, uMax;
+    double ploegH;
+    double ploegKp;
+    double ploegKd;
+    double flatbedKa;
+    double flatbedKv;
+    double flatbedKp;
+    double flatbedH;
+    double flatbedD;
+    double myccKd, myccKs;
+    bool useControllerAcceleration;
+    bool usePrediction;
 
-		//controller used by followers
-		enum Plexe::ACTIVE_CONTROLLER controller;
+    //location of the file with vehicle parameters
+    std::string vehicleFile;
+    //enable/disable realistic engine model
+    bool useRealisticEngine;
+    //vehicle type for realistic engine model
+    std::string vehicleType;
 
-		//list of various controller parameters
-		//headway time to be used for the ACC
-		double accHeadway;
-		//headway time for ACC of leaders
-		double leaderHeadway;
-		//cacc and engine related parameters
-		double caccXi;
-		double caccOmegaN;
-		double caccC1;
-		double engineTau;
-		double uMin, uMax;
-		double ploegH;
-		double ploegKp;
-		double ploegKd;
-		double flatbedKa;
-		double flatbedKv;
-		double flatbedKp;
-		double flatbedH;
-		double flatbedD;
-		double myccKd, myccKs;
-		bool useControllerAcceleration;
-		bool usePrediction;
+    void initializeControllers();
 
-		//location of the file with vehicle parameters
-		std::string vehicleFile;
-		//enable/disable realistic engine model
-		bool useRealisticEngine;
-		//vehicle type for realistic engine model
-		std::string vehicleType;
+public:
+    BaseScenario()
+    {
+        mobility = 0;
+        traci = 0;
+        traciVehicle = 0;
+        positionHelper = 0;
+        useRealisticEngine = false;
+        useControllerAcceleration = true;
+        usePrediction = true;
+    }
 
-		void initializeControllers();
-
-	public:
-		BaseScenario() {
-			mobility = 0;
-			traci = 0;
-			traciVehicle = 0;
-			positionHelper = 0;
-			useRealisticEngine = false;
-			useControllerAcceleration = true;
-			usePrediction = true;
-		}
-
-	protected:
-
-		virtual void handleSelfMsg(cMessage *msg);
-
+protected:
+    virtual void handleSelfMsg(cMessage* msg);
 };
 
 #endif

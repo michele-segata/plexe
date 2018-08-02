@@ -1,5 +1,6 @@
 //
 // Copyright (c) 2012-2016 Michele Segata <segata@ccs-labs.org>
+// Copyright (c) 2018 Julian Heinovski <julian.heinovski@ccs-labs.org>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -15,21 +16,20 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
+cplusplus {{
+    /** message type for maneuver messages */
+    static const int MANEUVER_TYPE = 12347;
+}}
+
+// General message for an arbitrary maneuver to holds common information.
+// Only children of this message should be initialized.
 packet ManeuverMessage {
-	//id of the originator
-	int vehicleId;
-	//platoon id
-	int platoonId;
-	//message type
-	int messageType;
-	//platoon speed
-	double platoonSpeed;
-	//platoon lane
-	int platoonLane;
-	//id of vehicle in front of the joiner (G)
-	int frontVehicleId;
-	//id of the follower vehicle (F)
-	int followerVehicleId;
-	//platoon formation
-	int platoonFormation[];
+    // id of the originator of this message
+    int vehicleId;
+    // id of the platoon this message is about
+    int platoonId;
+    // id of the destination of this message
+    int destinationId;
+    // sumo external id of the sender
+    string externalId;
 }

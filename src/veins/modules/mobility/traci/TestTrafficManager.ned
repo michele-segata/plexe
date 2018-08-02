@@ -20,6 +20,6 @@ package org.car2x.veins.modules.mobility.traci;
 simple TestTrafficManager like TraCIBaseTrafficManager {
 
     parameters:
-		int nCars = default(8); //number of cars to inject
-		@class(TestTrafficManager);
+        int nCars = default(8); //number of cars to inject
+        @class(TestTrafficManager);
 }

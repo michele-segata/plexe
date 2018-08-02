@@ -19,49 +19,50 @@
 
 Define_Module(TestTrafficManager);
 
-void TestTrafficManager::initialize(int stage) {
+void TestTrafficManager::initialize(int stage)
+{
 
-	TraCIBaseTrafficManager::initialize(stage);
+    TraCIBaseTrafficManager::initialize(stage);
 
-	if (stage == 0) {
+    if (stage == 0) {
 
-		generateVehicle = new cMessage("generateVehicle");
+        generateVehicle = new cMessage("generateVehicle");
 
-		scheduleAt(simTime() + SimTime(0.1), generateVehicle);
-
-	}
-
+        scheduleAt(simTime() + SimTime(0.1), generateVehicle);
+    }
 }
 
-void TestTrafficManager::handleSelfMsg(cMessage *msg) {
+void TestTrafficManager::handleSelfMsg(cMessage* msg)
+{
 
-	TraCIBaseTrafficManager::handleSelfMsg(msg);
+    TraCIBaseTrafficManager::handleSelfMsg(msg);
 
-	if (msg == generateVehicle) {
-		insertNewVehicle();
-	}
-
+    if (msg == generateVehicle) {
+        insertNewVehicle();
+    }
 }
 
-void TestTrafficManager::insertNewVehicle() {
-	int vehTypeId = 0;
-	int routeId = 0;
-	int i;
-	struct Vehicle v;
-	v.id = vehTypeId;
-	v.lane = -1;
-	v.position = 0;
-	v.speed = -1;
-	//insert nCars of the same type and with the same route, for testing purposes
-	for (i = 0; i < par("nCars").longValue(); i++) {
-		addVehicleToQueue(routeId, v);
-	}
+void TestTrafficManager::insertNewVehicle()
+{
+    int vehTypeId = 0;
+    int routeId = 0;
+    int i;
+    struct Vehicle v;
+    v.id = vehTypeId;
+    v.lane = -1;
+    v.position = 0;
+    v.speed = -1;
+    //insert nCars of the same type and with the same route, for testing purposes
+    for (i = 0; i < par("nCars").longValue(); i++) {
+        addVehicleToQueue(routeId, v);
+    }
 }
 
-void TestTrafficManager::finish() {
-	TraCIBaseTrafficManager::finish();
-	if (generateVehicle) {
-		cancelAndDelete(generateVehicle);
-		generateVehicle = 0;
-	}
+void TestTrafficManager::finish()
+{
+    TraCIBaseTrafficManager::finish();
+    if (generateVehicle) {
+        cancelAndDelete(generateVehicle);
+        generateVehicle = 0;
+    }
 }

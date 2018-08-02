@@ -20,26 +20,23 @@
 
 #include "veins/modules/mobility/traci/TraCIBaseTrafficManager.h"
 
-class TestTrafficManager : public TraCIBaseTrafficManager
-{
+class TestTrafficManager : public TraCIBaseTrafficManager {
 
-	public:
+public:
+    virtual void initialize(int stage);
+    virtual void finish();
 
-		virtual void initialize(int stage);
-		virtual void finish();
+    TestTrafficManager()
+    {
+        generateVehicle = 0;
+    }
 
-		TestTrafficManager() {
-			generateVehicle = 0;
-		}
+protected:
+    cMessage* generateVehicle;
 
-	protected:
+    void insertNewVehicle();
 
-		cMessage *generateVehicle;
-
-		void insertNewVehicle();
-
-		virtual void handleSelfMsg(cMessage *msg);
-
+    virtual void handleSelfMsg(cMessage* msg);
 };
 
 #endif /* TESTTRAFFICMANAGER_H_ */
