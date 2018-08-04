@@ -11,7 +11,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-# Copyright (C) 2016 Michele Segata <segata@ccs-labs.org>
+# Copyright (C) 2016-2018 Michele Segata <segata@ccs-labs.org>
 
 # determine whether a string contains a parsable number
 is.number <- function(string) {
