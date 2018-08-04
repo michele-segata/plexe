@@ -13,7 +13,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # Copyright (C) 2016 Bastian Bloessl <bloessl@ccs-labs.org>
-# Copyright (C) 2016 Michele Segata <segata@ccs-labs.org>
+# Copyright (C) 2016-2018 Michele Segata <segata@ccs-labs.org>
 
 import sys
 import ConfigParser

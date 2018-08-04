@@ -19,7 +19,7 @@
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo.dlr.de/
 // Copyright (C) 2007-2017 DLR (http://www.dlr.de/) and contributors
-// Copyright (C) 2012-2016 Michele Segata (segata@ccs-labs.org)
+// Copyright (C) 2012-2018 Michele Segata (segata@ccs-labs.org)
 /****************************************************************************/
 //
 //   This file is part of SUMO.
