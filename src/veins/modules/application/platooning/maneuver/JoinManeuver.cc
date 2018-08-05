@@ -48,10 +48,10 @@ void JoinManeuver::onManeuverMessage(const ManeuverMessage* mm)
 
 JoinPlatoonRequest*
 JoinManeuver::createJoinPlatoonRequest(int vehicleId,
-                                       std::string externalId,
-                                       int platoonId, int destinationId,
-                                       int currentLaneIndex, double xPos,
-                                       double yPos)
+    std::string externalId,
+    int platoonId, int destinationId,
+    int currentLaneIndex, double xPos,
+    double yPos)
 {
     JoinPlatoonRequest* msg = new JoinPlatoonRequest("JoinPlatoonRequest");
     app->fillManeuverMessage(msg, vehicleId, externalId, platoonId, destinationId);
@@ -63,9 +63,9 @@ JoinManeuver::createJoinPlatoonRequest(int vehicleId,
 
 JoinPlatoonResponse*
 JoinManeuver::createJoinPlatoonResponse(int vehicleId,
-                                        std::string externalId,
-                                        int platoonId, int destinationId,
-                                        bool permitted)
+    std::string externalId,
+    int platoonId, int destinationId,
+    bool permitted)
 {
     JoinPlatoonResponse* msg = new JoinPlatoonResponse("JoinPlatoonResponse");
     app->fillManeuverMessage(msg, vehicleId, externalId, platoonId, destinationId);
@@ -75,8 +75,8 @@ JoinManeuver::createJoinPlatoonResponse(int vehicleId,
 
 MoveToPosition*
 JoinManeuver::createMoveToPosition(int vehicleId, std::string externalId, int platoonId,
-                                   int destinationId, double platoonSpeed, int platoonLane,
-                                   const std::vector<int>& newPlatoonFormation)
+    int destinationId, double platoonSpeed, int platoonLane,
+    const std::vector<int>& newPlatoonFormation)
 {
     MoveToPosition* msg = new MoveToPosition("MoveToPosition");
     app->fillManeuverMessage(msg, vehicleId, externalId, platoonId, destinationId);
@@ -91,8 +91,8 @@ JoinManeuver::createMoveToPosition(int vehicleId, std::string externalId, int pl
 
 MoveToPositionAck*
 JoinManeuver::createMoveToPositionAck(int vehicleId, std::string externalId, int platoonId,
-                                      int destinationId, double platoonSpeed, int platoonLane,
-                                      const std::vector<int>& newPlatoonFormation)
+    int destinationId, double platoonSpeed, int platoonLane,
+    const std::vector<int>& newPlatoonFormation)
 {
     MoveToPositionAck* msg = new MoveToPositionAck("MoveToPositionAck");
     app->fillManeuverMessage(msg, vehicleId, externalId, platoonId, destinationId);
@@ -107,8 +107,8 @@ JoinManeuver::createMoveToPositionAck(int vehicleId, std::string externalId, int
 
 JoinFormation*
 JoinManeuver::createJoinFormation(int vehicleId, std::string externalId, int platoonId,
-                                  int destinationId, double platoonSpeed, int platoonLane,
-                                  const std::vector<int>& newPlatoonFormation)
+    int destinationId, double platoonSpeed, int platoonLane,
+    const std::vector<int>& newPlatoonFormation)
 {
     JoinFormation* msg = new JoinFormation("JoinFormation");
     app->fillManeuverMessage(msg, vehicleId, externalId, platoonId, destinationId);
@@ -123,8 +123,8 @@ JoinManeuver::createJoinFormation(int vehicleId, std::string externalId, int pla
 
 JoinFormationAck*
 JoinManeuver::createJoinFormationAck(int vehicleId, std::string externalId, int platoonId,
-                                     int destinationId, double platoonSpeed, int platoonLane,
-                                     const std::vector<int>& newPlatoonFormation)
+    int destinationId, double platoonSpeed, int platoonLane,
+    const std::vector<int>& newPlatoonFormation)
 {
     JoinFormationAck* msg = new JoinFormationAck("JoinFormationAck");
     app->fillManeuverMessage(msg, vehicleId, externalId, platoonId, destinationId);

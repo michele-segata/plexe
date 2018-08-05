@@ -58,10 +58,10 @@ protected:
      */
     JoinPlatoonRequest*
     createJoinPlatoonRequest(int vehicleId,
-                             std::string externalId,
-                             int platoonId, int destinationId,
-                             int currentLaneIndex, double xPos,
-                             double yPos);
+        std::string externalId,
+        int platoonId, int destinationId,
+        int currentLaneIndex, double xPos,
+        double yPos);
 
     /**
      * Creates a JoinPlatoonResponse message
@@ -73,9 +73,9 @@ protected:
      */
     JoinPlatoonResponse*
     createJoinPlatoonResponse(int vehicleId,
-                              std::string externalId,
-                              int platoonId, int destinationId,
-                              bool permitted);
+        std::string externalId,
+        int platoonId, int destinationId,
+        bool permitted);
 
     /**
      * Creates a MoveToPosition message
@@ -90,8 +90,8 @@ protected:
      */
     MoveToPosition*
     createMoveToPosition(int vehicleId, std::string externalId, int platoonId,
-                         int destinationId, double platoonSpeed, int platoonLane,
-                         const std::vector<int>& newPlatoonFormation);
+        int destinationId, double platoonSpeed, int platoonLane,
+        const std::vector<int>& newPlatoonFormation);
 
     /**
      * Creates a MoveToPositionAck message
@@ -106,8 +106,8 @@ protected:
      */
     MoveToPositionAck*
     createMoveToPositionAck(int vehicleId, std::string externalId, int platoonId,
-                            int destinationId, double platoonSpeed, int platoonLane,
-                            const std::vector<int>& newPlatoonFormation);
+        int destinationId, double platoonSpeed, int platoonLane,
+        const std::vector<int>& newPlatoonFormation);
 
     /**
      * Creates a JoinFormation message
@@ -122,8 +122,8 @@ protected:
      */
     JoinFormation*
     createJoinFormation(int vehicleId, std::string externalId, int platoonId,
-                        int destinationId, double platoonSpeed, int platoonLane,
-                        const std::vector<int>& newPlatoonFormation);
+        int destinationId, double platoonSpeed, int platoonLane,
+        const std::vector<int>& newPlatoonFormation);
 
     /**
      * Creates a JoinFormationAck message
@@ -138,8 +138,8 @@ protected:
      */
     JoinFormationAck*
     createJoinFormationAck(int vehicleId, std::string externalId, int platoonId,
-                           int destinationId, double platoonSpeed, int platoonLane,
-                           const std::vector<int>& newPlatoonFormation);
+        int destinationId, double platoonSpeed, int platoonLane,
+        const std::vector<int>& newPlatoonFormation);
 
     /**
      * Handles a JoinPlatoonRequest in the context of this application

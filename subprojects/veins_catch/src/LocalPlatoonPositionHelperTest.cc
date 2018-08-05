@@ -3,7 +3,7 @@
 #include "veins/modules/application/platooning/utilities/LocalPlatoonPositionHelper.h"
 
 SCENARIO("Tests the LocalPlatoonPositionHelper",
-         "[LocalPlatoonPositionHelper]")
+    "[LocalPlatoonPositionHelper]")
 {
 
     GIVEN("An uninitialized LocalPlatoonPositionHelper")

@@ -690,7 +690,7 @@ void TraCICommandInterface::Vehicle::setLaneChangeMode(int mode)
 void TraCICommandInterface::Vehicle::getLaneChangeState(int direction, int& state1, int& state2)
 {
     TraCIBuffer response = traci->connection.query(CMD_GET_VEHICLE_VARIABLE,
-                                                   TraCIBuffer() << static_cast<uint8_t>(CMD_CHANGELANE) << nodeId << static_cast<uint8_t>(TYPE_INTEGER) << direction);
+        TraCIBuffer() << static_cast<uint8_t>(CMD_CHANGELANE) << nodeId << static_cast<uint8_t>(TYPE_INTEGER) << direction);
     uint8_t cmdLength;
     response >> cmdLength;
     uint8_t responseId;
@@ -745,7 +745,7 @@ void TraCICommandInterface::Vehicle::setParameter(const std::string& parameter, 
     std::stringstream par;
     par << "carFollowModel." << parameter;
     TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE,
-                                              TraCIBuffer() << static_cast<uint8_t>(VAR_PARAMETER) << nodeId << static_cast<uint8_t>(TYPE_COMPOUND) << nParameters << static_cast<uint8_t>(TYPE_STRING) << par.str() << static_cast<uint8_t>(TYPE_STRING) << value);
+        TraCIBuffer() << static_cast<uint8_t>(VAR_PARAMETER) << nodeId << static_cast<uint8_t>(TYPE_COMPOUND) << nParameters << static_cast<uint8_t>(TYPE_STRING) << par.str() << static_cast<uint8_t>(TYPE_STRING) << value);
     ASSERT(buf.eof());
 }
 
@@ -769,7 +769,7 @@ void TraCICommandInterface::Vehicle::getParameter(const std::string& parameter, 
     std::stringstream par;
     par << "carFollowModel." << parameter;
     TraCIBuffer response = traci->connection.query(CMD_GET_VEHICLE_VARIABLE,
-                                                   TraCIBuffer() << static_cast<uint8_t>(VAR_PARAMETER) << nodeId << static_cast<uint8_t>(TYPE_STRING) << par.str());
+        TraCIBuffer() << static_cast<uint8_t>(VAR_PARAMETER) << nodeId << static_cast<uint8_t>(TYPE_STRING) << par.str());
     uint8_t cmdLength;
     response >> cmdLength;
     uint8_t responseId;
@@ -1330,7 +1330,7 @@ void TraCICommandInterface::Vehicle::setLeaderFakeData(double leaderSpeed, doubl
 }
 
 void TraCICommandInterface::Vehicle::setFrontVehicleFakeData(double controllerAcceleration, double acceleration,
-                                                             double speed, double distance)
+    double speed, double distance)
 {
     ParBuffer buf;
     buf << speed << acceleration << distance << controllerAcceleration;

@@ -315,7 +315,7 @@ void BaseProtocol::messageReceived(PlatooningBeacon* pkt, UnicastMessage* unicas
 }
 
 void BaseProtocol::registerApplication(int applicationId, InputGate* appInputGate, OutputGate* appOutputGate,
-                                       ControlInputGate* appControlInputGate, ControlOutputGate* appControlOutputGate)
+    ControlInputGate* appControlInputGate, ControlOutputGate* appControlOutputGate)
 {
     if (usedGates == MAX_GATES_COUNT)
         throw cRuntimeError("BaseProtocol: application with id=%d tried to register, but no space left", applicationId);

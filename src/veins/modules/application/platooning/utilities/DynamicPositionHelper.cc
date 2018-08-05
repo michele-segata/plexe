@@ -100,7 +100,7 @@ const std::vector<int>& DynamicPositionHelper::getPlatoonFormation() const
     // since the map<pos, id> is sorted by default by its key (i.e. pos)
     formationCache.resize(m.size());
     std::transform(m.begin(), m.end(), formationCache.begin(),
-                   [](const decltype(m)::value_type& p) { return p.second; });
+        [](const decltype(m)::value_type& p) { return p.second; });
     return formationCache;
 }
 

@@ -193,7 +193,7 @@ public:
 
     //register a higher level application by its id
     void registerApplication(int applicationId, InputGate* appInputGate, OutputGate* appOutputGate,
-                             ControlInputGate* appControlInputGate, ControlOutputGate* appControlOutputGate);
+        ControlInputGate* appControlInputGate, ControlOutputGate* appControlOutputGate);
 };
 
 #endif /* BASEPROTOCOL_H_ */
