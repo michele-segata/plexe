@@ -199,7 +199,7 @@ public:
     virtual bool isInSamePlatoon(int vehicleId) const override
     {
         return (std::find(formation.begin(), formation.end(), vehicleId) !=
-                formation.end());
+            formation.end());
     }
 
     /**
@@ -332,7 +332,7 @@ public:
 
     /** Override from BasePositionHelper */
     virtual void setIsInSamePlatoon(int vehicleId,
-                                    bool inSamePlatoon) override
+        bool inSamePlatoon) override
     {
         throw cRuntimeError("Not implemented");
     }

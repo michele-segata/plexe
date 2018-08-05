@@ -45,13 +45,13 @@ enum PLATOONING_LANE_CHANGE_ACTION {
  * leave the control to the mobility model which reproduces a human driver
  */
 enum ACTIVE_CONTROLLER { DRIVER = 0,
-                         ACC = 1,
-                         CACC = 2,
-                         FAKED_CACC = 3,
-                         PLOEG = 4,
-                         CONSENSUS = 5,
-                         FLATBED = 6,
-                         MYCC = 7 };
+    ACC = 1,
+    CACC = 2,
+    FAKED_CACC = 3,
+    PLOEG = 4,
+    CONSENSUS = 5,
+    FLATBED = 6,
+    MYCC = 7 };
 
 /**
  * @brief struct used as header for generic data passing to this model through

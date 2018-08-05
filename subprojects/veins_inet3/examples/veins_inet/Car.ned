@@ -18,20 +18,24 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
+package org.car2x.veins.subprojects.veins_inet.example;
+
+import inet.networklayer.configurator.ipv4.HostAutoConfigurator;
+import inet.node.inet.WirelessHost;
+
 //
-// Veins Mobility module for the INET Framework
-// Based on inet::MovingMobilityBase of INET Framework v4.0.0
+// Wireless-enabled Host
 //
-
-package org.car2x.veins.subprojects.veins_inet;
-
-import inet.mobility.base.MobilityBase;
-
-simple VeinsInetMobility extends MobilityBase
+module Car extends WirelessHost
 {
     parameters:
-        @class(Veins::VeinsInetMobility);
-        @display("i=block/cogwheel");
-        @signal[mobilityStateChanged](type=inet::MobilityBase);
-        bool initFromDisplayString = default(true); // do not change this to false
+        @display("i=device/cellphone");
+        networkLayer.configurator.networkConfiguratorModule = "";
+
+    submodules:
+        ac_wlan: HostAutoConfigurator {
+            @display("p=171,335");
+        }
+
 }
+

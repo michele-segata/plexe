@@ -154,8 +154,8 @@ public:
      * @param int destinationId the id of the destination
      */
     void fillManeuverMessage(ManeuverMessage* msg, int vehicleId,
-                             std::string externalId, int platoonId,
-                             int destinationId);
+        std::string externalId, int platoonId,
+        int destinationId);
 
     /**
      * Creates a UpdatePlatoonFormation message
@@ -169,9 +169,9 @@ public:
      */
     UpdatePlatoonFormation*
     createUpdatePlatoonFormation(int vehicleId, std::string externalId,
-                                 int platoonId, int destinationId,
-                                 double platoonSpeed, int platoonLane,
-                                 const std::vector<int>& platoonFormation);
+        int platoonId, int destinationId,
+        double platoonSpeed, int platoonLane,
+        const std::vector<int>& platoonFormation);
 
     /**
      * Handles a UpdatePlatoonFormation in the context of this

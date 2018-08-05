@@ -148,12 +148,12 @@ void BaseApp::onPlatoonBeacon(const PlatooningBeacon* pb)
         //if the message comes from the leader
         if (pb->getVehicleId() == positionHelper->getLeaderId()) {
             traciVehicle->setLeaderVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(),
-                                               pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
+                pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
         }
         //if the message comes from the vehicle in front
         if (pb->getVehicleId() == positionHelper->getFrontId()) {
             traciVehicle->setFrontVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(),
-                                              pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
+                pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
         }
         //send data about every vehicle to the CACC. this is needed by the consensus controller
         struct Plexe::VEHICLE_DATA vehicleData;
