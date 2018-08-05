@@ -18,20 +18,16 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-//
-// Veins Mobility module for the INET Framework
-// Based on inet::MovingMobilityBase of INET Framework v4.0.0
-//
+package org.car2x.veins.subprojects.veins_inet.example;
 
-package org.car2x.veins.subprojects.veins_inet;
+import inet.physicallayer.ieee80211.packetlevel.Ieee80211ScalarRadioMedium;
+import inet.visualizer.integrated.IntegratedCanvasVisualizer;
+import org.car2x.veins.subprojects.veins_inet.VeinsInetManager;
 
-import inet.mobility.base.MobilityBase;
-
-simple VeinsInetMobility extends MobilityBase
+network Scenario
 {
-    parameters:
-        @class(Veins::VeinsInetMobility);
-        @display("i=block/cogwheel");
-        @signal[mobilityStateChanged](type=inet::MobilityBase);
-        bool initFromDisplayString = default(true); // do not change this to false
+    submodules:
+        radioMedium: Ieee80211ScalarRadioMedium;
+        manager: VeinsInetManager;
+        node[0]: Car;
 }
