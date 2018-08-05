@@ -22,40 +22,36 @@
 
 #include "veins/modules/application/platooning/apps/BaseApp.h"
 
-class BrakingScenario : public BaseScenario
-{
+class BrakingScenario : public BaseScenario {
 
-    public:
+public:
+    virtual void initialize(int stage);
 
-        virtual void initialize(int stage);
+protected:
+    //leader average speed
+    double leaderSpeed;
+    //braking intensity in m/s/s
+    double brakingDeceleration;
+    //message used to tell the leader to start braking
+    cMessage* changeSpeed;
+    //start braking time
+    SimTime startBraking;
+    //application layer, used to stop the simulation
+    BaseApp* appl;
 
-    protected:
+public:
+    BrakingScenario()
+    {
+        leaderSpeed = 0;
+        brakingDeceleration = 0;
+        changeSpeed = nullptr;
+        startBraking = SimTime(0);
+        appl = 0;
+    }
+    virtual ~BrakingScenario();
 
-        //leader average speed
-        double leaderSpeed;
-        //braking intensity in m/s/s
-        double brakingDeceleration;
-        //message used to tell the leader to start braking
-        cMessage *changeSpeed;
-        //start braking time
-        SimTime startBraking;
-        //application layer, used to stop the simulation
-        BaseApp *appl;
-
-    public:
-        BrakingScenario() {
-            leaderSpeed = 0;
-            brakingDeceleration = 0;
-            changeSpeed = nullptr;
-            startBraking = SimTime(0);
-            appl = 0;
-        }
-        virtual ~BrakingScenario();
-
-    protected:
-
-        virtual void handleSelfMsg(cMessage *msg);
-
+protected:
+    virtual void handleSelfMsg(cMessage* msg);
 };
 
 #endif

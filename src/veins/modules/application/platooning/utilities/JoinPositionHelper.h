@@ -20,22 +20,20 @@
 
 #include "veins/modules/application/platooning/utilities/BasePositionHelper.h"
 
-class JoinPositionHelper : public BasePositionHelper
-{
+class JoinPositionHelper : public BasePositionHelper {
 
-    public:
+public:
+    virtual void initialize(int stage) override;
 
-        virtual void initialize(int stage) override;
+    virtual bool isInSamePlatoon(const int vehicleId) const override;
 
-        virtual bool isInSamePlatoon(const int vehicleId) const override;
+public:
+    static int getIdFromExternalId(const std::string externalId);
 
-    public:
-
-        static int getIdFromExternalId(const std::string externalId);
-
-        JoinPositionHelper() : BasePositionHelper() {
-        }
-
+    JoinPositionHelper()
+        : BasePositionHelper()
+    {
+    }
 };
 
 #endif

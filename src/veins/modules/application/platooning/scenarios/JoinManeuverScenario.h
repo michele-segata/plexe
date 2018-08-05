@@ -23,41 +23,36 @@
 
 #include "veins/modules/application/platooning/messages/ManeuverMessage_m.h"
 
-class JoinManeuverScenario : public BaseScenario
-{
+class JoinManeuverScenario : public BaseScenario {
 
-    protected:
+protected:
+    //message used to start the maneuver
+    cMessage* startManeuver;
+    //pointer to protocol
+    GeneralPlatooningApp* app;
 
-        //message used to start the maneuver
-        cMessage *startManeuver;
-        //pointer to protocol
-        GeneralPlatooningApp *app;
+public:
+    static const int MANEUVER_TYPE = 12347;
 
-    public:
+    virtual void initialize(int stage) override;
 
-        static const int MANEUVER_TYPE = 12347;
+protected:
+    void sendUnicast(cPacket* msg, int destination);
 
-        virtual void initialize(int stage) override;
+private:
+public:
+    JoinManeuverScenario()
+    {
+        startManeuver = nullptr;
+        app = nullptr;
+    }
+    virtual ~JoinManeuverScenario();
 
-    protected:
-        void sendUnicast(cPacket *msg, int destination);
+protected:
+    virtual void handleSelfMsg(cMessage* msg) override;
 
-    private:
-
-    public:
-        JoinManeuverScenario()    {
-            startManeuver = nullptr;
-            app = nullptr;
-        }
-        virtual ~JoinManeuverScenario();
-
-    protected:
-
-        virtual void handleSelfMsg(cMessage *msg) override;
-
-        void prepareManeuverCars(int platoonLane);
-        void setupFormation();
-
+    void prepareManeuverCars(int platoonLane);
+    void setupFormation();
 };
 
 #endif

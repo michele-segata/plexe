@@ -71,7 +71,6 @@
 // command: close sumo
 #define CMD_CLOSE 0x7F
 
-
 // command: subscribe induction loop (e1) context
 #define CMD_SUBSCRIBE_INDUCTIONLOOP_CONTEXT 0x80
 // response: subscribe induction loop (e1) context
@@ -84,7 +83,6 @@
 #define CMD_SUBSCRIBE_INDUCTIONLOOP_VARIABLE 0xd0
 // response: subscribe induction loop (e1) variable
 #define RESPONSE_SUBSCRIBE_INDUCTIONLOOP_VARIABLE 0xe0
-
 
 // command: subscribe areal detector (e2) context
 #define CMD_SUBSCRIBE_AREAL_DETECTOR_CONTEXT 0x8D
@@ -99,7 +97,6 @@
 // response: subscribe areal detector (e2) variable
 #define RESPONSE_SUBSCRIBE_AREAL_DETECTOR_VARIABLE 0x9F
 
-
 // command: subscribe areal detector (e3) context
 #define CMD_SUBSCRIBE_MULTI_ENTRY_EXIT_DETECTOR_CONTEXT 0x81
 // response: subscribe areal detector (e3) context
@@ -112,7 +109,6 @@
 #define CMD_SUBSCRIBE_MULTI_ENTRY_EXIT_DETECTOR_VARIABLE 0xd1
 // response: subscribe areal detector (e3) variable
 #define RESPONSE_SUBSCRIBE_MULTI_ENTRY_EXIT_DETECTOR_VARIABLE 0xe1
-
 
 // command: subscribe traffic lights context
 #define CMD_SUBSCRIBE_TL_CONTEXT 0x82
@@ -307,7 +303,6 @@
 // response: subscribe person variable
 #define RESPONSE_SUBSCRIBE_PERSON_VARIABLE 0xee
 
-
 // ****************************************
 // POSITION REPRESENTATIONS
 // ****************************************
@@ -321,7 +316,6 @@
 #define POSITION_3D 0x03
 // Position on road map
 #define POSITION_ROADMAP 0x04
-
 
 // ****************************************
 // DATA TYPES
@@ -351,7 +345,6 @@
 // color (four ubytes)
 #define TYPE_COLOR 0x11
 
-
 // ****************************************
 // RESULT TYPES
 // ****************************************
@@ -367,7 +360,6 @@
 // return value for invalid queries (especially vehicle is not on the road)
 #define INVALID_INT_VALUE -1
 
-
 // ****************************************
 // TRAFFIC LIGHT PHASES
 // ****************************************
@@ -382,7 +374,6 @@
 // tl is off and not blinking
 #define TLPHASE_NOSIGNAL 0x05
 
-
 // ****************************************
 // DIFFERENT DISTANCE REQUESTS
 // ****************************************
@@ -390,7 +381,6 @@
 #define REQUEST_AIRDIST 0x00
 // driving distance
 #define REQUEST_DRIVINGDIST 0x01
-
 
 // ****************************************
 // VEHICLE REMOVAL REASONS
@@ -497,7 +487,6 @@
 // last step person list (get: edges)
 #define LAST_STEP_PERSON_ID_LIST 0x1a
 
-
 // traffic light states, encoded as rRgGyYoO tuple (get: traffic lights)
 #define TL_RED_YELLOW_GREEN_STATE 0x20
 
@@ -536,7 +525,6 @@
 
 // current state, using external signal names (get: traffic lights)
 #define TL_EXTERNAL_STATE 0x2e
-
 
 // outgoing link number (get: lanes)
 #define LANE_LINK_NUMBER 0x30
@@ -654,7 +642,6 @@
 
 // speed deviation (set: vehicle)
 #define VAR_SPEED_DEVIATION 0x5f
-
 
 // speed without TraCI influence (get: vehicle)
 #define VAR_SPEED_WITHOUT_TRACI 0xb1
@@ -828,7 +815,6 @@
 
 // sets/retrieves abstract parameter
 #define VAR_PARAMETER 0x7e
-
 
 // add an instance (poi, polygon, vehicle, person, route)
 #define ADD 0x80

@@ -59,10 +59,14 @@ protected:
 
 public:
     /** c'tor of LocalPlatoonPositionHelper */
-    LocalPlatoonPositionHelper() {}
+    LocalPlatoonPositionHelper()
+    {
+    }
 
     /** d'tor of LocalPositionHelper */
-    virtual ~LocalPlatoonPositionHelper() {}
+    virtual ~LocalPlatoonPositionHelper()
+    {
+    }
 
     /** Override from BasePositionHelper */
     virtual void initialize(int stage) override;
@@ -72,14 +76,18 @@ public:
      *
      * @return the id of this vehicle
      */
-    virtual int getId() const override { return myId; }
+    virtual int getId() const override
+    {
+        return myId;
+    }
 
     /**
      * Set the id of this vehicle
      *
      * @param id the new id for this vehicle
      */
-    virtual void setId(int id) override {
+    virtual void setId(int id) override
+    {
         myId = id;
     }
 
@@ -88,24 +96,32 @@ public:
      *
      * @return the id of this vehicle's platoon
      */
-    virtual int getPlatoonId() const override { return platoonId; }
+    virtual int getPlatoonId() const override
+    {
+        return platoonId;
+    }
 
     /**
      * Set the id of the platoon
      *
      * @param id the id for this vehicle's platoon
      */
-    virtual void setPlatoonId(int id) override { platoonId = id; }
+    virtual void setPlatoonId(int id) override
+    {
+        platoonId = id;
+    }
 
     /**
      * Return the id of the leader of the own platoon
      *
      * @return the id of this vehicle's platoon's leader
      */
-    virtual int getLeaderId() const override {
+    virtual int getLeaderId() const override
+    {
         if (getPlatoonSize() > 0) {
             return formation.at(0);
-        } else {
+        }
+        else {
             return INVALID_VEHICLE_ID;
         }
     }
@@ -115,7 +131,8 @@ public:
      *
      * @return true, if this vehicle if the leader, else false
      */
-    virtual bool isLeader() const override {
+    virtual bool isLeader() const override
+    {
         return (getId() != INVALID_VEHICLE_ID && getLeaderId() == getId());
     }
 
@@ -124,14 +141,18 @@ public:
      *
      * @return the id of the front vehicle
      */
-    virtual int getFrontId() const override {
+    virtual int getFrontId() const override
+    {
         if (isLeader()) {
             return INVALID_VEHICLE_ID;
-        } else if (getPlatoonSize() < 1) {
+        }
+        else if (getPlatoonSize() < 1) {
             return INVALID_VEHICLE_ID;
-        } else if (getPosition() == INVALID_POSITION) {
+        }
+        else if (getPosition() == INVALID_POSITION) {
             return INVALID_VEHICLE_ID;
-        } else {
+        }
+        else {
             return formation.at(getPosition() - 1);
         }
     }
@@ -141,14 +162,18 @@ public:
      *
      * @return the if of the vehicle in the back
      */
-    virtual int getBackId() const override {
+    virtual int getBackId() const override
+    {
         if (getId() == getLastVehicleId()) {
             return INVALID_VEHICLE_ID;
-        } else if (getPlatoonSize() == 0) {
+        }
+        else if (getPlatoonSize() == 0) {
             return INVALID_VEHICLE_ID;
-        } else if (getPosition() == INVALID_POSITION) {
+        }
+        else if (getPosition() == INVALID_POSITION) {
             return INVALID_VEHICLE_ID;
-        } else {
+        }
+        else {
             return formation.at(getPosition() + 1);
         }
     }
@@ -158,7 +183,8 @@ public:
      *
      * @return the index of this vehicle in the platoon formation
      */
-    virtual int getPosition() const override {
+    virtual int getPosition() const override
+    {
         return getMemberPosition(getId());
     }
 
@@ -170,7 +196,8 @@ public:
      * @param vehicleId the id of the vehicle to check
      * @return true, if the given vehicle is in the same platoon, else false
      */
-    virtual bool isInSamePlatoon(int vehicleId) const override {
+    virtual bool isInSamePlatoon(int vehicleId) const override
+    {
         return (std::find(formation.begin(), formation.end(), vehicleId) !=
                 formation.end());
     }
@@ -180,14 +207,18 @@ public:
      *
      * @return the size
      */
-    virtual int getPlatoonSize() const override { return formation.size(); }
+    virtual int getPlatoonSize() const override
+    {
+        return formation.size();
+    }
 
     /**
      * Return the platoon formation
      *
      * @return the platoon formation
      */
-    virtual const std::vector<int> &getPlatoonFormation() const override {
+    virtual const std::vector<int>& getPlatoonFormation() const override
+    {
         return formation;
     }
 
@@ -196,7 +227,8 @@ public:
      *
      * @param f the new platoon formation
      */
-    virtual void setPlatoonFormation(const std::vector<int> &f) override {
+    virtual void setPlatoonFormation(const std::vector<int>& f) override
+    {
         formation = f;
     }
 
@@ -205,10 +237,12 @@ public:
      *
      * @return the id of the last vehicle
      */
-    virtual int getLastVehicleId() const {
+    virtual int getLastVehicleId() const
+    {
         if (getPlatoonSize() > 0) {
             return formation.at(getPlatoonSize() - 1);
-        } else {
+        }
+        else {
             return INVALID_VEHICLE_ID;
         }
     }
@@ -219,10 +253,12 @@ public:
      * @param position the position of the member vehicle
      * @return the id of the member vehicle
      */
-    virtual int getMemberId(int position) const override {
+    virtual int getMemberId(int position) const override
+    {
         if (getPlatoonSize() < position) {
             return INVALID_VEHICLE_ID;
-        } else {
+        }
+        else {
             return formation.at(position);
         }
     }
@@ -234,59 +270,70 @@ public:
      * @param int vehicleId the id of the member vehicle
      * @return the position of the member vehicle
      */
-    virtual int getMemberPosition(int vehicleId) const override {
+    virtual int getMemberPosition(int vehicleId) const override
+    {
         const auto it =
-                std::find(formation.begin(), formation.end(), vehicleId);
+            std::find(formation.begin(), formation.end(), vehicleId);
         if (it != formation.end()) {
             return std::distance(formation.begin(), it);
-        } else {
+        }
+        else {
             return INVALID_POSITION;
         }
     }
 
     /** Override from BasePositionHelper */
-    virtual void setLeaderId(int id) override {
+    virtual void setLeaderId(int id) override
+    {
         throw cRuntimeError("Not implemented");
     }
 
     /** Override from BasePositionHelper */
-    virtual void setFrontId(int id) override {
+    virtual void setFrontId(int id) override
+    {
         throw cRuntimeError("Not implemented");
     }
 
     /** Override from BasePositionHelper */
-    virtual void setBackId(int id) override {
+    virtual void setBackId(int id) override
+    {
         throw cRuntimeError("Not implemented");
     }
 
     /** Override from BasePositionHelper */
-    virtual void setPosition(int position) override {
+    virtual void setPosition(int position) override
+    {
         throw cRuntimeError("Not implemented");
     }
 
     /** Override from BasePositionHelper */
-    virtual void setMemberId(int position, int vehicleId) override {
+    virtual void setMemberId(int position, int vehicleId) override
+    {
         throw cRuntimeError("Not implemented");
     }
 
     /** Override from BasePositionHelper */
-    virtual void setMemberPosition(int vehicleId, int position) override {
+    virtual void setMemberPosition(int vehicleId, int position) override
+    {
         throw cRuntimeError("Not implemented");
     }
 
     /** Override from BasePositionHelper */
-    virtual int getHighestId() const override {
+    virtual int getHighestId() const override
+    {
         throw cRuntimeError("Not implemented");
     }
 
     /** Override from BasePositionHelper */
-    virtual void setHighestId(int id) override {
+    virtual void setHighestId(int id) override
+    {
         throw cRuntimeError("Not implemented");
     }
 
     /** Override from BasePositionHelper */
     virtual void setIsInSamePlatoon(int vehicleId,
-            bool inSamePlatoon) override {
+                                    bool inSamePlatoon) override
+    {
         throw cRuntimeError("Not implemented");
     }
 };

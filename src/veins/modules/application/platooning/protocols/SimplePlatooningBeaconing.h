@@ -20,18 +20,16 @@
 
 #include "BaseProtocol.h"
 
-class SimplePlatooningBeaconing : public BaseProtocol
-{
-    protected:
+class SimplePlatooningBeaconing : public BaseProtocol {
+protected:
+    virtual void handleSelfMsg(cMessage* msg);
+    virtual void messageReceived(PlatooningBeacon* pkt, UnicastMessage* unicast);
 
-        virtual void handleSelfMsg(cMessage *msg);
-        virtual void messageReceived(PlatooningBeacon *pkt, UnicastMessage *unicast);
+public:
+    SimplePlatooningBeaconing();
+    virtual ~SimplePlatooningBeaconing();
 
-    public:
-        SimplePlatooningBeaconing();
-        virtual ~SimplePlatooningBeaconing();
-
-        virtual void initialize(int stage);
+    virtual void initialize(int stage);
 };
 
 #endif /* SIMPLEPLATOONINGBEACONING_H_ */

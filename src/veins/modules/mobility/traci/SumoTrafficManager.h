@@ -25,17 +25,16 @@
  * is that, by default, traffic flows are managed by SUMO itself,
  * as defined in the rou.xml file
  */
-class SumoTrafficManager : public TraCIBaseTrafficManager
-{
+class SumoTrafficManager : public TraCIBaseTrafficManager {
 
-    public:
+public:
+    virtual void initialize(int stage);
+    virtual void finish();
 
-        virtual void initialize(int stage);
-        virtual void finish();
-
-    public:
-        SumoTrafficManager() {}
-
+public:
+    SumoTrafficManager()
+    {
+    }
 };
 
 #endif /* SUMOTRAFFICMANAGER_H_ */

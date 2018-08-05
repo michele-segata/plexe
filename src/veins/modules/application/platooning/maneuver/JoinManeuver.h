@@ -34,7 +34,7 @@ struct JoinManeuverParameters {
     int position;
 };
 
-class JoinManeuver: public Maneuver {
+class JoinManeuver : public Maneuver {
 
 public:
     /**
@@ -42,13 +42,12 @@ public:
      *
      * @param app pointer to the generic application used to fetch parameters and inform it about a concluded maneuver
      */
-    JoinManeuver(GeneralPlatooningApp *app);
-    virtual ~JoinManeuver() {};
+    JoinManeuver(GeneralPlatooningApp* app);
+    virtual ~JoinManeuver(){};
 
-    virtual void onManeuverMessage(const ManeuverMessage *mm) override;
+    virtual void onManeuverMessage(const ManeuverMessage* mm) override;
 
 protected:
-
     /**
      * Creates a JoinPlatoonRequest message
      *
@@ -57,7 +56,7 @@ protected:
      * @param int destinationId the id of the destination
      * @param int currentLaneIndex the index of the current lane of the vehicle
      */
-    JoinPlatoonRequest *
+    JoinPlatoonRequest*
     createJoinPlatoonRequest(int vehicleId,
                              std::string externalId,
                              int platoonId, int destinationId,
@@ -72,7 +71,7 @@ protected:
      * @param int destinationId the id of the destination
      * @param bool permitted whether the join maneuver is permitted
      */
-    JoinPlatoonResponse *
+    JoinPlatoonResponse*
     createJoinPlatoonResponse(int vehicleId,
                               std::string externalId,
                               int platoonId, int destinationId,
@@ -89,10 +88,10 @@ protected:
      * @param std::vector<int> newPlatoonFormation the platoon formation after
      * the join maneuver
      */
-    MoveToPosition *
+    MoveToPosition*
     createMoveToPosition(int vehicleId, std::string externalId, int platoonId,
                          int destinationId, double platoonSpeed, int platoonLane,
-                         const std::vector<int> &newPlatoonFormation);
+                         const std::vector<int>& newPlatoonFormation);
 
     /**
      * Creates a MoveToPositionAck message
@@ -105,10 +104,10 @@ protected:
      * @param std::vector<int> newPlatoonFormation the platoon formation after
      * the join maneuver
      */
-    MoveToPositionAck *
+    MoveToPositionAck*
     createMoveToPositionAck(int vehicleId, std::string externalId, int platoonId,
                             int destinationId, double platoonSpeed, int platoonLane,
-                            const std::vector<int> &newPlatoonFormation);
+                            const std::vector<int>& newPlatoonFormation);
 
     /**
      * Creates a JoinFormation message
@@ -121,10 +120,10 @@ protected:
      * @param std::vector<int> newPlatoonFormation the platoon formation after
      * the join maneuver
      */
-    JoinFormation *
+    JoinFormation*
     createJoinFormation(int vehicleId, std::string externalId, int platoonId,
                         int destinationId, double platoonSpeed, int platoonLane,
-                        const std::vector<int> &newPlatoonFormation);
+                        const std::vector<int>& newPlatoonFormation);
 
     /**
      * Creates a JoinFormationAck message
@@ -137,53 +136,52 @@ protected:
      * @param std::vector<int> newPlatoonFormation the platoon formation after
      * the join maneuver
      */
-    JoinFormationAck *
+    JoinFormationAck*
     createJoinFormationAck(int vehicleId, std::string externalId, int platoonId,
                            int destinationId, double platoonSpeed, int platoonLane,
-                           const std::vector<int> &newPlatoonFormation);
+                           const std::vector<int>& newPlatoonFormation);
 
     /**
      * Handles a JoinPlatoonRequest in the context of this application
      *
      * @param JoinPlatoonRequest msg to handle
      */
-    virtual void handleJoinPlatoonRequest(const JoinPlatoonRequest *msg) = 0;
+    virtual void handleJoinPlatoonRequest(const JoinPlatoonRequest* msg) = 0;
 
     /**
      * Handles a JoinPlatoonResponse in the context of this application
      *
      * @param JoinPlatoonResponse msg to handle
      */
-    virtual void handleJoinPlatoonResponse(const JoinPlatoonResponse *msg) = 0;
+    virtual void handleJoinPlatoonResponse(const JoinPlatoonResponse* msg) = 0;
 
     /**
      * Handles a MoveToPosition in the context of this application
      *
      * @param MoveToPosition msg to handle
      */
-    virtual void handleMoveToPosition(const MoveToPosition *msg) = 0;
+    virtual void handleMoveToPosition(const MoveToPosition* msg) = 0;
 
     /**
      * Handles a MoveToPositionAck in the context of this application
      *
      * @param MoveToPositionAck msg to handle
      */
-    virtual void handleMoveToPositionAck(const MoveToPositionAck *msg) = 0;
+    virtual void handleMoveToPositionAck(const MoveToPositionAck* msg) = 0;
 
     /**
      * Handles a JoinFormation in the context of this application
      *
      * @param JoinFormation msg to handle
      */
-    virtual void handleJoinFormation(const JoinFormation *msg) = 0;
+    virtual void handleJoinFormation(const JoinFormation* msg) = 0;
 
     /**
      * Handles a JoinFormationAck in the context of this application
      *
      * @param JoinFormationAck msg to handle
      */
-    virtual void handleJoinFormationAck(const JoinFormationAck *msg) = 0;
-
+    virtual void handleJoinFormationAck(const JoinFormationAck* msg) = 0;
 };
 
 #endif

@@ -31,53 +31,50 @@
 
 class HumanInterferingProtocol : public Veins::BaseApplLayer {
 
-    private:
+private:
+    //beacon interval
+    SimTime beaconingInterval;
+    //access category
+    int priority;
+    //packet size
+    int packetSize;
+    //transmit power in mW
+    double txPower;
+    //bit rate in bps
+    int bitrate;
 
-        //beacon interval
-        SimTime beaconingInterval;
-        //access category
-        int priority;
-        //packet size
-        int packetSize;
-        //transmit power in mW
-        double txPower;
-        //bit rate in bps
-        int bitrate;
+protected:
+    //traci mobility. used for getting/setting info about the car
+    Veins::TraCIMobility* mobility;
+    Veins::TraCICommandInterface* traci;
+    Veins::TraCICommandInterface::Vehicle* traciVehicle;
 
-    protected:
+    //pointer to the mac layer
+    Veins::Mac1609_4* mac;
 
-        //traci mobility. used for getting/setting info about the car
-        Veins::TraCIMobility *mobility;
-        Veins::TraCICommandInterface *traci;
-        Veins::TraCICommandInterface::Vehicle *traciVehicle;
+    //messages for scheduleAt
+    cMessage* sendBeacon;
 
-        //pointer to the mac layer
-        Veins::Mac1609_4 *mac;
+    virtual void handleSelfMsg(cMessage* msg);
 
-        //messages for scheduleAt
-        cMessage *sendBeacon;
+    virtual void handleLowerMsg(cMessage* msg);
 
-        virtual void handleSelfMsg(cMessage *msg);
-
-        virtual void handleLowerMsg(cMessage *msg);
-
-        /**
+    /**
          * Sends an interfering packet
          */
-        void sendInterferingMessage();
+    void sendInterferingMessage();
 
-    public:
+public:
+    //id for beacon message
+    static const int INTERFERENCE_TYPE = 12349;
 
-        //id for beacon message
-        static const int INTERFERENCE_TYPE = 12349;
+    HumanInterferingProtocol()
+    {
+        sendBeacon = nullptr;
+    }
+    virtual ~HumanInterferingProtocol();
 
-        HumanInterferingProtocol() {
-            sendBeacon = nullptr;
-        }
-        virtual ~HumanInterferingProtocol();
-
-        virtual void initialize(int stage);
-
+    virtual void initialize(int stage);
 };
 
 #endif
