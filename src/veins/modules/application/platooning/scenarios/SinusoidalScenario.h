@@ -26,15 +26,15 @@ public:
     virtual void initialize(int stage);
 
 protected:
-    //frequency at which the leader speed is oscillating
+    // frequency at which the leader speed is oscillating
     double leaderOscillationFrequency;
-    //oscillation amplitude
+    // oscillation amplitude
     double oscillationAmplitude;
-    //leader average speed
+    // leader average speed
     double leaderSpeed;
-    //message used to tell the leader to continuously change its desired speed
+    // message used to tell the leader to continuously change its desired speed
     cMessage* changeSpeed;
-    //start oscillation time
+    // start oscillation time
     SimTime startOscillating;
 
 public:

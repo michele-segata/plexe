@@ -42,7 +42,7 @@ public:
     virtual ~PlatoonsPlusHumanTraffic();
 
 protected:
-    //this is used to start traffic generation
+    // this is used to start traffic generation
     cMessage* insertPlatoonMessage;
 
     void insertPlatoons();
@@ -52,29 +52,29 @@ protected:
 
     SimTime platoonInsertTime;
     double platoonInsertSpeed;
-    //vehicles to be inserted
+    // vehicles to be inserted
     struct Vehicle automated;
     struct Vehicle human;
 
-    //total number of vehicles to be injected
+    // total number of vehicles to be injected
     int nCars;
-    //vehicles per platoon
+    // vehicles per platoon
     int platoonSize;
-    //number of lanes
+    // number of lanes
     int nLanes;
-    //number of human vehicles
+    // number of human vehicles
     int humanCars;
-    //number of lanes for human vehicles
+    // number of lanes for human vehicles
     int humanLanes;
-    //insert distance
+    // insert distance
     double platoonInsertDistance;
-    //insert headway
+    // insert headway
     double platoonInsertHeadway;
-    //headway for leader vehicles
+    // headway for leader vehicles
     double platoonLeaderHeadway;
-    //sumo vehicle type of platooning cars
+    // sumo vehicle type of platooning cars
     std::string platooningVType;
-    //sumo vehicle type of human driven cars
+    // sumo vehicle type of human driven cars
     std::string humanVType;
 
     virtual void scenarioLoaded();

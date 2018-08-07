@@ -53,7 +53,7 @@ void BaseScenario::initialize(int stage)
         }
 
         const char* strController = par("controller").stringValue();
-        //for now we have only two possibilities
+        // for now we have only two possibilities
         if (strcmp(strController, "ACC") == 0) {
             controller = Plexe::ACC;
         }
@@ -84,7 +84,7 @@ void BaseScenario::initialize(int stage)
         positionHelper = FindModule<BasePositionHelper*>::findSubModule(getParentModule());
         initializeControllers();
 
-        //set the active controller
+        // set the active controller
         if (positionHelper->isLeader()) {
             traciVehicle->setActiveController(Plexe::ACC);
             traciVehicle->setACCHeadwayTime(leaderHeadway);
@@ -93,13 +93,12 @@ void BaseScenario::initialize(int stage)
             traciVehicle->setActiveController(controller);
             traciVehicle->setACCHeadwayTime(accHeadway);
         }
-        //set the current lane
+        // set the current lane
         traciVehicle->setFixedLane(positionHelper->getPlatoonLane());
         traciVehicle->setSpeedMode(0);
         traciVehicle->usePrediction(usePrediction);
 
-        if (positionHelper->getId() == 0)
-            traci->guiView("View #0").trackVehicle(mobility->getExternalId());
+        if (positionHelper->getId() == 0) traci->guiView("View #0").trackVehicle(mobility->getExternalId());
     }
 }
 
@@ -109,38 +108,38 @@ void BaseScenario::handleSelfMsg(cMessage* msg)
 
 void BaseScenario::initializeControllers()
 {
-    //engine lag
+    // engine lag
     traciVehicle->setParameter(CC_PAR_ENGINE_TAU, engineTau);
     traciVehicle->setParameter(CC_PAR_UMIN, uMin);
     traciVehicle->setParameter(CC_PAR_UMAX, uMax);
-    //PATH's CACC parameters
+    // PATH's CACC parameters
     traciVehicle->setParameter(CC_PAR_CACC_C1, caccC1);
     traciVehicle->setParameter(CC_PAR_CACC_OMEGA_N, caccOmegaN);
     traciVehicle->setParameter(CC_PAR_CACC_XI, caccXi);
-    //Ploeg's parameters
+    // Ploeg's parameters
     traciVehicle->setParameter(CC_PAR_PLOEG_H, ploegH);
     traciVehicle->setParameter(CC_PAR_PLOEG_KP, ploegKp);
     traciVehicle->setParameter(CC_PAR_PLOEG_KD, ploegKd);
-    //flatbed's parameters
+    // flatbed's parameters
     traciVehicle->setParameter(CC_PAR_FLATBED_KA, flatbedKa);
     traciVehicle->setParameter(CC_PAR_FLATBED_KV, flatbedKv);
     traciVehicle->setParameter(CC_PAR_FLATBED_KP, flatbedKp);
     traciVehicle->setParameter(CC_PAR_FLATBED_H, flatbedH);
     traciVehicle->setParameter(CC_PAR_FLATBED_D, flatbedD);
-    //consensus parameters
+    // consensus parameters
     traciVehicle->setParameter(CC_PAR_VEHICLE_POSITION, positionHelper->getPosition());
     traciVehicle->setParameter(CC_PAR_PLATOON_SIZE, positionHelper->getPlatoonSize());
-    //use of controller acceleration
+    // use of controller acceleration
     traciVehicle->useControllerAcceleration(useControllerAcceleration);
 
     Plexe::VEHICLE_DATA vehicleData;
-    //initialize own vehicle data
+    // initialize own vehicle data
     if (!positionHelper->isLeader()) {
-        //my position
+        // my position
         vehicleData.index = positionHelper->getPosition();
-        //my length
+        // my length
         vehicleData.length = traciVehicle->getLength();
-        //the rest is all dummy data
+        // the rest is all dummy data
         vehicleData.acceleration = 10;
         vehicleData.positionX = 400000;
         vehicleData.positionY = 0;
@@ -152,12 +151,12 @@ void BaseScenario::initializeControllers()
 
     if (useRealisticEngine) {
         int engineModel = CC_ENGINE_MODEL_REALISTIC;
-        //the order is important
-        //1. let sumo instantiate the realistic engine model
+        // the order is important
+        // 1. let sumo instantiate the realistic engine model
         traciVehicle->setParameter(CC_PAR_VEHICLE_ENGINE_MODEL, engineModel);
-        //2. tell the realistic engine model the location of the parameters file
+        // 2. tell the realistic engine model the location of the parameters file
         traciVehicle->setParameter(CC_PAR_VEHICLES_FILE, vehicleFile);
-        //3. tell the realistic engine model which vehicle (in the specified parameters file) to use
+        // 3. tell the realistic engine model which vehicle (in the specified parameters file) to use
         traciVehicle->setParameter(CC_PAR_VEHICLE_MODEL, vehicleType);
     }
 }

@@ -27,9 +27,9 @@ namespace Plexe {
  * @brief action that might be requested by the platooning management
  */
 enum PLATOONING_LANE_CHANGE_ACTION {
-    DRIVER_CHOICE = 0, //the platooning management is not active, so just let the driver choose the lane
-    STAY_IN_CURRENT_LANE = 3, //the car is part of a platoon, so it has to stay on the dedicated platooning lane
-    MOVE_TO_FIXED_LANE = 4 //move the car to a specific lane
+    DRIVER_CHOICE = 0, // the platooning management is not active, so just let the driver choose the lane
+    STAY_IN_CURRENT_LANE = 3, // the car is part of a platoon, so it has to stay on the dedicated platooning lane
+    MOVE_TO_FIXED_LANE = 4 // move the car to a specific lane
 };
 
 /**
@@ -44,46 +44,48 @@ enum PLATOONING_LANE_CHANGE_ACTION {
  * driver. In future we might need to switch off the automatic controller and
  * leave the control to the mobility model which reproduces a human driver
  */
-enum ACTIVE_CONTROLLER { DRIVER = 0,
+enum ACTIVE_CONTROLLER {
+    DRIVER = 0,
     ACC = 1,
     CACC = 2,
     FAKED_CACC = 3,
     PLOEG = 4,
     CONSENSUS = 5,
-    FLATBED = 6 };
+    FLATBED = 6
+};
 
 /**
  * @brief struct used as header for generic data passing to this model through
  * traci
  */
 struct CCDataHeader {
-    int type; //type of message. indicates what comes after the header
-    int size; //size of message. indicates how many bytes comes after the header
+    int type; // type of message. indicates what comes after the header
+    int size; // size of message. indicates how many bytes comes after the header
 };
 
 /**
  * Struct defining data passed about a vehicle
  */
 struct VEHICLE_DATA {
-    int index; //position in the platoon (0 = first)
-    double speed; //vehicle speed
-    double acceleration; //vehicle acceleration
-    double positionX; //position of the vehicle in the simulation
-    double positionY; //position of the vehicle in the simulation
-    double time; //time at which such information was read from vehicle's sensors
-    double length; //vehicle length
-    double u; //controller acceleration
-    double speedX; //vehicle speed on the X axis
-    double speedY; //vehicle speed on the Y axis
-    double angle; //vehicle angle in radians
+    int index; // position in the platoon (0 = first)
+    double speed; // vehicle speed
+    double acceleration; // vehicle acceleration
+    double positionX; // position of the vehicle in the simulation
+    double positionY; // position of the vehicle in the simulation
+    double time; // time at which such information was read from vehicle's sensors
+    double length; // vehicle length
+    double u; // controller acceleration
+    double speedX; // vehicle speed on the X axis
+    double speedY; // vehicle speed on the Y axis
+    double angle; // vehicle angle in radians
 };
 
 #define MAX_N_CARS 8
 
-#define CC_ENGINE_MODEL_FOLM 0x00 //first order lag model
-#define CC_ENGINE_MODEL_REALISTIC 0x01 //the detailed and realistic engine model
+#define CC_ENGINE_MODEL_FOLM 0x00 // first order lag model
+#define CC_ENGINE_MODEL_REALISTIC 0x01 // the detailed and realistic engine model
 
-//parameter names for engine models
+// parameter names for engine models
 #define FOLM_PAR_TAU "tau_s"
 #define FOLM_PAR_DT "dt_s"
 
@@ -91,33 +93,33 @@ struct VEHICLE_DATA {
 #define ENGINE_PAR_XMLFILE "xmlFile"
 #define ENGINE_PAR_DT "dt_s"
 
-#define CC_PAR_VEHICLE_DATA "ccvd" //data about a vehicle, like position, speed, acceleration, etc
-#define CC_PAR_VEHICLE_POSITION "ccvp" //position of the vehicle in the platoon (0 based)
-#define CC_PAR_PLATOON_SIZE "ccps" //number of cars in the platoon
+#define CC_PAR_VEHICLE_DATA "ccvd" // data about a vehicle, like position, speed, acceleration, etc
+#define CC_PAR_VEHICLE_POSITION "ccvp" // position of the vehicle in the platoon (0 based)
+#define CC_PAR_PLATOON_SIZE "ccps" // number of cars in the platoon
 
-//set of controller-related constants
-#define CC_PAR_CACC_XI "ccxi" //xi
-#define CC_PAR_CACC_OMEGA_N "ccon" //omega_n
-#define CC_PAR_CACC_C1 "ccc1" //C1
-#define CC_PAR_ENGINE_TAU "cctau" //engine time constant
+// set of controller-related constants
+#define CC_PAR_CACC_XI "ccxi" // xi
+#define CC_PAR_CACC_OMEGA_N "ccon" // omega_n
+#define CC_PAR_CACC_C1 "ccc1" // C1
+#define CC_PAR_ENGINE_TAU "cctau" // engine time constant
 
-#define CC_PAR_UMIN "ccumin" //lower saturation for u
-#define CC_PAR_UMAX "ccumax" //upper saturation for u
+#define CC_PAR_UMIN "ccumin" // lower saturation for u
+#define CC_PAR_UMAX "ccumax" // upper saturation for u
 
-#define CC_PAR_PLOEG_H "ccph" //time headway of ploeg's CACC
-#define CC_PAR_PLOEG_KP "ccpkp" //kp parameter of ploeg's CACC
-#define CC_PAR_PLOEG_KD "ccpkd" //kd parameter of ploeg's CACC
+#define CC_PAR_PLOEG_H "ccph" // time headway of ploeg's CACC
+#define CC_PAR_PLOEG_KP "ccpkp" // kp parameter of ploeg's CACC
+#define CC_PAR_PLOEG_KD "ccpkd" // kd parameter of ploeg's CACC
 
-#define CC_PAR_FLATBED_KA "ccfka" //ka parameter of flatbed CACC
-#define CC_PAR_FLATBED_KV "ccfkv" //kv parameter of flatbed CACC
-#define CC_PAR_FLATBED_KP "ccfkp" //kp parameter of flatbed CACC
-#define CC_PAR_FLATBED_H "ccfh" //h parameter of flatbed CACC
-#define CC_PAR_FLATBED_D "ccfd" //distance parameter of flatbed CACC
+#define CC_PAR_FLATBED_KA "ccfka" // ka parameter of flatbed CACC
+#define CC_PAR_FLATBED_KV "ccfkv" // kv parameter of flatbed CACC
+#define CC_PAR_FLATBED_KP "ccfkp" // kp parameter of flatbed CACC
+#define CC_PAR_FLATBED_H "ccfh" // h parameter of flatbed CACC
+#define CC_PAR_FLATBED_D "ccfd" // distance parameter of flatbed CACC
 
-#define CC_PAR_VEHICLE_ENGINE_MODEL "ccem" //set the engine model for a vehicle
+#define CC_PAR_VEHICLE_ENGINE_MODEL "ccem" // set the engine model for a vehicle
 
-#define CC_PAR_VEHICLE_MODEL "ccvm" //set the vehicle model, i.e., engine characteristics
-#define CC_PAR_VEHICLES_FILE "ccvf" //set the location of the vehicle parameters file
+#define CC_PAR_VEHICLE_MODEL "ccvm" // set the vehicle model, i.e., engine characteristics
+#define CC_PAR_VEHICLES_FILE "ccvf" // set the location of the vehicle parameters file
 
 // set CACC constant spacing
 #define PAR_CACC_SPACING "ccsp"

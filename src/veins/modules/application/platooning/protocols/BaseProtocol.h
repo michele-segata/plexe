@@ -29,64 +29,64 @@
 
 #include <tuple>
 
-//maximum number of upper layer apps that can connect (see .ned file)
+// maximum number of upper layer apps that can connect (see .ned file)
 #define MAX_GATES_COUNT 10
 
 class BaseProtocol : public Veins::BaseApplLayer {
 
 private:
-    //signals for busy channel and collisions
+    // signals for busy channel and collisions
     static const simsignalwrap_t sigChannelBusy;
     static const simsignalwrap_t sigCollision;
 
-    //amount of time channel has been observed busy during the last "statisticsPeriod" seconds
+    // amount of time channel has been observed busy during the last "statisticsPeriod" seconds
     SimTime busyTime;
-    //count the number of collision at the phy layer
+    // count the number of collision at the phy layer
     int nCollisions;
-    //time at which channel turned busy
+    // time at which channel turned busy
     SimTime startBusy;
-    //indicates whether channel is busy or not
+    // indicates whether channel is busy or not
     bool channelBusy;
 
-    //record the delay between each pair of messages received from leader and car in front
+    // record the delay between each pair of messages received from leader and car in front
     SimTime lastLeaderMsgTime;
     SimTime lastFrontMsgTime;
 
-    //own id for statistics
+    // own id for statistics
     cOutVector nodeIdOut;
 
-    //output vectors for busy time and collisions
+    // output vectors for busy time and collisions
     cOutVector busyTimeOut, collisionsOut;
 
-    //output vector for delays
+    // output vector for delays
     cOutVector leaderDelayIdOut, frontDelayIdOut, leaderDelayOut, frontDelayOut;
 
 protected:
-    //determines position and role of each vehicle
+    // determines position and role of each vehicle
     BasePositionHelper* positionHelper;
 
-    //id of this vehicle
+    // id of this vehicle
     int myId;
-    //sequence number of sent messages
+    // sequence number of sent messages
     int seq_n;
-    //vehicle length
+    // vehicle length
     double length;
 
-    //beaconing interval (i.e., update frequency)
+    // beaconing interval (i.e., update frequency)
     SimTime beaconingInterval;
-    //priority used for messages (i.e., the access category)
+    // priority used for messages (i.e., the access category)
     int priority;
-    //packet size of the platooning message
+    // packet size of the platooning message
     int packetSize;
 
-    //input/output gates from/to upper layer
+    // input/output gates from/to upper layer
     int upperControlIn, upperControlOut, lowerLayerIn, lowerLayerOut;
-    //id range of input gates from upper layer
+    // id range of input gates from upper layer
     int minUpperId, maxUpperId, minUpperControlId, maxUpperControlId;
 
-    //registered upper layer applications. this is a mapping between
-    //beacon id inside packets coming from upper layer and the gate they
-    //the application is connected to. convention: id, from app, to app
+    // registered upper layer applications. this is a mapping between
+    // beacon id inside packets coming from upper layer and the gate they
+    // the application is connected to. convention: id, from app, to app
     typedef cGate OutputGate;
     typedef cGate InputGate;
     typedef cGate ControlInputGate;
@@ -95,15 +95,15 @@ protected:
     typedef std::vector<AppInOut> AppList;
     typedef std::map<int, AppList> ApplicationMap;
     ApplicationMap apps;
-    //number of gates from the array used
+    // number of gates from the array used
     int usedGates;
-    //maps of already existing connections
+    // maps of already existing connections
     typedef cGate ThisGate;
     typedef cGate OtherGate;
     typedef std::map<OtherGate*, ThisGate*> GateConnections;
     GateConnections connections;
 
-    //messages for scheduleAt
+    // messages for scheduleAt
     cMessage *sendBeacon, *recordData;
 
     /**
@@ -114,25 +114,25 @@ protected:
          */
     virtual void handleSelfMsg(cMessage* msg) override;
 
-    //TODO: implement method and pass info to upper layer (bogus platooning) as it is (msg)
+    // TODO: implement method and pass info to upper layer (bogus platooning) as it is (msg)
     virtual void handleLowerMsg(cMessage* msg) override;
 
-    //handle unicast messages coming from above layers
+    // handle unicast messages coming from above layers
     virtual void handleUpperMsg(cMessage* msg) override;
 
-    //handle control messages coming from above
+    // handle control messages coming from above
     virtual void handleUpperControl(cMessage* msg) override;
 
-    //handle control messages coming from below
+    // handle control messages coming from below
     virtual void handleLowerControl(cMessage* msg) override;
 
-    //handles and application layer message
+    // handles and application layer message
     void handleUnicastMsg(UnicastMessage* unicast);
 
-    //override handleMessage to manager upper layer gate array
+    // override handleMessage to manager upper layer gate array
     virtual void handleMessage(cMessage* msg) override;
 
-    //signal handler
+    // signal handler
     using BaseApplLayer::receiveSignal;
     void receiveSignal(cComponent* source, simsignal_t signalID, bool v, cObject* details) override;
     void receiveSignal(cComponent* source, simsignal_t signalID, bool v)
@@ -172,13 +172,13 @@ protected:
     {
     }
 
-    //traci mobility. used for getting/setting info about the car
+    // traci mobility. used for getting/setting info about the car
     Veins::TraCIMobility* mobility;
     Veins::TraCICommandInterface* traci;
     Veins::TraCICommandInterface::Vehicle* traciVehicle;
 
 public:
-    //id for beacon message
+    // id for beacon message
     static const int BEACON_TYPE = 12345;
 
     BaseProtocol()
@@ -191,9 +191,8 @@ public:
 
     virtual void initialize(int stage) override;
 
-    //register a higher level application by its id
-    void registerApplication(int applicationId, InputGate* appInputGate, OutputGate* appOutputGate,
-        ControlInputGate* appControlInputGate, ControlOutputGate* appControlOutputGate);
+    // register a higher level application by its id
+    void registerApplication(int applicationId, InputGate* appInputGate, OutputGate* appOutputGate, ControlInputGate* appControlInputGate, ControlOutputGate* appControlOutputGate);
 };
 
 #endif /* BASEPROTOCOL_H_ */

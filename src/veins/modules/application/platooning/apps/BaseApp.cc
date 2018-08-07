@@ -33,19 +33,19 @@ void BaseApp::initialize(int stage)
     BaseApplLayer::initialize(stage);
 
     if (stage == 0) {
-        //set names for output vectors
-        //distance from front vehicle
+        // set names for output vectors
+        // distance from front vehicle
         distanceOut.setName("distance");
-        //relative speed w.r.t. front vehicle
+        // relative speed w.r.t. front vehicle
         relSpeedOut.setName("relativeSpeed");
-        //vehicle id
+        // vehicle id
         nodeIdOut.setName("nodeId");
-        //current speed
+        // current speed
         speedOut.setName("speed");
-        //vehicle position
+        // vehicle position
         posxOut.setName("posx");
         posyOut.setName("posy");
-        //vehicle acceleration
+        // vehicle acceleration
         accelerationOut.setName("acceleration");
         controllerAccelerationOut.setName("controllerAcceleration");
     }
@@ -58,11 +58,11 @@ void BaseApp::initialize(int stage)
         protocol = FindModule<BaseProtocol*>::findSubModule(getParentModule());
         myId = positionHelper->getId();
 
-        //connect application to protocol
+        // connect application to protocol
         protocol->registerApplication(BaseProtocol::BEACON_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"), gate("lowerControlIn"), gate("lowerControlOut"));
 
         recordData = new cMessage("recordData");
-        //init statistics collection. round to 0.1 seconds
+        // init statistics collection. round to 0.1 seconds
         SimTime rounded = SimTime(floor(simTime().dbl() * 1000 + 100), SIMTIME_MS);
         scheduleAt(rounded, recordData);
     }
@@ -95,7 +95,7 @@ void BaseApp::handleLowerMsg(cMessage* msg)
 
 void BaseApp::logVehicleData(bool crashed)
 {
-    //get distance and relative speed w.r.t. front vehicle
+    // get distance and relative speed w.r.t. front vehicle
     double distance, relSpeed;
     Plexe::VEHICLE_DATA data;
     traciVehicle->getRadarMeasurements(distance, relSpeed);
@@ -105,7 +105,7 @@ void BaseApp::logVehicleData(bool crashed)
         stopSimulation = new cMessage("stopSimulation");
         scheduleAt(simTime() + SimTime(1, SIMTIME_MS), stopSimulation);
     }
-    //write data to output files
+    // write data to output files
     distanceOut.record(distance);
     relSpeedOut.record(relSpeed);
     nodeIdOut.record(myId);
@@ -132,9 +132,9 @@ void BaseApp::sendUnicast(cPacket* msg, int destination)
 void BaseApp::handleSelfMsg(cMessage* msg)
 {
     if (msg == recordData) {
-        //log mobility data
+        // log mobility data
         logVehicleData(traciVehicle->isCrashed());
-        //re-schedule next event
+        // re-schedule next event
         scheduleAt(simTime() + SimTime(100, SIMTIME_MS), recordData);
     }
     if (msg == stopSimulation) {
@@ -145,17 +145,15 @@ void BaseApp::handleSelfMsg(cMessage* msg)
 void BaseApp::onPlatoonBeacon(const PlatooningBeacon* pb)
 {
     if (positionHelper->isInSamePlatoon(pb->getVehicleId())) {
-        //if the message comes from the leader
+        // if the message comes from the leader
         if (pb->getVehicleId() == positionHelper->getLeaderId()) {
-            traciVehicle->setLeaderVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(),
-                pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
+            traciVehicle->setLeaderVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
         }
-        //if the message comes from the vehicle in front
+        // if the message comes from the vehicle in front
         if (pb->getVehicleId() == positionHelper->getFrontId()) {
-            traciVehicle->setFrontVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(),
-                pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
+            traciVehicle->setFrontVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
         }
-        //send data about every vehicle to the CACC. this is needed by the consensus controller
+        // send data about every vehicle to the CACC. this is needed by the consensus controller
         struct Plexe::VEHICLE_DATA vehicleData;
         vehicleData.index = positionHelper->getMemberPosition(pb->getVehicleId());
         vehicleData.acceleration = pb->getAcceleration();
@@ -168,7 +166,7 @@ void BaseApp::onPlatoonBeacon(const PlatooningBeacon* pb)
         vehicleData.speedX = pb->getSpeedX();
         vehicleData.speedY = pb->getSpeedY();
         vehicleData.angle = pb->getAngle();
-        //send information to CACC
+        // send information to CACC
         traciVehicle->setVehicleData(&vehicleData);
     }
     delete pb;

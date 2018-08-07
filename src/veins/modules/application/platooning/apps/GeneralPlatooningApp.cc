@@ -33,9 +33,7 @@ void GeneralPlatooningApp::initialize(int stage)
 
     if (stage == 1) {
         // connect maneuver application to protocol
-        protocol->registerApplication(
-            MANEUVER_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"),
-            gate("lowerControlIn"), gate("lowerControlOut"));
+        protocol->registerApplication(MANEUVER_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"), gate("lowerControlIn"), gate("lowerControlOut"));
 
         std::string joinManeuverName = par("joinManeuver").stdstringValue();
         if (joinManeuverName == "JoinAtBack")
@@ -98,12 +96,9 @@ void GeneralPlatooningApp::handleLowerMsg(cMessage* msg)
 
 void GeneralPlatooningApp::handleUpdatePlatoonFormation(const UpdatePlatoonFormation* msg)
 {
-    if (getPlatoonRole() != PlatoonRole::FOLLOWER)
-        return;
-    if (msg->getPlatoonId() != positionHelper->getPlatoonId())
-        return;
-    if (msg->getVehicleId() != positionHelper->getLeaderId())
-        return;
+    if (getPlatoonRole() != PlatoonRole::FOLLOWER) return;
+    if (msg->getPlatoonId() != positionHelper->getPlatoonId()) return;
+    if (msg->getVehicleId() != positionHelper->getLeaderId()) return;
 
     // update formation information
     std::vector<int> f;
@@ -131,9 +126,7 @@ void GeneralPlatooningApp::onManeuverMessage(ManeuverMessage* mm)
     delete mm;
 }
 
-void GeneralPlatooningApp::fillManeuverMessage(ManeuverMessage* msg, int vehicleId,
-    std::string externalId, int platoonId,
-    int destinationId)
+void GeneralPlatooningApp::fillManeuverMessage(ManeuverMessage* msg, int vehicleId, std::string externalId, int platoonId, int destinationId)
 {
     msg->setKind(MANEUVER_TYPE);
     msg->setVehicleId(vehicleId);
@@ -142,11 +135,7 @@ void GeneralPlatooningApp::fillManeuverMessage(ManeuverMessage* msg, int vehicle
     msg->setDestinationId(destinationId);
 }
 
-UpdatePlatoonFormation*
-GeneralPlatooningApp::createUpdatePlatoonFormation(int vehicleId, std::string externalId,
-    int platoonId, int destinationId,
-    double platoonSpeed, int platoonLane,
-    const std::vector<int>& platoonFormation)
+UpdatePlatoonFormation* GeneralPlatooningApp::createUpdatePlatoonFormation(int vehicleId, std::string externalId, int platoonId, int destinationId, double platoonSpeed, int platoonLane, const std::vector<int>& platoonFormation)
 {
     UpdatePlatoonFormation* msg = new UpdatePlatoonFormation("UpdatePlatoonFormation");
     fillManeuverMessage(msg, vehicleId, externalId, platoonId, destinationId);

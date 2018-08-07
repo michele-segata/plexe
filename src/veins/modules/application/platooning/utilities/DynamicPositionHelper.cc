@@ -67,8 +67,7 @@ int DynamicPositionHelper::getFrontId() const
 int DynamicPositionHelper::getPlatoonId() const
 {
     auto i = positions.vehToPlatoons.find(myId);
-    if (i == positions.vehToPlatoons.end())
-        return -1;
+    if (i == positions.vehToPlatoons.end()) return -1;
     int platoonId = i->second;
     return platoonId;
 }
@@ -81,10 +80,8 @@ int DynamicPositionHelper::getPlatoonLane() const
 bool DynamicPositionHelper::isInSamePlatoon(const int vehicleId) const
 {
     auto i = positions.vehToPlatoons.find(vehicleId);
-    if (i == positions.vehToPlatoons.end())
-        return false;
-    if (i->second == -1)
-        return false;
+    if (i == positions.vehToPlatoons.end()) return false;
+    if (i->second == -1) return false;
     return i->second == getPlatoonId();
 }
 
@@ -99,8 +96,7 @@ const std::vector<int>& DynamicPositionHelper::getPlatoonFormation() const
     // we do not need to sort the vehicles by their position,
     // since the map<pos, id> is sorted by default by its key (i.e. pos)
     formationCache.resize(m.size());
-    std::transform(m.begin(), m.end(), formationCache.begin(),
-        [](const decltype(m)::value_type& p) { return p.second; });
+    std::transform(m.begin(), m.end(), formationCache.begin(), [](const decltype(m)::value_type& p) { return p.second; });
     return formationCache;
 }
 

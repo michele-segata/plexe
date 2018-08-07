@@ -27,31 +27,31 @@ void AccelerateAndBrakeScenario::initialize(int stage)
     BaseScenario::initialize(stage);
 
     if (stage == 0)
-        //get pointer to application
+        // get pointer to application
         appl = FindModule<BaseApp*>::findSubModule(getParentModule());
 
     if (stage == 1) {
-        //get acceleration
+        // get acceleration
         acceleration = par("acceleration").doubleValue();
-        //get braking deceleration
+        // get braking deceleration
         brakingDeceleration = par("brakingDeceleration").doubleValue();
-        //average speed
+        // average speed
         leaderSpeed = par("leaderSpeed").doubleValue() / 3.6;
-        //start accelerating time
+        // start accelerating time
         startAccelerating = SimTime(par("startAccelerating").doubleValue());
-        //start braking time
+        // start braking time
         startBraking = SimTime(par("startBraking").doubleValue());
 
-        //messages to schedule actions
+        // messages to schedule actions
         startAccelerationMsg = new cMessage("startAccelerationMsg");
         startBrakingMsg = new cMessage("startBrakingMsg");
 
-        //enable ACC
+        // enable ACC
         traciVehicle->setActiveController(Plexe::ACC);
-        //let the vehicle start from standstill
+        // let the vehicle start from standstill
         traciVehicle->setFixedAcceleration(1, -8);
 
-        //schedule messages
+        // schedule messages
         scheduleAt(startAccelerating, startAccelerationMsg);
         scheduleAt(startBraking, startBrakingMsg);
     }
@@ -68,8 +68,6 @@ AccelerateAndBrakeScenario::~AccelerateAndBrakeScenario()
 void AccelerateAndBrakeScenario::handleSelfMsg(cMessage* msg)
 {
     BaseScenario::handleSelfMsg(msg);
-    if (msg == startAccelerationMsg)
-        traciVehicle->setFixedAcceleration(1, acceleration);
-    if (msg == startBrakingMsg)
-        traciVehicle->setFixedAcceleration(1, -brakingDeceleration);
+    if (msg == startAccelerationMsg) traciVehicle->setFixedAcceleration(1, acceleration);
+    if (msg == startBrakingMsg) traciVehicle->setFixedAcceleration(1, -brakingDeceleration);
 }

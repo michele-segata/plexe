@@ -198,8 +198,7 @@ public:
      */
     virtual bool isInSamePlatoon(int vehicleId) const override
     {
-        return (std::find(formation.begin(), formation.end(), vehicleId) !=
-            formation.end());
+        return (std::find(formation.begin(), formation.end(), vehicleId) != formation.end());
     }
 
     /**
@@ -272,8 +271,7 @@ public:
      */
     virtual int getMemberPosition(int vehicleId) const override
     {
-        const auto it =
-            std::find(formation.begin(), formation.end(), vehicleId);
+        const auto it = std::find(formation.begin(), formation.end(), vehicleId);
         if (it != formation.end()) {
             return std::distance(formation.begin(), it);
         }
@@ -331,8 +329,7 @@ public:
     }
 
     /** Override from BasePositionHelper */
-    virtual void setIsInSamePlatoon(int vehicleId,
-        bool inSamePlatoon) override
+    virtual void setIsInSamePlatoon(int vehicleId, bool inSamePlatoon) override
     {
         throw cRuntimeError("Not implemented");
     }

@@ -26,9 +26,9 @@ public:
     virtual void initialize(int stage);
 
 protected:
-    //leader average speed
+    // leader average speed
     double leaderSpeed;
-    //application layer, used to stop the simulation
+    // application layer, used to stop the simulation
     BaseApp* appl;
 
 public:

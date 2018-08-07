@@ -689,8 +689,7 @@ void TraCICommandInterface::Vehicle::setLaneChangeMode(int mode)
 
 void TraCICommandInterface::Vehicle::getLaneChangeState(int direction, int& state1, int& state2)
 {
-    TraCIBuffer response = traci->connection.query(CMD_GET_VEHICLE_VARIABLE,
-        TraCIBuffer() << static_cast<uint8_t>(CMD_CHANGELANE) << nodeId << static_cast<uint8_t>(TYPE_INTEGER) << direction);
+    TraCIBuffer response = traci->connection.query(CMD_GET_VEHICLE_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(CMD_CHANGELANE) << nodeId << static_cast<uint8_t>(TYPE_INTEGER) << direction);
     uint8_t cmdLength;
     response >> cmdLength;
     uint8_t responseId;
@@ -720,8 +719,7 @@ void TraCICommandInterface::Vehicle::changeLane(int lane, int duration)
     uint8_t commandType = TYPE_COMPOUND;
     int nParameters = 2;
     uint8_t variableId = CMD_CHANGELANE;
-    TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId
-                                                                                      << nodeId << commandType << nParameters << static_cast<uint8_t>(TYPE_BYTE) << (uint8_t) lane << static_cast<uint8_t>(TYPE_INTEGER) << duration);
+    TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << commandType << nParameters << static_cast<uint8_t>(TYPE_BYTE) << (uint8_t) lane << static_cast<uint8_t>(TYPE_INTEGER) << duration);
     ASSERT(buf.eof());
 }
 
@@ -744,8 +742,7 @@ void TraCICommandInterface::Vehicle::setParameter(const std::string& parameter, 
     static int32_t nParameters = 2;
     std::stringstream par;
     par << "carFollowModel." << parameter;
-    TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE,
-        TraCIBuffer() << static_cast<uint8_t>(VAR_PARAMETER) << nodeId << static_cast<uint8_t>(TYPE_COMPOUND) << nParameters << static_cast<uint8_t>(TYPE_STRING) << par.str() << static_cast<uint8_t>(TYPE_STRING) << value);
+    TraCIBuffer buf = traci->connection.query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(VAR_PARAMETER) << nodeId << static_cast<uint8_t>(TYPE_COMPOUND) << nParameters << static_cast<uint8_t>(TYPE_STRING) << par.str() << static_cast<uint8_t>(TYPE_STRING) << value);
     ASSERT(buf.eof());
 }
 
@@ -768,8 +765,7 @@ void TraCICommandInterface::Vehicle::getParameter(const std::string& parameter, 
 {
     std::stringstream par;
     par << "carFollowModel." << parameter;
-    TraCIBuffer response = traci->connection.query(CMD_GET_VEHICLE_VARIABLE,
-        TraCIBuffer() << static_cast<uint8_t>(VAR_PARAMETER) << nodeId << static_cast<uint8_t>(TYPE_STRING) << par.str());
+    TraCIBuffer response = traci->connection.query(CMD_GET_VEHICLE_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(VAR_PARAMETER) << nodeId << static_cast<uint8_t>(TYPE_STRING) << par.str());
     uint8_t cmdLength;
     response >> cmdLength;
     uint8_t responseId;
@@ -790,10 +786,7 @@ void TraCICommandInterface::Vehicle::getParameter(const std::string& parameter, 
 std::pair<double, double> TraCICommandInterface::getLonLat(const Coord& coord)
 {
     TraCIBuffer request;
-    request << static_cast<uint8_t>(POSITION_CONVERSION) << std::string("sim0")
-            << static_cast<uint8_t>(TYPE_COMPOUND) << static_cast<int32_t>(2)
-            << connection.omnet2traci(coord)
-            << static_cast<uint8_t>(TYPE_UBYTE) << static_cast<uint8_t>(POSITION_LON_LAT);
+    request << static_cast<uint8_t>(POSITION_CONVERSION) << std::string("sim0") << static_cast<uint8_t>(TYPE_COMPOUND) << static_cast<int32_t>(2) << connection.omnet2traci(coord) << static_cast<uint8_t>(TYPE_UBYTE) << static_cast<uint8_t>(POSITION_LON_LAT);
     TraCIBuffer response = connection.query(CMD_GET_SIM_VARIABLE, request);
 
     uint8_t cmdLength;
@@ -1100,9 +1093,7 @@ void TraCICommandInterface::Vehicle::getVehicleData(Plexe::VEHICLE_DATA* data)
     std::string v;
     getParameter(PAR_SPEED_AND_ACCELERATION, v);
     ParBuffer buf(v);
-    buf >> data->speed >> data->acceleration >> data->u >>
-        data->positionX >> data->positionY >> data->time >> data->speedX >>
-        data->speedY >> data->angle;
+    buf >> data->speed >> data->acceleration >> data->u >> data->positionX >> data->positionY >> data->time >> data->speedX >> data->speedY >> data->angle;
 }
 
 double TraCICommandInterface::Vehicle::getACCAcceleration()
@@ -1182,24 +1173,17 @@ double TraCICommandInterface::Vehicle::getCACCConstantSpacing()
 
 void TraCICommandInterface::Vehicle::setPathCACCParameters(double omegaN, double xi, double c1, double distance)
 {
-    if (omegaN >= 0)
-        setParameter(CC_PAR_CACC_OMEGA_N, omegaN);
-    if (xi >= 0)
-        setParameter(CC_PAR_CACC_XI, xi);
-    if (c1 >= 0)
-        setParameter(CC_PAR_CACC_C1, c1);
-    if (distance >= 0)
-        setParameter(PAR_CACC_SPACING, distance);
+    if (omegaN >= 0) setParameter(CC_PAR_CACC_OMEGA_N, omegaN);
+    if (xi >= 0) setParameter(CC_PAR_CACC_XI, xi);
+    if (c1 >= 0) setParameter(CC_PAR_CACC_C1, c1);
+    if (distance >= 0) setParameter(PAR_CACC_SPACING, distance);
 }
 
 void TraCICommandInterface::Vehicle::setPloegCACCParameters(double kp, double kd, double h)
 {
-    if (kp >= 0)
-        setParameter(CC_PAR_PLOEG_KP, kp);
-    if (kd >= 0)
-        setParameter(CC_PAR_PLOEG_KD, kd);
-    if (h >= 0)
-        setParameter(CC_PAR_PLOEG_H, h);
+    if (kp >= 0) setParameter(CC_PAR_PLOEG_KP, kp);
+    if (kd >= 0) setParameter(CC_PAR_PLOEG_KD, kd);
+    if (h >= 0) setParameter(CC_PAR_PLOEG_H, h);
 }
 
 void TraCICommandInterface::Vehicle::setACCHeadwayTime(double headway)
@@ -1272,8 +1256,7 @@ void TraCICommandInterface::executePlexeTimestep()
             __changeLane(i->first, current, direction, i->second.safe);
         }
     }
-    for (int i = 0; i < satisfied.size(); i++)
-        laneChanges.erase(satisfied[i]);
+    for (int i = 0; i < satisfied.size(); i++) laneChanges.erase(satisfied[i]);
 }
 
 void TraCICommandInterface::__changeLane(std::string veh, int current, int direction, bool safe)
@@ -1329,8 +1312,7 @@ void TraCICommandInterface::Vehicle::setLeaderFakeData(double leaderSpeed, doubl
     setLeaderVehicleFakeData(leaderAcceleration, leaderAcceleration, leaderSpeed);
 }
 
-void TraCICommandInterface::Vehicle::setFrontVehicleFakeData(double controllerAcceleration, double acceleration,
-    double speed, double distance)
+void TraCICommandInterface::Vehicle::setFrontVehicleFakeData(double controllerAcceleration, double acceleration, double speed, double distance)
 {
     ParBuffer buf;
     buf << speed << acceleration << distance << controllerAcceleration;
@@ -1376,10 +1358,7 @@ void TraCICommandInterface::Vehicle::getStoredVehicleData(struct Plexe::VEHICLE_
     inBuf << CC_PAR_VEHICLE_DATA << index;
     getParameter(inBuf.str(), v);
     ParBuffer outBuf(v);
-    outBuf >> data->index >> data->speed >> data->acceleration >>
-        data->positionX >> data->positionY >> data->time >>
-        data->length >> data->u >> data->speedX >> data->speedY >>
-        data->angle;
+    outBuf >> data->index >> data->speed >> data->acceleration >> data->positionX >> data->positionY >> data->time >> data->length >> data->u >> data->speedX >> data->speedY >> data->angle;
 }
 
 void TraCICommandInterface::Vehicle::useControllerAcceleration(bool use)
@@ -1399,8 +1378,7 @@ void TraCICommandInterface::Vehicle::getEngineData(int& gear, double& rpm)
 
 void TraCICommandInterface::Vehicle::enableAutoFeed(bool enable, std::string leaderId, std::string frontId)
 {
-    if (enable && (leaderId.compare("") == 0 || frontId.compare("") == 0))
-        return;
+    if (enable && (leaderId.compare("") == 0 || frontId.compare("") == 0)) return;
     ParBuffer inBuf;
     if (enable)
         inBuf << 1 << leaderId << frontId;

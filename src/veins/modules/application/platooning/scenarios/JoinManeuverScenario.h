@@ -26,9 +26,9 @@
 class JoinManeuverScenario : public BaseScenario {
 
 protected:
-    //message used to start the maneuver
+    // message used to start the maneuver
     cMessage* startManeuver;
-    //pointer to protocol
+    // pointer to protocol
     GeneralPlatooningApp* app;
 
 public:

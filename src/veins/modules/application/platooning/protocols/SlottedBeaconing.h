@@ -25,9 +25,9 @@ protected:
     virtual void handleSelfMsg(cMessage* msg);
     virtual void messageReceived(PlatooningBeacon* pkt, UnicastMessage* unicast);
 
-    //number of the slot where we should send our message
+    // number of the slot where we should send our message
     int slotNumber;
-    //time after the message received from the leader at which we should send (i.e., slot time)
+    // time after the message received from the leader at which we should send (i.e., slot time)
     SimTime slotTime;
 
 public:

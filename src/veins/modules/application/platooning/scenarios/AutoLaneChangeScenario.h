@@ -28,11 +28,11 @@ public:
     virtual void initialize(int stage);
 
 protected:
-    //leader average speed
+    // leader average speed
     double leaderSpeed;
-    //application layer, used to stop the simulation
+    // application layer, used to stop the simulation
     BaseApp* appl;
-    //sumo vehicle type of plaotoning cars
+    // sumo vehicle type of plaotoning cars
     std::string platooningVType;
 
 public:

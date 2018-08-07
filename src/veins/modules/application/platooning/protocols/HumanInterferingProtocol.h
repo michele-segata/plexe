@@ -32,27 +32,27 @@
 class HumanInterferingProtocol : public Veins::BaseApplLayer {
 
 private:
-    //beacon interval
+    // beacon interval
     SimTime beaconingInterval;
-    //access category
+    // access category
     int priority;
-    //packet size
+    // packet size
     int packetSize;
-    //transmit power in mW
+    // transmit power in mW
     double txPower;
-    //bit rate in bps
+    // bit rate in bps
     int bitrate;
 
 protected:
-    //traci mobility. used for getting/setting info about the car
+    // traci mobility. used for getting/setting info about the car
     Veins::TraCIMobility* mobility;
     Veins::TraCICommandInterface* traci;
     Veins::TraCICommandInterface::Vehicle* traciVehicle;
 
-    //pointer to the mac layer
+    // pointer to the mac layer
     Veins::Mac1609_4* mac;
 
-    //messages for scheduleAt
+    // messages for scheduleAt
     cMessage* sendBeacon;
 
     virtual void handleSelfMsg(cMessage* msg);
@@ -65,7 +65,7 @@ protected:
     void sendInterferingMessage();
 
 public:
-    //id for beacon message
+    // id for beacon message
     static const int INTERFERENCE_TYPE = 12349;
 
     HumanInterferingProtocol()
