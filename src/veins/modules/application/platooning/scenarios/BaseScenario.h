@@ -32,23 +32,23 @@ public:
     virtual void initialize(int stage);
 
 protected:
-    //traci interfaces
+    // traci interfaces
     Veins::TraCIMobility* mobility;
     Veins::TraCICommandInterface* traci;
     Veins::TraCICommandInterface::Vehicle* traciVehicle;
 
-    //determines position and role of each vehicle
+    // determines position and role of each vehicle
     BasePositionHelper* positionHelper;
 
-    //controller used by followers
+    // controller used by followers
     enum Plexe::ACTIVE_CONTROLLER controller;
 
-    //list of various controller parameters
-    //headway time to be used for the ACC
+    // list of various controller parameters
+    // headway time to be used for the ACC
     double accHeadway;
-    //headway time for ACC of leaders
+    // headway time for ACC of leaders
     double leaderHeadway;
-    //cacc and engine related parameters
+    // cacc and engine related parameters
     double caccXi;
     double caccOmegaN;
     double caccC1;
@@ -66,11 +66,11 @@ protected:
     bool useControllerAcceleration;
     bool usePrediction;
 
-    //location of the file with vehicle parameters
+    // location of the file with vehicle parameters
     std::string vehicleFile;
-    //enable/disable realistic engine model
+    // enable/disable realistic engine model
     bool useRealisticEngine;
-    //vehicle type for realistic engine model
+    // vehicle type for realistic engine model
     std::string vehicleType;
 
     void initializeControllers();

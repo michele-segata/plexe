@@ -47,15 +47,15 @@ protected:
     int injectedCars;
     int injectedPlatoons;
     DynamicPositionManager& positions;
-    //number of lanes
+    // number of lanes
     int nLanes;
-    //insert distance
+    // insert distance
     double platoonInsertDistance;
-    //insert headway
+    // insert headway
     double platoonInsertHeadway;
-    //headway for leader vehicles
+    // headway for leader vehicles
     double platoonLeaderHeadway;
-    //sumo vehicle type of platooning cars
+    // sumo vehicle type of platooning cars
     std::string platooningVType;
     cPar* platoonInsertSpeed;
 

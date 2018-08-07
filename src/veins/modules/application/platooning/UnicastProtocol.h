@@ -26,68 +26,68 @@
 #include "veins/modules/application/platooning/messages/UnicastProtocolControlMessage_m.h"
 
 enum ControlMessageCommand {
-    //from app to protocol for setting mac address
+    // from app to protocol for setting mac address
     SET_MAC_ADDRESS,
-    //from app to protocol, disable acks reply for unicast (debug purpose)
+    // from app to protocol, disable acks reply for unicast (debug purpose)
     DISABLE_ACKS,
-    //from app to protocol, enable acks reply
+    // from app to protocol, enable acks reply
     ENABLE_ACKS,
-    //from protocol to app to tell that sending failed after trying several attempts
+    // from protocol to app to tell that sending failed after trying several attempts
     SEND_FAIL,
-    //from protocol to app to tell that message cannot be sent because queue is full
+    // from protocol to app to tell that message cannot be sent because queue is full
     FULL_QUEUE
 };
 
 class UnicastProtocol : public Veins::BaseWaveApplLayer {
 
 protected:
-    //this is the mac address of the node.
-    //the application can set it at the beginning
-    //so that it does not have to care about it
-    //anymore. the unicast layer will insert the
-    //mac address before sending a frame and
-    //will drop frames not directed to this
-    //vehicle
+    // this is the mac address of the node.
+    // the application can set it at the beginning
+    // so that it does not have to care about it
+    // anymore. the unicast layer will insert the
+    // mac address before sending a frame and
+    // will drop frames not directed to this
+    // vehicle
     int macAddress;
 
-    //queue of packets from above
+    // queue of packets from above
     std::queue<UnicastMessage*> queue;
-    //size of the queue, 0 means infinite
+    // size of the queue, 0 means infinite
     size_t queueSize;
-    //maximum number of retransmission attempts when ack not received
+    // maximum number of retransmission attempts when ack not received
     int maxAttempts;
-    //amount of time to wait before declaring ack timeout
+    // amount of time to wait before declaring ack timeout
 
-    //a copy of the current message sent on the channel, waiting for ack
+    // a copy of the current message sent on the channel, waiting for ack
     UnicastMessage* currentMsg;
-    //number of retransmission attempts for the current msg
+    // number of retransmission attempts for the current msg
     int nAttempts;
 
-    //ack timeout time
+    // ack timeout time
     double ackTimeout;
-    //self scheduled message for ack waiting timeout
+    // self scheduled message for ack waiting timeout
     cMessage* timeout;
-    //enable/disable ack reply on unicast (for debug purpose)
+    // enable/disable ack reply on unicast (for debug purpose)
     bool enableAck;
 
-    //sequence number used in the next message
+    // sequence number used in the next message
     int sequenceNumber;
-    //variable to map a node's MAC address to the next sequence number
-    //expected from that node. this is needed for understanding whether
-    //the received message is a duplicate or not. notice that the
-    //sequence number does not work like in TCP. each node uses a sequence
-    //number for all the receivers, and not one for each receiver. So
-    //if node A is sending packet 1 to B, and then it wants to send a packet
-    //to C, A will use sequence number 2. B will anyhow save the tuple (A,2)
-    //saying that the next expected sequence number from A is 2. If A now
-    //sends a packet to B, it will use the sequence number 3, but B will
-    //anyhow understand that packet 3 is a new packet from A.
+    // variable to map a node's MAC address to the next sequence number
+    // expected from that node. this is needed for understanding whether
+    // the received message is a duplicate or not. notice that the
+    // sequence number does not work like in TCP. each node uses a sequence
+    // number for all the receivers, and not one for each receiver. So
+    // if node A is sending packet 1 to B, and then it wants to send a packet
+    // to C, A will use sequence number 2. B will anyhow save the tuple (A,2)
+    // saying that the next expected sequence number from A is 2. If A now
+    // sends a packet to B, it will use the sequence number 3, but B will
+    // anyhow understand that packet 3 is a new packet from A.
     std::map<int, int> receiveSequenceNumbers;
 
-    //packet loss rate (between 0 and 1)
+    // packet loss rate (between 0 and 1)
     double packetLossRate;
 
-    //input/output gates from/to upper layer
+    // input/output gates from/to upper layer
     int upperLayerIn, upperLayerOut, upperControlIn, upperControlOut;
 
 public:

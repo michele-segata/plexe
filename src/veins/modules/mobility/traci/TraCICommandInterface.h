@@ -69,7 +69,7 @@ public:
          * @param routeId Identifier of the new vehicle's route.
          * @param emitTime_st Time at which to spawn the new vehicle or a value from DepartTime.
          * @param emitPosition Position of the new vehicle on its lane. Valid values are between 0 and 1 (start and
-         *                        end of edge) and special values from DepartPosition. 
+         *                        end of edge) and special values from DepartPosition.
          * @param emitSpeed Speed in meters per second of the new vehicle. Also accepts special values from DepartSpeed.
          * @param emitLane The new vehicle's lane. Special Also accepts special values from DepartLane.
          * @return Success indication

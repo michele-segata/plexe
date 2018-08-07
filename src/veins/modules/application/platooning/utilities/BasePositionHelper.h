@@ -205,31 +205,31 @@ protected:
     Veins::TraCICommandInterface* traci;
     Veins::TraCICommandInterface::Vehicle* traciVehicle;
 
-    //id of this vehicle
+    // id of this vehicle
     int myId;
-    //number of lanes
+    // number of lanes
     int nLanes;
-    //number of cars in the platoon
+    // number of cars in the platoon
     int platoonSize;
-    //total number of platooning cars in the simulation
+    // total number of platooning cars in the simulation
     int nCars;
-    //largest automated car id in the simulation
+    // largest automated car id in the simulation
     int highestId;
-    //id of the leader of the platoon
+    // id of the leader of the platoon
     int leaderId;
-    //id of the vehicle in front of me
+    // id of the vehicle in front of me
     int frontId;
-    //id of the vehicle in the back of me
+    // id of the vehicle in the back of me
     int backId;
-    //my position within the platoon
+    // my position within the platoon
     int position;
-    //is this car a leader?
+    // is this car a leader?
     bool leader;
-    //id of this car's platoon
+    // id of this car's platoon
     int platoonId;
-    //lane of this car's platoon
+    // lane of this car's platoon
     int platoonLane;
-    //speed of the platoon
+    // speed of the platoon
     double platoonSpeed;
 
 public:

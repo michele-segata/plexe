@@ -27,7 +27,7 @@ void AutoLaneChangeScenario::initialize(int stage)
     BaseScenario::initialize(stage);
 
     if (stage == 0)
-        //get pointer to application
+        // get pointer to application
         appl = FindModule<BaseApp*>::findSubModule(getParentModule());
 
     if (stage == 1) {

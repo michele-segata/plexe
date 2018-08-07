@@ -69,21 +69,20 @@ void PlatoonsPlusHumanTraffic::handleSelfMsg(cMessage* msg)
 void PlatoonsPlusHumanTraffic::insertPlatoons()
 {
 
-    //compute intervehicle distance
+    // compute intervehicle distance
     double distance = platoonInsertSpeed / 3.6 * platoonInsertHeadway + platoonInsertDistance;
-    //total number of platoons per lane
+    // total number of platoons per lane
     int nPlatoons = nCars / platoonSize / nLanes;
-    //length of 1 platoon
+    // length of 1 platoon
     double platoonLength = platoonSize * 4 + (platoonSize - 1) * distance;
-    //inter-platoon distance
+    // inter-platoon distance
     double platoonDistance = platoonInsertSpeed / 3.6 * platoonLeaderHeadway;
-    //total length for one lane
+    // total length for one lane
     double totalLength = nPlatoons * platoonLength + (nPlatoons - 1) * platoonDistance;
 
-    //for each lane, we create an offset to have misaligned platoons
+    // for each lane, we create an offset to have misaligned platoons
     double* laneOffset = new double[nLanes];
-    for (int l = 0; l < nLanes; l++)
-        laneOffset[l] = uniform(0, 20);
+    for (int l = 0; l < nLanes; l++) laneOffset[l] = uniform(0, 20);
 
     double currentPos = totalLength;
     int currentCar = 0;
@@ -96,11 +95,11 @@ void PlatoonsPlusHumanTraffic::insertPlatoons()
         currentCar++;
         if (currentCar == platoonSize) {
             currentCar = 0;
-            //add inter platoon gap
+            // add inter platoon gap
             currentPos -= (platoonDistance + 4);
         }
         else {
-            //add intra platoon gap
+            // add intra platoon gap
             currentPos -= (4 + distance);
         }
     }
@@ -111,17 +110,16 @@ void PlatoonsPlusHumanTraffic::insertPlatoons()
 void PlatoonsPlusHumanTraffic::insertHumans()
 {
 
-    //keep 50 m between human vehicles (random number)
+    // keep 50 m between human vehicles (random number)
     double distance = 50;
-    //total number of cars per lane
+    // total number of cars per lane
     int carsPerLane = humanCars / humanLanes;
-    //total length for one lane
+    // total length for one lane
     double totalLength = carsPerLane * (4 + distance);
 
-    //for each lane, we create an offset to have misaligned platoons
+    // for each lane, we create an offset to have misaligned platoons
     double* laneOffset = new double[humanLanes];
-    for (int l = 0; l < humanLanes; l++)
-        laneOffset[l] = uniform(0, 20);
+    for (int l = 0; l < humanLanes; l++) laneOffset[l] = uniform(0, 20);
 
     double currentPos = totalLength;
     for (int i = 0; i < carsPerLane; i++) {

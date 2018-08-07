@@ -28,21 +28,21 @@ public:
     virtual void initialize(int stage);
 
 protected:
-    //leader average speed
+    // leader average speed
     double leaderSpeed;
-    //acceleration in m/s/s
+    // acceleration in m/s/s
     double acceleration;
-    //braking intensity in m/s/s
+    // braking intensity in m/s/s
     double brakingDeceleration;
-    //message used to tell the car to start accelerating
+    // message used to tell the car to start accelerating
     cMessage* startAccelerationMsg;
-    //message used to tell the car to start braking
+    // message used to tell the car to start braking
     cMessage* startBrakingMsg;
-    //start accelerating time
+    // start accelerating time
     SimTime startAccelerating;
-    //start braking time
+    // start braking time
     SimTime startBraking;
-    //application layer, used to stop the simulation
+    // application layer, used to stop the simulation
     BaseApp* appl;
 
 public:

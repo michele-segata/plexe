@@ -40,7 +40,7 @@ public:
     virtual ~PlatoonsTrafficManager();
 
 protected:
-    //this is used to start traffic generation
+    // this is used to start traffic generation
     cMessage* insertPlatoonMessage;
 
     void insertPlatoons();
@@ -49,22 +49,22 @@ protected:
 
     SimTime platoonInsertTime;
     double platoonInsertSpeed;
-    //vehicles to be inserted
+    // vehicles to be inserted
     struct Vehicle automated;
 
-    //total number of vehicles to be injected
+    // total number of vehicles to be injected
     int nCars;
-    //vehicles per platoon
+    // vehicles per platoon
     int platoonSize;
-    //number of lanes
+    // number of lanes
     int nLanes;
-    //insert distance
+    // insert distance
     double platoonInsertDistance;
-    //insert headway
+    // insert headway
     double platoonInsertHeadway;
-    //headway for leader vehicles
+    // headway for leader vehicles
     double platoonLeaderHeadway;
-    //sumo vehicle type of platooning cars
+    // sumo vehicle type of platooning cars
     std::string platooningVType;
 
     virtual void scenarioLoaded();

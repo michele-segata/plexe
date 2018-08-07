@@ -32,8 +32,7 @@ public:
         std::string value;
         size_t sep;
 
-        if (inBuffer.size() == 0)
-            return "";
+        if (inBuffer.size() == 0) return "";
 
         sep = inBuffer.find(SEP);
         if (sep == std::string::npos) {

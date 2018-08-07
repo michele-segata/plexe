@@ -22,15 +22,15 @@
 
 class DynamicPositionManager {
 
-    //map from position within the platoon to vehicle id
+    // map from position within the platoon to vehicle id
     typedef std::map<int, int> Platoon;
-    //map from platoon id to platoon structure
+    // map from platoon id to platoon structure
     typedef std::map<int, Platoon> Platoons;
-    //map from vehicle id to own platoon id
+    // map from vehicle id to own platoon id
     typedef std::map<int, int> VehicleToPlatoon;
-    //map from position to vehicle id
+    // map from position to vehicle id
     typedef std::map<int, int> Position;
-    //map from platoon id to positions
+    // map from platoon id to positions
     typedef std::map<int, Position> Positions;
 
 public:

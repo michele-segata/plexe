@@ -37,17 +37,17 @@ public:
     virtual void initialize(int stage) override;
 
 protected:
-    //id of this vehicle
+    // id of this vehicle
     int myId;
 
     Veins::TraCIMobility* mobility;
     Veins::TraCICommandInterface* traci;
     Veins::TraCICommandInterface::Vehicle* traciVehicle;
 
-    //determines position and role of each vehicle
+    // determines position and role of each vehicle
     BasePositionHelper* positionHelper;
 
-    //lower layer protocol
+    // lower layer protocol
     BaseProtocol* protocol;
 
     /**
@@ -55,19 +55,19 @@ protected:
          */
     virtual void logVehicleData(bool crashed = false);
 
-    //output vectors for mobility stats
-    //id of the vehicle
+    // output vectors for mobility stats
+    // id of the vehicle
     cOutVector nodeIdOut;
-    //distance and relative speed
+    // distance and relative speed
     cOutVector distanceOut, relSpeedOut;
-    //speed and position
+    // speed and position
     cOutVector speedOut, posxOut, posyOut;
-    //real acceleration and controller acceleration
+    // real acceleration and controller acceleration
     cOutVector accelerationOut, controllerAccelerationOut;
 
-    //messages for scheduleAt
+    // messages for scheduleAt
     cMessage* recordData;
-    //message to stop the simulation in case of collision
+    // message to stop the simulation in case of collision
     cMessage* stopSimulation;
 
 public:

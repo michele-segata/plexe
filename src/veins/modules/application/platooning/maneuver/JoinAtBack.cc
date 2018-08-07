@@ -40,10 +40,7 @@ void JoinAtBack::startManeuver(const void* parameters)
         targetPlatoonData->platoonLeader = pars->leaderId;
 
         // send join request to leader
-        JoinPlatoonRequest* req = createJoinPlatoonRequest(
-            positionHelper->getId(), positionHelper->getExternalId(), targetPlatoonData->platoonId,
-            targetPlatoonData->platoonLeader, traciVehicle->getLaneIndex(),
-            mobility->getCurrentPosition().x, mobility->getCurrentPosition().y);
+        JoinPlatoonRequest* req = createJoinPlatoonRequest(positionHelper->getId(), positionHelper->getExternalId(), targetPlatoonData->platoonId, targetPlatoonData->platoonLeader, traciVehicle->getLaneIndex(), mobility->getCurrentPosition().x, mobility->getCurrentPosition().y);
         app->sendUnicast(req, targetPlatoonData->platoonLeader);
         joinManeuverState = JoinManeuverState::J_WAIT_REPLY;
     }
@@ -61,9 +58,7 @@ void JoinAtBack::onPlatoonBeacon(const PlatooningBeacon* pb)
 
         // if the message comes from the leader
         if (pb->getVehicleId() == targetPlatoonData->newFormation.at(0)) {
-            traciVehicle->setLeaderVehicleFakeData(
-                pb->getControllerAcceleration(), pb->getAcceleration(),
-                pb->getSpeed());
+            traciVehicle->setLeaderVehicleFakeData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed());
         }
         // if the message comes from the front vehicle
         int frontPosition = targetPlatoonData->joinIndex - 1;
@@ -75,19 +70,13 @@ void JoinAtBack::onPlatoonBeacon(const PlatooningBeacon* pb)
             Veins::TraCICoord traciPosition = mobility->getManager()->omnet2traci(mobility->getCurrentPosition());
             Coord position(traciPosition.x, traciPosition.y);
             // compute distance
-            double distance =
-                position.distance(frontPosition) - pb->getLength();
-            traciVehicle->setFrontVehicleFakeData(
-                pb->getControllerAcceleration(), pb->getAcceleration(),
-                pb->getSpeed(), distance);
+            double distance = position.distance(frontPosition) - pb->getLength();
+            traciVehicle->setFrontVehicleFakeData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed(), distance);
             // if we are in position, tell the leader about that
             if (distance < 16) { // TODO fixed value? make dependent on
                 // controller and headway time
                 // send move to position response to confirm the parameters
-                MoveToPositionAck* ack = createMoveToPositionAck(
-                    positionHelper->getId(), positionHelper->getExternalId(), targetPlatoonData->platoonId,
-                    targetPlatoonData->platoonLeader, targetPlatoonData->platoonSpeed,
-                    targetPlatoonData->platoonLane, targetPlatoonData->newFormation);
+                MoveToPositionAck* ack = createMoveToPositionAck(positionHelper->getId(), positionHelper->getExternalId(), targetPlatoonData->platoonId, targetPlatoonData->platoonLeader, targetPlatoonData->platoonSpeed, targetPlatoonData->platoonLane, targetPlatoonData->newFormation);
                 app->sendUnicast(ack, targetPlatoonData->newFormation.at(0));
                 joinManeuverState = JoinManeuverState::J_WAIT_JOIN;
             }
@@ -98,24 +87,17 @@ void JoinAtBack::onPlatoonBeacon(const PlatooningBeacon* pb)
 void JoinAtBack::handleJoinPlatoonRequest(const JoinPlatoonRequest* msg)
 {
 
-    if (msg->getPlatoonId() != positionHelper->getPlatoonId())
-        return;
+    if (msg->getPlatoonId() != positionHelper->getPlatoonId()) return;
 
-    if (app->getPlatoonRole() != PlatoonRole::LEADER && app->getPlatoonRole() != PlatoonRole::NONE)
-        return;
+    if (app->getPlatoonRole() != PlatoonRole::LEADER && app->getPlatoonRole() != PlatoonRole::NONE) return;
 
     bool permission = app->isJoinAllowed();
 
     // send response to the joiner
-    JoinPlatoonResponse* response = createJoinPlatoonResponse(
-        positionHelper->getId(),
-        positionHelper->getExternalId(),
-        msg->getPlatoonId(),
-        msg->getVehicleId(), permission);
+    JoinPlatoonResponse* response = createJoinPlatoonResponse(positionHelper->getId(), positionHelper->getExternalId(), msg->getPlatoonId(), msg->getVehicleId(), permission);
     app->sendUnicast(response, msg->getVehicleId());
 
-    if (!permission)
-        return;
+    if (!permission) return;
 
     app->setInManeuver(true);
     app->setPlatoonRole(PlatoonRole::LEADER);
@@ -134,10 +116,7 @@ void JoinAtBack::handleJoinPlatoonRequest(const JoinPlatoonRequest* msg)
     joinerData->newFormation = positionHelper->getPlatoonFormation();
     joinerData->newFormation.push_back(joinerData->joinerId);
 
-    MoveToPosition* mtp = createMoveToPosition(
-        positionHelper->getId(), positionHelper->getExternalId(), positionHelper->getPlatoonId(),
-        joinerData->joinerId, positionHelper->getPlatoonSpeed(),
-        positionHelper->getPlatoonLane(), joinerData->newFormation);
+    MoveToPosition* mtp = createMoveToPosition(positionHelper->getId(), positionHelper->getExternalId(), positionHelper->getPlatoonId(), joinerData->joinerId, positionHelper->getPlatoonSpeed(), positionHelper->getPlatoonLane(), joinerData->newFormation);
     app->sendUnicast(mtp, joinerData->joinerId);
 
     joinManeuverState = JoinManeuverState::L_WAIT_JOINER_IN_POSITION;
@@ -145,14 +124,10 @@ void JoinAtBack::handleJoinPlatoonRequest(const JoinPlatoonRequest* msg)
 
 void JoinAtBack::handleJoinPlatoonResponse(const JoinPlatoonResponse* msg)
 {
-    if (app->getPlatoonRole() != PlatoonRole::JOINER)
-        return;
-    if (joinManeuverState != JoinManeuverState::J_WAIT_REPLY)
-        return;
-    if (msg->getPlatoonId() != targetPlatoonData->platoonId)
-        return;
-    if (msg->getVehicleId() != targetPlatoonData->platoonLeader)
-        return;
+    if (app->getPlatoonRole() != PlatoonRole::JOINER) return;
+    if (joinManeuverState != JoinManeuverState::J_WAIT_REPLY) return;
+    if (msg->getPlatoonId() != targetPlatoonData->platoonId) return;
+    if (msg->getVehicleId() != targetPlatoonData->platoonLeader) return;
 
     // evaluate permission
     if (msg->getPermitted()) {
@@ -171,14 +146,10 @@ void JoinAtBack::handleJoinPlatoonResponse(const JoinPlatoonResponse* msg)
 
 void JoinAtBack::handleMoveToPosition(const MoveToPosition* msg)
 {
-    if (app->getPlatoonRole() != PlatoonRole::JOINER)
-        return;
-    if (joinManeuverState != JoinManeuverState::J_WAIT_INFORMATION)
-        return;
-    if (msg->getPlatoonId() != targetPlatoonData->platoonId)
-        return;
-    if (msg->getVehicleId() != targetPlatoonData->platoonLeader)
-        return;
+    if (app->getPlatoonRole() != PlatoonRole::JOINER) return;
+    if (joinManeuverState != JoinManeuverState::J_WAIT_INFORMATION) return;
+    if (msg->getPlatoonId() != targetPlatoonData->platoonId) return;
+    if (msg->getVehicleId() != targetPlatoonData->platoonLeader) return;
 
     // the leader told us to move in position, we can start
     // save some data about the platoon
@@ -211,43 +182,29 @@ void JoinAtBack::handleMoveToPosition(const MoveToPosition* msg)
 
 void JoinAtBack::handleMoveToPositionAck(const MoveToPositionAck* msg)
 {
-    if (app->getPlatoonRole() != PlatoonRole::LEADER)
-        return;
-    if (joinManeuverState != JoinManeuverState::L_WAIT_JOINER_IN_POSITION)
-        return;
-    if (msg->getPlatoonId() != positionHelper->getPlatoonId())
-        return;
-    if (msg->getVehicleId() != joinerData->joinerId)
-        return;
+    if (app->getPlatoonRole() != PlatoonRole::LEADER) return;
+    if (joinManeuverState != JoinManeuverState::L_WAIT_JOINER_IN_POSITION) return;
+    if (msg->getPlatoonId() != positionHelper->getPlatoonId()) return;
+    if (msg->getVehicleId() != joinerData->joinerId) return;
 
-    for (unsigned i = 0; i < msg->getNewPlatoonFormationArraySize(); i++)
-        ASSERT(msg->getNewPlatoonFormation(i) == joinerData->newFormation.at(i));
+    for (unsigned i = 0; i < msg->getNewPlatoonFormationArraySize(); i++) ASSERT(msg->getNewPlatoonFormation(i) == joinerData->newFormation.at(i));
 
     // the joiner is now in position and is ready to join
 
     // tell the joiner to join the platoon
-    JoinFormation* jf = createJoinFormation(
-        positionHelper->getId(), positionHelper->getExternalId(),
-        positionHelper->getPlatoonId(), joinerData->joinerId,
-        positionHelper->getPlatoonSpeed(), traciVehicle->getLaneIndex(),
-        joinerData->newFormation);
+    JoinFormation* jf = createJoinFormation(positionHelper->getId(), positionHelper->getExternalId(), positionHelper->getPlatoonId(), joinerData->joinerId, positionHelper->getPlatoonSpeed(), traciVehicle->getLaneIndex(), joinerData->newFormation);
     app->sendUnicast(jf, joinerData->joinerId);
     joinManeuverState = JoinManeuverState::L_WAIT_JOINER_TO_JOIN;
 }
 
 void JoinAtBack::handleJoinFormation(const JoinFormation* msg)
 {
-    if (app->getPlatoonRole() != PlatoonRole::JOINER)
-        return;
-    if (joinManeuverState != JoinManeuverState::J_WAIT_JOIN)
-        return;
-    if (msg->getPlatoonId() != targetPlatoonData->platoonId)
-        return;
-    if (msg->getVehicleId() != targetPlatoonData->platoonLeader)
-        return;
+    if (app->getPlatoonRole() != PlatoonRole::JOINER) return;
+    if (joinManeuverState != JoinManeuverState::J_WAIT_JOIN) return;
+    if (msg->getPlatoonId() != targetPlatoonData->platoonId) return;
+    if (msg->getVehicleId() != targetPlatoonData->platoonLeader) return;
 
-    for (unsigned i = 0; i < msg->getNewPlatoonFormationArraySize(); i++)
-        ASSERT(msg->getNewPlatoonFormation(i) == targetPlatoonData->newFormation[i]);
+    for (unsigned i = 0; i < msg->getNewPlatoonFormationArraySize(); i++) ASSERT(msg->getNewPlatoonFormation(i) == targetPlatoonData->newFormation[i]);
 
     // we got confirmation from the leader
     // switch from faked CACC to real CACC
@@ -260,16 +217,11 @@ void JoinAtBack::handleJoinFormation(const JoinFormation* msg)
     positionHelper->setPlatoonLane(targetPlatoonData->platoonLane);
     positionHelper->setPlatoonSpeed(targetPlatoonData->platoonSpeed);
     std::vector<int> formation;
-    for (unsigned i = 0; i < msg->getNewPlatoonFormationArraySize(); i++)
-        formation.push_back(msg->getNewPlatoonFormation(i));
+    for (unsigned i = 0; i < msg->getNewPlatoonFormationArraySize(); i++) formation.push_back(msg->getNewPlatoonFormation(i));
     positionHelper->setPlatoonFormation(formation);
 
     // tell the leader that we're now in the platoon
-    JoinFormationAck* jfa = createJoinFormationAck(
-        positionHelper->getId(), positionHelper->getExternalId(),
-        positionHelper->getPlatoonId(), targetPlatoonData->platoonLeader,
-        positionHelper->getPlatoonSpeed(), traciVehicle->getLaneIndex(),
-        formation);
+    JoinFormationAck* jfa = createJoinFormationAck(positionHelper->getId(), positionHelper->getExternalId(), positionHelper->getPlatoonId(), targetPlatoonData->platoonLeader, positionHelper->getPlatoonSpeed(), traciVehicle->getLaneIndex(), formation);
     app->sendUnicast(jfa, positionHelper->getLeaderId());
 
     app->setPlatoonRole(PlatoonRole::FOLLOWER);
@@ -282,16 +234,11 @@ void JoinAtBack::handleJoinFormation(const JoinFormation* msg)
 // request update of formation information
 void JoinAtBack::handleJoinFormationAck(const JoinFormationAck* msg)
 {
-    if (app->getPlatoonRole() != PlatoonRole::LEADER)
-        return;
-    if (joinManeuverState != JoinManeuverState::L_WAIT_JOINER_TO_JOIN)
-        return;
-    if (msg->getPlatoonId() != positionHelper->getPlatoonId())
-        return;
-    if (msg->getVehicleId() != joinerData->joinerId)
-        return;
-    for (unsigned i = 0; i < msg->getNewPlatoonFormationArraySize(); i++)
-        ASSERT(msg->getNewPlatoonFormation(i) == joinerData->newFormation.at(i));
+    if (app->getPlatoonRole() != PlatoonRole::LEADER) return;
+    if (joinManeuverState != JoinManeuverState::L_WAIT_JOINER_TO_JOIN) return;
+    if (msg->getPlatoonId() != positionHelper->getPlatoonId()) return;
+    if (msg->getVehicleId() != joinerData->joinerId) return;
+    for (unsigned i = 0; i < msg->getNewPlatoonFormationArraySize(); i++) ASSERT(msg->getNewPlatoonFormation(i) == joinerData->newFormation.at(i));
 
     // the joiner has joined the platoon
     // add the joiner to the list of vehicles in the platoon
@@ -299,11 +246,7 @@ void JoinAtBack::handleJoinFormationAck(const JoinFormationAck* msg)
 
     // send to all vehicles in Platoon
     for (unsigned int i = 1; i < positionHelper->getPlatoonSize(); i++) {
-        UpdatePlatoonFormation* dup = app->createUpdatePlatoonFormation(
-            positionHelper->getId(), positionHelper->getExternalId(),
-            positionHelper->getPlatoonId(), -1,
-            positionHelper->getPlatoonSpeed(), traciVehicle->getLaneIndex(),
-            joinerData->newFormation);
+        UpdatePlatoonFormation* dup = app->createUpdatePlatoonFormation(positionHelper->getId(), positionHelper->getExternalId(), positionHelper->getPlatoonId(), -1, positionHelper->getPlatoonSpeed(), traciVehicle->getLaneIndex(), joinerData->newFormation);
         int dest = positionHelper->getMemberId(i);
         dup->setDestinationId(dest);
         app->sendUnicast(dup, dest);

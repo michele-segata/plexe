@@ -43,45 +43,45 @@ private:
          */
     void loadSumoScenario();
 
-    //total number of vehicles generated
+    // total number of vehicles generated
     int vehCounter;
-    //has the data about the scenario been loaded?
+    // has the data about the scenario been loaded?
     bool initScenario;
-    //should vehicles be inserted in order, or whenever there is room for doing so?
+    // should vehicles be inserted in order, or whenever there is room for doing so?
     bool insertInOrder;
 
-    //at each simulation step, triggers insertion of vehicles in the queue
+    // at each simulation step, triggers insertion of vehicles in the queue
     cMessage* insertVehiclesTrigger;
 
 protected:
-    //pointer to the scenario manager, used to issue traci commands
+    // pointer to the scenario manager, used to issue traci commands
     Veins::TraCIScenarioManager* manager;
-    //pointer to the command interface
+    // pointer to the command interface
     Veins::TraCICommandInterface* commandInterface;
-    //vector of all the vehicle types available
+    // vector of all the vehicle types available
     std::vector<std::string> vehicleTypeIds;
-    //vector counting the number of vehicles inserted per each type
+    // vector counting the number of vehicles inserted per each type
     std::vector<int> vehiclesCount;
-    //vector of all lanes ids
+    // vector of all lanes ids
     std::vector<std::string> laneIds;
-    //vector of all the roads ids
+    // vector of all the roads ids
     std::vector<std::string> roadIds;
-    //vector of all the routes ids
+    // vector of all the routes ids
     std::vector<std::string> routeIds;
-    //mapping between the edge id and the ids of the lanes in that edge
+    // mapping between the edge id and the ids of the lanes in that edge
     std::map<std::string, std::vector<std::string>> laneIdsOnEdge;
-    //mapping between the route id and the ids of the lanes at the start of the route
+    // mapping between the route id and the ids of the lanes at the start of the route
     std::map<std::string, std::vector<std::string>> routeStartLaneIds;
 
     struct Vehicle {
-        int id; //id of the vehicle in sumo. this is the index of the vehicle type in the array of vehicle types
-        int lane; //index of the lane where to insert (set to -1 to choose first free)
-        float position; //position on the first edge
-        float speed; //start speed (-1 for lane speed?)
+        int id; // id of the vehicle in sumo. this is the index of the vehicle type in the array of vehicle types
+        int lane; // index of the lane where to insert (set to -1 to choose first free)
+        float position; // position on the first edge
+        float speed; // start speed (-1 for lane speed?)
     };
 
-    //queue of vehicles to be inserted. maps the index of a route in routeIds to a list of indexes of vehicle
-    //types in vehicleTypeIds
+    // queue of vehicles to be inserted. maps the index of a route in routeIds to a list of indexes of vehicle
+    // types in vehicleTypeIds
     typedef std::map<int, std::deque<struct Vehicle>> InsertQueue;
 
 private:

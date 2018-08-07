@@ -27,20 +27,20 @@ void SimpleScenario::initialize(int stage)
     BaseScenario::initialize(stage);
 
     if (stage == 0)
-        //get pointer to application
+        // get pointer to application
         appl = FindModule<BaseApp*>::findSubModule(getParentModule());
 
     if (stage == 1) {
-        //average speed
+        // average speed
         leaderSpeed = par("leaderSpeed").doubleValue() / 3.6;
 
         if (positionHelper->isLeader()) {
-            //set base cruising speed
+            // set base cruising speed
             traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed);
         }
         else {
-            //let the follower set a higher desired speed to stay connected
-            //to the leader when it is accelerating
+            // let the follower set a higher desired speed to stay connected
+            // to the leader when it is accelerating
             traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed + 10);
         }
     }

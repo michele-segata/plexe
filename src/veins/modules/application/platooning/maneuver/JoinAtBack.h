@@ -149,12 +149,10 @@ protected:
             platoonLane = msg->getPlatoonLane();
             platoonSpeed = msg->getPlatoonSpeed();
             newFormation.resize(msg->getNewPlatoonFormationArraySize());
-            for (unsigned int i = 0; i < msg->getNewPlatoonFormationArraySize();
-                 i++) {
+            for (unsigned int i = 0; i < msg->getNewPlatoonFormationArraySize(); i++) {
                 newFormation[i] = msg->getNewPlatoonFormation(i);
             }
-            const auto it = std::find(newFormation.begin(), newFormation.end(),
-                msg->getDestinationId());
+            const auto it = std::find(newFormation.begin(), newFormation.end(), msg->getDestinationId());
             if (it != newFormation.end()) {
                 joinIndex = std::distance(newFormation.begin(), it);
                 ASSERT(newFormation.at(joinIndex) == msg->getDestinationId());

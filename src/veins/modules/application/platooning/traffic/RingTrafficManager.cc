@@ -40,9 +40,9 @@ void RingTrafficManager::scenarioLoaded()
     int vehTypeId = findVehicleTypeIndex("vtypeauto");
     struct Vehicle automated;
 
-    //map from lane index to a vector with all platoon sizes
+    // map from lane index to a vector with all platoon sizes
     std::map<int, std::vector<Platoon>> platoons;
-    //total vehicle length for each lane
+    // total vehicle length for each lane
     std::vector<double> lengths;
 
     for (int l = 0; l < nLanes; l++) {
@@ -50,29 +50,29 @@ void RingTrafficManager::scenarioLoaded()
         lengths.push_back(0);
     }
 
-    //pre-compute the platoons to be inserted
-    //TODO: the ring is composed by two half-rings. position/route of vehicles
-    //must depend on the length of the ring
-    //TODO: add human driven vehicles as well
+    // pre-compute the platoons to be inserted
+    // TODO: the ring is composed by two half-rings. position/route of vehicles
+    // must depend on the length of the ring
+    // TODO: add human driven vehicles as well
     int l = 0;
     for (int p = 0; p < nPlatoons; p++) {
         Platoon platoon;
-        //get the number of cars in this platoon
+        // get the number of cars in this platoon
         platoon.size = platoonSize->longValue();
-        //get the speed of this platoon
+        // get the speed of this platoon
         platoon.speed = platoonInsertSpeed->doubleValue() / 3.6;
-        //compute the distance of this platoon
+        // compute the distance of this platoon
         platoon.distanceToFront = platoonLeaderHeadway * platoon.speed;
-        //compute the length of the platoon. assume a hardcoded vehicle length value of 4
+        // compute the length of the platoon. assume a hardcoded vehicle length value of 4
         platoon.length = platoon.size * 4 + (platoon.size - 1) * (platoonInsertDistance + platoonInsertHeadway * platoon.speed);
-        //add the length of this platoon to the platoons of this lane
+        // add the length of this platoon to the platoons of this lane
         lengths[l] += platoon.length + platoon.distanceToFront;
         platoons.find(l)->second.push_back(platoon);
-        //loop through all lanes
+        // loop through all lanes
         l = (l + 1) % nLanes;
     }
 
-    //finally inject vehicles
+    // finally inject vehicles
     double totalLength;
     for (l = 0; l < nLanes; l++) {
         totalLength = lengths[l];
