@@ -60,8 +60,8 @@ protected:
     virtual void handleLowerMsg(cMessage* msg);
 
     /**
-         * Sends an interfering packet
-         */
+     * Sends an interfering packet
+     */
     void sendInterferingMessage();
 
 public:

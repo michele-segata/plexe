@@ -107,11 +107,11 @@ protected:
     cMessage *sendBeacon, *recordData;
 
     /**
-         * NB: this method must be overridden by inheriting classes, BUT THEY MUST invoke the super class
-         * method prior processing the message. For example, the start communication event is handled by the
-         * BaseProtocol which then calls the startCommunications method. Also statistics are handled
-         * by BaseProtocol and are recorder periodically.
-         */
+     * NB: this method must be overridden by inheriting classes, BUT THEY MUST invoke the super class
+     * method prior processing the message. For example, the start communication event is handled by the
+     * BaseProtocol which then calls the startCommunications method. Also statistics are handled
+     * by BaseProtocol and are recorder periodically.
+     */
     virtual void handleSelfMsg(cMessage* msg) override;
 
     // TODO: implement method and pass info to upper layer (bogus platooning) as it is (msg)
@@ -141,27 +141,27 @@ protected:
     }
 
     /**
-         * Sends a platooning message with all information about the car. This is an utility function for
-         * subclasses
-         */
+     * Sends a platooning message with all information about the car. This is an utility function for
+     * subclasses
+     */
     void sendPlatooningMessage(int destinationAddress);
 
     /**
-         * This method must be overridden by subclasses to take decisions
-         * about what to do.
-         * Passed packet MUST NOT be freed, but just be read. Freeing is a duty of the
-         * superclass
-         *
-         * \param pkt the platooning beacon
-         * \param unicast the original unicast packet which was containing pkt
-         */
+     * This method must be overridden by subclasses to take decisions
+     * about what to do.
+     * Passed packet MUST NOT be freed, but just be read. Freeing is a duty of the
+     * superclass
+     *
+     * \param pkt the platooning beacon
+     * \param unicast the original unicast packet which was containing pkt
+     */
     virtual void messageReceived(PlatooningBeacon* pkt, UnicastMessage* unicast);
 
     /**
-         * These methods signal changes in channel busy status to subclasses
-         * or occurrences of collisions.
-         * Subclasses which are interested should ovverride these methods.
-         */
+     * These methods signal changes in channel busy status to subclasses
+     * or occurrences of collisions.
+     * Subclasses which are interested should ovverride these methods.
+     */
     virtual void channelBusyStart()
     {
     }

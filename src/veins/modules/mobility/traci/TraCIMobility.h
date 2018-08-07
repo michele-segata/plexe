@@ -125,8 +125,8 @@ public:
         return signals;
     }
     /**
-         * returns angle in rads, 0 being east, with -M_PI <= angle < M_PI.
-         */
+     * returns angle in rads, 0 being east, with -M_PI <= angle < M_PI.
+     */
     virtual double getAngleRad() const
     {
         if (angle == M_PI) throw cRuntimeError("TraCIMobility::getAngleRad called with no angle set yet");
@@ -186,19 +186,19 @@ protected:
     virtual void fixIfHostGetsOutside(); /**< called after each read to check for (and handle) invalid positions */
 
     /**
-         * Returns the amount of CO2 emissions in grams/second, calculated for an average Car
-         * @param v speed in m/s
-         * @param a acceleration in m/s^2
-         * @returns emission in g/s
-         */
+     * Returns the amount of CO2 emissions in grams/second, calculated for an average Car
+     * @param v speed in m/s
+     * @param a acceleration in m/s^2
+     * @returns emission in g/s
+     */
     double calculateCO2emission(double v, double a) const;
 
     /**
-         * Calculates where the antenna of this car is, given its front bumper position
-         */
+     * Calculates where the antenna of this car is, given its front bumper position
+     */
     Coord calculateAntennaPosition(const Coord& vehiclePos) const;
 };
-}
+} // namespace Veins
 
 namespace Veins {
 class TraCIMobilityAccess {
@@ -210,6 +210,6 @@ public:
         return traci;
     };
 };
-}
+} // namespace Veins
 
 #endif

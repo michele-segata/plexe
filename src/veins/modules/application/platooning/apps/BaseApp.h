@@ -51,8 +51,8 @@ protected:
     BaseProtocol* protocol;
 
     /**
-         * Log data about vehicle
-         */
+     * Log data about vehicle
+     */
     virtual void logVehicleData(bool crashed = false);
 
     // output vectors for mobility stats
@@ -79,11 +79,11 @@ public:
     virtual ~BaseApp();
 
     /**
-         * Sends a unicast message
-         *
-         * @param msg message to be encapsulated into the unicast message
-         * @param destination id of the destination
-         */
+     * Sends a unicast message
+     *
+     * @param msg message to be encapsulated into the unicast message
+     * @param destination id of the destination
+     */
     void sendUnicast(cPacket* msg, int destination);
 
 protected:
@@ -92,8 +92,8 @@ protected:
     virtual void handleLowerControl(cMessage* msg) override;
 
     /**
-         * Handles PlatoonBeacons
-         */
+     * Handles PlatoonBeacons
+     */
     virtual void onPlatoonBeacon(const PlatooningBeacon* pb);
 };
 

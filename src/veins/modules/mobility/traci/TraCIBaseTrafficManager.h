@@ -39,8 +39,8 @@ public:
 
 private:
     /**
-         * Loads data about vehicles, routes, etc...
-         */
+     * Loads data about vehicles, routes, etc...
+     */
     void loadSumoScenario();
 
     // total number of vehicles generated
@@ -91,16 +91,16 @@ protected:
     void addVehicleToQueue(int routeId, struct Vehicle v);
 
     /**
-         * Inserts the vehicles which have been put into the queue
-         */
+     * Inserts the vehicles which have been put into the queue
+     */
     void insertVehicles();
 
     virtual void handleSelfMsg(cMessage* msg);
     virtual void handleMessage(cMessage* msg);
 
     /**
-         * virtual function that inheriting classes can override to get informed when scenario is loaded
-         */
+     * virtual function that inheriting classes can override to get informed when scenario is loaded
+     */
     virtual void scenarioLoaded(){};
 };
 

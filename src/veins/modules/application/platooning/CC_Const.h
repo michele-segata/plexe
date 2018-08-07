@@ -194,6 +194,6 @@ struct VEHICLE_DATA {
 
 // let the leader automatically change lane for the whole platoon if there is a speed advantage
 #define PAR_ENABLE_AUTO_LANE_CHANGE "ccalc"
-}
+} // namespace Plexe
 
 #endif /* CC_CONST_H */

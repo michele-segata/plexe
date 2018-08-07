@@ -64,7 +64,7 @@ protected:
     virtual void startServer();
     virtual void killServer();
 };
-}
+} // namespace Veins
 
 namespace Veins {
 class TraCIScenarioManagerForkerAccess {
@@ -74,6 +74,6 @@ public:
         return FindModule<TraCIScenarioManagerForker*>::findGlobalModule();
     };
 };
-}
+} // namespace Veins
 
 #endif

@@ -31,11 +31,11 @@
 #include "veins/modules/obstacle/ObstacleControl.h"
 #include "veins/modules/world/traci/trafficLight/TraCITrafficLightInterface.h"
 
-using Veins::TraCIScenarioManager;
+using Veins::AnnotationManagerAccess;
 using Veins::TraCIBuffer;
 using Veins::TraCICoord;
+using Veins::TraCIScenarioManager;
 using Veins::TraCITrafficLightInterface;
-using Veins::AnnotationManagerAccess;
 
 Define_Module(Veins::TraCIScenarioManager);
 
