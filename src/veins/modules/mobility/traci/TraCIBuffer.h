@@ -111,9 +111,9 @@ public:
     }
 
     /**
-         * @brief
-         * read and check type, then read and return an item from the buffer
-         */
+     * @brief
+     * read and check type, then read and return an item from the buffer
+     */
     template <typename T>
     T readTypeChecked(int expectedTraCIType)
     {
@@ -143,6 +143,6 @@ template <>
 std::string TraCIBuffer::read();
 template <>
 TraCICoord TraCIBuffer::read();
-}
+} // namespace Veins
 
 #endif /* VEINS_MOBILITY_TRACI_TRACIBUFFER_H_ */

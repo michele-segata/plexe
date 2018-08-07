@@ -108,51 +108,51 @@ protected:
 
 protected:
     /**
-         * Handle unicast procedures, e.g., determining whether the
-         * message is directed to this node, sending the ack, etc.
-         */
+     * Handle unicast procedures, e.g., determining whether the
+     * message is directed to this node, sending the ack, etc.
+     */
     virtual void handleUnicastMessage(const UnicastMessage* msg);
 
     /**
-         * Handle the reception of an ack frame
-         */
+     * Handle the reception of an ack frame
+     */
     virtual void handleAckMessage(const UnicastMessage* ack);
 
     /**
-         * Generates and sends a message. if a unicast address is specified, then the message is
-         * repeatedly sent until an ack is received. if no ack is received after a certain number
-         * of attempts, a control message signaling the error is sent to the application.
-         * This function inserts sender mac address and sequence number into the sent frame. It
-         * takes care of incrementing the sequence number too.
-         *
-         * \param destination destination mac address. set to "broadcast" for a broadcast message
-         * \param msg packet to encapsulate
-         * \param encapsulatedId tells the kind of encapsulated frame inside the unicast message
-         * which will be used by the receiver to know the type of content, a kind of protocol ID field
-         * \param priority the priority of the message, a value from 0 to 3 which will be then mapped
-         * onto an AC (AC_BK = 0, ... AC_VO = 3)
-         * \param channel 0 for CCH, 1 for SCH
-         * \param kind id of the application, for (de)multiplexing
-         */
+     * Generates and sends a message. if a unicast address is specified, then the message is
+     * repeatedly sent until an ack is received. if no ack is received after a certain number
+     * of attempts, a control message signaling the error is sent to the application.
+     * This function inserts sender mac address and sequence number into the sent frame. It
+     * takes care of incrementing the sequence number too.
+     *
+     * \param destination destination mac address. set to "broadcast" for a broadcast message
+     * \param msg packet to encapsulate
+     * \param encapsulatedId tells the kind of encapsulated frame inside the unicast message
+     * which will be used by the receiver to know the type of content, a kind of protocol ID field
+     * \param priority the priority of the message, a value from 0 to 3 which will be then mapped
+     * onto an AC (AC_BK = 0, ... AC_VO = 3)
+     * \param channel 0 for CCH, 1 for SCH
+     * \param kind id of the application, for (de)multiplexing
+     */
     void sendMessageDown(int destination, cPacket* msg, int encapsulatedId, int priority, SimTime timestamp, enum Channels::ChannelNumber channel, short kind);
 
     /**
-         * Sends an ack in response to an unicast message
-         *
-         * \param msg the unicast message to be acknowledged
-         */
+     * Sends an ack in response to an unicast message
+     *
+     * \param msg the unicast message to be acknowledged
+     */
     void sendAck(const UnicastMessage* msg);
 
     /**
-         * Resend the current unicast message after an ack timeout occurred.
-         * This function also increments the number of attempts.
-         */
+     * Resend the current unicast message after an ack timeout occurred.
+     * This function also increments the number of attempts.
+     */
     void resendMessage();
 
     /**
-         * After an ack is received or a message is discarded after a certain number of attempts,
-         * this method can be called to process the next packet in the queue, if any.
-         */
+     * After an ack is received or a message is discarded after a certain number of attempts,
+     * this method can be called to process the next packet in the queue, if any.
+     */
     void processNextPacket();
 
 public:

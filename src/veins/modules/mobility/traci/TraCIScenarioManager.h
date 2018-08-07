@@ -123,8 +123,8 @@ public:
         return updateInterval;
     }
     /**
-         * convert TraCI coordinates to OMNeT++ coordinates
-         */
+     * convert TraCI coordinates to OMNeT++ coordinates
+     */
     Coord traci2omnet(TraCICoord coord) const
     {
         return connection->traci2omnet(coord);
@@ -135,8 +135,8 @@ public:
     }
 
     /**
-         * convert OMNeT++ coordinates to TraCI coordinates
-         */
+     * convert OMNeT++ coordinates to TraCI coordinates
+     */
     TraCICoord omnet2traci(Coord coord) const
     {
         return connection->omnet2traci(coord);
@@ -147,8 +147,8 @@ public:
     }
 
     /**
-         * returns whether simulation is running under gui or not
-         */
+     * returns whether simulation is running under gui or not
+     */
     virtual bool isGuiSimulation()
     {
         return false;
@@ -222,19 +222,19 @@ protected:
     bool isModuleUnequipped(std::string nodeId); /**< returns true if this vehicle is Unequipped */
 
     /**
-         * returns whether a given position lies within the simulation's region of interest.
-         * Modules are destroyed and re-created as managed vehicles leave and re-enter the ROI
-         */
+     * returns whether a given position lies within the simulation's region of interest.
+     * Modules are destroyed and re-created as managed vehicles leave and re-enter the ROI
+     */
     bool isInRegionOfInterest(const TraCICoord& position, std::string road_id, double speed, double angle);
 
     /**
-         * adds a new vehicle to the queue which are tried to be inserted at the next SUMO time step;
-         */
+     * adds a new vehicle to the queue which are tried to be inserted at the next SUMO time step;
+     */
     void insertNewVehicle();
 
     /**
-         * tries to add all vehicles in the vehicle queue to SUMO;
-         */
+     * tries to add all vehicles in the vehicle queue to SUMO;
+     */
     void insertVehicles();
 
     void subscribeToVehicleVariables(std::string vehicleId);
@@ -247,21 +247,21 @@ protected:
     void unsubscribeFromTrafficLightVariables(std::string tlId);
     void processTrafficLightSubscription(std::string objectId, TraCIBuffer& buf);
     /**
-         * parses the vector of module types in ini file
-         *
-         * in case of inconsistencies the function kills the simulation
-         */
+     * parses the vector of module types in ini file
+     *
+     * in case of inconsistencies the function kills the simulation
+     */
     void parseModuleTypes();
 
     /**
-         * transforms a list of mappings of an omnetpp.ini parameter in a list
-         */
+     * transforms a list of mappings of an omnetpp.ini parameter in a list
+     */
     TypeMapping parseMappings(std::string parameter, std::string parameterName, bool allowEmpty = false);
 
 private:
     const omnetpp::simsignal_t traciInitializedSignal;
 };
-}
+} // namespace Veins
 
 namespace Veins {
 class TraCIScenarioManagerAccess {
@@ -271,6 +271,6 @@ public:
         return FindModule<TraCIScenarioManager*>::findGlobalModule();
     };
 };
-}
+} // namespace Veins
 
 #endif

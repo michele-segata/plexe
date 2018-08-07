@@ -1408,4 +1408,4 @@ void TraCICommandInterface::Vehicle::enableAutoLaneChanging(bool enable)
 {
     setParameter(PAR_ENABLE_AUTO_LANE_CHANGE, enable ? 1 : 0);
 }
-}
+} // namespace Veins
