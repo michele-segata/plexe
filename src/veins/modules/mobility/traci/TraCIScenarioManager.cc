@@ -345,7 +345,9 @@ void TraCIScenarioManager::init_traci()
         buf >> simId;
         uint8_t typeId_resp;
         buf >> typeId_resp;
-        ASSERT(typeId_resp == TYPE_BOUNDINGBOX);
+        ASSERT(typeId_resp == TYPE_POLYGON);
+        uint8_t edges;
+        buf >> edges;
         double x1;
         buf >> x1;
         double y1;
@@ -367,8 +369,8 @@ void TraCIScenarioManager::init_traci()
 
     {
         // subscribe to list of departed and arrived vehicles, as well as simulation time
-        uint32_t beginTime = 0;
-        uint32_t endTime = 0x7FFFFFFF;
+        double beginTime = 0;
+        double endTime = (double)0x7FFFFFFF;
         std::string objectId = "";
         uint8_t variableNumber = 7;
         uint8_t variable1 = VAR_DEPARTED_VEHICLES_IDS;
@@ -385,8 +387,8 @@ void TraCIScenarioManager::init_traci()
 
     {
         // subscribe to list of vehicle ids
-        uint32_t beginTime = 0;
-        uint32_t endTime = 0x7FFFFFFF;
+        double beginTime = 0;
+        double endTime = (double)0x7FFFFFFF;
         std::string objectId = "";
         uint8_t variableNumber = 1;
         uint8_t variable1 = ID_LIST;
@@ -669,7 +671,7 @@ void TraCIScenarioManager::executeOneTimestep()
 
     EV_DEBUG << "Triggering TraCI server simulation advance to t=" << simTime() << endl;
 
-    uint32_t targetTime = simTime().inUnit(SIMTIME_MS);
+    double targetTime = simTime().dbl();
 
     if (isConnected()) {
         insertVehicles();
@@ -737,8 +739,8 @@ void TraCIScenarioManager::insertVehicles()
 void TraCIScenarioManager::subscribeToVehicleVariables(std::string vehicleId)
 {
     // subscribe to some attributes of the vehicle
-    uint32_t beginTime = 0;
-    uint32_t endTime = 0x7FFFFFFF;
+    double beginTime = 0;
+    double endTime = (double)0x7FFFFFFF;
     std::string objectId = vehicleId;
     uint8_t variableNumber = 5;
     uint8_t variable1 = VAR_POSITION;
@@ -755,8 +757,8 @@ void TraCIScenarioManager::subscribeToVehicleVariables(std::string vehicleId)
 void TraCIScenarioManager::unsubscribeFromVehicleVariables(std::string vehicleId)
 {
     // subscribe to some attributes of the vehicle
-    uint32_t beginTime = 0;
-    uint32_t endTime = 0x7FFFFFFF;
+    double beginTime = 0;
+    double endTime = (double)0x7FFFFFFF;
     std::string objectId = vehicleId;
     uint8_t variableNumber = 0;
 
@@ -766,8 +768,8 @@ void TraCIScenarioManager::unsubscribeFromVehicleVariables(std::string vehicleId
 void TraCIScenarioManager::subscribeToTrafficLightVariables(std::string tlId)
 {
     // subscribe to some attributes of the traffic light system
-    uint32_t beginTime = 0;
-    uint32_t endTime = 0x7FFFFFFF;
+    double beginTime = 0;
+    double endTime = (double)0x7FFFFFFF;
     std::string objectId = tlId;
     uint8_t variableNumber = 4;
     uint8_t variable1 = TL_CURRENT_PHASE;
@@ -785,8 +787,8 @@ void TraCIScenarioManager::unsubscribeFromTrafficLightVariables(std::string tlId
     // unsubscribe from some attributes of the traffic light system
     // this method is mainly for completeness as traffic lights are not supposed to be removed at runtime
 
-    uint32_t beginTime = 0;
-    uint32_t endTime = 0x7FFFFFFF;
+    double beginTime = 0;
+    double endTime = (double)0x7FFFFFFF;
     std::string objectId = tlId;
     uint8_t variableNumber = 0;
 
