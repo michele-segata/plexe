@@ -106,7 +106,7 @@ public:
         bool changeVehicleRoute(const std::list<std::string>& roads);
         void setLaneChangeMode(int mode);
         void getLaneChangeState(int direction, int& state1, int& state2);
-        void changeLane(int lane, int duration);
+        void changeLane(int lane, double duration);
         double getLength();
         void setParameter(const std::string& parameter, int value);
         void setParameter(const std::string& parameter, double value);
