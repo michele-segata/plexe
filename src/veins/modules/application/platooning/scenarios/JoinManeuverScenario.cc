@@ -68,8 +68,8 @@ void JoinManeuverScenario::prepareManeuverCars(int platoonLane)
         positionHelper->setIsLeader(false);
         positionHelper->setPlatoonLane(platoonLane);
         positionHelper->setPlatoonSpeed(100 / 3.6);
-        positionHelper->setPlatoonId(positionHelper->getLeaderId());
         setupFormation();
+        positionHelper->setPlatoonId(positionHelper->getLeaderId());
 
         break;
     }
