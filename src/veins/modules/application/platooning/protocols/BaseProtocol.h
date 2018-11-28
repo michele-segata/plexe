@@ -35,10 +35,6 @@
 class BaseProtocol : public Veins::BaseApplLayer {
 
 private:
-    // signals for busy channel and collisions
-    static const simsignalwrap_t sigChannelBusy;
-    static const simsignalwrap_t sigCollision;
-
     // amount of time channel has been observed busy during the last "statisticsPeriod" seconds
     SimTime busyTime;
     // count the number of collision at the phy layer
@@ -178,6 +174,9 @@ protected:
     Veins::TraCICommandInterface::Vehicle* traciVehicle;
 
 public:
+    static const simsignal_t sigChannelBusy;
+    static const simsignal_t sigCollision;
+
     // id for beacon message
     static const int BEACON_TYPE = 12345;
 

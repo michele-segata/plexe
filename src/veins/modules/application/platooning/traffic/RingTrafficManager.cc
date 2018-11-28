@@ -25,8 +25,8 @@ void RingTrafficManager::initialize(int stage)
     TraCIBaseTrafficManager::initialize(stage);
 
     platoonSize = &par("platoonSize");
-    nPlatoons = par("nPlatoons").longValue();
-    nLanes = par("nLanes").longValue();
+    nPlatoons = par("nPlatoons");
+    nLanes = par("nLanes");
     platoonInsertSpeed = &par("platoonInsertSpeed");
     platoonInsertDistance = par("platoonInsertDistance").doubleValue();
     platoonInsertHeadway = par("platoonInsertHeadway").doubleValue();
@@ -58,7 +58,7 @@ void RingTrafficManager::scenarioLoaded()
     for (int p = 0; p < nPlatoons; p++) {
         Platoon platoon;
         // get the number of cars in this platoon
-        platoon.size = platoonSize->longValue();
+        platoon.size = *platoonSize;
         // get the speed of this platoon
         platoon.speed = platoonInsertSpeed->doubleValue() / 3.6;
         // compute the distance of this platoon

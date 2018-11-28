@@ -25,7 +25,7 @@ void PositionHelper::initialize(int stage)
     BasePositionHelper::initialize(stage);
 
     if (stage == 0) {
-        nCars = par("nCars").longValue();
+        nCars = par("nCars");
         myId = getIdFromExternalId(getExternalId());
         leaderId = getPlatoonLeader(myId, nLanes, platoonSize);
         leader = myId == leaderId;

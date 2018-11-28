@@ -30,9 +30,9 @@ void BasePositionHelper::initialize(int stage)
         mobility = Veins::TraCIMobilityAccess().get(getParentModule());
         traci = mobility->getCommandInterface();
         traciVehicle = mobility->getVehicleCommandInterface();
-        nLanes = par("nLanes").longValue();
-        platoonSize = par("platoonSize").longValue();
-        nCars = par("nCars").longValue();
+        nLanes = par("nLanes");
+        platoonSize = par("platoonSize");
+        nCars = par("nCars");
         highestId = nCars - 1;
     }
 }

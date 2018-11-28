@@ -26,9 +26,9 @@ void PlatoonsTrafficManager::initialize(int stage)
 
     if (stage == 0) {
 
-        nCars = par("nCars").longValue();
-        platoonSize = par("platoonSize").longValue();
-        nLanes = par("nLanes").longValue();
+        nCars = par("nCars");
+        platoonSize = par("platoonSize");
+        nLanes = par("nLanes");
         platoonInsertTime = SimTime(par("platoonInsertTime").doubleValue());
         platoonInsertSpeed = par("platoonInsertSpeed").doubleValue();
         platoonInsertDistance = par("platoonInsertDistance").doubleValue();

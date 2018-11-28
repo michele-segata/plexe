@@ -23,14 +23,12 @@
 // Based on inet::MovingMobilityBase of INET Framework v4.0.0
 //
 
-#ifndef Veins_VeinsInetMobility_h
-#define Veins_VeinsInetMobility_h
+#pragma once
 
 namespace omnetpp {
 }
 using namespace omnetpp;
 
-#undef INET_IMPORT
 #include "inet/mobility/base/MobilityBase.h"
 
 #include "veins/modules/mobility/traci/TraCIScenarioManager.h"
@@ -38,7 +36,7 @@ using namespace omnetpp;
 
 namespace Veins {
 
-class INET_API VeinsInetMobility : public inet::MobilityBase {
+class VeinsInetMobility : public inet::MobilityBase {
 public:
     VeinsInetMobility();
 
@@ -97,5 +95,3 @@ public:
     };
 };
 } // namespace Veins
-
-#endif // ifndef Veins_VeinsInetMobility_h

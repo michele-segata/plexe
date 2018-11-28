@@ -23,7 +23,6 @@
 // Based on inet::MovingMobilityBase of INET Framework v4.0.0
 //
 
-#undef INET_IMPORT
 #include "inet/common/INETMath.h"
 #include "veins_inet/VeinsInetMobility.h"
 #include "inet/visualizer/mobility/MobilityCanvasVisualizer.h"
@@ -42,6 +41,7 @@ VeinsInetMobility::VeinsInetMobility()
 
 VeinsInetMobility::~VeinsInetMobility()
 {
+    delete vehicleCommandInterface;
 }
 
 void VeinsInetMobility::preInitialize(std::string external_id, const inet::Coord& position, std::string road_id, double speed, double angle)
@@ -68,6 +68,15 @@ void VeinsInetMobility::nextPosition(const inet::Coord& position, std::string ro
     lastPosition = position;
     lastVelocity = inet::Coord(cos(angle), -sin(angle)) * speed;
     lastOrientation = inet::EulerAngles(rad(-angle), rad(0.0), rad(0.0));
+
+    // Update display string to show node is getting updates
+    auto hostMod = getParentModule();
+    if (std::string(hostMod->getDisplayString().getTagArg("veins", 0)) == ". ") {
+        hostMod->getDisplayString().setTagArg("veins", 0, " .");
+    }
+    else {
+        hostMod->getDisplayString().setTagArg("veins", 0, ". ");
+    }
 
     emitMobilityStateChangedSignal();
 }

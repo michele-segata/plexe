@@ -18,8 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-#ifndef ___WAVEAPPTOMAC1609_4INTERFACE_H_
-#define ___WAVEAPPTOMAC1609_4INTERFACE_H_
+#pragma once
 
 #include "veins/base/utils/NetwToMacControlInfo.h"
 #include "veins/modules/utility/Consts80211p.h"
@@ -45,8 +44,11 @@ public:
     virtual void changeServiceChannel(int channelNumber) = 0;
 
     virtual ~WaveAppToMac1609_4Interface(){};
+
+    /**
+     * @brief Returns the MAC address of this MAC module.
+     */
+    virtual const LAddress::L2Type& getMACAddress() = 0;
 };
 
 } // namespace Veins
-
-#endif /* ___WAVEAPPTOMAC1609_4INTERFACE_H_ */

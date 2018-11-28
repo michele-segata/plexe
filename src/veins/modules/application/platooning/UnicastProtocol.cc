@@ -45,8 +45,8 @@ void UnicastProtocol::initialize(int stage)
         upperControlOut = findGate("upperControlOut");
 
         // get parameters
-        queueSize = par("queueSize").longValue();
-        maxAttempts = par("maxAttempts").longValue();
+        queueSize = par("queueSize");
+        maxAttempts = par("maxAttempts");
         ackTimeout = par("ackTimeout").doubleValue();
 
         // timeout message
@@ -216,7 +216,7 @@ void UnicastProtocol::handleUnicastMessage(const UnicastMessage* msg)
 
     int destination = msg->getDestination();
     int source = msg->getSource();
-    //-1 means never seen a message from the sender of the message
+    // -1 means never seen a message from the sender of the message
     int expectedSequenceNumber = -1;
     std::map<int, int>::iterator sequenceNumberIt;
 

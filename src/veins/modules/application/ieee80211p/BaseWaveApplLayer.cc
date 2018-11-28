@@ -20,16 +20,7 @@
 
 #include "veins/modules/application/ieee80211p/BaseWaveApplLayer.h"
 
-//#define DBG_APP std::cerr << "[" << simTime().raw() << "] " << getParentModule()->getFullPath() << " "
-
-#ifndef DBG_APP
-#define DBG_APP EV
-#endif
-
 using namespace Veins;
-
-const simsignalwrap_t BaseWaveApplLayer::mobilityStateChangedSignal = simsignalwrap_t(MIXIM_SIGNAL_MOBILITY_CHANGE_NAME);
-const simsignalwrap_t BaseWaveApplLayer::parkingStateChangedSignal = simsignalwrap_t(TRACI_SIGNAL_PARKING_CHANGE_NAME);
 
 void BaseWaveApplLayer::initialize(int stage)
 {
@@ -55,8 +46,6 @@ void BaseWaveApplLayer::initialize(int stage)
         mac = FindModule<WaveAppToMac1609_4Interface*>::findSubModule(getParentModule());
         assert(mac);
 
-        myId = getParentModule()->getId();
-
         // read parameters
         headerLength = par("headerLength");
         sendBeacons = par("sendBeacons").boolValue();
@@ -73,8 +62,8 @@ void BaseWaveApplLayer::initialize(int stage)
 
         isParked = false;
 
-        findHost()->subscribe(mobilityStateChangedSignal, this);
-        findHost()->subscribe(parkingStateChangedSignal, this);
+        findHost()->subscribe(BaseMobility::mobilityStateChangedSignal, this);
+        findHost()->subscribe(TraCIMobility::parkingStateChangedSignal, this);
 
         sendBeaconEvt = new cMessage("beacon evt", SEND_BEACON_EVT);
         sendWSAEvt = new cMessage("wsa evt", SEND_WSA_EVT);
@@ -87,11 +76,15 @@ void BaseWaveApplLayer::initialize(int stage)
         receivedWSMs = 0;
     }
     else if (stage == 1) {
+
+        // store MAC address for quick access
+        myId = mac->getMACAddress();
+
         // simulate asynchronous channel access
 
         if (dataOnSch == true && !mac->isChannelSwitchingActive()) {
             dataOnSch = false;
-            std::cerr << "App wants to send data on SCH but MAC doesn't use any SCH. Sending all data on CCH" << std::endl;
+            EV_ERROR << "App wants to send data on SCH but MAC doesn't use any SCH. Sending all data on CCH" << std::endl;
         }
         simtime_t firstBeacon = simTime();
 
@@ -102,8 +95,7 @@ void BaseWaveApplLayer::initialize(int stage)
 
             if (mac->isChannelSwitchingActive() == true) {
                 if (beaconInterval.raw() % (mac->getSwitchingInterval().raw() * 2)) {
-                    std::cerr << "The beacon interval (" << beaconInterval << ") is smaller than or not a multiple of  one synchronization interval (" << 2 * mac->getSwitchingInterval() << "). "
-                              << "This means that beacons are generated during SCH intervals" << std::endl;
+                    EV_ERROR << "The beacon interval (" << beaconInterval << ") is smaller than or not a multiple of  one synchronization interval (" << 2 * mac->getSwitchingInterval() << "). This means that beacons are generated during SCH intervals" << std::endl;
                 }
                 firstBeacon = computeAsynchronousSendingTime(beaconInterval, type_CCH);
             }
@@ -157,7 +149,7 @@ simtime_t BaseWaveApplLayer::computeAsynchronousSendingTime(simtime_t interval, 
     return firstEvent;
 }
 
-void BaseWaveApplLayer::populateWSM(WaveShortMessage* wsm, int rcvId, int serial)
+void BaseWaveApplLayer::populateWSM(WaveShortMessage* wsm, LAddress::L2Type rcvId, int serial)
 {
 
     wsm->setWsmVersion(1);
@@ -194,10 +186,10 @@ void BaseWaveApplLayer::populateWSM(WaveShortMessage* wsm, int rcvId, int serial
 void BaseWaveApplLayer::receiveSignal(cComponent* source, simsignal_t signalID, cObject* obj, cObject* details)
 {
     Enter_Method_Silent();
-    if (signalID == mobilityStateChangedSignal) {
+    if (signalID == BaseMobility::mobilityStateChangedSignal) {
         handlePositionUpdate(obj);
     }
-    else if (signalID == parkingStateChangedSignal) {
+    else if (signalID == TraCIMobility::parkingStateChangedSignal) {
         handleParkingUpdate(obj);
     }
 }
@@ -254,7 +246,7 @@ void BaseWaveApplLayer::handleSelfMsg(cMessage* msg)
         break;
     }
     default: {
-        if (msg) DBG_APP << "APP: Error: Got Self Message of unknown kind! Name: " << msg->getName() << endl;
+        if (msg) EV_WARN << "APP: Error: Got Self Message of unknown kind! Name: " << msg->getName() << endl;
         break;
     }
     }
@@ -276,7 +268,7 @@ BaseWaveApplLayer::~BaseWaveApplLayer()
 {
     cancelAndDelete(sendBeaconEvt);
     cancelAndDelete(sendWSAEvt);
-    findHost()->unsubscribe(mobilityStateChangedSignal, this);
+    findHost()->unsubscribe(BaseMobility::mobilityStateChangedSignal, this);
 }
 
 void BaseWaveApplLayer::startService(Channels::ChannelNumber channel, int serviceId, std::string serviceDescription)
@@ -315,15 +307,15 @@ void BaseWaveApplLayer::sendDelayedDown(cMessage* msg, simtime_t delay)
 void BaseWaveApplLayer::checkAndTrackPacket(cMessage* msg)
 {
     if (dynamic_cast<BasicSafetyMessage*>(msg)) {
-        DBG_APP << "sending down a BSM" << std::endl;
+        EV_TRACE << "sending down a BSM" << std::endl;
         generatedBSMs++;
     }
     else if (dynamic_cast<WaveServiceAdvertisment*>(msg)) {
-        DBG_APP << "sending down a WSA" << std::endl;
+        EV_TRACE << "sending down a WSA" << std::endl;
         generatedWSAs++;
     }
     else if (dynamic_cast<WaveShortMessage*>(msg)) {
-        DBG_APP << "sending down a wsm" << std::endl;
+        EV_TRACE << "sending down a wsm" << std::endl;
         generatedWSMs++;
     }
 }

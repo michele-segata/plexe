@@ -21,11 +21,11 @@
 
 using namespace Veins;
 
-Define_Module(BaseProtocol)
+Define_Module(BaseProtocol);
 
-    // set signals for channel busy and collisions
-    const simsignalwrap_t BaseProtocol::sigChannelBusy = simsignalwrap_t("sigChannelBusy");
-const simsignalwrap_t BaseProtocol::sigCollision = simsignalwrap_t("sigCollision");
+// set signals for channel busy and collisions
+const simsignal_t BaseProtocol::sigChannelBusy = registerSignal("org.car2x.veins.modules.application.platooning.sigChannelBusy");
+const simsignal_t BaseProtocol::sigCollision = registerSignal("org.car2x.veins.modules.application.platooning.sigCollision");
 
 void BaseProtocol::initialize(int stage)
 {
@@ -55,9 +55,9 @@ void BaseProtocol::initialize(int stage)
         // beaconing interval in seconds
         beaconingInterval = SimTime(par("beaconingInterval").doubleValue());
         // platooning message packet size
-        packetSize = par("packetSize").longValue();
+        packetSize = par("packetSize");
         // priority of platooning message
-        priority = par("priority").longValue();
+        priority = par("priority");
         ASSERT2(priority >= 0 && priority <= 7, "priority value must be between 0 and 7");
 
         // init messages for scheduleAt

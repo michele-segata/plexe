@@ -18,8 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-#ifndef BASEWAVEAPPLLAYER_H_
-#define BASEWAVEAPPLLAYER_H_
+#pragma once
 
 #include <map>
 #include "veins/base/modules/BaseApplLayer.h"
@@ -68,9 +67,6 @@ public:
     };
 
 protected:
-    static const simsignalwrap_t mobilityStateChangedSignal;
-    static const simsignalwrap_t parkingStateChangedSignal;
-
     /** @brief handle messages from below and calls the onWSM, onBSM, and onWSA functions accordingly */
     virtual void handleLowerMsg(cMessage* msg);
 
@@ -78,7 +74,7 @@ protected:
     virtual void handleSelfMsg(cMessage* msg);
 
     /** @brief sets all the necessary fields in the WSM, BSM, or WSA. */
-    virtual void populateWSM(WaveShortMessage* wsm, int rcvId = -1, int serial = 0);
+    virtual void populateWSM(WaveShortMessage* wsm, LAddress::L2Type rcvId = LAddress::L2BROADCAST(), int serial = 0);
 
     /** @brief this function is called upon receiving a WaveShortMessage */
     virtual void onWSM(WaveShortMessage* wsm){};
@@ -167,7 +163,7 @@ protected:
     /* state of the vehicle */
     Coord curPosition;
     Coord curSpeed;
-    int myId;
+    LAddress::L2Type myId = 0;
     int mySCH;
 
     /* stats */
@@ -184,5 +180,3 @@ protected:
 };
 
 } // namespace Veins
-
-#endif /* BASEWAVEAPPLLAYER_H_ */

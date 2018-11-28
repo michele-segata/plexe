@@ -18,14 +18,15 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-#ifndef ___MAC1609_4_H_
-#define ___MAC1609_4_H_
+#pragma once
 
 #include <assert.h>
-#include <omnetpp.h>
 #include <queue>
 #include <memory>
 #include <stdint.h>
+
+#include "veins/veins.h"
+
 #include "veins/base/modules/BaseLayer.h"
 #include "veins/base/phyLayer/MacToPhyControlInfo.h"
 #include "veins/modules/phy/PhyLayer80211p.h"
@@ -37,7 +38,6 @@
 #include "veins/modules/messages/AckTimeOutMessage_m.h"
 #include "veins/modules/messages/Mac80211Ack_m.h"
 #include "veins/base/modules/BaseMacLayer.h"
-
 #include "veins/modules/utility/ConstsPhy.h"
 
 namespace Veins {
@@ -61,9 +61,16 @@ namespace Veins {
  * @see Decider80211p
  */
 
+class DeciderResult80211;
+
 class Mac1609_4 : public BaseMacLayer, public WaveAppToMac1609_4Interface {
 
 public:
+    // tell to anybody which is interested when the channel turns busy or idle
+    static const simsignal_t sigChannelBusy;
+    // tell to anybody which is interested when a collision occurred
+    static const simsignal_t sigCollision;
+
     // Access categories in increasing order of priority (see IEEE Std 802.11-2012, Table 9-1)
     enum t_access_category {
         AC_BK = 0,
@@ -199,6 +206,9 @@ protected:
     /** @brief Handle control messages from lower layer.*/
     virtual void handleLowerControl(cMessage* msg);
 
+    /** @brief Handle received broadcast */
+    virtual void handleBroadcast(Mac80211Pkt* macPkt, DeciderResult80211* res);
+
     /** @brief Set a state for the channel selecting operation.*/
     void setActiveChannel(t_channel state);
 
@@ -223,11 +233,17 @@ protected:
 
     simtime_t getFrameDuration(int payloadLengthBits, enum PHY_MCS mcs = MCS_DEFAULT) const;
 
-    void sendAck(int recpAddress, unsigned long wsmId);
-    void handleUnicast(std::unique_ptr<WaveShortMessage> wsm);
+    void sendAck(LAddress::L2Type recpAddress, unsigned long wsmId);
+    void handleUnicast(LAddress::L2Type srcAddr, std::unique_ptr<WaveShortMessage> wsm);
     void handleAck(const Mac80211Ack* ack);
     void handleAckTimeOut(AckTimeOutMessage* ackTimeOutMsg);
     void handleRetransmit(t_access_category ac);
+
+    const LAddress::L2Type& getMACAddress()
+    {
+        ASSERT(myMacAddr != LAddress::L2NULL());
+        return BaseMacLayer::getMACAddress();
+    }
 
 protected:
     /** @brief Self message to indicate that the current channel shall be switched.*/
@@ -278,9 +294,6 @@ protected:
     long statsSlotsBackoff;
     simtime_t statsTotalBusyTime;
 
-    /** @brief This MAC layers MAC address.*/
-    int myMacAddress;
-
     /** @brief The power (in mW) to transmit with.*/
     double txPower;
 
@@ -312,13 +325,6 @@ protected:
     std::set<unsigned long> handledUnicastToApp;
 
     Mac80211pToPhy11pInterface* phy11p;
-
-    // tell to anybody which is interested when the channel turns busy or idle
-    simsignal_t sigChannelBusy;
-    // tell to anybody which is interested when a collision occurred
-    simsignal_t sigCollision;
 };
 
 } // namespace Veins
-
-#endif /* ___MAC1609_4_H_*/

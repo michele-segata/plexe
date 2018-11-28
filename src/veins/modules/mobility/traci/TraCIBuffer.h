@@ -1,10 +1,9 @@
-#ifndef VEINS_MOBILITY_TRACI_TRACIBUFFER_H_
-#define VEINS_MOBILITY_TRACI_TRACIBUFFER_H_
+#pragma once
 
 #include <cstddef>
 #include <string>
 
-#include "veins/base/utils/MiXiMDefs.h"
+#include "veins/veins.h"
 
 namespace Veins {
 
@@ -55,20 +54,6 @@ public:
         else {
             for (size_t i = 0; i < sizeof(inv); ++i) {
                 buf += p_buf_to_send[sizeof(inv) - 1 - i];
-            }
-        }
-    }
-
-    void writeBuffer(const unsigned char* buffer, size_t size)
-    {
-        if (isBigEndian()) {
-            for (size_t i = 0; i < size; ++i) {
-                buf += buffer[i];
-            }
-        }
-        else {
-            for (size_t i = 0; i < size; ++i) {
-                buf += buffer[size - 1 - i];
             }
         }
     }
@@ -128,9 +113,15 @@ public:
     std::string str() const;
     std::string hexStr() const;
 
+    static void setTimeAsDouble(bool val)
+    {
+        timeAsDouble = val;
+    }
+
 private:
     std::string buf;
     size_t buf_index;
+    static bool timeAsDouble;
 };
 
 template <>
@@ -143,6 +134,9 @@ template <>
 std::string TraCIBuffer::read();
 template <>
 TraCICoord TraCIBuffer::read();
-} // namespace Veins
+template <>
+void TraCIBuffer::write(simtime_t o);
+template <>
+simtime_t TraCIBuffer::read();
 
-#endif /* VEINS_MOBILITY_TRACI_TRACIBUFFER_H_ */
+} // namespace Veins

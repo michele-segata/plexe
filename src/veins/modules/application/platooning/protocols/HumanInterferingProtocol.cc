@@ -56,9 +56,9 @@ Define_Module(HumanInterferingProtocol)
         // beaconing interval in seconds
         beaconingInterval = SimTime(par("beaconingInterval").doubleValue());
         // platooning message packet size
-        packetSize = par("packetSize").longValue();
+        packetSize = par("packetSize");
         // priority of platooning message
-        priority = par("priority").longValue();
+        priority = par("priority");
         ASSERT2(priority >= 0 && priority <= 7, "priority value must be between 0 and 7");
         // tx power
         txPower = par("txPower").doubleValue();
