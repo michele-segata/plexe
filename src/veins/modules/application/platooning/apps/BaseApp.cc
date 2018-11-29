@@ -17,7 +17,7 @@
 
 #include "veins/modules/application/platooning/apps/BaseApp.h"
 
-#include "veins/modules/messages/WaveShortMessage_m.h"
+#include "veins/modules/messages/BaseFrame1609_4_m.h"
 #include "veins/base/messages/MacPkt_m.h"
 #include "veins/modules/mac/ieee80211p/Mac1609_4.h"
 

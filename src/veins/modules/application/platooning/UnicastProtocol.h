@@ -18,7 +18,7 @@
 #ifndef UNICASTPROTOCOL_H_
 #define UNICASTPROTOCOL_H_
 
-#include "veins/modules/application/ieee80211p/BaseWaveApplLayer.h"
+#include "veins/modules/application/ieee80211p/DemoBaseApplLayer.h"
 
 #include <queue>
 
@@ -38,7 +38,7 @@ enum ControlMessageCommand {
     FULL_QUEUE
 };
 
-class UnicastProtocol : public Veins::BaseWaveApplLayer {
+class UnicastProtocol : public Veins::DemoBaseApplLayer {
 
 protected:
     // this is the mac address of the node.
@@ -97,8 +97,8 @@ public:
     virtual void initialize(int stage);
 
 protected:
-    virtual void onBeacon(Veins::WaveShortMessage* wsm);
-    virtual void onData(Veins::WaveShortMessage* wsm);
+    virtual void onBeacon(Veins::BaseFrame1609_4* wsm);
+    virtual void onData(Veins::BaseFrame1609_4* wsm);
 
 protected:
     virtual void handleUpperMsg(cMessage* msg);

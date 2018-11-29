@@ -32,7 +32,7 @@ const simsignal_t UnicastProtocol::sigTransmissionAttempts = registerSignal("tra
 void UnicastProtocol::initialize(int stage)
 {
 
-    BaseWaveApplLayer::initialize(stage);
+    DemoBaseApplLayer::initialize(stage);
 
     if (stage == 0) {
         // by default we have acks
@@ -149,7 +149,7 @@ void UnicastProtocol::sendMessageDown(int destination, cPacket* msg, int encapsu
     // free it
     unicast->encapsulate(msg);
 
-    WaveShortMessage* wsm = new WaveShortMessage();
+    BaseFrame1609_4* wsm = new BaseFrame1609_4();
     populateWSM(wsm, -1, unicast->getSequenceNumber());
     wsm->setChannelNumber(channel);
     wsm->setUserPriority(priority);
@@ -187,7 +187,7 @@ void UnicastProtocol::sendAck(const UnicastMessage* msg)
     unicast->setChannel(msg->getChannel());
     unicast->setType(ACK);
 
-    WaveShortMessage* wsm = new WaveShortMessage();
+    BaseFrame1609_4* wsm = new BaseFrame1609_4();
     populateWSM(wsm, -1, msg->getSequenceNumber());
     wsm->setChannelNumber(msg->getChannel());
     wsm->setUserPriority(msg->getPriority());
@@ -198,7 +198,7 @@ void UnicastProtocol::sendAck(const UnicastMessage* msg)
 void UnicastProtocol::resendMessage()
 {
 
-    WaveShortMessage* wsm = new WaveShortMessage();
+    BaseFrame1609_4* wsm = new BaseFrame1609_4();
     populateWSM(wsm, -1, currentMsg->getSequenceNumber());
     wsm->setChannelNumber(currentMsg->getChannel());
     wsm->setUserPriority(currentMsg->getPriority());
@@ -302,7 +302,7 @@ void UnicastProtocol::handleAckMessage(const UnicastMessage* ack)
 void UnicastProtocol::handleLowerMsg(cMessage* msg)
 {
     // first try to get the WSM out
-    WaveShortMessage* wsm = dynamic_cast<WaveShortMessage*>(msg);
+    BaseFrame1609_4* wsm = dynamic_cast<BaseFrame1609_4*>(msg);
     ASSERT2(wsm, "expecting a WSM but something different received");
 
     // then get our unicast message out
@@ -391,11 +391,11 @@ void UnicastProtocol::processNextPacket()
     delete toSend;
 }
 
-void UnicastProtocol::onBeacon(WaveShortMessage* wsm)
+void UnicastProtocol::onBeacon(BaseFrame1609_4* wsm)
 {
     ASSERT2(0, "onBeacon invoke when handleLowerMsg() has been overridden");
 }
-void UnicastProtocol::onData(WaveShortMessage* wsm)
+void UnicastProtocol::onData(BaseFrame1609_4* wsm)
 {
     ASSERT2(0, "onData invoke when handleLowerMsg() has been overridden");
 }
