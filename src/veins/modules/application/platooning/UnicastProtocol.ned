@@ -17,7 +17,7 @@
 
 package org.car2x.veins.modules.application.platooning;
 
-import org.car2x.veins.modules.application.ieee80211p.BaseWaveApplLayer;
+import org.car2x.veins.modules.application.ieee80211p.DemoBaseApplLayer;
 
 //
 // This simple module implements a basic unicast (acknowledged)
@@ -34,7 +34,7 @@ import org.car2x.veins.modules.application.ieee80211p.BaseWaveApplLayer;
 // after a certain number of attempts, an error is communicated
 // to the upper layer.
 //
-simple UnicastProtocol extends BaseWaveApplLayer
+simple UnicastProtocol extends DemoBaseApplLayer
 {
     parameters:
         //maximum queue size. set to 0 for infinite queue
