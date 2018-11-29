@@ -63,7 +63,7 @@ Define_Module(HumanInterferingProtocol)
         // tx power
         txPower = par("txPower").doubleValue();
         // bit rate
-        bitrate = par("bitrate").doubleValue();
+        bitrate = par("bitrate");
 
         // init messages for scheduleAt
         sendBeacon = new cMessage("sendBeacon");
