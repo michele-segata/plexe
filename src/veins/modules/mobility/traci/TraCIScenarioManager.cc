@@ -50,10 +50,10 @@ const simsignal_t TraCIScenarioManager::traciTimestepEndSignal = registerSignal(
 TraCIScenarioManager::TraCIScenarioManager()
     : connection(nullptr)
     , commandIfc(nullptr)
-    , connectAndStartTrigger(0)
-    , executeOneTimestepTrigger(0)
-    , world(0)
-    , cc(0)
+    , connectAndStartTrigger(nullptr)
+    , executeOneTimestepTrigger(nullptr)
+    , world(nullptr)
+    , cc(nullptr)
 {
 }
 
@@ -527,7 +527,7 @@ void TraCIScenarioManager::addModule(std::string nodeId, std::string type, std::
 
 cModule* TraCIScenarioManager::getManagedModule(std::string nodeId)
 {
-    if (hosts.find(nodeId) == hosts.end()) return 0;
+    if (hosts.find(nodeId) == hosts.end()) return nullptr;
     return hosts[nodeId];
 }
 
@@ -687,7 +687,7 @@ void TraCIScenarioManager::processTrafficLightSubscription(std::string objectId,
             break;
 
         case TL_NEXT_SWITCH:
-            tlIfModule->setNextSwitch(SimTime(buf.readTypeChecked<int32_t>(TYPE_INTEGER), SIMTIME_MS), false);
+            tlIfModule->setNextSwitch(buf.readTypeChecked<simtime_t>(getCommandInterface()->getTimeType()), false);
             break;
 
         case TL_RED_YELLOW_GREEN_STATE:

@@ -45,12 +45,10 @@ namespace Veins {
 class TraCIScenarioManagerForker : public TraCIScenarioManager {
 public:
     TraCIScenarioManagerForker();
-    virtual ~TraCIScenarioManagerForker();
-    virtual void initialize(int stage);
-    virtual void finish();
-
-    virtual bool isGuiSimulation() override;
-
+    ~TraCIScenarioManagerForker() override;
+    void initialize(int stage) override;
+    void finish() override;
+    bool isGuiSimulation() override;
 protected:
     bool useGui;
     std::string sumoCommand; // command line to run sumo (no gui)

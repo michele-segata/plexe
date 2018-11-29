@@ -20,6 +20,8 @@
 
 #pragma once
 
+#include "veins/veins.h"
+
 #include <veins/modules/world/traci/trafficLight/logics/TraCITrafficLightAbstractLogic.h>
 #include "veins/base/utils/FindModule.h"
 #include "veins/modules/world/traci/trafficLight/TraCITrafficLightInterface.h"
@@ -31,9 +33,9 @@ public:
     using signalScheme = std::string;
 
 protected:
-    virtual void handleApplMsg(cMessage* msg);
-    virtual void handleTlIfMsg(TraCITrafficLightMessage* tlMsg);
-    virtual void handlePossibleSwitch();
+    void handleApplMsg(cMessage* msg) override;
+    void handleTlIfMsg(TraCITrafficLightMessage* tlMsg) override;
+    void handlePossibleSwitch() override;
 };
 
 class TraCITrafficLightSimpleLogicAccess {
