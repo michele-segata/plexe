@@ -20,19 +20,20 @@
 
 #pragma once
 
+#include <cstdlib>
+
 #include "veins/base/phyLayer/AnalogueModel.h"
 #include "veins/base/modules/BaseWorldUtility.h"
 #include "veins/modules/obstacle/ObstacleControl.h"
 #include "veins/base/utils/Move.h"
-#include "veins/base/toolbox/Signal.h"
 #include "veins/base/messages/AirFrame_m.h"
 
 using Veins::AirFrame;
 using Veins::ObstacleControl;
 
-#include <cstdlib>
-
 namespace Veins {
+
+class Signal;
 
 /**
  * @brief Basic implementation of a SimpleObstacleShadowing
@@ -43,9 +44,6 @@ class SimpleObstacleShadowing : public AnalogueModel {
 protected:
     /** @brief reference to global ObstacleControl instance */
     ObstacleControl& obstacleControl;
-
-    /** @brief carrier frequency needed for calculation */
-    double carrierFrequency;
 
     /** @brief Information needed about the playground */
     const bool useTorus;
@@ -61,18 +59,18 @@ public:
      * The constructor needs some specific knowledge in order to create
      * its mapping properly:
      *
+     * @param owner pointer to the cComponent that owns this AnalogueModel
      * @param obstacleControl the parent module
-     * @param carrierFrequency the carrier frequency
      * @param useTorus information about the playground the host is moving in
      * @param playgroundSize information about the playground the host is moving in
      */
-    SimpleObstacleShadowing(ObstacleControl& obstacleControl, double carrierFrequency, bool useTorus, const Coord& playgroundSize);
+    SimpleObstacleShadowing(cComponent* owner, ObstacleControl& obstacleControl, bool useTorus, const Coord& playgroundSize);
 
     /**
      * @brief Filters a specified Signal by adding an attenuation
      * over time to the Signal.
      */
-    void filterSignal(Signal* signal, const Coord& senderPos, const Coord& receiverPos) override;
+    void filterSignal(Signal* signal) override;
 
     bool neverIncreasesPower() override
     {

@@ -75,7 +75,7 @@ Define_Module(HumanInterferingProtocol)
         // call this method at stage 1 otherwise the MAC might overwrite the
         // values with the ones loaded from omnetpp.ini
         mac->setTxPower(txPower);
-        mac->setMCS(getMCS(bitrate, BW_OFDM_10_MHZ));
+        mac->setMCS(getMCS(bitrate, Bandwidth::ofdm_10_mhz));
     }
 }
 
@@ -100,7 +100,7 @@ void HumanInterferingProtocol::sendInterferingMessage()
     UnicastMessage* unicast = new UnicastMessage("", INTERFERENCE_TYPE);
     unicast->setDestination(-1);
     unicast->setPriority(priority);
-    unicast->setChannel(Channels::CCH);
+    unicast->setChannel((int)Channel::cch);
 
     // create platooning beacon with data about the car
     InterferingBeacon* pkt = new InterferingBeacon();
@@ -110,7 +110,7 @@ void HumanInterferingProtocol::sendInterferingMessage()
     // METHOD 2: setting tx power and bitrate on a per frame basis
     PhyControlMessage* ctrl = new PhyControlMessage();
     ctrl->setTxPower_mW(txPower);
-    ctrl->setMcs(getMCS(bitrate, BW_OFDM_10_MHZ));
+    ctrl->setMcs((int)getMCS(bitrate, Bandwidth::ofdm_10_mhz));
     pkt->setControlInfo(ctrl);
 
     // put platooning beacon into the message for the UnicastProtocol

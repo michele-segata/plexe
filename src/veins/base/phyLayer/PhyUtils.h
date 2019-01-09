@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cassert>
 #include <list>
+#include <memory>
 
 #include "veins/veins.h"
 
@@ -79,9 +79,9 @@ public:
      * correct number of radio states. Sub classing Radios should also
      * define a factory method like this instead of an public constructor.
      */
-    static Radio* createNewRadio(bool recordStats = false, int initialState = RX, int currentChannel = 0, int nbChannels = 1)
+    static std::unique_ptr<Radio> createNewRadio(bool recordStats = false, int initialState = RX, int currentChannel = 0, int nbChannels = 1)
     {
-        return new Radio(NUM_RADIO_STATES, recordStats, initialState, currentChannel, nbChannels);
+        return std::unique_ptr<Radio>(new Radio(NUM_RADIO_STATES, recordStats, initialState, currentChannel, nbChannels));
     }
 
     /**
@@ -134,8 +134,8 @@ public:
      */
     void setCurrentChannel(int newChannel)
     {
-        assert(newChannel > -1);
-        assert(newChannel < nbChannels);
+        ASSERT(newChannel > -1);
+        ASSERT(newChannel < nbChannels);
         currentChannel = newChannel;
         radioChannels.record(currentChannel);
     }

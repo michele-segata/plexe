@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include <assert.h>
 #include <queue>
 #include <memory>
 #include <stdint.h>
@@ -28,10 +27,10 @@
 #include "veins/veins.h"
 
 #include "veins/base/modules/BaseLayer.h"
-#include "veins/base/phyLayer/MacToPhyControlInfo.h"
 #include "veins/modules/phy/PhyLayer80211p.h"
 #include "veins/modules/mac/ieee80211p/DemoBaseApplLayerToMac1609_4Interface.h"
 #include "veins/modules/utility/Consts80211p.h"
+#include "veins/modules/utility/MacToPhyControlInfo11p.h"
 #include "veins/base/utils/FindModule.h"
 #include "veins/modules/messages/Mac80211Pkt_m.h"
 #include "veins/modules/messages/BaseFrame1609_4_m.h"
@@ -39,6 +38,7 @@
 #include "veins/modules/messages/Mac80211Ack_m.h"
 #include "veins/base/modules/BaseMacLayer.h"
 #include "veins/modules/utility/ConstsPhy.h"
+#include "veins/modules/utility/HasLogProxy.h"
 
 namespace Veins {
 
@@ -79,7 +79,7 @@ public:
         AC_VO = 3
     };
 
-    class EDCA {
+    class EDCA : HasLogProxy {
     public:
         class EDCAQueue {
         public:
@@ -103,16 +103,9 @@ public:
             ~EDCAQueue();
         };
 
-        EDCA(cSimpleModule* owner, t_channel channelType, int maxQueueLength = 0);
+        EDCA(cSimpleModule* owner, ChannelType channelType, int maxQueueLength = 0);
         ~EDCA();
-        const cObject* getThisPtr() const
-        {
-            return nullptr;
-        }
-        const char* getClassName() const
-        {
-            return "Mac1609_4::EDCA";
-        }
+
         void createQueue(int aifsn, int cwMin, int cwMax, t_access_category);
         int queuePacket(t_access_category AC, BaseFrame1609_4* cmsg);
         void backoff(t_access_category ac);
@@ -129,7 +122,7 @@ public:
         std::map<t_access_category, EDCAQueue> myQueues;
         uint32_t maxQueueSize;
         simtime_t lastStart; // when we started the last contention;
-        t_channel channelType;
+        ChannelType channelType;
 
         /** @brief Stats */
         long statsNumInternalContention;
@@ -157,7 +150,7 @@ public:
 
     bool isCurrentChannelCCH() override;
 
-    void changeServiceChannel(int channelNumber) override;
+    void changeServiceChannel(Channel channelNumber) override;
 
     /**
      * @brief Change the default tx power the NIC card is using
@@ -172,7 +165,7 @@ public:
      * @param mcs the default modulation and coding scheme
      * to use
      */
-    void setMCS(enum PHY_MCS mcs);
+    void setMCS(MCS mcs);
 
     /**
      * @brief Change the phy layer carrier sense threshold.
@@ -210,17 +203,16 @@ protected:
     virtual void handleBroadcast(Mac80211Pkt* macPkt, DeciderResult80211* res);
 
     /** @brief Set a state for the channel selecting operation.*/
-    void setActiveChannel(t_channel state);
+    void setActiveChannel(ChannelType state);
 
-    void sendFrame(Mac80211Pkt* frame, omnetpp::simtime_t delay, double frequency, uint64_t datarate, double txPower_mW);
+    void sendFrame(Mac80211Pkt* frame, omnetpp::simtime_t delay, Channel channelNr, MCS mcs, double txPower_mW);
 
     simtime_t timeLeftInSlot() const;
     simtime_t timeLeftTillGuardOver() const;
 
     bool guardActive() const;
 
-    void attachSignal(Mac80211Pkt* mac, simtime_t startTime, double frequency, uint64_t datarate, double txPower_mW);
-    Signal* createSignal(simtime_t start, simtime_t length, double power, uint64_t bitrate, double frequency);
+    void attachControlInfo(Mac80211Pkt* mac, Channel channelNr, MCS mcs, double txPower_mW);
 
     /** @brief maps a application layer priority (up) to an EDCA access category. */
     t_access_category mapUserPriority(int prio);
@@ -230,8 +222,6 @@ protected:
     void channelIdle(bool afterSwitch = false);
 
     void setParametersForBitrate(uint64_t bitrate);
-
-    simtime_t getFrameDuration(int payloadLengthBits, enum PHY_MCS mcs = MCS_DEFAULT) const;
 
     void sendAck(LAddress::L2Type recpAddress, unsigned long wsmId);
     void handleUnicast(LAddress::L2Type srcAddr, std::unique_ptr<BaseFrame1609_4> wsm);
@@ -257,7 +247,7 @@ protected:
     simtime_t lastBusy;
 
     /** @brief Current state of the channel selecting operation.*/
-    t_channel activeChannel;
+    ChannelType activeChannel;
 
     /** @brief access category of last sent packet */
     t_access_category lastAC;
@@ -268,15 +258,12 @@ protected:
     /** @brief pointer to last sent mac frame */
     std::unique_ptr<Mac80211Pkt> lastMac;
 
-    /** @brief Stores the frequencies in Hz that are associated to the channel numbers.*/
-    std::map<int, double> frequency;
-
     int headerLength;
 
     bool useSCH;
-    int mySCH;
+    Channel mySCH;
 
-    std::map<t_channel, std::unique_ptr<EDCA>> myEDCA;
+    std::map<ChannelType, std::unique_ptr<EDCA>> myEDCA;
 
     bool idleChannel;
 
@@ -297,11 +284,7 @@ protected:
     /** @brief The power (in mW) to transmit with.*/
     double txPower;
 
-    /** @brief the bit rate at which we transmit */
-    uint64_t bitrate;
-
-    /** @brief N_DBPS, derived from bitrate, for frame length calculation */
-    double n_dbps;
+    MCS mcs; ///< Modulation and coding scheme to use unless explicitly specified.
 
     /** @brief Id for debug messages */
     std::string myId;

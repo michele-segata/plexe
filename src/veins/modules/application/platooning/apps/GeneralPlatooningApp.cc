@@ -66,7 +66,7 @@ void GeneralPlatooningApp::sendUnicast(cPacket* msg, int destination)
     take(msg);
     UnicastMessage* unicast = new UnicastMessage("UnicastMessage", msg->getKind());
     unicast->setDestination(destination);
-    unicast->setChannel(Channels::CCH);
+    unicast->setChannel((int)Channel::cch);
     unicast->encapsulate(msg);
     sendDown(unicast);
 }

@@ -129,10 +129,10 @@ protected:
         TargetPlatoonData()
         {
             platoonId = INVALID_PLATOON_ID;
-            platoonLeader = INVALID_INT_VALUE;
-            platoonLane = INVALID_INT_VALUE;
-            platoonSpeed = INVALID_DOUBLE_VALUE;
-            joinIndex = INVALID_INT_VALUE;
+            platoonLeader = TraCIConstants::INVALID_INT_VALUE;
+            platoonLane = TraCIConstants::INVALID_INT_VALUE;
+            platoonSpeed = TraCIConstants::INVALID_DOUBLE_VALUE;
+            joinIndex = TraCIConstants::INVALID_INT_VALUE;
         }
 
         /**
@@ -179,8 +179,8 @@ protected:
         /** c'tor for JoinerData */
         JoinerData()
         {
-            joinerId = INVALID_INT_VALUE;
-            joinerLane = INVALID_INT_VALUE;
+            joinerId = TraCIConstants::INVALID_INT_VALUE;
+            joinerLane = TraCIConstants::INVALID_INT_VALUE;
         }
 
         /**

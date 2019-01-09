@@ -28,14 +28,15 @@ protected:
     const double factor;
 
 public:
-    DummyAnalogueModel(double factor)
-        : factor(factor)
+    DummyAnalogueModel(cComponent* owner, double factor)
+        : AnalogueModel(owner)
+        , factor(factor)
     {
     }
 
-    void filterSignal(Signal* signal, const Coord& senderPos, const Coord& receiverPos) override
+    void filterSignal(Signal* signal) override
     {
-        signal->addUniformAttenuation(factor);
+        *signal *= factor;
     }
 };
 } // namespace Veins

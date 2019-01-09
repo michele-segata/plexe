@@ -1,15 +1,15 @@
 #include "veins/base/phyLayer/Decider.h"
 
 using namespace Veins;
-using Veins::AirFrame;
 
 bool DeciderResult::isSignalCorrect() const
 {
     return isCorrect;
 }
 
-Decider::Decider(DeciderToPhyInterface* phy)
-    : phy(phy)
+Decider::Decider(cComponent* owner, DeciderToPhyInterface* phy)
+    : HasLogProxy(owner)
+    , phy(phy)
     , notAgain(-1)
 {
 }

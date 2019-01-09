@@ -40,7 +40,7 @@ void JoinAtBack::startManeuver(const void* parameters)
         targetPlatoonData->platoonLeader = pars->leaderId;
 
         // send join request to leader
-        JoinPlatoonRequest* req = createJoinPlatoonRequest(positionHelper->getId(), positionHelper->getExternalId(), targetPlatoonData->platoonId, targetPlatoonData->platoonLeader, traciVehicle->getLaneIndex(), mobility->getCurrentPosition().x, mobility->getCurrentPosition().y);
+        JoinPlatoonRequest* req = createJoinPlatoonRequest(positionHelper->getId(), positionHelper->getExternalId(), targetPlatoonData->platoonId, targetPlatoonData->platoonLeader, traciVehicle->getLaneIndex(), mobility->getPositionAt(simTime()).x, mobility->getPositionAt(simTime()).y);
         app->sendUnicast(req, targetPlatoonData->platoonLeader);
         joinManeuverState = JoinManeuverState::J_WAIT_REPLY;
     }
@@ -67,7 +67,7 @@ void JoinAtBack::onPlatoonBeacon(const PlatooningBeacon* pb)
             // get front vehicle position
             Coord frontPosition(pb->getPositionX(), pb->getPositionY(), 0);
             // get my position
-            Veins::TraCICoord traciPosition = mobility->getManager()->omnet2traci(mobility->getCurrentPosition());
+            Veins::TraCICoord traciPosition = mobility->getManager()->omnet2traci(mobility->getPositionAt(simTime()));
             Coord position(traciPosition.x, traciPosition.y);
             // compute distance
             double distance = position.distance(frontPosition) - pb->getLength();

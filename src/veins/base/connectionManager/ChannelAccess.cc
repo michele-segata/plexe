@@ -27,8 +27,6 @@
 
 #include "veins/base/connectionManager/ChannelAccess.h"
 
-#include <cassert>
-
 #include "veins/base/utils/FindModule.h"
 #include "veins/base/modules/BaseWorldUtility.h"
 #include "veins/base/connectionManager/BaseConnectionManager.h"
@@ -143,12 +141,12 @@ simtime_t ChannelAccess::calculatePropagationDelay(const NicEntry* nic)
     ChannelAccess* const receiverModule = nic->chAccess;
     // const simtime_t_cref sStart         = simTime();
 
-    assert(senderModule);
-    assert(receiverModule);
+    ASSERT(senderModule);
+    ASSERT(receiverModule);
 
     /** claim the Move pattern of the sender from the Signal */
-    Coord senderPos = senderModule->antennaPosition;
-    Coord receiverPos = receiverModule->antennaPosition;
+    Coord senderPos = senderModule->antennaPosition.getPositionAt();
+    Coord receiverPos = receiverModule->antennaPosition.getPositionAt();
 
     // this time-point is used to calculate the distance between sending and receiving host
     return receiverPos.distance(senderPos) / BaseWorldUtility::speedOfLight();
@@ -160,16 +158,16 @@ void ChannelAccess::receiveSignal(cComponent* source, simsignal_t signalID, cObj
         ChannelMobilityPtrType const mobility = check_and_cast<ChannelMobilityPtrType>(obj);
 
         auto heading = Heading::fromCoord(mobility->getCurrentOrientation());
-        antennaPosition = mobility->getCurrentPosition() + antennaOffset.rotatedYaw(-heading.getRad());
+        antennaPosition = AntennaPosition(getId(), mobility->getPositionAt(simTime()) + antennaOffset.rotatedYaw(-heading.getRad()), mobility->getCurrentSpeed(), simTime());
         antennaHeading = Heading(heading.getRad() + antennaOffsetYaw);
 
         if (isRegistered) {
-            cc->updateNicPos(getParentModule()->getId(), &antennaPosition, antennaHeading);
+            cc->updateNicPos(getParentModule()->getId(), antennaPosition.getPositionAt(), antennaHeading);
         }
         else {
             // register the nic with ConnectionManager
             // returns true, if sendDirect is used
-            useSendDirect = cc->registerNic(getParentModule(), this, &antennaPosition, antennaHeading);
+            useSendDirect = cc->registerNic(getParentModule(), this, antennaPosition.getPositionAt(), antennaHeading);
             isRegistered = true;
         }
     }

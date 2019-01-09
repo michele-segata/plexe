@@ -37,9 +37,6 @@
 
 using namespace Veins;
 
-using Veins::AirFrame;
-using Veins::Radio;
-
 simtime_t Decider80211p::processNewSignal(AirFrame* msg)
 {
 
@@ -50,10 +47,10 @@ simtime_t Decider80211p::processNewSignal(AirFrame* msg)
 
     signalStates[frame] = EXPECT_END;
 
-    if (signal.smallerAtCenterFrequency(sensitivity)) {
+    if (signal.smallerAtCenterFrequency(minPowerLevel)) {
 
         // annotate the frame, so that we won't try decoding it at its end
-        frame->setUnderSensitivity(true);
+        frame->setUnderMinPowerLevel(true);
         // check channel busy status. a superposition of low power frames might turn channel status to busy
         if (cca(simTime(), nullptr) == false) {
             setChannelIdleStatus(false);
@@ -76,14 +73,14 @@ simtime_t Decider80211p::processNewSignal(AirFrame* msg)
             if (!currentSignal.first) {
                 // NIC is not yet synced to any frame, so lock and try to decode this frame
                 currentSignal.first = frame;
-                EV_TRACE << "AirFrame: " << frame->getId() << " with (" << recvPower << " > " << sensitivity << ") -> Trying to receive AirFrame." << std::endl;
+                EV_TRACE << "AirFrame: " << frame->getId() << " with (" << recvPower << " > " << minPowerLevel << ") -> Trying to receive AirFrame." << std::endl;
                 if (notifyRxStart) {
                     phy->sendControlMsgToMac(new cMessage("RxStartStatus", MacToPhyInterface::PHY_RX_START));
                 }
             }
             else {
                 // NIC is currently trying to decode another frame. this frame will be simply treated as interference
-                EV_TRACE << "AirFrame: " << frame->getId() << " with (" << recvPower << " > " << sensitivity << ") -> Already synced to another AirFrame. Treating AirFrame as interference." << std::endl;
+                EV_TRACE << "AirFrame: " << frame->getId() << " with (" << recvPower << " > " << minPowerLevel << ") -> Already synced to another AirFrame. Treating AirFrame as interference." << std::endl;
             }
 
             // channel turned busy
@@ -107,6 +104,7 @@ int Decider80211p::getSignalState(AirFrame* frame)
 
 DeciderResult* Decider80211p::checkIfSignalOk(AirFrame* frame)
 {
+    auto frame11p = check_and_cast<AirFrame11p*>(frame);
 
     Signal& s = frame->getSignal();
     simtime_t start = s.getReceptionStart();
@@ -120,7 +118,7 @@ DeciderResult* Decider80211p::checkIfSignalOk(AirFrame* frame)
     AirFrameVector airFrames;
     getChannelInfo(start, end, airFrames);
 
-    double noise = phy->getThermalNoiseValue();
+    double noise = phy->getNoiseFloorValue();
 
     // Make sure to use the adjusted starting-point (which ignores the preamble)
     double sinrMin = SignalUtils::getMinSINR(start, end, frame, airFrames, noise);
@@ -135,7 +133,7 @@ DeciderResult* Decider80211p::checkIfSignalOk(AirFrame* frame)
         snrMin = 1e200;
     }
 
-    double payloadBitrate = s.getBitrate();
+    double payloadBitrate = getOfdmDatarate(static_cast<MCS>(frame11p->getMcs()), BANDWIDTH_11P);
 
     DeciderResult80211* result = nullptr;
 
@@ -179,22 +177,22 @@ enum Decider80211p::PACKET_OK_RESULT Decider80211p::packetOk(double sinrMin, dou
     double packetOkSnr;
 
     // compute success rate depending on mcs and bw
-    packetOkSinr = NistErrorRate::getChunkSuccessRate(bitrate, BW_OFDM_10_MHZ, sinrMin, lengthMPDU);
+    packetOkSinr = NistErrorRate::getChunkSuccessRate(bitrate, BANDWIDTH_11P, sinrMin, lengthMPDU);
 
     // check if header is broken
-    double headerNoError = NistErrorRate::getChunkSuccessRate(PHY_HDR_BITRATE, BW_OFDM_10_MHZ, sinrMin, PHY_HDR_PLCPSIGNAL_LENGTH);
+    double headerNoError = NistErrorRate::getChunkSuccessRate(PHY_HDR_BITRATE, BANDWIDTH_11P, sinrMin, PHY_HDR_PLCPSIGNAL_LENGTH);
 
     double headerNoErrorSnr;
     // compute PER also for SNR only
     if (collectCollisionStats) {
 
-        packetOkSnr = NistErrorRate::getChunkSuccessRate(bitrate, BW_OFDM_10_MHZ, snrMin, lengthMPDU);
-        headerNoErrorSnr = NistErrorRate::getChunkSuccessRate(PHY_HDR_BITRATE, BW_OFDM_10_MHZ, snrMin, PHY_HDR_PLCPSIGNAL_LENGTH);
+        packetOkSnr = NistErrorRate::getChunkSuccessRate(bitrate, BANDWIDTH_11P, snrMin, lengthMPDU);
+        headerNoErrorSnr = NistErrorRate::getChunkSuccessRate(PHY_HDR_BITRATE, BANDWIDTH_11P, snrMin, PHY_HDR_PLCPSIGNAL_LENGTH);
 
         // the probability of correct reception without considering the interference
         // MUST be greater or equal than when consider it
-        assert(packetOkSnr >= packetOkSinr);
-        assert(headerNoErrorSnr >= headerNoError);
+        ASSERT(packetOkSnr >= packetOkSinr);
+        ASSERT(headerNoErrorSnr >= headerNoError);
     }
 
     // probability of no bit error in the PLCP header
@@ -262,11 +260,11 @@ bool Decider80211p::cca(simtime_t_cref time, AirFrame* exclude)
 
     // In the reference implementation only centerFrequenvy - 5e6 (half bandwidth) is checked!
     // Although this is wrong, the same is done here to reproduce original results
-    double minPower = phy->getThermalNoiseValue();
+    double minPower = phy->getNoiseFloorValue();
     bool isChannelIdle = minPower < ccaThreshold;
     if (airFrames.size() > 0) {
         size_t usedFreqIndex = airFrames.front()->getSignal().getSpectrum().indexOf(centerFrequency - 5e6);
-        isChannelIdle = SignalUtils::smallerAtFreqIndex(time, time, airFrames, usedFreqIndex, ccaThreshold - minPower, exclude);
+        isChannelIdle = SignalUtils::isChannelPowerBelowThreshold(time, airFrames, usedFreqIndex, ccaThreshold - minPower, exclude);
     }
 
     return isChannelIdle;
@@ -280,7 +278,7 @@ simtime_t Decider80211p::processSignalEnd(AirFrame* msg)
     // here the Signal is finally processed
     Signal& signal = frame->getSignal();
 
-    double recvPower_dBm = 10 * log10(signal.getRelativeMax());
+    double recvPower_dBm = 10 * log10(signal.getMax());
 
     bool whileSending = false;
 
@@ -289,7 +287,7 @@ simtime_t Decider80211p::processSignalEnd(AirFrame* msg)
 
     DeciderResult* result;
 
-    if (frame->getUnderSensitivity()) {
+    if (frame->getUnderMinPowerLevel()) {
         // this frame was not even detected by the radio card
         result = new DeciderResult80211(false, 0, 0, recvPower_dBm);
     }
@@ -325,8 +323,8 @@ simtime_t Decider80211p::processSignalEnd(AirFrame* msg)
         phy->sendUp(frame, result);
     }
     else {
-        if (frame->getUnderSensitivity()) {
-            EV_TRACE << "packet was not detected by the card. power was under sensitivity threshold\n";
+        if (frame->getUnderMinPowerLevel()) {
+            EV_TRACE << "packet was not detected by the card. power was under minPowerLevel threshold\n";
         }
         else if (whileSending) {
             EV_TRACE << "packet was received while sending, sending it as control message to upper layer\n";
@@ -403,7 +401,7 @@ void Decider80211p::switchToTx()
         if (allowTxDuringRx) {
             // if the above layer decides to transmit anyhow, we need to abort reception
             AirFrame11p* currentFrame = dynamic_cast<AirFrame11p*>(currentSignal.first);
-            assert(currentFrame);
+            ASSERT(currentFrame);
             // flag the frame as "while transmitting"
             currentFrame->setWasTransmitting(true);
             currentFrame->setBitError(true);
