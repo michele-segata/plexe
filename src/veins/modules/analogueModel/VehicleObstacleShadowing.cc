@@ -22,19 +22,21 @@
 
 using namespace Veins;
 
-VehicleObstacleShadowing::VehicleObstacleShadowing(VehicleObstacleControl& vehicleObstacleControl, double carrierFrequency, bool useTorus, const Coord& playgroundSize)
-    : vehicleObstacleControl(vehicleObstacleControl)
-    , carrierFrequency(carrierFrequency)
+VehicleObstacleShadowing::VehicleObstacleShadowing(cComponent* owner, VehicleObstacleControl& vehicleObstacleControl, bool useTorus, const Coord& playgroundSize)
+    : AnalogueModel(owner)
+    , vehicleObstacleControl(vehicleObstacleControl)
     , useTorus(useTorus)
     , playgroundSize(playgroundSize)
 {
-    vehicleObstacleControl.setCarrierFrequency(carrierFrequency);
     if (useTorus) throw cRuntimeError("VehicleObstacleShadowing does not work on torus-shaped playgrounds");
 }
 
-void VehicleObstacleShadowing::filterSignal(Signal* signal, const Coord& senderPos, const Coord& receiverPos)
+void VehicleObstacleShadowing::filterSignal(Signal* signal)
 {
-    auto potentialObstacles = vehicleObstacleControl.getPotentialObstacles(senderPos, receiverPos, *signal);
+    auto senderPos = signal->getSenderPoa().pos.getPositionAt();
+    auto receiverPos = signal->getReceiverPoa().pos.getPositionAt();
+
+    auto potentialObstacles = vehicleObstacleControl.getPotentialObstacles(signal->getSenderPoa().pos, signal->getReceiverPoa().pos, *signal);
 
     if (potentialObstacles.size() < 1) return;
 
@@ -43,13 +45,15 @@ void VehicleObstacleShadowing::filterSignal(Signal* signal, const Coord& senderP
     potentialObstacles.insert(potentialObstacles.begin(), std::make_pair(0, senderHeight));
     potentialObstacles.emplace_back(senderPos.distance(receiverPos), receiverHeight);
 
-    double attenuationDB = VehicleObstacleControl::getVehicleAttenuationDZ(potentialObstacles, carrierFrequency);
+    auto attenuationDB = VehicleObstacleControl::getVehicleAttenuationDZ(potentialObstacles, Signal(signal->getSpectrum()));
 
-    EV << "t=" << simTime() << ": Attenuation by vehicles is " << attenuationDB << " dB" << std::endl;
+    EV_TRACE << "t=" << simTime() << ": Attenuation by vehicles is " << attenuationDB << std::endl;
 
-    auto factor = pow(10.0, -attenuationDB / 10.0);
+    // convert from "dB loss" to a multiplicative factor
+    Signal attenuation(attenuationDB.getSpectrum());
+    for (uint16_t i = 0; i < attenuation.getNumValues(); i++) {
+        attenuation.at(i) = pow(10.0, -attenuationDB.at(i) / 10.0);
+    }
 
-    EV_TRACE << "value is: " << factor << endl;
-
-    signal->addUniformAttenuation(factor);
+    *signal *= attenuation;
 }

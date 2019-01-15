@@ -8,6 +8,7 @@
 #include "veins/base/utils/Coord.h"
 #include "veins/modules/mobility/traci/TraCICoord.h"
 #include "veins/modules/world/traci/trafficLight/TraCITrafficLightProgram.h"
+#include "veins/modules/utility/HasLogProxy.h"
 
 #include "veins/modules/application/platooning/CC_Const.h"
 
@@ -15,9 +16,9 @@ namespace Veins {
 
 class TraCIConnection;
 
-class TraCICommandInterface {
+class TraCICommandInterface : public HasLogProxy {
 public:
-    TraCICommandInterface(TraCIConnection&);
+    TraCICommandInterface(cComponent* owner, TraCIConnection& c);
 
     enum DepartTime {
         DEPART_TIME_TRIGGERED = -1,

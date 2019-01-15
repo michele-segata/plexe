@@ -6,18 +6,14 @@
  */
 
 #include "veins/base/phyLayer/BaseDecider.h"
-
-#include <cassert>
-
 #include "veins/base/messages/AirFrame_m.h"
 
 using namespace Veins;
-using Veins::AirFrame;
 
 simtime_t BaseDecider::processSignal(AirFrame* frame)
 {
 
-    assert(frame);
+    ASSERT(frame);
     EV_TRACE << "Processing AirFrame..." << endl;
 
     switch (getSignalState(frame)) {
@@ -41,17 +37,17 @@ simtime_t BaseDecider::processNewSignal(AirFrame* frame)
 
     // get the receiving power of the Signal at start-time
     Signal& signal = frame->getSignal();
-    double recvPower = signal.getRelativeMax();
+    double recvPower = signal.getMax();
 
     // check whether signal is strong enough to receive
-    if (recvPower < sensitivity) {
-        EV_TRACE << "Signal is too weak (" << recvPower << " < " << sensitivity << ") -> do not receive." << endl;
+    if (recvPower < minPowerLevel) {
+        EV_TRACE << "Signal is too weak (" << recvPower << " < " << minPowerLevel << ") -> do not receive." << endl;
         // Signal too weak, we can't receive it, tell PhyLayer that we don't want it again
         return notAgain;
     }
 
     // Signal is strong enough, receive this Signal and schedule it
-    EV_TRACE << "Signal is strong enough (" << recvPower << " > " << sensitivity << ") -> Trying to receive AirFrame." << endl;
+    EV_TRACE << "Signal is strong enough (" << recvPower << " > " << minPowerLevel << ") -> Trying to receive AirFrame." << endl;
 
     currentSignal.first = frame;
     currentSignal.second = EXPECT_END;

@@ -9,10 +9,9 @@
 #include "veins/veins.h"
 
 #include "veins/base/phyLayer/DeciderToPhyInterface.h"
+#include "veins/modules/utility/HasLogProxy.h"
 
 namespace Veins {
-
-using Veins::AirFrame;
 
 /**
  * @brief A class to represent the result of a processed packet (that is not
@@ -64,7 +63,7 @@ public:
  *
  * @ingroup decider
  */
-class VEINS_API Decider {
+class VEINS_API Decider : public HasLogProxy {
 protected:
     /** @brief A pointer to the physical layer of this Decider. */
     DeciderToPhyInterface* phy;
@@ -79,7 +78,7 @@ public:
     /**
      * @brief Initializes the Decider with a pointer to its PhyLayer
      */
-    Decider(DeciderToPhyInterface* phy);
+    Decider(cComponent* owner, DeciderToPhyInterface* phy);
 
     virtual ~Decider()
     {

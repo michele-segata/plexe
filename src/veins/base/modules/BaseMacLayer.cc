@@ -21,14 +21,11 @@
 
 #include "veins/base/modules/BaseMacLayer.h"
 
-#include <cassert>
 #include <sstream>
 
-#include "veins/base/toolbox/Signal.h"
 #include "veins/base/phyLayer/MacToPhyInterface.h"
 #include "veins/base/utils/MacToNetwControlInfo.h"
 #include "veins/base/utils/NetwToMacControlInfo.h"
-#include "veins/base/phyLayer/MacToPhyControlInfo.h"
 #include "veins/base/modules/AddressingInterface.h"
 #include "veins/base/connectionManager/ChannelAccess.h"
 #include "veins/base/utils/FindModule.h"
@@ -54,7 +51,6 @@ void BaseMacLayer::initialize(int stage)
         }
 
         headerLength = par("headerLength");
-        phyHeaderLength = phy->getPhyHeaderLength();
     }
     if (myMacAddr == LAddress::L2NULL()) {
         // see if there is an addressing module available
@@ -134,7 +130,7 @@ MacPkt* BaseMacLayer::encapsMsg(cPacket* netwPkt)
  **/
 void BaseMacLayer::handleUpperMsg(cMessage* mac)
 {
-    assert(dynamic_cast<cPacket*>(mac));
+    ASSERT(dynamic_cast<cPacket*>(mac));
     sendDown(encapsMsg(static_cast<cPacket*>(mac)));
 }
 
@@ -177,21 +173,6 @@ void BaseMacLayer::handleLowerControl(cMessage* msg)
     }
 }
 
-Signal* BaseMacLayer::createSimpleSignal(simtime_t_cref start, simtime_t_cref length, double power, double bitrate)
-{
-    // create signal with start at current simtime and passed length
-    Signal* s = new Signal(overallSpectrum, start, length);
-
-    (*s)[0] = power;
-    s->setBitrate(bitrate);
-
-    s->setCenterFrequencyIndex(0);
-    s->setDataStart(0);
-    s->setDataEnd(0);
-
-    return s;
-}
-
 BaseConnectionManager* BaseMacLayer::getConnectionManager()
 {
     cModule* nic = getParentModule();
@@ -209,12 +190,4 @@ const LAddress::L2Type& BaseMacLayer::getUpperDestinationFromControlInfo(const c
 cObject* const BaseMacLayer::setUpControlInfo(cMessage* const pMsg, const LAddress::L2Type& pSrcAddr)
 {
     return MacToNetwControlInfo::setControlInfo(pMsg, pSrcAddr);
-}
-
-/**
- * Attaches a "control info" (MacToPhy) structure (object) to the message pMsg.
- */
-cObject* const BaseMacLayer::setDownControlInfo(cMessage* const pMsg, Signal* const pSignal)
-{
-    return MacToPhyControlInfo::setControlInfo(pMsg, pSignal);
 }

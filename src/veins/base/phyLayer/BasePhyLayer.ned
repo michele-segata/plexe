@@ -6,15 +6,14 @@ simple BasePhyLayer like IWirelessPhy
 {
     parameters:
         @class(Veins::BasePhyLayer);
-        
-        bool recordStats = default(false); //enable/disable tracking of statistics (eg. cOutvectors)
-        int headerLength = default(0) @unit(bit); //defines the length of the phy header (/preamble)
-        
-        bool usePropagationDelay;        //Should transmission delay be simulated?
-        double thermalNoise @unit(dBm);    //the strength of the thermal noise [dBm]
-        bool useThermalNoise;            //should thermal noise be considered?
 
-        
+        bool recordStats = default(false); //enable/disable tracking of statistics (eg. cOutvectors)
+
+        bool usePropagationDelay;        //Should transmission delay be simulated?
+        double noiseFloor @unit(dBm); // catch-all for all factors negatively impacting SINR (e.g., thermal noise, noise figure, ...)
+        bool useNoiseFloor; // should a noise floor be considered when calculating SINR?
+
+
         xml antenna = default(xml("<root><Antenna type=\"IsotropicAntenna\" id=\"default_isotropic\"></Antenna></root>"));
         double antennaOffsetX @unit("m") = default(0 m); // Offset of antenna position (x direction) with respect to what a BaseMobility module will tell us (inherited from IChannelAccess)
         double antennaOffsetY @unit("m") = default(0 m); // Offset of antenna position (y direction) with respect to what a BaseMobility module will tell us (inherited from IChannelAccess)
@@ -23,7 +22,7 @@ simple BasePhyLayer like IWirelessPhy
         xml analogueModels;             //Specification of the analogue models to use and their parameters
         xml decider;                    //Specification of the decider to use and its parameters
 
-        double sensitivity @unit(dBm);    //The sensitivity of the physical layer [dBm]
+        double minPowerLevel @unit(dBm); // The minimum receive power needed to even attempt decoding a frame
 
         //# switch times [s]:
         double timeRXToTX       = default(0) @unit(s); // Elapsed time to switch from receive to send state
@@ -35,8 +34,8 @@ simple BasePhyLayer like IWirelessPhy
         double timeSleepToRX    = default(0) @unit(s); // Elapsed time to switch from sleep to receive state
         double timeSleepToTX    = default(0) @unit(s); // Elapsed time to switch from sleep to send state
 
-        int initialRadioState   = default(0);   // State the radio is initially in (0=RX, 1=TX, 2=Sleep) 
-        
+        int initialRadioState   = default(0);   // State the radio is initially in (0=RX, 1=TX, 2=Sleep)
+
         double radioMinAtt = default(1.0); //radios gain factor (attenuation) while receiving
         double radioMaxAtt = default(0.0); //radios gain factor (attenuation) while not receiving
 
@@ -47,7 +46,7 @@ simple BasePhyLayer like IWirelessPhy
         input upperLayerIn;     // from the MAC layer
         output upperLayerOut;     // to the MAC layer
 
-        input upperControlIn;     // control from the MAC layer        
+        input upperControlIn;     // control from the MAC layer
         output upperControlOut;     // control to the MAC layer
 
         input radioIn; // for sendDirect from other physical layers
