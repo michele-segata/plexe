@@ -7,6 +7,7 @@
 #include "veins/modules/mobility/traci/TraCIColor.h"
 #include "veins/base/utils/Coord.h"
 #include "veins/modules/mobility/traci/TraCICoord.h"
+#include "veins/modules/mobility/traci/TraCIConnection.h"
 #include "veins/modules/world/traci/trafficLight/TraCITrafficLightProgram.h"
 #include "veins/modules/utility/HasLogProxy.h"
 
@@ -14,11 +15,10 @@
 
 namespace Veins {
 
-class TraCIConnection;
-
 class TraCICommandInterface : public HasLogProxy {
 public:
-    TraCICommandInterface(cComponent* owner, TraCIConnection& c);
+    TraCICommandInterface(cComponent* owner, TraCIConnection& c, bool ignoreGuiCommands);
+    bool isIgnoringGuiCommands();
 
     enum DepartTime {
         DEPART_TIME_TRIGGERED = -1,
@@ -63,6 +63,10 @@ public:
     uint8_t getTimeStepCmd() const
     {
         return versionConfig.timeStepCmd;
+    }
+    bool getHasNewTrafficLightProgramDef() const
+    {
+        return versionConfig.newTrafficLightProgramDef;
     }
 
     std::pair<TraCICoord, TraCICoord> initNetworkBoundaries(int margin);
@@ -683,16 +687,20 @@ public:
     std::list<std::string> getVehicleTypeIds();
 
     // GuiView methods
-    class GuiView {
+    std::list<std::string> getGuiViewIds();
+    class GuiView : public HasLogProxy {
     public:
         GuiView(TraCICommandInterface* traci, std::string viewId)
-            : traci(traci)
+            : HasLogProxy(traci->owner)
+            , traci(traci)
             , viewId(viewId)
         {
             connection = &traci->connection;
         }
 
+        std::string getScheme();
         void setScheme(std::string name);
+        double getZoom();
         void setZoom(double zoom);
         void setBoundary(Coord p1, Coord p2);
         void takeScreenshot(std::string filename = "", int32_t width = -1, int32_t height = -1);
@@ -719,25 +727,27 @@ private:
         uint8_t timeStepCmd;
         bool timeAsDouble;
         bool screenshotTakesCompound;
+        bool newTrafficLightProgramDef;
     };
 
     TraCIConnection& connection;
+    bool ignoreGuiCommands;
     static const std::map<uint32_t, VersionConfig> versionConfigs;
     VersionConfig versionConfig;
 
-    std::string genericGetString(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId);
-    Coord genericGetCoord(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId);
-    double genericGetDouble(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId);
-    simtime_t genericGetTime(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId);
-    int32_t genericGetInt(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId);
-    std::list<std::string> genericGetStringList(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId);
-    std::list<Coord> genericGetCoordList(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId);
+    std::string genericGetString(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId, TraCIConnection::Result* result = nullptr);
+    Coord genericGetCoord(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId, TraCIConnection::Result* result = nullptr);
+    double genericGetDouble(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId, TraCIConnection::Result* result = nullptr);
+    simtime_t genericGetTime(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId, TraCIConnection::Result* result = nullptr);
+    int32_t genericGetInt(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId, TraCIConnection::Result* result = nullptr);
+    std::list<std::string> genericGetStringList(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId, TraCIConnection::Result* result = nullptr);
+    std::list<Coord> genericGetCoordList(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId, TraCIConnection::Result* result = nullptr);
 
-    typedef struct {
+    struct PlexeLaneChange {
         int lane;
         bool safe;
         bool wait;
-    } PlexeLaneChange;
+    };
     typedef std::map<std::string, PlexeLaneChange> PlexeLaneChanges;
     PlexeLaneChanges laneChanges;
     void __changeLane(std::string veh, int current, int direction, bool safe = true);

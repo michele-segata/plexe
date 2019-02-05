@@ -133,14 +133,6 @@ public:
         return connection->omnet2traci(coords);
     }
 
-    /**
-     * returns whether simulation is running under gui or not
-     */
-    virtual bool isGuiSimulation()
-    {
-        return false;
-    }
-
 protected:
     bool traciInitialized;
     simtime_t connectAt; /**< when to connect to TraCI server (must be the initial timestep of the server) */
@@ -161,6 +153,7 @@ protected:
 
     bool autoShutdown; /**< Shutdown module as soon as no more vehicles are in the simulation */
     double penetrationRate;
+    bool ignoreGuiCommands; /**< whether to ignore all TraCI commands that only make sense when the server has a graphical user interface */
     TraCIRegionOfInterest roi; /**< Can return whether a given position lies within the simulation's region of interest. Modules are destroyed and re-created as managed vehicles leave and re-enter the ROI */
     double areaSum;
 
