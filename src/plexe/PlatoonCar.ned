@@ -19,23 +19,46 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-import org.car2x.veins.base.modules.IBaseApplLayer;
+package org.car2x.plexe;
 
-import org.car2x.plexe.protocols.HumanInterferingProtocol;
-import org.car2x.plexe.UnicastProtocol;
+import org.car2x.veins.base.modules.IBaseApplLayer;
 import org.car2x.veins.modules.mobility.traci.TraCIMobility;
 import org.car2x.veins.modules.nic.Nic80211p;
 
+import org.car2x.plexe.utilities.BasePositionHelper;
+import org.car2x.plexe.scenarios.BaseScenario;
+import org.car2x.plexe.protocols.BaseProtocol;
+import org.car2x.plexe.apps.BaseApp;
+import org.car2x.plexe.UnicastProtocol;
 
-module HumanCar
+module PlatoonCar
 {
+    parameters:
+        string scenario_type;
+        string helper_type;
+        string appl_type;
+        string protocol_type;
 
     gates:
         input radioIn; // gate for sendDirect
     submodules:
 
+        helper: <helper_type> like BasePositionHelper {
+            parameters:
+                @display("p=90,100");
+        }
 
-        prot: HumanInterferingProtocol {
+        scenario: <scenario_type> like BaseScenario {
+            parameters:
+                @display("p=90,100");
+        }
+
+        appl: <appl_type> like BaseApp {
+            parameters:
+                @display("p=60,100");
+        }
+
+        prot: <protocol_type> like BaseProtocol {
             parameters:
                 @display("p=60,200");
         }

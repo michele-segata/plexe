@@ -7,7 +7,6 @@
 #include "veins/modules/mobility/traci/TraCIScenarioManager.h"
 #include "veins/modules/mobility/traci/ParBuffer.h"
 
-#include "veins/modules/application/platooning/CC_Const.h"
 #define LCA_OVERLAPPING 1 << 13
 
 #ifdef _WIN32

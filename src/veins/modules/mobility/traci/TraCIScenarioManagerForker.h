@@ -48,6 +48,7 @@ public:
     ~TraCIScenarioManagerForker() override;
     void initialize(int stage) override;
     void finish() override;
+
 protected:
     std::string sumoCommand; // command line to run sumo (no gui)
     std::string sumoGuiCommand; // command line to run sumo (with gui)

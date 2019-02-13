@@ -1,6 +1,6 @@
 #include "catch2/catch.hpp"
 
-#include "veins/modules/application/platooning/utilities/LocalPlatoonPositionHelper.h"
+#include "plexe/utilities/LocalPlatoonPositionHelper.h"
 
 SCENARIO("Tests the LocalPlatoonPositionHelper", "[LocalPlatoonPositionHelper]")
 {
@@ -121,20 +121,17 @@ SCENARIO("Tests the LocalPlatoonPositionHelper", "[LocalPlatoonPositionHelper]")
                 REQUIRE(lpph->getLastVehicleId() == INVALID_VEHICLE_ID);
             }
 
-            THEN("The id of the member with index 42 has an invalid "
-                 "value")
+            THEN("The id of the member with index 42 has an invalid value")
             {
                 REQUIRE(lpph->getMemberId(42) == INVALID_VEHICLE_ID);
             }
 
-            THEN("The position of the member with id 42 has an invalid "
-                 "value")
+            THEN("The position of the member with id 42 has an invalid value")
             {
                 REQUIRE(lpph->getMemberPosition(42) == INVALID_POSITION);
             }
 
-            THEN("An arbitrary vehicle (e.g. id 42) is not in the same "
-                 "platoon")
+            THEN("An arbitrary vehicle (e.g. id 42) is not in the same platoon")
             {
                 REQUIRE(!lpph->isInSamePlatoon(42));
             }
@@ -168,14 +165,12 @@ SCENARIO("Tests the LocalPlatoonPositionHelper", "[LocalPlatoonPositionHelper]")
                 REQUIRE(lpph->getLastVehicleId() == f.at(3));
             }
 
-            THEN("The id of the member with index 42 has an invalid "
-                 "value")
+            THEN("The id of the member with index 42 has an invalid value")
             {
                 REQUIRE(lpph->getMemberId(42) == INVALID_VEHICLE_ID);
             }
 
-            THEN("The position of the member with id 42 has an invalid "
-                 "value")
+            THEN("The position of the member with id 42 has an invalid value")
             {
                 REQUIRE(lpph->getMemberPosition(42) == INVALID_POSITION);
             }
@@ -190,8 +185,7 @@ SCENARIO("Tests the LocalPlatoonPositionHelper", "[LocalPlatoonPositionHelper]")
                 REQUIRE(lpph->getMemberPosition(3) == 3);
             }
 
-            THEN("An arbitrary vehicle (e.g. id 42) is not in the same "
-                 "platoon")
+            THEN("An arbitrary vehicle (e.g. id 42) is not in the same platoon")
             {
                 REQUIRE(!lpph->isInSamePlatoon(42));
             }
@@ -199,8 +193,7 @@ SCENARIO("Tests the LocalPlatoonPositionHelper", "[LocalPlatoonPositionHelper]")
 
         // platoon formation was not set and id was not set (dependent on id)
 
-        WHEN("The vehicle id was not set and the platoon formation was not "
-             "set")
+        WHEN("The vehicle id was not set and the platoon formation was not set")
         {
 
             THEN("This vehicle is not the leader")

@@ -11,7 +11,7 @@
 #include "veins/modules/world/traci/trafficLight/TraCITrafficLightProgram.h"
 #include "veins/modules/utility/HasLogProxy.h"
 
-#include "veins/modules/application/platooning/CC_Const.h"
+#include "plexe/CC_Const.h"
 
 namespace Veins {
 
