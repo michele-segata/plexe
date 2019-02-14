@@ -30,6 +30,8 @@
 #define INVALID_LANE_ID -1
 #define INVALID_SPEED -1
 
+namespace plexe {
+
 /**
  * This class stores information about the platoon a vehicle is in. This
  * information includes the formation of the platoon including as well as
@@ -334,5 +336,7 @@ public:
         throw cRuntimeError("Not implemented");
     }
 };
+
+} // namespace plexe
 
 #endif // LOCALPLATOONPOSITIONHELPER_H_

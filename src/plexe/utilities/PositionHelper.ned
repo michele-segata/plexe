@@ -33,7 +33,7 @@ simple PositionHelper like BasePositionHelper
         int headerLength @unit("bit") = default(0bit);
 
         @display("i=block/app2");
-        @class(PositionHelper);
+        @class(plexe::PositionHelper);
 
     gates:
         input lowerLayerIn; // from network layer

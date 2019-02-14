@@ -20,6 +20,8 @@
 
 #include "plexe/traffic/PlatoonsTrafficManager.h"
 
+namespace plexe {
+
 class JoinTrafficManager : public PlatoonsTrafficManager {
 
 public:
@@ -39,5 +41,7 @@ protected:
 
     virtual void handleSelfMsg(cMessage* msg);
 };
+
+} // namespace plexe
 
 #endif

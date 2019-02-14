@@ -18,6 +18,8 @@
 #include "plexe/maneuver/JoinAtBack.h"
 #include "plexe/apps/GeneralPlatooningApp.h"
 
+namespace plexe {
+
 JoinAtBack::JoinAtBack(GeneralPlatooningApp* app)
     : JoinManeuver(app)
     , joinManeuverState(JoinManeuverState::IDLE)
@@ -175,7 +177,7 @@ void JoinAtBack::handleMoveToPosition(const MoveToPosition* msg)
     traciVehicle->setFrontVehicleFakeData(0, 0, targetPlatoonData->platoonSpeed, 15);
     // set a CC speed higher than the platoon speed to approach it
     traciVehicle->setCruiseControlDesiredSpeed(targetPlatoonData->platoonSpeed + (30 / 3.6));
-    traciVehicle->setActiveController(Plexe::FAKED_CACC);
+    traciVehicle->setActiveController(FAKED_CACC);
 
     joinManeuverState = JoinManeuverState::J_MOVE_IN_POSITION;
 }
@@ -208,7 +210,7 @@ void JoinAtBack::handleJoinFormation(const JoinFormation* msg)
 
     // we got confirmation from the leader
     // switch from faked CACC to real CACC
-    traciVehicle->setActiveController(Plexe::CACC);
+    traciVehicle->setActiveController(CACC);
     // set spacing to 5 meters to get close to the platoon
     traciVehicle->setCACCConstantSpacing(5);
 
@@ -255,3 +257,5 @@ void JoinAtBack::handleJoinFormationAck(const JoinFormationAck* msg)
     joinManeuverState = JoinManeuverState::IDLE;
     app->setInManeuver(false);
 }
+
+} // namespace plexe

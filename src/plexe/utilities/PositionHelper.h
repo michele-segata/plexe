@@ -20,6 +20,8 @@
 
 #include "plexe/utilities/BasePositionHelper.h"
 
+namespace plexe {
+
 /**
  * Defines position utility functions for platoons organized in the following
  * way:
@@ -99,5 +101,7 @@ public:
     {
     }
 };
+
+} // namespace plexe
 
 #endif

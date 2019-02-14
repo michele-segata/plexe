@@ -22,6 +22,8 @@
 #include "plexe/apps/GeneralPlatooningApp.h"
 #include "plexe/messages/ManeuverMessage_m.h"
 
+namespace plexe {
+
 class JoinManeuverScenario : public BaseScenario {
 
 protected:
@@ -53,5 +55,7 @@ protected:
     void prepareManeuverCars(int platoonLane);
     void setupFormation();
 };
+
+} // namespace plexe
 
 #endif

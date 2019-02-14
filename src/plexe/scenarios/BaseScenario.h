@@ -24,6 +24,8 @@
 #include "plexe/CC_Const.h"
 #include "plexe/utilities/BasePositionHelper.h"
 
+namespace plexe {
+
 class BaseScenario : public Veins::BaseApplLayer {
 
 public:
@@ -39,7 +41,7 @@ protected:
     BasePositionHelper* positionHelper;
 
     // controller used by followers
-    enum Plexe::ACTIVE_CONTROLLER controller;
+    enum ACTIVE_CONTROLLER controller;
 
     // list of various controller parameters
     // headway time to be used for the ACC
@@ -87,5 +89,7 @@ public:
 protected:
     virtual void handleSelfMsg(cMessage* msg);
 };
+
+} // namespace plexe
 
 #endif

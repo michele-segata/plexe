@@ -20,6 +20,8 @@
 
 #include "plexe/utilities/BasePositionHelper.h"
 
+namespace plexe {
+
 class JoinPositionHelper : public BasePositionHelper {
 
 public:
@@ -35,5 +37,7 @@ public:
     {
     }
 };
+
+} // namespace plexe
 
 #endif

@@ -20,6 +20,8 @@
 
 #include "BaseProtocol.h"
 
+namespace plexe {
+
 class SlottedBeaconing : public BaseProtocol {
 protected:
     virtual void handleSelfMsg(cMessage* msg);
@@ -36,5 +38,7 @@ public:
 
     virtual void initialize(int stage);
 };
+
+} // namespace plexe
 
 #endif /* SLOTTEDBEACONING_H_ */

@@ -38,7 +38,7 @@ simple HumanInterferingProtocol like IBaseApplLayer
 
         int headerLength @unit("bit") = default(0 bit);
         @display("i=block/network2");
-        @class(HumanInterferingProtocol);
+        @class(plexe::HumanInterferingProtocol);
 
     gates:
         input lowerLayerIn;

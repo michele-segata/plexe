@@ -30,7 +30,7 @@ simple DynamicPositionHelper like BasePositionHelper
         int platoonSize = default(0);
 
         @display("i=block/app2");
-        @class(DynamicPositionHelper);
+        @class(plexe::DynamicPositionHelper);
 
     gates:
         input lowerLayerIn; // from network layer

@@ -26,6 +26,6 @@ simple SimplePlatooningBeaconing extends BBaseProtocol
 {
     parameters:
         @display("i=block/network2");
-        @class(SimplePlatooningBeaconing);
+        @class(plexe::SimplePlatooningBeaconing);
 
 }

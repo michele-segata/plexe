@@ -41,5 +41,5 @@ simple RingTrafficManager like TraCIBaseTrafficManager {
         double platoonInsertDistance @unit("m") = default(5m);
         double platoonInsertHeadway @unit("s") = default(0s);
         double platoonLeaderHeadway @unit("s") = default(1.2s);
-        @class(RingTrafficManager);
+        @class(plexe::RingTrafficManager);
 }

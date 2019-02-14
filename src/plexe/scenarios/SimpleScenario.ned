@@ -23,6 +23,6 @@ simple SimpleScenario extends BBaseScenario
 {
     parameters:
         @display("i=block/app2");
-        @class(SimpleScenario);
+        @class(plexe::SimpleScenario);
 
 }

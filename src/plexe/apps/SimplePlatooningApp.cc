@@ -17,4 +17,8 @@
 
 #include "plexe/apps/SimplePlatooningApp.h"
 
+namespace plexe {
+
 Define_Module(SimplePlatooningApp);
+
+} // namespace plexe

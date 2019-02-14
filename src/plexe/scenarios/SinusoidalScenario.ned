@@ -30,5 +30,5 @@ simple SinusoidalScenario extends BBaseScenario
         double startOscillating @unit("s") = default(5s);
 
         @display("i=block/app2");
-        @class(SinusoidalScenario);
+        @class(plexe::SinusoidalScenario);
 }

@@ -29,6 +29,8 @@
 
 #include "veins/modules/mac/ieee80211p/Mac1609_4.h"
 
+namespace plexe {
+
 class HumanInterferingProtocol : public Veins::BaseApplLayer {
 
 private:
@@ -76,5 +78,7 @@ public:
 
     virtual void initialize(int stage);
 };
+
+} // namespace plexe
 
 #endif

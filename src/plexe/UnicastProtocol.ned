@@ -46,7 +46,7 @@ simple UnicastProtocol extends DemoBaseApplLayer
         //packet loss rate (between 0 and 1)
         double packetLossRate = default(0);
 
-        @class(UnicastProtocol);
+        @class(plexe::UnicastProtocol);
         @display("i=msg/mail");
 
         @signal[droppedExceededAttempts](type=bool);

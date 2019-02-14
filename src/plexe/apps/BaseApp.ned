@@ -23,5 +23,5 @@ moduleinterface BaseApp extends IBaseApplLayer
 {
     parameters:
         @display("i=block/app2");
-        @class(BaseApp);
+        @class(plexe::BaseApp);
 }

@@ -20,6 +20,8 @@
 
 #include "veins/modules/mobility/traci/TraCIBaseTrafficManager.h"
 
+namespace plexe {
+
 class PlatoonsTrafficManager : public TraCIBaseTrafficManager {
 
 public:
@@ -69,5 +71,7 @@ protected:
 
     virtual void scenarioLoaded();
 };
+
+} // namespace plexe
 
 #endif

@@ -21,6 +21,8 @@
 #include "plexe/scenarios/BaseScenario.h"
 #include "plexe/apps/BaseApp.h"
 
+namespace plexe {
+
 class BrakingScenario : public BaseScenario {
 
 public:
@@ -52,5 +54,7 @@ public:
 protected:
     virtual void handleSelfMsg(cMessage* msg);
 };
+
+} // namespace plexe
 
 #endif

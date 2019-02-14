@@ -17,6 +17,8 @@
 
 #include "plexe/scenarios/SinusoidalScenario.h"
 
+namespace plexe {
+
 Define_Module(SinusoidalScenario);
 
 void SinusoidalScenario::initialize(int stage)
@@ -69,3 +71,5 @@ void SinusoidalScenario::handleSelfMsg(cMessage* msg)
         scheduleAt(simTime() + SimTime(0.1), changeSpeed);
     }
 }
+
+} // namespace plexe

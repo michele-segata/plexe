@@ -19,6 +19,8 @@
 
 using namespace Veins;
 
+namespace plexe {
+
 Define_Module(AccelerateAndBrakeScenario);
 
 void AccelerateAndBrakeScenario::initialize(int stage)
@@ -47,7 +49,7 @@ void AccelerateAndBrakeScenario::initialize(int stage)
         startBrakingMsg = new cMessage("startBrakingMsg");
 
         // enable ACC
-        traciVehicle->setActiveController(Plexe::ACC);
+        traciVehicle->setActiveController(ACC);
         // let the vehicle start from standstill
         traciVehicle->setFixedAcceleration(1, -8);
 
@@ -71,3 +73,5 @@ void AccelerateAndBrakeScenario::handleSelfMsg(cMessage* msg)
     if (msg == startAccelerationMsg) traciVehicle->setFixedAcceleration(1, acceleration);
     if (msg == startBrakingMsg) traciVehicle->setFixedAcceleration(1, -brakingDeceleration);
 }
+
+} // namespace plexe

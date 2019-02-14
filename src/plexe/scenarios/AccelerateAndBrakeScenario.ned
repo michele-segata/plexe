@@ -32,5 +32,5 @@ simple AccelerateAndBrakeScenario extends BBaseScenario
         double startBraking @unit("s") = default(30s);
 
         @display("i=block/app2");
-        @class(AccelerateAndBrakeScenario);
+        @class(plexe::AccelerateAndBrakeScenario);
 }

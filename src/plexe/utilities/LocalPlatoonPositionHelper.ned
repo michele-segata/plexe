@@ -31,7 +31,7 @@ simple LocalPlatoonPositionHelper like BasePositionHelper {
         int platoonSize = default(0);
 
         @display("i=block/app2");
-        @class(LocalPlatoonPositionHelper);
+        @class(plexe::LocalPlatoonPositionHelper);
 
     gates:
         input lowerLayerIn; // from network layer

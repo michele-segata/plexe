@@ -28,6 +28,8 @@
 #include "plexe/messages/MoveToPositionAck_m.h"
 #include "plexe/messages/MoveToPosition_m.h"
 
+namespace plexe {
+
 struct JoinManeuverParameters {
     int platoonId;
     int leaderId;
@@ -162,5 +164,7 @@ protected:
      */
     virtual void handleJoinFormationAck(const JoinFormationAck* msg) = 0;
 };
+
+} // namespace plexe
 
 #endif

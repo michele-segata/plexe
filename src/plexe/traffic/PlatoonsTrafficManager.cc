@@ -17,6 +17,8 @@
 
 #include "PlatoonsTrafficManager.h"
 
+namespace plexe {
+
 Define_Module(PlatoonsTrafficManager);
 
 void PlatoonsTrafficManager::initialize(int stage)
@@ -104,3 +106,5 @@ PlatoonsTrafficManager::~PlatoonsTrafficManager()
     cancelAndDelete(insertPlatoonMessage);
     insertPlatoonMessage = nullptr;
 }
+
+} // namespace plexe

@@ -24,6 +24,8 @@
 using omnetpp::simsignal_t;
 using namespace Veins;
 
+namespace plexe {
+
 Define_Module(UnicastProtocol);
 
 const simsignal_t UnicastProtocol::sigDroppedExceededAttempts = registerSignal("droppedExceededAttempts");
@@ -410,3 +412,5 @@ UnicastProtocol::~UnicastProtocol()
     cancelAndDelete(timeout);
     timeout = nullptr;
 }
+
+} // namespace plexe

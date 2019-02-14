@@ -17,6 +17,8 @@
 
 #include "JoinTrafficManager.h"
 
+namespace plexe {
+
 Define_Module(JoinTrafficManager);
 
 void JoinTrafficManager::initialize(int stage)
@@ -47,8 +49,11 @@ void JoinTrafficManager::insertJoiner()
     automated.lane = 2;
     addVehicleToQueue(0, automated);
 }
+
 JoinTrafficManager::~JoinTrafficManager()
 {
     cancelAndDelete(insertJoinerMessage);
     insertJoinerMessage = nullptr;
 }
+
+} // namespace plexe

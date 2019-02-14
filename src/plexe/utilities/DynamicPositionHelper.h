@@ -21,6 +21,8 @@
 #include "plexe/utilities/BasePositionHelper.h"
 #include "plexe/utilities/DynamicPositionManager.h"
 
+namespace plexe {
+
 /**
  * Implements a position helper where vehicles can be dynamically added and removed
  */
@@ -107,5 +109,7 @@ protected:
     DynamicPositionManager& positions;
     mutable std::vector<int> formationCache;
 };
+
+} // namespace plexe
 
 #endif

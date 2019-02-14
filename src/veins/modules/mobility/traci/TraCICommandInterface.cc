@@ -1477,7 +1477,7 @@ void TraCICommandInterface::Vehicle::getVehicleData(double& speed, double& accel
     buf >> speed >> acceleration >> controllerAcceleration >> positionX >> positionY >> time;
 }
 
-void TraCICommandInterface::Vehicle::getVehicleData(Plexe::VEHICLE_DATA* data)
+void TraCICommandInterface::Vehicle::getVehicleData(plexe::VEHICLE_DATA* data)
 {
     std::string v;
     getParameter(PAR_SPEED_AND_ACCELERATION, v);
@@ -1608,7 +1608,7 @@ void TraCICommandInterface::Vehicle::setLaneChangeAction(int action)
     uint8_t variableId = VAR_LANECHANGE_MODE;
     uint8_t type = TYPE_INTEGER;
     int traciAction;
-    if (action == Plexe::MOVE_TO_FIXED_LANE || action == Plexe::STAY_IN_CURRENT_LANE)
+    if (action == plexe::MOVE_TO_FIXED_LANE || action == plexe::STAY_IN_CURRENT_LANE)
         traciAction = FIX_LC;
     else
         traciAction = DEFAULT_NOTRACI_LC;
@@ -1733,14 +1733,14 @@ std::string TraCICommandInterface::Vehicle::getVType()
     return traci->genericGetString(CMD_GET_VEHICLE_VARIABLE, nodeId, VAR_TYPE, RESPONSE_GET_VEHICLE_VARIABLE);
 }
 
-void TraCICommandInterface::Vehicle::setVehicleData(const struct Plexe::VEHICLE_DATA* data)
+void TraCICommandInterface::Vehicle::setVehicleData(const struct plexe::VEHICLE_DATA* data)
 {
     ParBuffer buf;
     buf << data->index << data->speed << data->acceleration << data->positionX << data->positionY << data->time << data->length << data->u << data->speedX << data->speedY << data->angle;
     setParameter(CC_PAR_VEHICLE_DATA, buf.str());
 }
 
-void TraCICommandInterface::Vehicle::getStoredVehicleData(struct Plexe::VEHICLE_DATA* data, int index)
+void TraCICommandInterface::Vehicle::getStoredVehicleData(struct plexe::VEHICLE_DATA* data, int index)
 {
     ParBuffer inBuf;
     std::string v;

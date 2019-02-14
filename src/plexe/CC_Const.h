@@ -21,7 +21,7 @@
 #include <string>
 #include <sstream>
 
-namespace Plexe {
+namespace plexe {
 
 /**
  * @brief action that might be requested by the platooning management
@@ -190,6 +190,7 @@ struct VEHICLE_DATA {
 
 // let the leader automatically change lane for the whole platoon if there is a speed advantage
 #define PAR_ENABLE_AUTO_LANE_CHANGE "ccalc"
-} // namespace Plexe
+
+} // namespace plexe
 
 #endif /* CC_CONST_H */

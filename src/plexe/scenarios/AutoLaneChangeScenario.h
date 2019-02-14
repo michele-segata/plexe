@@ -21,6 +21,8 @@
 #include "plexe/scenarios/BaseScenario.h"
 #include "plexe/apps/BaseApp.h"
 
+namespace plexe {
+
 class AutoLaneChangeScenario : public BaseScenario {
 
 public:
@@ -41,5 +43,7 @@ public:
         appl = 0;
     }
 };
+
+} // namespace plexe
 
 #endif

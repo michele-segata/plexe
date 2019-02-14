@@ -26,6 +26,6 @@ simple AutoLaneChangeScenario extends BBaseScenario
         string platooningVType;
 
         @display("i=block/app2");
-        @class(AutoLaneChangeScenario);
+        @class(plexe::AutoLaneChangeScenario);
 
 }

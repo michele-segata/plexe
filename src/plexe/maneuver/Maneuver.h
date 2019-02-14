@@ -19,14 +19,16 @@
 #ifndef MANEUVER_H_
 #define MANEUVER_H_
 
-class GeneralPlatooningApp;
-
 #include "plexe/utilities/BasePositionHelper.h"
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 
 #include "plexe/messages/ManeuverMessage_m.h"
 #include "plexe/messages/PlatooningBeacon_m.h"
 #include "plexe/messages/UpdatePlatoonFormation_m.h"
+
+namespace plexe {
+
+class GeneralPlatooningApp;
 
 class Maneuver {
 
@@ -69,5 +71,7 @@ protected:
     Veins::TraCICommandInterface* traci;
     Veins::TraCICommandInterface::Vehicle* traciVehicle;
 };
+
+} // namespace plexe
 
 #endif

@@ -17,6 +17,8 @@
 
 #include "PlatoonsPlusHumanTraffic.h"
 
+namespace plexe {
+
 Define_Module(PlatoonsPlusHumanTraffic);
 
 void PlatoonsPlusHumanTraffic::initialize(int stage)
@@ -139,3 +141,5 @@ PlatoonsPlusHumanTraffic::~PlatoonsPlusHumanTraffic()
     cancelAndDelete(insertPlatoonMessage);
     insertPlatoonMessage = nullptr;
 }
+
+} // namespace plexe

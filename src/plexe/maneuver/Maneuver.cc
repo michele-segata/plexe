@@ -18,6 +18,8 @@
 #include "plexe/maneuver/Maneuver.h"
 #include "plexe/apps/GeneralPlatooningApp.h"
 
+namespace plexe {
+
 Maneuver::Maneuver(GeneralPlatooningApp* app)
 {
     this->app = app;
@@ -26,3 +28,5 @@ Maneuver::Maneuver(GeneralPlatooningApp* app)
     this->traci = app->getTraci();
     this->traciVehicle = app->getTraciVehicle();
 }
+
+} // namespace plexe

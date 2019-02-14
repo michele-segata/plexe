@@ -29,6 +29,8 @@
 
 using namespace Veins;
 
+namespace plexe {
+
 class JoinAtBack : public JoinManeuver {
 
 public:
@@ -206,5 +208,7 @@ protected:
     /** the data about the current joiner */
     std::unique_ptr<JoinerData> joinerData;
 };
+
+} // namespace plexe
 
 #endif

@@ -19,6 +19,8 @@
 #include "plexe/maneuver/JoinManeuver.h"
 #include "plexe/apps/GeneralPlatooningApp.h"
 
+namespace plexe {
+
 JoinManeuver::JoinManeuver(GeneralPlatooningApp* app)
     : Maneuver(app)
 {
@@ -115,3 +117,5 @@ JoinFormationAck* JoinManeuver::createJoinFormationAck(int vehicleId, std::strin
     }
     return msg;
 }
+
+} // namespace plexe

@@ -25,6 +25,8 @@
 
 using namespace Veins;
 
+namespace plexe {
+
 Define_Module(GeneralPlatooningApp);
 
 void GeneralPlatooningApp::initialize(int stage)
@@ -152,3 +154,5 @@ GeneralPlatooningApp::~GeneralPlatooningApp()
 {
     delete joinManeuver;
 }
+
+} // namespace plexe

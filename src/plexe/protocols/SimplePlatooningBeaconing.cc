@@ -17,6 +17,8 @@
 
 #include "SimplePlatooningBeaconing.h"
 
+namespace plexe {
+
 Define_Module(SimplePlatooningBeaconing)
 
 void SimplePlatooningBeaconing::initialize(int stage)
@@ -53,3 +55,5 @@ SimplePlatooningBeaconing::SimplePlatooningBeaconing()
 SimplePlatooningBeaconing::~SimplePlatooningBeaconing()
 {
 }
+
+} // namespace plexe

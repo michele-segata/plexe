@@ -31,7 +31,7 @@ simple JoinPositionHelper like BasePositionHelper
         int headerLength @unit("bit") = default(0bit);
 
         @display("i=block/app2");
-        @class(JoinPositionHelper);
+        @class(plexe::JoinPositionHelper);
 
     gates:
         input lowerLayerIn; // from network layer

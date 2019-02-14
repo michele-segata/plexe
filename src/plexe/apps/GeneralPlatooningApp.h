@@ -30,6 +30,8 @@
 
 #include "veins/modules/mobility/traci/TraCIConstants.h"
 
+namespace plexe {
+
 /** possible roles of this vehicle */
 enum class PlatoonRole : size_t {
     NONE, ///< The vehicle is not in a Platoon
@@ -204,5 +206,7 @@ private:
     /** join maneuver implementation */
     JoinManeuver* joinManeuver;
 };
+
+} // namespace plexe
 
 #endif

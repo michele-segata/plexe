@@ -19,6 +19,8 @@
 
 #include <iostream>
 
+namespace plexe {
+
 DynamicPositionManager& DynamicPositionManager::getInstance()
 {
     static DynamicPositionManager instance;
@@ -69,3 +71,5 @@ void DynamicPositionManager::printPlatoons()
         std::cout << "Veh " << i->first << ": Platoon " << i->second << "\n";
     }
 }
+
+} // namespace plexe

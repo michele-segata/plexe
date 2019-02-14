@@ -17,6 +17,8 @@
 
 #include "plexe/utilities/JoinPositionHelper.h"
 
+namespace plexe {
+
 Define_Module(JoinPositionHelper);
 
 void JoinPositionHelper::initialize(int stage)
@@ -40,3 +42,5 @@ int JoinPositionHelper::getIdFromExternalId(const std::string externalId)
     std::string strId = externalId.substr(dotIndex + 1);
     return strtol(strId.c_str(), 0, 10);
 }
+
+} // namespace plexe

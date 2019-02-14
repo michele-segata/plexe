@@ -33,7 +33,7 @@ moduleinterface BaseProtocol extends IBaseApplLayer
         //size of platooning messages
         int packetSize;// = default(25);
         @display("i=block/network2");
-        @class(BaseProtocol);
+        @class(plexe::BaseProtocol);
      gates:
          input upperLayerIn[10];
          output upperLayerOut[10];

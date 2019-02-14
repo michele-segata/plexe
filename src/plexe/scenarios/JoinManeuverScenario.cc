@@ -17,6 +17,8 @@
 
 #include "plexe/scenarios/JoinManeuverScenario.h"
 
+namespace plexe {
+
 Define_Module(JoinManeuverScenario);
 
 void JoinManeuverScenario::initialize(int stage)
@@ -45,7 +47,7 @@ void JoinManeuverScenario::prepareManeuverCars(int platoonLane)
     case 0: {
         // this is the leader
         traciVehicle->setCruiseControlDesiredSpeed(100.0 / 3.6);
-        traciVehicle->setActiveController(Plexe::ACC);
+        traciVehicle->setActiveController(ACC);
         traciVehicle->setFixedLane(platoonLane);
 
         positionHelper->setIsLeader(true);
@@ -62,7 +64,7 @@ void JoinManeuverScenario::prepareManeuverCars(int platoonLane)
     case 3: {
         // these are the followers which are already in the platoon
         traciVehicle->setCruiseControlDesiredSpeed(130.0 / 3.6);
-        traciVehicle->setActiveController(Plexe::CACC);
+        traciVehicle->setActiveController(CACC);
         traciVehicle->setFixedLane(platoonLane);
 
         positionHelper->setIsLeader(false);
@@ -78,7 +80,7 @@ void JoinManeuverScenario::prepareManeuverCars(int platoonLane)
         // this is the car which will join
         traciVehicle->setCruiseControlDesiredSpeed(100 / 3.6);
         traciVehicle->setFixedLane(2);
-        traciVehicle->setActiveController(Plexe::ACC);
+        traciVehicle->setActiveController(ACC);
 
         positionHelper->setPlatoonId(-1);
         positionHelper->setIsLeader(false);
@@ -106,3 +108,5 @@ void JoinManeuverScenario::handleSelfMsg(cMessage* msg)
 
     if (msg == startManeuver) app->startJoinManeuver(0, 0, -1);
 }
+
+} // namespace plexe

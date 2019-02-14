@@ -19,6 +19,8 @@
 
 using namespace Veins;
 
+namespace plexe {
+
 Define_Module(SimpleScenario);
 
 void SimpleScenario::initialize(int stage)
@@ -45,3 +47,5 @@ void SimpleScenario::initialize(int stage)
         }
     }
 }
+
+} // namespace plexe

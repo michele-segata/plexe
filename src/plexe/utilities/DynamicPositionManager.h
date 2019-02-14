@@ -20,6 +20,8 @@
 
 #include <map>
 
+namespace plexe {
+
 class DynamicPositionManager {
 
     // map from position within the platoon to vehicle id
@@ -54,5 +56,7 @@ public:
     Positions positions;
     VehicleToPlatoon vehToPlatoons;
 };
+
+} // namespace plexe
 
 #endif

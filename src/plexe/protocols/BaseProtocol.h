@@ -32,6 +32,8 @@
 // maximum number of upper layer apps that can connect (see .ned file)
 #define MAX_GATES_COUNT 10
 
+namespace plexe {
+
 class BaseProtocol : public Veins::BaseApplLayer {
 
 private:
@@ -194,5 +196,7 @@ public:
     // register a higher level application by its id
     void registerApplication(int applicationId, InputGate* appInputGate, OutputGate* appOutputGate, ControlInputGate* appControlInputGate, ControlOutputGate* appControlOutputGate);
 };
+
+} // namespace plexe
 
 #endif /* BASEPROTOCOL_H_ */

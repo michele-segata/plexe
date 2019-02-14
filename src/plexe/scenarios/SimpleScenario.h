@@ -21,6 +21,8 @@
 #include "plexe/scenarios/BaseScenario.h"
 #include "plexe/apps/BaseApp.h"
 
+namespace plexe {
+
 class SimpleScenario : public BaseScenario {
 public:
     virtual void initialize(int stage);
@@ -36,5 +38,7 @@ public:
         : leaderSpeed(0)
         , appl(nullptr){};
 };
+
+} // namespace plexe
 
 #endif

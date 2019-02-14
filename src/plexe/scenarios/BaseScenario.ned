@@ -58,6 +58,6 @@ moduleinterface BaseScenario extends IBaseApplLayer
         string vehicleType;
 
         @display("i=block/app2");
-        @class(BaseScenario);
+        @class(plexe::BaseScenario);
 
 }

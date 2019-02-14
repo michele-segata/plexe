@@ -23,5 +23,5 @@ simple JoinManeuverScenario extends BBaseScenario
 {
     parameters:
         @display("i=block/app2");
-        @class(JoinManeuverScenario);
+        @class(plexe::JoinManeuverScenario);
 }

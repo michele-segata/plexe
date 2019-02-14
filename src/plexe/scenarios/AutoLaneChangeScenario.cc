@@ -19,6 +19,8 @@
 
 using namespace Veins;
 
+namespace plexe {
+
 Define_Module(AutoLaneChangeScenario);
 
 void AutoLaneChangeScenario::initialize(int stage)
@@ -53,3 +55,5 @@ void AutoLaneChangeScenario::initialize(int stage)
         }
     }
 }
+
+} // namespace plexe

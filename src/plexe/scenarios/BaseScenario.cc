@@ -19,6 +19,8 @@
 
 using namespace Veins;
 
+namespace plexe {
+
 Define_Module(BaseScenario);
 
 void BaseScenario::initialize(int stage)
@@ -55,19 +57,19 @@ void BaseScenario::initialize(int stage)
         const char* strController = par("controller").stringValue();
         // for now we have only two possibilities
         if (strcmp(strController, "ACC") == 0) {
-            controller = Plexe::ACC;
+            controller = ACC;
         }
         else if (strcmp(strController, "CACC") == 0) {
-            controller = Plexe::CACC;
+            controller = CACC;
         }
         else if (strcmp(strController, "PLOEG") == 0) {
-            controller = Plexe::PLOEG;
+            controller = PLOEG;
         }
         else if (strcmp(strController, "CONSENSUS") == 0) {
-            controller = Plexe::CONSENSUS;
+            controller = CONSENSUS;
         }
         else if (strcmp(strController, "FLATBED") == 0) {
-            controller = Plexe::FLATBED;
+            controller = FLATBED;
         }
         else {
             throw cRuntimeError("Invalid controller selected");
@@ -86,7 +88,7 @@ void BaseScenario::initialize(int stage)
 
         // set the active controller
         if (positionHelper->isLeader()) {
-            traciVehicle->setActiveController(Plexe::ACC);
+            traciVehicle->setActiveController(ACC);
             traciVehicle->setACCHeadwayTime(leaderHeadway);
         }
         else {
@@ -132,7 +134,7 @@ void BaseScenario::initializeControllers()
     // use of controller acceleration
     traciVehicle->useControllerAcceleration(useControllerAcceleration);
 
-    Plexe::VEHICLE_DATA vehicleData;
+    VEHICLE_DATA vehicleData;
     // initialize own vehicle data
     if (!positionHelper->isLeader()) {
         // my position
@@ -160,3 +162,5 @@ void BaseScenario::initializeControllers()
         traciVehicle->setParameter(CC_PAR_VEHICLE_MODEL, vehicleType);
     }
 }
+
+} // namespace plexe

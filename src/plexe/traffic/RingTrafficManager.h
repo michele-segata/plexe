@@ -22,6 +22,8 @@
 
 #include "plexe/utilities/DynamicPositionManager.h"
 
+namespace plexe {
+
 class RingTrafficManager : public TraCIBaseTrafficManager {
 
 public:
@@ -67,5 +69,7 @@ protected:
         double distanceToFront;
     } Platoon;
 };
+
+} // namespace plexe
 
 #endif

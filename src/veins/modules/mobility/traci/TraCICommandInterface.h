@@ -177,7 +177,7 @@ public:
          * Gets the data about a vehicle. This can be used by a platoon leader in order to query for the acceleration
          * before sending the data to the followers
          */
-        void getVehicleData(Plexe::VEHICLE_DATA* data);
+        void getVehicleData(plexe::VEHICLE_DATA* data);
 
         /**
          * Set the cruise control desired speed
@@ -310,11 +310,11 @@ public:
         /**
          * Sets data information about a vehicle in the same platoon
          */
-        void setVehicleData(const struct Plexe::VEHICLE_DATA* data);
+        void setVehicleData(const struct plexe::VEHICLE_DATA* data);
         /**
          * Gets data information about a vehicle in the same platoon, as stored by this car
          */
-        void getStoredVehicleData(struct Plexe::VEHICLE_DATA* data, int index);
+        void getStoredVehicleData(struct plexe::VEHICLE_DATA* data, int index);
 
         /**
          * Determines whether PATH's and PLOEG's CACCs should use the controller

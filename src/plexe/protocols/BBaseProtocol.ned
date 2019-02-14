@@ -30,7 +30,7 @@ simple BBaseProtocol like BaseProtocol
         int packetSize;
         int headerLength @unit("bit") = default(0bit);
         @display("i=block/network2");
-        @class(BBaseProtocol);
+        @class(plexe::BBaseProtocol);
     gates:
         input lowerLayerIn;
         output lowerLayerOut;

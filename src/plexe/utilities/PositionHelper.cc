@@ -17,6 +17,8 @@
 
 #include "plexe/utilities/PositionHelper.h"
 
+namespace plexe {
+
 Define_Module(PositionHelper);
 
 void PositionHelper::initialize(int stage)
@@ -127,3 +129,5 @@ int PositionHelper::getPositionInPlatoon(const int vehicleId, const int nLanes, 
 {
     return (vehicleId - getPlatoonLeader(vehicleId, nLanes, platoonSize)) / nLanes;
 }
+
+} // namespace plexe

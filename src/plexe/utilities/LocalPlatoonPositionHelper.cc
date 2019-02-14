@@ -17,6 +17,8 @@
 
 #include "plexe/utilities/LocalPlatoonPositionHelper.h"
 
+namespace plexe {
+
 Define_Module(LocalPlatoonPositionHelper);
 
 void LocalPlatoonPositionHelper::initialize(int stage)
@@ -34,3 +36,5 @@ int LocalPlatoonPositionHelper::getIdFromExternalId(const std::string externalId
     std::string strId = externalId.substr(dotIndex + 1);
     return std::stol(strId.c_str(), 0, 10);
 }
+
+} // namespace plexe

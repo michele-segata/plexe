@@ -17,6 +17,8 @@
 
 #include "plexe/traffic/RingTrafficManager.h"
 
+namespace plexe {
+
 Define_Module(RingTrafficManager);
 
 void RingTrafficManager::initialize(int stage)
@@ -96,3 +98,5 @@ void RingTrafficManager::scenarioLoaded()
         }
     }
 }
+
+} // namespace plexe

@@ -19,6 +19,8 @@
 
 using namespace Veins;
 
+namespace plexe {
+
 Define_Module(BasePositionHelper);
 
 void BasePositionHelper::initialize(int stage)
@@ -189,3 +191,5 @@ void BasePositionHelper::setPlatoonFormation(const std::vector<int>& formation)
 {
     throw cRuntimeError("not implemented in base class");
 }
+
+} // namespace plexe

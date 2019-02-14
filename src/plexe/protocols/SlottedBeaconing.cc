@@ -17,6 +17,8 @@
 
 #include "SlottedBeaconing.h"
 
+namespace plexe {
+
 Define_Module(SlottedBeaconing)
 
 void SlottedBeaconing::initialize(int stage)
@@ -80,3 +82,5 @@ SlottedBeaconing::SlottedBeaconing()
 SlottedBeaconing::~SlottedBeaconing()
 {
 }
+
+} // namespace plexe

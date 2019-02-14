@@ -26,5 +26,5 @@ simple SlottedBeaconing extends BBaseProtocol
 {
     parameters:
         @display("i=block/network2");
-        @class(SlottedBeaconing);
+        @class(plexe::SlottedBeaconing);
 }

@@ -25,6 +25,8 @@
 
 using namespace Veins;
 
+namespace plexe {
+
 Define_Module(BaseApp);
 
 void BaseApp::initialize(int stage)
@@ -97,7 +99,7 @@ void BaseApp::logVehicleData(bool crashed)
 {
     // get distance and relative speed w.r.t. front vehicle
     double distance, relSpeed;
-    Plexe::VEHICLE_DATA data;
+    VEHICLE_DATA data;
     traciVehicle->getRadarMeasurements(distance, relSpeed);
     traciVehicle->getVehicleData(&data);
     if (crashed) {
@@ -154,7 +156,7 @@ void BaseApp::onPlatoonBeacon(const PlatooningBeacon* pb)
             traciVehicle->setFrontVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
         }
         // send data about every vehicle to the CACC. this is needed by the consensus controller
-        struct Plexe::VEHICLE_DATA vehicleData;
+        struct VEHICLE_DATA vehicleData;
         vehicleData.index = positionHelper->getMemberPosition(pb->getVehicleId());
         vehicleData.acceleration = pb->getAcceleration();
         vehicleData.length = pb->getLength();
@@ -171,3 +173,5 @@ void BaseApp::onPlatoonBeacon(const PlatooningBeacon* pb)
     }
     delete pb;
 }
+
+} // namespace plexe

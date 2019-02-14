@@ -22,6 +22,8 @@
 
 using namespace Veins;
 
+namespace plexe {
+
 Define_Module(HumanInterferingProtocol)
 
 void HumanInterferingProtocol::initialize(int stage)
@@ -122,3 +124,5 @@ void HumanInterferingProtocol::handleLowerMsg(cMessage* msg)
 {
     delete msg;
 }
+
+} // namespace plexe

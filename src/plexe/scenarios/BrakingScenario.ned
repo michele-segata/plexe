@@ -28,6 +28,6 @@ simple BrakingScenario extends BBaseScenario
         double startBraking @unit("s") = default(5s);
 
         @display("i=block/app2");
-        @class(BrakingScenario);
+        @class(plexe::BrakingScenario);
 
 }

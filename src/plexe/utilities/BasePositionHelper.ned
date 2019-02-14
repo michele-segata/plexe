@@ -28,6 +28,6 @@ moduleinterface BasePositionHelper
         int platoonSize;
 
         @display("i=block/app2");
-        @class(BasePositionHelper);
+        @class(plexe::BasePositionHelper);
 
 }

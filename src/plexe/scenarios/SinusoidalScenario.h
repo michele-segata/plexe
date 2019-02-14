@@ -20,6 +20,8 @@
 
 #include "plexe/scenarios/BaseScenario.h"
 
+namespace plexe {
+
 class SinusoidalScenario : public BaseScenario {
 
 public:
@@ -51,5 +53,7 @@ public:
 protected:
     virtual void handleSelfMsg(cMessage* msg);
 };
+
+} // namespace plexe
 
 #endif

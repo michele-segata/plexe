@@ -25,6 +25,8 @@
 #include "plexe/messages/UnicastMessage_m.h"
 #include "plexe/messages/UnicastProtocolControlMessage_m.h"
 
+namespace plexe {
+
 enum ControlMessageCommand {
     // from app to protocol for setting mac address
     SET_MAC_ADDRESS,
@@ -159,5 +161,7 @@ public:
     UnicastProtocol();
     virtual ~UnicastProtocol();
 };
+
+} // namespace plexe
 
 #endif /* UNICASTPROTOCOL_H_ */

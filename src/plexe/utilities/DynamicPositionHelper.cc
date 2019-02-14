@@ -19,6 +19,8 @@
 
 #include <algorithm>
 
+namespace plexe {
+
 Define_Module(DynamicPositionHelper);
 
 void DynamicPositionHelper::initialize(int stage)
@@ -124,3 +126,5 @@ int DynamicPositionHelper::getIdFromExternalId(const std::string externalId)
     std::string strId = externalId.substr(dotIndex + 1);
     return strtol(strId.c_str(), 0, 10);
 }
+
+} // namespace plexe

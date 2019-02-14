@@ -19,6 +19,8 @@
 
 using namespace Veins;
 
+namespace plexe {
+
 Define_Module(BrakingScenario);
 
 void BrakingScenario::initialize(int stage)
@@ -70,3 +72,5 @@ void BrakingScenario::handleSelfMsg(cMessage* msg)
     BaseScenario::handleSelfMsg(msg);
     if (msg == changeSpeed) traciVehicle->setFixedAcceleration(1, -brakingDeceleration);
 }
+
+} // namespace plexe

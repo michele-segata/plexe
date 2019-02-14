@@ -20,6 +20,8 @@
 
 #include "plexe/apps/BaseApp.h"
 
+namespace plexe {
+
 class SimplePlatooningApp : public BaseApp {
 
 public:
@@ -27,5 +29,7 @@ public:
     {
     }
 };
+
+} // namespace plexe
 
 #endif /* SIMPLEPLATOONINGAPP_H_ */

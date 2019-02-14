@@ -22,5 +22,5 @@ import org.car2x.plexe.traffic.PlatoonsTrafficManager;
 simple JoinTrafficManager extends PlatoonsTrafficManager {
 
     parameters:
-        @class(JoinTrafficManager);
+        @class(plexe::JoinTrafficManager);
 }

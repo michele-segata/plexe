@@ -21,6 +21,8 @@
 
 using namespace Veins;
 
+namespace plexe {
+
 Define_Module(BaseProtocol);
 
 // set signals for channel busy and collisions
@@ -151,7 +153,7 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress)
 {
 
     // vehicle's data to be included in the message
-    Plexe::VEHICLE_DATA data;
+    VEHICLE_DATA data;
     // get information about the vehicle via traci
     traciVehicle->getVehicleData(&data);
 
@@ -358,3 +360,5 @@ void BaseProtocol::registerApplication(int applicationId, InputGate* appInputGat
     // save the mapping in the connection
     apps[applicationId].push_back(AppInOut(upperIn, upperOut, upperCntIn, upperCntOut));
 }
+
+} // namespace plexe

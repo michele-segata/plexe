@@ -24,6 +24,8 @@
 
 #define INVALID_PLATOON_ID -99
 
+namespace plexe {
+
 class BasePositionHelper : public Veins::BaseApplLayer {
 
 public:
@@ -253,5 +255,7 @@ public:
     {
     }
 };
+
+} // namespace plexe
 
 #endif

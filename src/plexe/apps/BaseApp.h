@@ -29,6 +29,8 @@
 
 #include "plexe/utilities/BasePositionHelper.h"
 
+namespace plexe {
+
 class BaseProtocol;
 
 class BaseApp : public Veins::BaseApplLayer {
@@ -96,5 +98,7 @@ protected:
      */
     virtual void onPlatoonBeacon(const PlatooningBeacon* pb);
 };
+
+} // namespace plexe
 
 #endif /* BASEAPP_H_ */
