@@ -18,7 +18,7 @@
 #ifndef RINGTRAFFICMANAGER_H_
 #define RINGTRAFFICMANAGER_H_
 
-#include "veins/modules/mobility/traci/TraCIBaseTrafficManager.h"
+#include "plexe/mobility/TraCIBaseTrafficManager.h"
 
 #include "plexe/utilities/DynamicPositionManager.h"
 

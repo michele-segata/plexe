@@ -23,6 +23,8 @@
 #include "veins/modules/mobility/traci/TraCIScenarioManager.h"
 #include "veins/modules/mobility/traci/TraCICommandInterface.h"
 
+namespace plexe {
+
 class TraCIBaseTrafficManager : public cSimpleModule {
 
 public:
@@ -103,5 +105,7 @@ protected:
      */
     virtual void scenarioLoaded(){};
 };
+
+} // namespace plexe
 
 #endif /* TRACIBASETRAFFICMANAGER_H_ */

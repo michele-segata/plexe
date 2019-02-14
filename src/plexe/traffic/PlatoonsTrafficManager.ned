@@ -17,7 +17,7 @@
 
 package org.car2x.plexe.traffic;
 
-import org.car2x.veins.modules.mobility.traci.TraCIBaseTrafficManager;
+import org.car2x.plexe.mobility.TraCIBaseTrafficManager;
 
 simple PlatoonsTrafficManager like TraCIBaseTrafficManager {
 

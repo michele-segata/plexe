@@ -15,17 +15,30 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-#include "SumoTrafficManager.h"
+#ifndef SUMOTRAFFICMANAGER_H_
+#define SUMOTRAFFICMANAGER_H_
 
-Define_Module(SumoTrafficManager);
+#include "plexe/mobility/TraCIBaseTrafficManager.h"
 
-void SumoTrafficManager::initialize(int stage)
-{
+namespace plexe {
 
-    TraCIBaseTrafficManager::initialize(stage);
-}
+/**
+ * This traffic manager, set by default, does nothing. The idea
+ * is that, by default, traffic flows are managed by SUMO itself,
+ * as defined in the rou.xml file
+ */
+class SumoTrafficManager : public TraCIBaseTrafficManager {
 
-void SumoTrafficManager::finish()
-{
-    TraCIBaseTrafficManager::finish();
-}
+public:
+    virtual void initialize(int stage);
+    virtual void finish();
+
+public:
+    SumoTrafficManager()
+    {
+    }
+};
+
+} // namespace plexe
+
+#endif /* SUMOTRAFFICMANAGER_H_ */

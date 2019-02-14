@@ -15,8 +15,11 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-package org.car2x.veins.modules.mobility.traci;
+package org.car2x.plexe.mobility;
 
-moduleinterface TraCIBaseTrafficManager {
+simple TestTrafficManager like TraCIBaseTrafficManager {
 
+    parameters:
+        int nCars = default(8); //number of cars to inject
+        @class(plexe::TestTrafficManager);
 }

@@ -15,26 +15,8 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-#ifndef SUMOTRAFFICMANAGER_H_
-#define SUMOTRAFFICMANAGER_H_
+package org.car2x.plexe.mobility;
 
-#include "veins/modules/mobility/traci/TraCIBaseTrafficManager.h"
+moduleinterface TraCIBaseTrafficManager {
 
-/**
- * This traffic manager, set by default, does nothing. The idea
- * is that, by default, traffic flows are managed by SUMO itself,
- * as defined in the rou.xml file
- */
-class SumoTrafficManager : public TraCIBaseTrafficManager {
-
-public:
-    virtual void initialize(int stage);
-    virtual void finish();
-
-public:
-    SumoTrafficManager()
-    {
-    }
-};
-
-#endif /* SUMOTRAFFICMANAGER_H_ */
+}

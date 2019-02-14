@@ -18,7 +18,7 @@
 #ifndef PLATOONSTRAFFICMANAGER_H_
 #define PLATOONSTRAFFICMANAGER_H_
 
-#include "veins/modules/mobility/traci/TraCIBaseTrafficManager.h"
+#include "plexe/mobility/TraCIBaseTrafficManager.h"
 
 namespace plexe {
 

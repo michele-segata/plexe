@@ -18,7 +18,9 @@
 #ifndef TESTTRAFFICMANAGER_H_
 #define TESTTRAFFICMANAGER_H_
 
-#include "veins/modules/mobility/traci/TraCIBaseTrafficManager.h"
+#include "plexe/mobility/TraCIBaseTrafficManager.h"
+
+namespace plexe {
 
 class TestTrafficManager : public TraCIBaseTrafficManager {
 
@@ -38,5 +40,7 @@ protected:
 
     virtual void handleSelfMsg(cMessage* msg);
 };
+
+} // namespace plexe
 
 #endif /* TESTTRAFFICMANAGER_H_ */

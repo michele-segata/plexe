@@ -15,7 +15,9 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-#include "veins/modules/mobility/traci/TestTrafficManager.h"
+#include "plexe/mobility/TestTrafficManager.h"
+
+namespace plexe {
 
 Define_Module(TestTrafficManager);
 
@@ -67,3 +69,5 @@ void TestTrafficManager::finish()
         generateVehicle = 0;
     }
 }
+
+} // namespace plexe

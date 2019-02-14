@@ -15,9 +15,21 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-package org.car2x.veins.modules.mobility.traci;
+#include "SumoTrafficManager.h"
 
-simple SumoTrafficManager like TraCIBaseTrafficManager {
-    parameters:
-        @class(SumoTrafficManager);
+namespace plexe {
+
+Define_Module(SumoTrafficManager);
+
+void SumoTrafficManager::initialize(int stage)
+{
+
+    TraCIBaseTrafficManager::initialize(stage);
 }
+
+void SumoTrafficManager::finish()
+{
+    TraCIBaseTrafficManager::finish();
+}
+
+} // namespace plexe

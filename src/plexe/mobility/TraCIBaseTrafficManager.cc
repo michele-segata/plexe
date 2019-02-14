@@ -15,9 +15,11 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 
-#include "veins/modules/mobility/traci/TraCIBaseTrafficManager.h"
+#include "plexe/mobility/TraCIBaseTrafficManager.h"
 
 using namespace Veins;
+
+namespace plexe {
 
 Define_Module(TraCIBaseTrafficManager);
 
@@ -223,3 +225,5 @@ void TraCIBaseTrafficManager::addVehicleToQueue(int routeId, struct Vehicle v)
 {
     vehicleInsertQueue[routeId].push_back(v);
 }
+
+} // namespace plexe
