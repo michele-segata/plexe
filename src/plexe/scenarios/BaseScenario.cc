@@ -17,6 +17,10 @@
 
 #include "plexe/scenarios/BaseScenario.h"
 
+#include "veins/base/utils/FindModule.h"
+
+#include "plexe/PlexeManager.h"
+
 using namespace Veins;
 
 namespace plexe {
@@ -83,22 +87,26 @@ void BaseScenario::initialize(int stage)
         ASSERT(traci);
         traciVehicle = mobility->getVehicleCommandInterface();
         ASSERT(traciVehicle);
+        auto plexe = FindModule<PlexeManager*>::findGlobalModule();
+        ASSERT(plexe);
+        plexeTraci = plexe->getCommandInterface();
+        plexeTraciVehicle.reset(new traci::CommandInterface::Vehicle(plexeTraci, mobility->getExternalId()));
         positionHelper = FindModule<BasePositionHelper*>::findSubModule(getParentModule());
         initializeControllers();
 
         // set the active controller
         if (positionHelper->isLeader()) {
-            traciVehicle->setActiveController(ACC);
-            traciVehicle->setACCHeadwayTime(leaderHeadway);
+            plexeTraciVehicle->setActiveController(ACC);
+            plexeTraciVehicle->setACCHeadwayTime(leaderHeadway);
         }
         else {
-            traciVehicle->setActiveController(controller);
-            traciVehicle->setACCHeadwayTime(accHeadway);
+            plexeTraciVehicle->setActiveController(controller);
+            plexeTraciVehicle->setACCHeadwayTime(accHeadway);
         }
         // set the current lane
-        traciVehicle->setFixedLane(positionHelper->getPlatoonLane());
+        plexeTraciVehicle->setFixedLane(positionHelper->getPlatoonLane());
         traciVehicle->setSpeedMode(0);
-        traciVehicle->usePrediction(usePrediction);
+        plexeTraciVehicle->usePrediction(usePrediction);
 
         if (positionHelper->getId() == 0) traci->guiView("View #0").trackVehicle(mobility->getExternalId());
     }
@@ -132,7 +140,7 @@ void BaseScenario::initializeControllers()
     traciVehicle->setParameter(CC_PAR_VEHICLE_POSITION, positionHelper->getPosition());
     traciVehicle->setParameter(CC_PAR_PLATOON_SIZE, positionHelper->getPlatoonSize());
     // use of controller acceleration
-    traciVehicle->useControllerAcceleration(useControllerAcceleration);
+    plexeTraciVehicle->useControllerAcceleration(useControllerAcceleration);
 
     VEHICLE_DATA vehicleData;
     // initialize own vehicle data
@@ -148,7 +156,7 @@ void BaseScenario::initializeControllers()
         vehicleData.speed = 200;
         vehicleData.time = simTime().dbl();
         vehicleData.u = 0;
-        traciVehicle->setVehicleData(&vehicleData);
+        plexeTraciVehicle->setVehicleData(&vehicleData);
     }
 
     if (useRealisticEngine) {

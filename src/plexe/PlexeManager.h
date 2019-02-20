@@ -39,21 +39,24 @@ private:
 
     class PlexeTimestepTrigger : public cListener {
     public:
-        PlexeTimestepTrigger() {}
+        PlexeTimestepTrigger(PlexeManager* owner)
+            : owner(owner) {}
 
         void receiveSignal(cComponent*, simsignal_t signalID, const simtime_t&, cObject*) override
         {
-            const auto scenarioManager = Veins::TraCIScenarioManagerAccess().get();
-            ASSERT(scenarioManager);
+            ASSERT(signalID == Veins::TraCIScenarioManager::traciTimestepEndSignal);
 
-            scenarioManager->getCommandInterface()->executePlexeTimestep();
+            owner->getCommandInterface()->executePlexeTimestep();
         }
+
+    private:
+        PlexeManager* owner;
     };
 
     void initializeCommandInterface();
 
     DeferredCommandInterfaceInitializer deferredCommandInterfaceInitializer{this};
-    PlexeTimestepTrigger plexeTimestepTrigger;
+    PlexeTimestepTrigger plexeTimestepTrigger{this};
     std::unique_ptr<traci::CommandInterface> commandInterface;
 };
 

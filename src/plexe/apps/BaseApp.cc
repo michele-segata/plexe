@@ -20,8 +20,10 @@
 #include "veins/modules/messages/BaseFrame1609_4_m.h"
 #include "veins/base/messages/MacPkt_m.h"
 #include "veins/modules/mac/ieee80211p/Mac1609_4.h"
+#include "veins/base/utils/FindModule.h"
 
 #include "plexe/protocols/BaseProtocol.h"
+#include "plexe/PlexeManager.h"
 
 using namespace Veins;
 
@@ -56,6 +58,10 @@ void BaseApp::initialize(int stage)
         mobility = Veins::TraCIMobilityAccess().get(getParentModule());
         traci = mobility->getCommandInterface();
         traciVehicle = mobility->getVehicleCommandInterface();
+        auto plexe = FindModule<PlexeManager*>::findGlobalModule();
+        ASSERT(plexe);
+        plexeTraci = plexe->getCommandInterface();
+        plexeTraciVehicle.reset(new traci::CommandInterface::Vehicle(plexeTraci, mobility->getExternalId()));
         positionHelper = FindModule<BasePositionHelper*>::findSubModule(getParentModule());
         protocol = FindModule<BaseProtocol*>::findSubModule(getParentModule());
         myId = positionHelper->getId();
@@ -100,8 +106,8 @@ void BaseApp::logVehicleData(bool crashed)
     // get distance and relative speed w.r.t. front vehicle
     double distance, relSpeed;
     VEHICLE_DATA data;
-    traciVehicle->getRadarMeasurements(distance, relSpeed);
-    traciVehicle->getVehicleData(&data);
+    plexeTraciVehicle->getRadarMeasurements(distance, relSpeed);
+    plexeTraciVehicle->getVehicleData(&data);
     if (crashed) {
         distance = 0;
         stopSimulation = new cMessage("stopSimulation");
@@ -135,7 +141,7 @@ void BaseApp::handleSelfMsg(cMessage* msg)
 {
     if (msg == recordData) {
         // log mobility data
-        logVehicleData(traciVehicle->isCrashed());
+        logVehicleData(plexeTraciVehicle->isCrashed());
         // re-schedule next event
         scheduleAt(simTime() + SimTime(100, SIMTIME_MS), recordData);
     }
@@ -149,11 +155,11 @@ void BaseApp::onPlatoonBeacon(const PlatooningBeacon* pb)
     if (positionHelper->isInSamePlatoon(pb->getVehicleId())) {
         // if the message comes from the leader
         if (pb->getVehicleId() == positionHelper->getLeaderId()) {
-            traciVehicle->setLeaderVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
+            plexeTraciVehicle->setLeaderVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
         }
         // if the message comes from the vehicle in front
         if (pb->getVehicleId() == positionHelper->getFrontId()) {
-            traciVehicle->setFrontVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
+            plexeTraciVehicle->setFrontVehicleData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed(), pb->getPositionX(), pb->getPositionY(), pb->getTime());
         }
         // send data about every vehicle to the CACC. this is needed by the consensus controller
         struct VEHICLE_DATA vehicleData;
@@ -169,7 +175,7 @@ void BaseApp::onPlatoonBeacon(const PlatooningBeacon* pb)
         vehicleData.speedY = pb->getSpeedY();
         vehicleData.angle = pb->getAngle();
         // send information to CACC
-        traciVehicle->setVehicleData(&vehicleData);
+        plexeTraciVehicle->setVehicleData(&vehicleData);
     }
     delete pb;
 }

@@ -19,14 +19,12 @@
 #define BASEAPP_H_
 
 #include "veins/base/modules/BaseApplLayer.h"
-
-#include "plexe/UnicastProtocol.h"
-#include "plexe/messages/PlatooningBeacon_m.h"
-
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 
 #include "plexe/CC_Const.h"
-
+#include "plexe/UnicastProtocol.h"
+#include "plexe/messages/PlatooningBeacon_m.h"
+#include "plexe/mobility/CommandInterface.h"
 #include "plexe/utilities/BasePositionHelper.h"
 
 namespace plexe {
@@ -45,6 +43,8 @@ protected:
     Veins::TraCIMobility* mobility;
     Veins::TraCICommandInterface* traci;
     Veins::TraCICommandInterface::Vehicle* traciVehicle;
+    traci::CommandInterface* plexeTraci;
+    std::unique_ptr<traci::CommandInterface::Vehicle> plexeTraciVehicle;
 
     // determines position and role of each vehicle
     BasePositionHelper* positionHelper;

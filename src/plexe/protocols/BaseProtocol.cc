@@ -18,6 +18,9 @@
 #include "plexe/protocols/BaseProtocol.h"
 
 #include "veins/modules/mac/ieee80211p/Mac1609_4.h"
+#include "veins/base/utils/FindModule.h"
+
+#include "plexe/PlexeManager.h"
 
 using namespace Veins;
 
@@ -98,6 +101,10 @@ void BaseProtocol::initialize(int stage)
         ASSERT(traci);
         traciVehicle = mobility->getVehicleCommandInterface();
         ASSERT(traciVehicle);
+        auto plexe = FindModule<PlexeManager*>::findGlobalModule();
+        ASSERT(plexe);
+        plexeTraci = plexe->getCommandInterface();
+        plexeTraciVehicle.reset(new traci::CommandInterface::Vehicle(plexeTraci, mobility->getExternalId()));
         positionHelper = FindModule<BasePositionHelper*>::findSubModule(getParentModule());
         ASSERT(positionHelper);
 
@@ -155,7 +162,7 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress)
     // vehicle's data to be included in the message
     VEHICLE_DATA data;
     // get information about the vehicle via traci
-    traciVehicle->getVehicleData(&data);
+    plexeTraciVehicle->getVehicleData(&data);
 
     // create and send beacon
     UnicastMessage* unicast = new UnicastMessage("", BEACON_TYPE);

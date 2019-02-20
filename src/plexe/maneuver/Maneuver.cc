@@ -21,12 +21,13 @@
 namespace plexe {
 
 Maneuver::Maneuver(GeneralPlatooningApp* app)
-{
-    this->app = app;
-    this->positionHelper = app->getPositionHelper();
-    this->mobility = app->getMobility();
-    this->traci = app->getTraci();
-    this->traciVehicle = app->getTraciVehicle();
-}
+    : app(app)
+    , positionHelper(app->getPositionHelper())
+    , mobility(app->getMobility())
+    , traci(app->getTraci())
+    , traciVehicle(app->getTraciVehicle())
+    , plexeTraci(app->getPlexeTraci())
+    , plexeTraciVehicle(app->getPlexeTraciVehicle())
+{}
 
 } // namespace plexe

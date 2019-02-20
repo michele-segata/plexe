@@ -23,6 +23,7 @@ void PlexeManager::initialize(int stage)
 
 void PlexeManager::initializeCommandInterface()
 {
+
     const auto scenarioManager = Veins::TraCIScenarioManagerAccess().get();
     ASSERT(scenarioManager);
     commandInterface.reset(new traci::CommandInterface(this, scenarioManager->getCommandInterface(), scenarioManager->getConnection()));

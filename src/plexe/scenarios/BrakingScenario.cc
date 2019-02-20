@@ -51,12 +51,12 @@ void BrakingScenario::initialize(int stage)
                 scheduleAt(startBraking, changeSpeed);
             }
             // set base cruising speed
-            traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed);
+            plexeTraciVehicle->setCruiseControlDesiredSpeed(leaderSpeed);
         }
         else {
             // let the follower set a higher desired speed to stay connected
             // to the leader when it is accelerating
-            traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed + 10);
+            plexeTraciVehicle->setCruiseControlDesiredSpeed(leaderSpeed + 10);
         }
     }
 }
@@ -70,7 +70,7 @@ BrakingScenario::~BrakingScenario()
 void BrakingScenario::handleSelfMsg(cMessage* msg)
 {
     BaseScenario::handleSelfMsg(msg);
-    if (msg == changeSpeed) traciVehicle->setFixedAcceleration(1, -brakingDeceleration);
+    if (msg == changeSpeed) plexeTraciVehicle->setFixedAcceleration(1, -brakingDeceleration);
 }
 
 } // namespace plexe

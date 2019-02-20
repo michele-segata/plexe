@@ -21,8 +21,8 @@
 #include "veins/base/modules/BaseApplLayer.h"
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 
-#include "plexe/CC_Const.h"
 #include "plexe/utilities/BasePositionHelper.h"
+#include "plexe/mobility/CommandInterface.h"
 
 namespace plexe {
 
@@ -36,6 +36,8 @@ protected:
     Veins::TraCIMobility* mobility;
     Veins::TraCICommandInterface* traci;
     Veins::TraCICommandInterface::Vehicle* traciVehicle;
+    traci::CommandInterface* plexeTraci;
+    std::unique_ptr<traci::CommandInterface::Vehicle> plexeTraciVehicle;
 
     // determines position and role of each vehicle
     BasePositionHelper* positionHelper;

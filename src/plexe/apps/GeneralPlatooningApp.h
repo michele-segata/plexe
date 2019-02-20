@@ -125,17 +125,30 @@ public:
     {
         return positionHelper;
     }
+
     Veins::TraCIMobility* getMobility()
     {
         return mobility;
     }
+
     Veins::TraCICommandInterface* getTraci()
     {
         return traci;
     }
+
     Veins::TraCICommandInterface::Vehicle* getTraciVehicle()
     {
         return traciVehicle;
+    }
+
+    traci::CommandInterface* getPlexeTraci()
+    {
+        return plexeTraci;
+    }
+
+    traci::CommandInterface::Vehicle* getPlexeTraciVehicle()
+    {
+        return plexeTraciVehicle.get();
     }
 
     /**

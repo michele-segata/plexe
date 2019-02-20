@@ -35,23 +35,23 @@ void AutoLaneChangeScenario::initialize(int stage)
     if (stage == 1) {
         platooningVType = par("platooningVType").stdstringValue();
 
-        traciVehicle->setFixedLane(traciVehicle->getLaneIndex(), false);
+        plexeTraciVehicle->setFixedLane(traciVehicle->getLaneIndex(), false);
         traciVehicle->setSpeedMode(0);
         if (positionHelper->isLeader()) {
             for (int i = 1; i < positionHelper->getPlatoonSize(); i++) {
                 std::stringstream ss;
                 ss << platooningVType << "." << positionHelper->getMemberId(i);
-                traciVehicle->addPlatoonMember(ss.str(), i);
+                plexeTraciVehicle->addPlatoonMember(ss.str(), i);
             }
-            traciVehicle->enableAutoLaneChanging(true);
-            traciVehicle->setCruiseControlDesiredSpeed(mobility->getSpeed());
+            plexeTraciVehicle->enableAutoLaneChanging(true);
+            plexeTraciVehicle->setCruiseControlDesiredSpeed(mobility->getSpeed());
         }
         else {
             std::stringstream ssl, ss;
             ssl << platooningVType << "." << positionHelper->getLeaderId();
             ss << platooningVType << "." << positionHelper->getFrontId();
-            traciVehicle->enableAutoFeed(true, ssl.str(), ss.str());
-            traciVehicle->setCruiseControlDesiredSpeed(mobility->getSpeed() + 10);
+            plexeTraciVehicle->enableAutoFeed(true, ssl.str(), ss.str());
+            plexeTraciVehicle->setCruiseControlDesiredSpeed(mobility->getSpeed() + 10);
         }
     }
 }

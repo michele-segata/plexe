@@ -22,6 +22,7 @@
 #include "plexe/utilities/BasePositionHelper.h"
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 
+#include "plexe/mobility/CommandInterface.h"
 #include "plexe/messages/ManeuverMessage_m.h"
 #include "plexe/messages/PlatooningBeacon_m.h"
 #include "plexe/messages/UpdatePlatoonFormation_m.h"
@@ -70,6 +71,8 @@ protected:
     Veins::TraCIMobility* mobility;
     Veins::TraCICommandInterface* traci;
     Veins::TraCICommandInterface::Vehicle* traciVehicle;
+    traci::CommandInterface* plexeTraci;
+    traci::CommandInterface::Vehicle* plexeTraciVehicle;
 };
 
 } // namespace plexe

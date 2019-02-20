@@ -49,9 +49,9 @@ void AccelerateAndBrakeScenario::initialize(int stage)
         startBrakingMsg = new cMessage("startBrakingMsg");
 
         // enable ACC
-        traciVehicle->setActiveController(ACC);
+        plexeTraciVehicle->setActiveController(ACC);
         // let the vehicle start from standstill
-        traciVehicle->setFixedAcceleration(1, -8);
+        plexeTraciVehicle->setFixedAcceleration(1, -8);
 
         // schedule messages
         scheduleAt(startAccelerating, startAccelerationMsg);
@@ -70,8 +70,8 @@ AccelerateAndBrakeScenario::~AccelerateAndBrakeScenario()
 void AccelerateAndBrakeScenario::handleSelfMsg(cMessage* msg)
 {
     BaseScenario::handleSelfMsg(msg);
-    if (msg == startAccelerationMsg) traciVehicle->setFixedAcceleration(1, acceleration);
-    if (msg == startBrakingMsg) traciVehicle->setFixedAcceleration(1, -brakingDeceleration);
+    if (msg == startAccelerationMsg) plexeTraciVehicle->setFixedAcceleration(1, acceleration);
+    if (msg == startBrakingMsg) plexeTraciVehicle->setFixedAcceleration(1, -brakingDeceleration);
 }
 
 } // namespace plexe

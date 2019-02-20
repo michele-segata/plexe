@@ -19,14 +19,14 @@
 #define BASEPROTOCOL_H_
 
 #include "veins/base/modules/BaseApplLayer.h"
+#include "veins/modules/mobility/traci/TraCIMobility.h"
 
 #include "plexe/UnicastProtocol.h"
 #include "plexe/messages/PlatooningBeacon_m.h"
-
-#include "veins/modules/mobility/traci/TraCIMobility.h"
-
+#include "plexe/mobility/CommandInterface.h"
 #include "plexe/utilities/BasePositionHelper.h"
 
+#include <memory>
 #include <tuple>
 
 // maximum number of upper layer apps that can connect (see .ned file)
@@ -175,6 +175,8 @@ protected:
     Veins::TraCIMobility* mobility;
     Veins::TraCICommandInterface* traci;
     Veins::TraCICommandInterface::Vehicle* traciVehicle;
+    traci::CommandInterface* plexeTraci;
+    std::unique_ptr<traci::CommandInterface::Vehicle> plexeTraciVehicle;
 
 public:
     static const simsignal_t sigChannelBusy;

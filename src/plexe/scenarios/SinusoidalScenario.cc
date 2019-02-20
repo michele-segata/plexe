@@ -47,12 +47,12 @@ void SinusoidalScenario::initialize(int stage)
                 scheduleAt(startOscillating, changeSpeed);
             }
             // set base cruising speed
-            traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed);
+            plexeTraciVehicle->setCruiseControlDesiredSpeed(leaderSpeed);
         }
         else {
             // let the follower set a higher desired speed to stay connected
             // to the leader when it is accelerating
-            traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed + 2 * oscillationAmplitude);
+            plexeTraciVehicle->setCruiseControlDesiredSpeed(leaderSpeed + 2 * oscillationAmplitude);
         }
     }
 }
@@ -67,7 +67,7 @@ void SinusoidalScenario::handleSelfMsg(cMessage* msg)
 {
     BaseScenario::handleSelfMsg(msg);
     if (msg == changeSpeed) {
-        traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed + oscillationAmplitude * sin(2 * M_PI * (simTime() - startOscillating).dbl() * leaderOscillationFrequency));
+        plexeTraciVehicle->setCruiseControlDesiredSpeed(leaderSpeed + oscillationAmplitude * sin(2 * M_PI * (simTime() - startOscillating).dbl() * leaderOscillationFrequency));
         scheduleAt(simTime() + SimTime(0.1), changeSpeed);
     }
 }

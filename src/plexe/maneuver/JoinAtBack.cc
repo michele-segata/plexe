@@ -60,7 +60,7 @@ void JoinAtBack::onPlatoonBeacon(const PlatooningBeacon* pb)
 
         // if the message comes from the leader
         if (pb->getVehicleId() == targetPlatoonData->newFormation.at(0)) {
-            traciVehicle->setLeaderVehicleFakeData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed());
+            plexeTraciVehicle->setLeaderVehicleFakeData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed());
         }
         // if the message comes from the front vehicle
         int frontPosition = targetPlatoonData->joinIndex - 1;
@@ -73,7 +73,7 @@ void JoinAtBack::onPlatoonBeacon(const PlatooningBeacon* pb)
             Coord position(traciPosition.x, traciPosition.y);
             // compute distance
             double distance = position.distance(frontPosition) - pb->getLength();
-            traciVehicle->setFrontVehicleFakeData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed(), distance);
+            plexeTraciVehicle->setFrontVehicleFakeData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed(), distance);
             // if we are in position, tell the leader about that
             if (distance < 16) { // TODO fixed value? make dependent on
                 // controller and headway time
@@ -105,7 +105,7 @@ void JoinAtBack::handleJoinPlatoonRequest(const JoinPlatoonRequest* msg)
     app->setPlatoonRole(PlatoonRole::LEADER);
 
     // disable lane changing during maneuver
-    traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
+    plexeTraciVehicle->setFixedLane(traciVehicle->getLaneIndex());
     positionHelper->setPlatoonLane(traciVehicle->getLaneIndex());
 
     // save some data. who is joining?
@@ -136,7 +136,7 @@ void JoinAtBack::handleJoinPlatoonResponse(const JoinPlatoonResponse* msg)
         // wait for information about the join maneuver
         joinManeuverState = JoinManeuverState::J_WAIT_INFORMATION;
         // disable lane changing during maneuver
-        traciVehicle->setFixedLane(traciVehicle->getLaneIndex());
+        plexeTraciVehicle->setFixedLane(traciVehicle->getLaneIndex());
     }
     else {
         // abort maneuver
@@ -163,21 +163,21 @@ void JoinAtBack::handleMoveToPosition(const MoveToPosition* msg)
     // position
     int currentLane = traciVehicle->getLaneIndex();
     if (currentLane != targetPlatoonData->platoonLane) {
-        traciVehicle->setFixedLane(targetPlatoonData->platoonLane);
+        plexeTraciVehicle->setFixedLane(targetPlatoonData->platoonLane);
     }
 
     // approaching the platoon
 
     // activate faked CACC. this way we can approach the front car
     // using data obtained through GPS
-    traciVehicle->setCACCConstantSpacing(15);
+    plexeTraciVehicle->setCACCConstantSpacing(15);
     // we have no data so far, so for the moment just initialize
     // with some fake data
-    traciVehicle->setLeaderVehicleFakeData(0, 0, targetPlatoonData->platoonSpeed);
-    traciVehicle->setFrontVehicleFakeData(0, 0, targetPlatoonData->platoonSpeed, 15);
+    plexeTraciVehicle->setLeaderVehicleFakeData(0, 0, targetPlatoonData->platoonSpeed);
+    plexeTraciVehicle->setFrontVehicleFakeData(0, 0, targetPlatoonData->platoonSpeed, 15);
     // set a CC speed higher than the platoon speed to approach it
-    traciVehicle->setCruiseControlDesiredSpeed(targetPlatoonData->platoonSpeed + (30 / 3.6));
-    traciVehicle->setActiveController(FAKED_CACC);
+    plexeTraciVehicle->setCruiseControlDesiredSpeed(targetPlatoonData->platoonSpeed + (30 / 3.6));
+    plexeTraciVehicle->setActiveController(FAKED_CACC);
 
     joinManeuverState = JoinManeuverState::J_MOVE_IN_POSITION;
 }
@@ -210,9 +210,9 @@ void JoinAtBack::handleJoinFormation(const JoinFormation* msg)
 
     // we got confirmation from the leader
     // switch from faked CACC to real CACC
-    traciVehicle->setActiveController(CACC);
+    plexeTraciVehicle->setActiveController(CACC);
     // set spacing to 5 meters to get close to the platoon
-    traciVehicle->setCACCConstantSpacing(5);
+    plexeTraciVehicle->setCACCConstantSpacing(5);
 
     // update platoon information
     positionHelper->setPlatoonId(msg->getPlatoonId());
