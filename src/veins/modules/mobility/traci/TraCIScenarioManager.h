@@ -114,29 +114,6 @@ public:
     {
         return updateInterval;
     }
-    /**
-     * convert TraCI coordinates to OMNeT++ coordinates
-     */
-    Coord traci2omnet(TraCICoord coord) const
-    {
-        return connection->traci2omnet(coord);
-    }
-    std::list<Coord> traci2omnet(const std::list<TraCICoord>& coords) const
-    {
-        return connection->traci2omnet(coords);
-    }
-
-    /**
-     * convert OMNeT++ coordinates to TraCI coordinates
-     */
-    TraCICoord omnet2traci(Coord coord) const
-    {
-        return connection->omnet2traci(coord);
-    }
-    std::list<TraCICoord> omnet2traci(const std::list<Coord>& coords) const
-    {
-        return connection->omnet2traci(coords);
-    }
 
 protected:
     bool traciInitialized;
