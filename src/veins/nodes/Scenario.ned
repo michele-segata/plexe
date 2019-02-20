@@ -52,7 +52,7 @@ network Scenario
                 playgroundSizeZ = playgroundSizeZ;
                 @display("p=30,0;i=misc/globe");
         }
-        manager: TraCIScenarioManagerForker {
+        manager: TraCIScenarioManagerLaunchd {
             parameters:
                 @display("p=512,128");
         }
