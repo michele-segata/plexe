@@ -49,7 +49,8 @@ const simsignal_t TraCIScenarioManager::traciTimestepBeginSignal = registerSigna
 const simsignal_t TraCIScenarioManager::traciTimestepEndSignal = registerSignal("org.car2x.veins.modules.mobility.traciTimestepEnd");
 
 TraCIScenarioManager::TraCIScenarioManager()
-    : connection(nullptr)
+    : traciInitialized(false)
+    , connection(nullptr)
     , commandIfc(nullptr)
     , connectAndStartTrigger(nullptr)
     , executeOneTimestepTrigger(nullptr)
@@ -233,7 +234,6 @@ void TraCIScenarioManager::initialize(int stage)
         return;
     }
 
-    traciInitialized = false;
     trafficLightModuleType = par("trafficLightModuleType").stdstringValue();
     trafficLightModuleName = par("trafficLightModuleName").stdstringValue();
     trafficLightModuleDisplayString = par("trafficLightModuleDisplayString").stdstringValue();
