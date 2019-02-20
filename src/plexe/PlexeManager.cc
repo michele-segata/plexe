@@ -11,6 +11,8 @@ void PlexeManager::initialize(int stage)
     const auto scenarioManager = Veins::TraCIScenarioManagerAccess().get();
     ASSERT(scenarioManager);
 
+    scenarioManager->subscribe(Veins::TraCIScenarioManager::traciTimestepEndSignal, &plexeTimestepTrigger);
+
     if (scenarioManager->isTraciInitialized()) {
         initializeCommandInterface();
     }

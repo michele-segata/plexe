@@ -591,7 +591,6 @@ void TraCIScenarioManager::executeOneTimestep()
 
     emit(traciTimestepEndSignal, targetTime);
 
-    commandIfc->executePlexeTimestep();
     if (!autoShutdownTriggered) scheduleAt(simTime() + updateInterval, executeOneTimestepTrigger);
 }
 
