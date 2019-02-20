@@ -29,7 +29,6 @@ class TraCIBaseTrafficManager : public cSimpleModule {
 
 public:
     virtual void initialize(int stage);
-    virtual void finish();
 
     int findVehicleTypeIndex(std::string vehType);
 
@@ -87,7 +86,31 @@ protected:
     typedef std::map<int, std::deque<struct Vehicle>> InsertQueue;
 
 private:
+    class InsertTrigger : public cListener {
+    public:
+        InsertTrigger(TraCIBaseTrafficManager* owner)
+            : owner(owner) {}
+
+        void receiveSignal(cComponent*, simsignal_t signalID, const simtime_t&, cObject*) override;
+
+    private:
+        TraCIBaseTrafficManager* owner;
+    };
+
+    class LoadTrigger : public cListener {
+    public:
+        LoadTrigger(TraCIBaseTrafficManager* owner)
+            : owner(owner) {}
+
+        void receiveSignal(cComponent* source, simsignal_t signalID, bool b, cObject* details) override;
+
+    private:
+        TraCIBaseTrafficManager* owner;
+    };
+
     InsertQueue vehicleInsertQueue;
+    InsertTrigger insertTrigger{this};
+    LoadTrigger loadTrigger{this};
 
 protected:
     void addVehicleToQueue(int routeId, struct Vehicle v);
@@ -97,9 +120,8 @@ protected:
      */
     void insertVehicles();
 
-    virtual void handleSelfMsg(cMessage* msg);
+    virtual void handleSelfMsg(cMessage* msg) {}
     virtual void handleMessage(cMessage* msg);
-
     /**
      * virtual function that inheriting classes can override to get informed when scenario is loaded
      */

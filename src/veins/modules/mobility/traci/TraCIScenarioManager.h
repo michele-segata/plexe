@@ -110,11 +110,6 @@ public:
         return traciInitialized;
     }
 
-    simtime_t getUpdateInterval()
-    {
-        return updateInterval;
-    }
-
 protected:
     bool traciInitialized;
     simtime_t connectAt; /**< when to connect to TraCI server (must be the initial timestep of the server) */
