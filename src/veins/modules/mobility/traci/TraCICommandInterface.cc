@@ -19,6 +19,7 @@ using namespace Veins::TraCIConstants;
 namespace Veins {
 
 const std::map<uint32_t, TraCICommandInterface::VersionConfig> TraCICommandInterface::versionConfigs = {
+    {20, {TYPE_DOUBLE, TYPE_POLYGON, VAR_TIME, true, true, true}},
     {19, {TYPE_DOUBLE, TYPE_POLYGON, VAR_TIME, true, true, true}},
     {18, {TYPE_DOUBLE, TYPE_POLYGON, VAR_TIME, true, true, false}},
     {17, {TYPE_INTEGER, TYPE_BOUNDINGBOX, VAR_TIME_STEP, false, false, false}},
