@@ -25,7 +25,7 @@
 #include "plexe/protocols/BaseProtocol.h"
 #include "plexe/PlexeManager.h"
 
-using namespace Veins;
+using namespace veins;
 
 namespace plexe {
 
@@ -55,7 +55,7 @@ void BaseApp::initialize(int stage)
     }
 
     if (stage == 1) {
-        mobility = Veins::TraCIMobilityAccess().get(getParentModule());
+        mobility = veins::TraCIMobilityAccess().get(getParentModule());
         traci = mobility->getCommandInterface();
         traciVehicle = mobility->getVehicleCommandInterface();
         auto plexe = FindModule<PlexeManager*>::findGlobalModule();

@@ -56,9 +56,9 @@ private:
 
 protected:
     // pointer to the scenario manager, used to issue traci commands
-    Veins::TraCIScenarioManager* manager;
+    veins::TraCIScenarioManager* manager;
     // pointer to the command interface
-    Veins::TraCICommandInterface* commandInterface;
+    veins::TraCICommandInterface* commandInterface;
     // vector of all the vehicle types available
     std::vector<std::string> vehicleTypeIds;
     // vector counting the number of vehicles inserted per each type
@@ -89,7 +89,9 @@ private:
     class InsertTrigger : public cListener {
     public:
         InsertTrigger(TraCIBaseTrafficManager* owner)
-            : owner(owner) {}
+            : owner(owner)
+        {
+        }
 
         void receiveSignal(cComponent*, simsignal_t signalID, const simtime_t&, cObject*) override;
 
@@ -100,7 +102,9 @@ private:
     class LoadTrigger : public cListener {
     public:
         LoadTrigger(TraCIBaseTrafficManager* owner)
-            : owner(owner) {}
+            : owner(owner)
+        {
+        }
 
         void receiveSignal(cComponent* source, simsignal_t signalID, bool b, cObject* details) override;
 
@@ -120,7 +124,9 @@ protected:
      */
     void insertVehicles();
 
-    virtual void handleSelfMsg(cMessage* msg) {}
+    virtual void handleSelfMsg(cMessage* msg)
+    {
+    }
     virtual void handleMessage(cMessage* msg);
     /**
      * virtual function that inheriting classes can override to get informed when scenario is loaded

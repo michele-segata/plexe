@@ -34,7 +34,7 @@
 
 namespace plexe {
 
-class BaseProtocol : public Veins::BaseApplLayer {
+class BaseProtocol : public veins::BaseApplLayer {
 
 private:
     // amount of time channel has been observed busy during the last "statisticsPeriod" seconds
@@ -172,9 +172,9 @@ protected:
     }
 
     // traci mobility. used for getting/setting info about the car
-    Veins::TraCIMobility* mobility;
-    Veins::TraCICommandInterface* traci;
-    Veins::TraCICommandInterface::Vehicle* traciVehicle;
+    veins::TraCIMobility* mobility;
+    veins::TraCICommandInterface* traci;
+    veins::TraCICommandInterface::Vehicle* traciVehicle;
     traci::CommandInterface* plexeTraci;
     std::unique_ptr<traci::CommandInterface::Vehicle> plexeTraciVehicle;
 

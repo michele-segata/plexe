@@ -1,0 +1,8 @@
+#
+# copied from INET Framework (inet-3.6.0) makefrag
+#
+ifeq ($(PLATFORM),win32.x86_64)
+  DEFINES += -DVEINS_INET_EXPORT
+  ENABLE_AUTO_IMPORT=-Wl,--enable-auto-import
+  LDFLAGS := $(filter-out $(ENABLE_AUTO_IMPORT), $(LDFLAGS))
+endif

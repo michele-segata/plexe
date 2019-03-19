@@ -27,7 +27,7 @@
 #include "veins/base/toolbox/Spectrum.h"
 #include "veins/base/phyLayer/AnalogueModel.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * A Signal represents the power measured on a channel.
@@ -39,7 +39,7 @@ namespace Veins {
  * @see SignalUtils
  * @see Spectrum
  */
-class Signal {
+class VEINS_API Signal {
 public:
     Signal() = default;
 
@@ -624,4 +624,4 @@ Signal operator/(const Signal& lhs, double rhs);
 Signal operator/(double lhs, const Signal& rhs);
 ///@}
 
-} // namespace Veins
+} // namespace veins

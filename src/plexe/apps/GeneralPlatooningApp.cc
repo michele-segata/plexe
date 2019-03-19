@@ -23,7 +23,7 @@
 #include "veins/modules/mobility/traci/TraCIColor.h"
 #include "veins/modules/mobility/traci/TraCIScenarioManager.h"
 
-using namespace Veins;
+using namespace veins;
 
 namespace plexe {
 

@@ -32,13 +32,13 @@
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 #include "veins/modules/mobility/traci/TraCICommandInterface.h"
 
-namespace Veins {
+namespace veins {
 
-using Veins::AnnotationManager;
-using Veins::AnnotationManagerAccess;
-using Veins::TraCICommandInterface;
-using Veins::TraCIMobility;
-using Veins::TraCIMobilityAccess;
+using veins::AnnotationManager;
+using veins::AnnotationManagerAccess;
+using veins::TraCICommandInterface;
+using veins::TraCIMobility;
+using veins::TraCIMobilityAccess;
 
 /**
  * @brief
@@ -53,7 +53,7 @@ using Veins::TraCIMobilityAccess;
  * @see PhyLayer80211p
  * @see Decider80211p
  */
-class DemoBaseApplLayer : public BaseApplLayer {
+class VEINS_API DemoBaseApplLayer : public BaseApplLayer {
 
 public:
     ~DemoBaseApplLayer() override;
@@ -180,4 +180,4 @@ protected:
     cMessage* sendWSAEvt;
 };
 
-} // namespace Veins
+} // namespace veins

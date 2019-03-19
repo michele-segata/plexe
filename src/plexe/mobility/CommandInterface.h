@@ -8,21 +8,22 @@
 
 #include <map>
 
-namespace Veins {
+namespace veins {
 class TraCIConnection;
 }
 
 namespace plexe {
 namespace traci {
 
-class CommandInterface : public Veins::HasLogProxy {
+class CommandInterface : public veins::HasLogProxy {
 public:
     class Vehicle {
     public:
         Vehicle(CommandInterface* cifc, const std::string& nodeId)
             : cifc(cifc)
             , nodeId(nodeId)
-        {}
+        {
+        }
 
         void setLaneChangeMode(int mode);
         void getLaneChangeState(int direction, int& state1, int& state2);
@@ -253,7 +254,7 @@ public:
          */
         unsigned int getLanesCount();
 
-        Veins::TraCICommandInterface::Vehicle veinsVehicle()
+        veins::TraCICommandInterface::Vehicle veinsVehicle()
         {
             return {cifc->veinsCommandInterface, nodeId};
         }
@@ -278,7 +279,7 @@ public:
         const std::string nodeId;
     };
 
-    CommandInterface(cComponent* owner, Veins::TraCICommandInterface* commandInterface, Veins::TraCIConnection* connection);
+    CommandInterface(cComponent* owner, veins::TraCICommandInterface* commandInterface, veins::TraCIConnection* connection);
 
     void executePlexeTimestep();
 
@@ -286,6 +287,7 @@ public:
     {
         return {this, nodeId};
     }
+
 private:
     struct PlexeLaneChange {
         int lane;
@@ -298,8 +300,8 @@ private:
 
     void __changeLane(std::string veh, int current, int direction, bool safe = true);
 
-    Veins::TraCICommandInterface* veinsCommandInterface;
-    Veins::TraCIConnection* connection;
+    veins::TraCICommandInterface* veinsCommandInterface;
+    veins::TraCIConnection* connection;
     PlexeLaneChanges laneChanges;
 };
 

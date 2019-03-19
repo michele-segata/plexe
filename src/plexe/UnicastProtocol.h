@@ -40,7 +40,7 @@ enum ControlMessageCommand {
     FULL_QUEUE
 };
 
-class UnicastProtocol : public Veins::DemoBaseApplLayer {
+class UnicastProtocol : public veins::DemoBaseApplLayer {
 
 protected:
     // this is the mac address of the node.
@@ -99,8 +99,8 @@ public:
     virtual void initialize(int stage);
 
 protected:
-    virtual void onBeacon(Veins::BaseFrame1609_4* wsm);
-    virtual void onData(Veins::BaseFrame1609_4* wsm);
+    virtual void onBeacon(veins::BaseFrame1609_4* wsm);
+    virtual void onData(veins::BaseFrame1609_4* wsm);
 
 protected:
     virtual void handleUpperMsg(cMessage* msg);
@@ -136,7 +136,7 @@ protected:
      * \param channel 0 for CCH, 1 for SCH
      * \param kind id of the application, for (de)multiplexing
      */
-    void sendMessageDown(int destination, cPacket* msg, int encapsulatedId, int priority, SimTime timestamp, Veins::Channel channel, short kind);
+    void sendMessageDown(int destination, cPacket* msg, int encapsulatedId, int priority, SimTime timestamp, veins::Channel channel, short kind);
 
     /**
      * Sends an ack in response to an unicast message

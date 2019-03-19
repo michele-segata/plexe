@@ -40,7 +40,7 @@
 #include "veins/modules/utility/ConstsPhy.h"
 #include "veins/modules/utility/HasLogProxy.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief
@@ -63,7 +63,7 @@ namespace Veins {
 
 class DeciderResult80211;
 
-class Mac1609_4 : public BaseMacLayer, public DemoBaseApplLayerToMac1609_4Interface {
+class VEINS_API Mac1609_4 : public BaseMacLayer, public DemoBaseApplLayerToMac1609_4Interface {
 
 public:
     // tell to anybody which is interested when the channel turns busy or idle
@@ -79,9 +79,9 @@ public:
         AC_VO = 3
     };
 
-    class EDCA : HasLogProxy {
+    class VEINS_API EDCA : HasLogProxy {
     public:
-        class EDCAQueue {
+        class VEINS_API EDCAQueue {
         public:
             std::queue<BaseFrame1609_4*> queue;
             int aifsn; // number of aifs slots for this queue
@@ -310,4 +310,4 @@ protected:
     Mac80211pToPhy11pInterface* phy11p;
 };
 
-} // namespace Veins
+} // namespace veins

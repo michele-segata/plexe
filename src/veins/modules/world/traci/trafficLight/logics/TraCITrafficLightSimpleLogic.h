@@ -26,8 +26,8 @@
 #include "veins/modules/world/traci/trafficLight/logics/TraCITrafficLightAbstractLogic.h"
 #include "veins/modules/world/traci/trafficLight/TraCITrafficLightInterface.h"
 
-namespace Veins {
-class TraCITrafficLightSimpleLogic : public TraCITrafficLightAbstractLogic {
+namespace veins {
+class VEINS_API TraCITrafficLightSimpleLogic : public TraCITrafficLightAbstractLogic {
 
 public:
     using signalScheme = std::string;
@@ -38,7 +38,7 @@ protected:
     void handlePossibleSwitch() override;
 };
 
-class TraCITrafficLightSimpleLogicAccess {
+class VEINS_API TraCITrafficLightSimpleLogicAccess {
 public:
     TraCITrafficLightSimpleLogic* get(cModule* host)
     {
@@ -48,4 +48,4 @@ public:
     };
 };
 
-} // namespace Veins
+} // namespace veins

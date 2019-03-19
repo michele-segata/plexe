@@ -22,7 +22,7 @@
 
 #include "plexe/PlexeManager.h"
 
-using namespace Veins;
+using namespace veins;
 
 namespace plexe {
 
@@ -95,7 +95,7 @@ void BaseProtocol::initialize(int stage)
 
     if (stage == 1) {
         // get traci interface
-        mobility = Veins::TraCIMobilityAccess().get(getParentModule());
+        mobility = veins::TraCIMobilityAccess().get(getParentModule());
         ASSERT(mobility);
         traci = mobility->getCommandInterface();
         ASSERT(traci);

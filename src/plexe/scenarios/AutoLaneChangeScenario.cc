@@ -17,7 +17,7 @@
 
 #include "plexe/scenarios/AutoLaneChangeScenario.h"
 
-using namespace Veins;
+using namespace veins;
 
 namespace plexe {
 

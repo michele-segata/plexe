@@ -20,9 +20,11 @@
 
 #pragma once
 
+#include "veins/veins.h"
+
 #include "veins/base/utils/EnumBitset.h"
 
-namespace Veins {
+namespace veins {
 
 enum class VehicleSignal : uint32_t {
     blinker_right,
@@ -43,10 +45,10 @@ enum class VehicleSignal : uint32_t {
 };
 
 template <>
-struct EnumTraits<VehicleSignal> {
+struct VEINS_API EnumTraits<VehicleSignal> {
     static const VehicleSignal max = VehicleSignal::undefined;
 };
 
 using VehicleSignalSet = EnumBitset<VehicleSignal>;
 
-} // namespace Veins
+} // namespace veins

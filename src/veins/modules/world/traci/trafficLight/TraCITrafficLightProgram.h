@@ -28,8 +28,8 @@
 
 using omnetpp::simtime_t;
 
-namespace Veins {
-class TraCITrafficLightProgram {
+namespace veins {
+class VEINS_API TraCITrafficLightProgram {
 public:
     struct Phase {
         simtime_t duration;
@@ -37,6 +37,7 @@ public:
         simtime_t minDuration;
         simtime_t maxDuration;
         int32_t next;
+        std::string name;
 
         bool isGreenPhase() const;
     };
@@ -59,10 +60,10 @@ private:
     std::map<std::string, TraCITrafficLightProgram::Logic> logics;
 };
 
-struct TraCITrafficLightLink {
+struct VEINS_API TraCITrafficLightLink {
     std::string incoming;
     std::string outgoing;
     std::string internal;
 };
 
-} // namespace Veins
+} // namespace veins

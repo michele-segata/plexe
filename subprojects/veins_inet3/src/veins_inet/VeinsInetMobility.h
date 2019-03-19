@@ -32,9 +32,11 @@
 #include "inet/common/geometry/common/CanvasProjection.h"
 #include "inet/mobility/contract/IMobility.h"
 
-namespace Veins {
+#include "veins_inet/veins_inet.h"
 
-class INET_API VeinsInetMobility : public cSimpleModule, public inet::IMobility {
+namespace veins {
+
+class VEINS_INET_API VeinsInetMobility : public cSimpleModule, public inet::IMobility {
 public:
     VeinsInetMobility();
 
@@ -87,4 +89,4 @@ protected:
     virtual void emitMobilityStateChangedSignal();
 };
 
-} // namespace Veins
+} // namespace veins

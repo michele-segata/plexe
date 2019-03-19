@@ -11,9 +11,9 @@
 #include "veins/modules/world/traci/trafficLight/TraCITrafficLightProgram.h"
 #include "veins/modules/utility/HasLogProxy.h"
 
-namespace Veins {
+namespace veins {
 
-class TraCICommandInterface : public HasLogProxy {
+class VEINS_API TraCICommandInterface : public HasLogProxy {
 public:
     TraCICommandInterface(cComponent* owner, TraCIConnection& c, bool ignoreGuiCommands);
     bool isIgnoringGuiCommands();
@@ -50,6 +50,10 @@ public:
     void setApiVersion(uint32_t apiVersion);
     std::pair<double, double> getLonLat(const Coord&);
 
+    unsigned getApiVersion() const
+    {
+        return versionConfig.version;
+    }
     uint8_t getTimeType() const
     {
         return versionConfig.timeType;
@@ -61,10 +65,6 @@ public:
     uint8_t getTimeStepCmd() const
     {
         return versionConfig.timeStepCmd;
-    }
-    bool getHasNewTrafficLightProgramDef() const
-    {
-        return versionConfig.newTrafficLightProgramDef;
     }
 
     std::pair<TraCICoord, TraCICoord> initNetworkBoundaries(int margin);
@@ -104,7 +104,7 @@ public:
      * @return Success indication
      */
     bool addVehicle(std::string vehicleId, std::string vehicleTypeId, std::string routeId, simtime_t emitTime_st = DEPART_TIME_TRIGGERED, double emitPosition = DEPART_POSITION_BASE, double emitSpeed = DEPART_SPEED_MAX, int8_t emitLane = DEPART_LANE_BEST);
-    class Vehicle {
+    class VEINS_API Vehicle {
     public:
         Vehicle(TraCICommandInterface* traci, std::string nodeId)
             : traci(traci)
@@ -236,7 +236,7 @@ public:
 
     // Road methods
     std::list<std::string> getRoadIds();
-    class Road {
+    class VEINS_API Road {
     public:
         Road(TraCICommandInterface* traci, std::string roadId)
             : traci(traci)
@@ -260,7 +260,7 @@ public:
 
     // Lane methods
     std::list<std::string> getLaneIds();
-    class Lane {
+    class VEINS_API Lane {
     public:
         Lane(TraCICommandInterface* traci, std::string laneId)
             : traci(traci)
@@ -287,7 +287,7 @@ public:
 
     // Trafficlight methods
     std::list<std::string> getTrafficlightIds();
-    class Trafficlight {
+    class VEINS_API Trafficlight {
     public:
         Trafficlight(TraCICommandInterface* traci, std::string trafficLightId)
             : traci(traci)
@@ -323,7 +323,7 @@ public:
 
     // LaneAreaDetector methods
     std::list<std::string> getLaneAreaDetectorIds();
-    class LaneAreaDetector {
+    class VEINS_API LaneAreaDetector {
     public:
         LaneAreaDetector(TraCICommandInterface* traci, std::string laneAreaDetectorId)
             : traci(traci)
@@ -347,7 +347,7 @@ public:
     // Polygon methods
     std::list<std::string> getPolygonIds();
     void addPolygon(std::string polyId, std::string polyType, const TraCIColor& color, bool filled, int32_t layer, const std::list<Coord>& points);
-    class Polygon {
+    class VEINS_API Polygon {
     public:
         Polygon(TraCICommandInterface* traci, std::string polyId)
             : traci(traci)
@@ -374,7 +374,7 @@ public:
     // Poi methods
     std::list<std::string> getPoiIds();
     void addPoi(std::string poiId, std::string poiType, const TraCIColor& color, int32_t layer, const Coord& pos);
-    class Poi {
+    class VEINS_API Poi {
     public:
         Poi(TraCICommandInterface* traci, std::string poiId)
             : traci(traci)
@@ -397,7 +397,7 @@ public:
 
     // Junction methods
     std::list<std::string> getJunctionIds();
-    class Junction {
+    class VEINS_API Junction {
     public:
         Junction(TraCICommandInterface* traci, std::string junctionId)
             : traci(traci)
@@ -420,7 +420,7 @@ public:
 
     // Route methods
     std::list<std::string> getRouteIds();
-    class Route {
+    class VEINS_API Route {
     public:
         Route(TraCICommandInterface* traci, std::string routeId)
             : traci(traci)
@@ -446,7 +446,7 @@ public:
 
     // GuiView methods
     std::list<std::string> getGuiViewIds();
-    class GuiView : public HasLogProxy {
+    class VEINS_API GuiView : public HasLogProxy {
     public:
         GuiView(TraCICommandInterface* traci, std::string viewId)
             : HasLogProxy(traci->owner)
@@ -480,12 +480,10 @@ public:
 
 private:
     struct VersionConfig {
+        unsigned version;
         uint8_t timeType;
         uint8_t netBoundaryType;
         uint8_t timeStepCmd;
-        bool timeAsDouble;
-        bool screenshotTakesCompound;
-        bool newTrafficLightProgramDef;
     };
 
     TraCIConnection& connection;
@@ -502,4 +500,4 @@ private:
     std::list<Coord> genericGetCoordList(uint8_t commandId, std::string objectId, uint8_t variableId, uint8_t responseId, TraCIConnection::Result* result = nullptr);
 };
 
-} // namespace Veins
+} // namespace veins

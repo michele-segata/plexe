@@ -26,16 +26,16 @@
 
 namespace plexe {
 
-class BaseScenario : public Veins::BaseApplLayer {
+class BaseScenario : public veins::BaseApplLayer {
 
 public:
     virtual void initialize(int stage);
 
 protected:
     // traci interfaces
-    Veins::TraCIMobility* mobility;
-    Veins::TraCICommandInterface* traci;
-    Veins::TraCICommandInterface::Vehicle* traciVehicle;
+    veins::TraCIMobility* mobility;
+    veins::TraCICommandInterface* traci;
+    veins::TraCICommandInterface::Vehicle* traciVehicle;
     traci::CommandInterface* plexeTraci;
     std::unique_ptr<traci::CommandInterface::Vehicle> plexeTraciVehicle;
 

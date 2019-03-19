@@ -25,7 +25,7 @@
 #include "veins/veins.h"
 #include "veins/modules/mobility/traci/TraCIScenarioManager.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief
@@ -40,7 +40,7 @@ namespace Veins {
  * @see TraCIScenarioManager
  *
  */
-class TraCIVehicleInserter : public cSimpleModule, public cListener {
+class VEINS_API TraCIVehicleInserter : public cSimpleModule, public cListener {
 public:
     TraCIVehicleInserter();
     ~TraCIVehicleInserter() override;
@@ -77,4 +77,4 @@ protected:
     std::vector<std::string> vehicleTypeIds;
 };
 
-} // namespace Veins
+} // namespace veins

@@ -6,9 +6,9 @@
 
 #include "veins/base/messages/AirFrame_m.h"
 
-using Veins::AirFrame;
+using veins::AirFrame;
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief This class is used by the BasePhyLayer to keep track of the AirFrames
@@ -76,7 +76,7 @@ protected:
      * In template form to work as const- and non-const iterator.
      */
     template <class C, class ItMatrix, class ItList>
-    class BaseIntersectionIterator {
+    class VEINS_API BaseIntersectionIterator {
     public:
         /** @brief Pointer to the matrix holding the intervals.*/
         C* intervals;
@@ -164,7 +164,7 @@ protected:
      *
      * Extends the const-version by an erase method.
      */
-    class IntersectionIterator : public BaseIntersectionIterator<AirFrameMatrix, AirFrameMatrix::iterator, AirFrameTimeList::iterator> {
+    class VEINS_API IntersectionIterator : public BaseIntersectionIterator<AirFrameMatrix, AirFrameMatrix::iterator, AirFrameTimeList::iterator> {
     private:
         /** @brief Type for shortcut to base class type.*/
         typedef BaseIntersectionIterator<AirFrameMatrix, AirFrameMatrix::iterator, AirFrameTimeList::iterator> Base;
@@ -450,4 +450,4 @@ public:
     }
 };
 
-} // namespace Veins
+} // namespace veins

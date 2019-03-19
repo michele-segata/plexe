@@ -27,13 +27,13 @@
 
 #include "veins/modules/mobility/traci/TraCICoord.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * Can return whether a given position lies within the simulation's region of interest.
  * Modules are destroyed and re-created as managed vehicles leave and re-enter the ROI
  */
-class TraCIRegionOfInterest {
+class VEINS_API TraCIRegionOfInterest {
 public:
     enum ConstraintResult {
         NONE, // when no constraints exist
@@ -87,4 +87,4 @@ private:
     std::list<std::pair<TraCICoord, TraCICoord>> roiRects; /**< which rectangles (e.g. "0,0-10,10 20,20-30,30) are considered to consitute the region of interest, if not empty */
 };
 
-} // namespace Veins
+} // namespace veins

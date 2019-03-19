@@ -20,7 +20,7 @@
 #include "plexe/messages/InterferingBeacon_m.h"
 #include "veins/modules/messages/PhyControlMessage_m.h"
 
-using namespace Veins;
+using namespace veins;
 
 namespace plexe {
 
@@ -41,7 +41,7 @@ void HumanInterferingProtocol::initialize(int stage)
         lowerLayerOut = findGate("lowerLayerOut");
 
         // get traci interface
-        mobility = Veins::TraCIMobilityAccess().get(getParentModule());
+        mobility = veins::TraCIMobilityAccess().get(getParentModule());
         traci = mobility->getCommandInterface();
         traciVehicle = mobility->getVehicleCommandInterface();
 

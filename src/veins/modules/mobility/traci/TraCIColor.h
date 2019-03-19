@@ -22,12 +22,12 @@
 
 #include "veins/veins.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * TraCI compatible color container
  */
-class TraCIColor {
+class VEINS_API TraCIColor {
 public:
     TraCIColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
     static TraCIColor fromTkColor(std::string tkColorName);
@@ -39,4 +39,4 @@ public:
     uint8_t alpha;
 };
 
-} // namespace Veins
+} // namespace veins

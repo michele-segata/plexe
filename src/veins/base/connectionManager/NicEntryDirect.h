@@ -23,7 +23,7 @@
 
 #include "veins/base/connectionManager/NicEntry.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief NicEntry is used by ConnectionManager to store the necessary
@@ -33,7 +33,7 @@ namespace Veins {
  * @author Daniel Willkomm
  * @sa ConnectionManager, NicEntry
  */
-class NicEntryDirect : public NicEntry {
+class VEINS_API NicEntryDirect : public NicEntry {
 public:
     /** @brief Constructor, initializes all members
      */
@@ -68,4 +68,4 @@ public:
     void disconnectFrom(NicEntry*) override;
 };
 
-} // namespace Veins
+} // namespace veins

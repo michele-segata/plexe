@@ -26,9 +26,9 @@
 #include "veins/modules/mobility/traci/TraCICommandInterface.h"
 #include "veins/modules/world/traci/trafficLight/TraCITrafficLightProgram.h"
 
-namespace Veins {
+namespace veins {
 
-class TraCITrafficLightInterface : public cSimpleModule {
+class VEINS_API TraCITrafficLightInterface : public cSimpleModule {
 public:
     TraCITrafficLightInterface();
     ~TraCITrafficLightInterface() override;
@@ -114,10 +114,10 @@ protected:
     bool inOnlineSignalState; /**< whether the TLS is currently set to a manual (i.e. online) phase state */
 };
 
-} // namespace Veins
+} // namespace veins
 
-namespace Veins {
-class TraCITrafficLightInterfaceAccess {
+namespace veins {
+class VEINS_API TraCITrafficLightInterfaceAccess {
 public:
     TraCITrafficLightInterface* get(cModule* host)
     {
@@ -126,4 +126,4 @@ public:
         return traci;
     };
 };
-} // namespace Veins
+} // namespace veins

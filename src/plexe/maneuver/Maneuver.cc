@@ -28,6 +28,7 @@ Maneuver::Maneuver(GeneralPlatooningApp* app)
     , traciVehicle(app->getTraciVehicle())
     , plexeTraci(app->getPlexeTraci())
     , plexeTraciVehicle(app->getPlexeTraciVehicle())
-{}
+{
+}
 
 } // namespace plexe

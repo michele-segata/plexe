@@ -24,7 +24,7 @@
 
 #include "veins/base/utils/Coord.h"
 
-namespace Veins {
+namespace veins {
 
 class ChannelAccess;
 
@@ -33,7 +33,7 @@ class TraCIMobility;
 /**
  * stores information about a VehicleObstacle for VehicleObstacleControl
  */
-class VehicleObstacle {
+class VEINS_API VehicleObstacle {
 public:
     using Coords = std::vector<Coord>;
 
@@ -114,4 +114,4 @@ protected:
     double width;
     double height;
 };
-} // namespace Veins
+} // namespace veins

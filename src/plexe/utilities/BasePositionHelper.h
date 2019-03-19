@@ -26,7 +26,7 @@
 
 namespace plexe {
 
-class BasePositionHelper : public Veins::BaseApplLayer {
+class BasePositionHelper : public veins::BaseApplLayer {
 
 public:
     virtual void initialize(int stage) override;
@@ -203,9 +203,9 @@ public:
     virtual void setPlatoonFormation(const std::vector<int>& formation);
 
 protected:
-    Veins::TraCIMobility* mobility;
-    Veins::TraCICommandInterface* traci;
-    Veins::TraCICommandInterface::Vehicle* traciVehicle;
+    veins::TraCIMobility* mobility;
+    veins::TraCICommandInterface* traci;
+    veins::TraCICommandInterface::Vehicle* traciVehicle;
 
     // id of this vehicle
     int myId;

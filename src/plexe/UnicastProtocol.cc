@@ -22,7 +22,7 @@
 #include "veins/modules/phy/DeciderResult80211.h"
 
 using omnetpp::simsignal_t;
-using namespace Veins;
+using namespace veins;
 
 namespace plexe {
 

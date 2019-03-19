@@ -24,7 +24,7 @@
 
 #include "veins/modules/mobility/traci/TraCIScenarioManager.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief
@@ -43,7 +43,7 @@ namespace Veins {
  * @see TraCIScenarioManager
  *
  */
-class TraCIScenarioManagerLaunchd : public TraCIScenarioManager {
+class VEINS_API TraCIScenarioManagerLaunchd : public TraCIScenarioManager {
 public:
     ~TraCIScenarioManagerLaunchd() override;
     void initialize(int stage) override;
@@ -56,7 +56,7 @@ protected:
     void init_traci() override;
 };
 
-class TraCIScenarioManagerLaunchdAccess {
+class VEINS_API TraCIScenarioManagerLaunchdAccess {
 public:
     TraCIScenarioManagerLaunchd* get()
     {
@@ -64,4 +64,4 @@ public:
     };
 };
 
-} // namespace Veins
+} // namespace veins

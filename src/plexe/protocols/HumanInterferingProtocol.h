@@ -31,7 +31,7 @@
 
 namespace plexe {
 
-class HumanInterferingProtocol : public Veins::BaseApplLayer {
+class HumanInterferingProtocol : public veins::BaseApplLayer {
 
 private:
     // beacon interval
@@ -47,12 +47,12 @@ private:
 
 protected:
     // traci mobility. used for getting/setting info about the car
-    Veins::TraCIMobility* mobility;
-    Veins::TraCICommandInterface* traci;
-    Veins::TraCICommandInterface::Vehicle* traciVehicle;
+    veins::TraCIMobility* mobility;
+    veins::TraCICommandInterface* traci;
+    veins::TraCICommandInterface::Vehicle* traciVehicle;
 
     // pointer to the mac layer
-    Veins::Mac1609_4* mac;
+    veins::Mac1609_4* mac;
 
     // messages for scheduleAt
     cMessage* sendBeacon;

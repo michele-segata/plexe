@@ -22,7 +22,7 @@
 
 #include "veins/modules/application/ieee80211p/DemoBaseApplLayer.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief
@@ -38,7 +38,7 @@ namespace Veins {
  *
  */
 
-class TraCIDemo11p : public DemoBaseApplLayer {
+class VEINS_API TraCIDemo11p : public DemoBaseApplLayer {
 public:
     void initialize(int stage) override;
 
@@ -55,4 +55,4 @@ protected:
     void handlePositionUpdate(cObject* obj) override;
 };
 
-} // namespace Veins
+} // namespace veins

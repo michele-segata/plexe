@@ -17,7 +17,7 @@
 
 #include "plexe/mobility/TraCIBaseTrafficManager.h"
 
-using namespace Veins;
+using namespace veins;
 
 namespace plexe {
 
@@ -42,7 +42,7 @@ void TraCIBaseTrafficManager::initialize(int stage)
         insertInOrder = true;
 
         // search for the scenario manager. it will be needed to inject vehicles
-        manager = FindModule<Veins::TraCIScenarioManager*>::findGlobalModule();
+        manager = FindModule<veins::TraCIScenarioManager*>::findGlobalModule();
         ASSERT2(manager, "cannot find TraciScenarioManager");
 
         // reset vehicles counter
@@ -50,8 +50,8 @@ void TraCIBaseTrafficManager::initialize(int stage)
         initScenario = false;
 
         // subscribe to signals
-        manager->subscribe(Veins::TraCIScenarioManager::traciInitializedSignal, &loadTrigger);
-        manager->subscribe(Veins::TraCIScenarioManager::traciTimestepEndSignal, &insertTrigger);
+        manager->subscribe(veins::TraCIScenarioManager::traciInitializedSignal, &loadTrigger);
+        manager->subscribe(veins::TraCIScenarioManager::traciTimestepEndSignal, &insertTrigger);
     }
 }
 
@@ -201,14 +201,14 @@ void TraCIBaseTrafficManager::addVehicleToQueue(int routeId, struct Vehicle v)
 
 void TraCIBaseTrafficManager::InsertTrigger::receiveSignal(cComponent*, simsignal_t signalID, const simtime_t&, cObject*)
 {
-    ASSERT(signalID == Veins::TraCIScenarioManager::traciTimestepEndSignal);
+    ASSERT(signalID == veins::TraCIScenarioManager::traciTimestepEndSignal);
 
     owner->insertVehicles();
 }
 
 void TraCIBaseTrafficManager::LoadTrigger::receiveSignal(cComponent* source, simsignal_t signalID, bool b, cObject* details)
 {
-    ASSERT(signalID == Veins::TraCIScenarioManager::traciInitializedSignal && b);
+    ASSERT(signalID == veins::TraCIScenarioManager::traciInitializedSignal && b);
 
     owner->loadSumoScenario();
 }

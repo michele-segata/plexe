@@ -37,10 +37,10 @@
 #include "veins/modules/mobility/traci/TraCIConstants.h"
 #include "veins/modules/mobility/traci/TraCILauncher.h"
 
-using Veins::TraCILauncher;
-using Veins::TraCIScenarioManagerForker;
+using veins::TraCILauncher;
+using veins::TraCIScenarioManagerForker;
 
-Define_Module(Veins::TraCIScenarioManagerForker);
+Define_Module(veins::TraCIScenarioManagerForker);
 
 namespace {
 
@@ -70,18 +70,14 @@ TraCIScenarioManagerForker::~TraCIScenarioManagerForker()
 void TraCIScenarioManagerForker::initialize(int stage)
 {
     if (stage == 1) {
-        sumoCommand = par("sumoCommand").stringValue();
-        sumoGuiCommand = par("sumoGuiCommand").stringValue();
+        commandLine = par("commandLine").stringValue();
+        command = par("command").stringValue();
         configFile = par("configFile").stringValue();
         seed = par("seed");
         killServer();
     }
     TraCIScenarioManager::initialize(stage);
     if (stage == 1) {
-        std::string parameters = par("commandLine").stringValue();
-        std::stringstream commandLineStream;
-        commandLineStream << (ignoreGuiCommands ? sumoCommand : sumoGuiCommand) << " " << parameters;
-        commandLine = commandLineStream.str();
         startServer();
     }
 }
@@ -131,6 +127,7 @@ void TraCIScenarioManagerForker::startServer()
     }
 
     // assemble commandLine
+    commandLine = replace(commandLine, "$command", command);
     commandLine = replace(commandLine, "$configFile", configFile);
     commandLine = replace(commandLine, "$seed", seed);
     commandLine = replace(commandLine, "$port", port);

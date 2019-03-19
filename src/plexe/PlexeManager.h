@@ -20,15 +20,18 @@ public:
     {
         return commandInterface.get();
     }
+
 private:
     class DeferredCommandInterfaceInitializer : public cListener {
     public:
         DeferredCommandInterfaceInitializer(PlexeManager* owner)
-            : owner(owner) {}
+            : owner(owner)
+        {
+        }
 
         void receiveSignal(cComponent* source, simsignal_t signalID, bool b, cObject* details) override
         {
-            ASSERT(signalID == Veins::TraCIScenarioManager::traciInitializedSignal && b);
+            ASSERT(signalID == veins::TraCIScenarioManager::traciInitializedSignal && b);
 
             owner->initializeCommandInterface();
         }
@@ -40,11 +43,13 @@ private:
     class PlexeTimestepTrigger : public cListener {
     public:
         PlexeTimestepTrigger(PlexeManager* owner)
-            : owner(owner) {}
+            : owner(owner)
+        {
+        }
 
         void receiveSignal(cComponent*, simsignal_t signalID, const simtime_t&, cObject*) override
         {
-            ASSERT(signalID == Veins::TraCIScenarioManager::traciTimestepEndSignal);
+            ASSERT(signalID == veins::TraCIScenarioManager::traciTimestepEndSignal);
 
             owner->getCommandInterface()->executePlexeTimestep();
         }

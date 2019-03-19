@@ -69,7 +69,7 @@ void JoinAtBack::onPlatoonBeacon(const PlatooningBeacon* pb)
             // get front vehicle position
             Coord frontPosition(pb->getPositionX(), pb->getPositionY(), 0);
             // get my position
-            Veins::TraCICoord traciPosition = mobility->getManager()->getConnection()->omnet2traci(mobility->getPositionAt(simTime()));
+            veins::TraCICoord traciPosition = mobility->getManager()->getConnection()->omnet2traci(mobility->getPositionAt(simTime()));
             Coord position(traciPosition.x, traciPosition.y);
             // compute distance
             double distance = position.distance(frontPosition) - pb->getLength();

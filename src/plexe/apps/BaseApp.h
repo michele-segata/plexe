@@ -31,7 +31,7 @@ namespace plexe {
 
 class BaseProtocol;
 
-class BaseApp : public Veins::BaseApplLayer {
+class BaseApp : public veins::BaseApplLayer {
 
 public:
     virtual void initialize(int stage) override;
@@ -40,9 +40,9 @@ protected:
     // id of this vehicle
     int myId;
 
-    Veins::TraCIMobility* mobility;
-    Veins::TraCICommandInterface* traci;
-    Veins::TraCICommandInterface::Vehicle* traciVehicle;
+    veins::TraCIMobility* mobility;
+    veins::TraCICommandInterface* traci;
+    veins::TraCICommandInterface::Vehicle* traciVehicle;
     traci::CommandInterface* plexeTraci;
     std::unique_ptr<traci::CommandInterface::Vehicle> plexeTraciVehicle;
 

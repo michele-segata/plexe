@@ -29,7 +29,7 @@
 #include "veins/base/utils/Heading.h"
 #include "veins/modules/utility/HasLogProxy.h"
 
-namespace Veins {
+namespace veins {
 
 class ChannelAccess;
 
@@ -43,7 +43,7 @@ class ChannelAccess;
  */
 class VEINS_API NicEntry : public HasLogProxy {
 protected:
-    class NicEntryComparator {
+    class VEINS_API NicEntryComparator {
     public:
         bool operator()(const NicEntry* nic1, const NicEntry* nic2) const
         {
@@ -132,4 +132,4 @@ public:
     };
 };
 
-} // namespace Veins
+} // namespace veins

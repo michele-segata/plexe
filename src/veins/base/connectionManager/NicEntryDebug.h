@@ -26,7 +26,7 @@
 #include <map>
 #include <vector>
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief NicEntry is used by ConnectionManager to store the necessary
@@ -36,7 +36,7 @@ namespace Veins {
  * @author Daniel Willkomm
  * @sa ConnectionManager, NicEntry
  */
-class NicEntryDebug : public NicEntry {
+class VEINS_API NicEntryDebug : public NicEntry {
 protected:
     /** @brief Number of in gates allocated for the nic so far*/
     int inCnt;
@@ -141,4 +141,4 @@ public:
     void disconnectFrom(NicEntry* other) override;
 };
 
-} // namespace Veins
+} // namespace veins

@@ -27,7 +27,7 @@
 #include "veins/modules/mobility/traci/TraCIConstants.h"
 #include "veins/base/utils/Coord.h"
 
-using namespace Veins;
+using namespace veins;
 
 namespace plexe {
 

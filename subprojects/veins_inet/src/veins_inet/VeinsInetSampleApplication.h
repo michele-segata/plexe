@@ -20,9 +20,11 @@
 
 #pragma once
 
-#include "VeinsInetApplicationBase.h"
+#include "veins_inet/veins_inet.h"
 
-class VeinsInetSampleApplication : public Veins::VeinsInetApplicationBase {
+#include "veins_inet/VeinsInetApplicationBase.h"
+
+class VEINS_INET_API VeinsInetSampleApplication : public veins::VeinsInetApplicationBase {
 protected:
     bool haveForwarded = false;
 

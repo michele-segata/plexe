@@ -29,7 +29,7 @@
 #include "veins/modules/phy/Decider80211pToPhy80211pInterface.h"
 #include "veins/base/utils/Move.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief
@@ -42,7 +42,7 @@ namespace Veins {
  * @see PhyLayer80211p
  * @see Decider80211p
  */
-class PhyLayer80211p : public BasePhyLayer, public Mac80211pToPhy11pInterface, public Decider80211pToPhy80211pInterface {
+class VEINS_API PhyLayer80211p : public BasePhyLayer, public Mac80211pToPhy11pInterface, public Decider80211pToPhy80211pInterface {
 public:
     void initialize(int stage) override;
     /**
@@ -178,4 +178,4 @@ protected:
     simtime_t setRadioState(int rs) override;
 };
 
-} // namespace Veins
+} // namespace veins

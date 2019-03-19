@@ -2,7 +2,7 @@
 
 #include "veins/veins.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief Provides method templates to find omnet modules.
@@ -11,7 +11,7 @@ namespace Veins {
  * @ingroup utils
  */
 template <typename T = cModule* const>
-class FindModule {
+class VEINS_API FindModule {
 public:
     /**
      * @brief Returns a pointer to a sub module of the passed module with
@@ -82,7 +82,7 @@ public:
  * Uses FindModule<>::findSubModule(), FindModule<>::findHost(). See usage e.g. at ChannelAccess.
  */
 template <typename T = cModule>
-class AccessModuleWrap {
+class VEINS_API AccessModuleWrap {
 public:
     using wrapType = T;
 
@@ -123,4 +123,4 @@ std::vector<T*> getSubmodulesOfType(cModule* parentModule, bool recurse = false)
     return result;
 }
 
-} // namespace Veins
+} // namespace veins

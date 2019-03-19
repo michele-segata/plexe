@@ -20,11 +20,11 @@
 
 #pragma once
 
-#include "veins/veins.h"
+#include "veins_inet/veins_inet.h"
 
 #include "veins/modules/mobility/traci/TraCIScenarioManagerLaunchd.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief
@@ -35,7 +35,7 @@ namespace Veins {
  * @author Christoph Sommer
  *
  */
-class VeinsInetManager : public TraCIScenarioManagerLaunchd {
+class VEINS_INET_API VeinsInetManager : public TraCIScenarioManagerLaunchd {
 public:
     virtual ~VeinsInetManager();
     virtual void preInitializeModule(cModule* mod, const std::string& nodeId, const Coord& position, const std::string& road_id, double speed, Heading heading, VehicleSignalSet signals) override;
@@ -44,7 +44,7 @@ public:
 protected:
 };
 
-class VeinsInetManagerAccess {
+class VEINS_INET_API VeinsInetManagerAccess {
 public:
     VeinsInetManager* get()
     {
@@ -52,4 +52,4 @@ public:
     };
 };
 
-} // namespace Veins
+} // namespace veins

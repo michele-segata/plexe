@@ -68,9 +68,9 @@ public:
 protected:
     GeneralPlatooningApp* app;
     BasePositionHelper* positionHelper;
-    Veins::TraCIMobility* mobility;
-    Veins::TraCICommandInterface* traci;
-    Veins::TraCICommandInterface::Vehicle* traciVehicle;
+    veins::TraCIMobility* mobility;
+    veins::TraCICommandInterface* traci;
+    veins::TraCICommandInterface::Vehicle* traciVehicle;
     traci::CommandInterface* plexeTraci;
     traci::CommandInterface::Vehicle* plexeTraciVehicle;
 };

@@ -17,7 +17,7 @@
 
 #include "plexe/scenarios/AccelerateAndBrakeScenario.h"
 
-using namespace Veins;
+using namespace veins;
 
 namespace plexe {
 

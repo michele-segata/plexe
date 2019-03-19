@@ -24,7 +24,7 @@
 #include "veins/modules/utility/ConstsPhy.h"
 #include "veins/modules/utility/Consts80211p.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief
@@ -35,7 +35,7 @@ namespace Veins {
  *
  * @ingroup phyLayer
  */
-class Mac80211pToPhy11pInterface {
+class VEINS_API Mac80211pToPhy11pInterface {
 public:
     enum BasePhyMessageKinds {
         CHANNEL_IDLE,
@@ -51,4 +51,4 @@ public:
     virtual simtime_t getFrameDuration(int payloadLengthBits, MCS mcs) const = 0;
 };
 
-} // namespace Veins
+} // namespace veins

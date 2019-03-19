@@ -8,23 +8,23 @@ Define_Module(PlexeManager);
 
 void PlexeManager::initialize(int stage)
 {
-    const auto scenarioManager = Veins::TraCIScenarioManagerAccess().get();
+    const auto scenarioManager = veins::TraCIScenarioManagerAccess().get();
     ASSERT(scenarioManager);
 
-    scenarioManager->subscribe(Veins::TraCIScenarioManager::traciTimestepEndSignal, &plexeTimestepTrigger);
+    scenarioManager->subscribe(veins::TraCIScenarioManager::traciTimestepEndSignal, &plexeTimestepTrigger);
 
-    if (scenarioManager->isTraciInitialized()) {
+    if (scenarioManager->isUsable()) {
         initializeCommandInterface();
     }
     else {
-        scenarioManager->subscribe(Veins::TraCIScenarioManager::traciInitializedSignal, &deferredCommandInterfaceInitializer);
+        scenarioManager->subscribe(veins::TraCIScenarioManager::traciInitializedSignal, &deferredCommandInterfaceInitializer);
     }
 }
 
 void PlexeManager::initializeCommandInterface()
 {
 
-    const auto scenarioManager = Veins::TraCIScenarioManagerAccess().get();
+    const auto scenarioManager = veins::TraCIScenarioManagerAccess().get();
     ASSERT(scenarioManager);
     commandInterface.reset(new traci::CommandInterface(this, scenarioManager->getCommandInterface(), scenarioManager->getConnection()));
 }

@@ -19,12 +19,13 @@
 //
 
 #include "veins_inet/VeinsInetManager.h"
+
 #include "veins/base/utils/Coord.h"
 #include "veins_inet/VeinsInetMobility.h"
 
-using Veins::VeinsInetManager;
+using veins::VeinsInetManager;
 
-Define_Module(Veins::VeinsInetManager);
+Define_Module(veins::VeinsInetManager);
 
 VeinsInetManager::~VeinsInetManager()
 {

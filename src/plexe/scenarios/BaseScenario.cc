@@ -21,7 +21,7 @@
 
 #include "plexe/PlexeManager.h"
 
-using namespace Veins;
+using namespace veins;
 
 namespace plexe {
 
@@ -81,7 +81,7 @@ void BaseScenario::initialize(int stage)
     }
 
     if (stage == 1) {
-        mobility = Veins::TraCIMobilityAccess().get(getParentModule());
+        mobility = veins::TraCIMobilityAccess().get(getParentModule());
         ASSERT(mobility);
         traci = mobility->getCommandInterface();
         ASSERT(traci);

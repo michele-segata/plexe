@@ -23,9 +23,9 @@
 #include "veins/base/phyLayer/AnalogueModel.h"
 #include "veins/base/modules/BaseWorldUtility.h"
 
-namespace Veins {
+namespace veins {
 
-using Veins::AirFrame;
+using veins::AirFrame;
 
 /**
  * @brief
@@ -40,7 +40,7 @@ using Veins::AirFrame;
  *
  * @ingroup analogueModels
  */
-class TwoRayInterferenceModel : public AnalogueModel {
+class VEINS_API TwoRayInterferenceModel : public AnalogueModel {
 
 public:
     TwoRayInterferenceModel(cComponent* owner, double dielectricConstant)
@@ -60,4 +60,4 @@ protected:
     double epsilon_r;
 };
 
-} // namespace Veins
+} // namespace veins

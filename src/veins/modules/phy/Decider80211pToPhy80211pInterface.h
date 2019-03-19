@@ -20,7 +20,7 @@
 
 #pragma once
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief
@@ -30,10 +30,10 @@ namespace Veins {
  *
  * @ingroup phyLayer
  */
-class Decider80211pToPhy80211pInterface {
+class VEINS_API Decider80211pToPhy80211pInterface {
 public:
     virtual ~Decider80211pToPhy80211pInterface(){};
     virtual int getRadioState() = 0;
 };
 
-} // namespace Veins
+} // namespace veins

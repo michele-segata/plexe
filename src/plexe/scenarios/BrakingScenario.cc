@@ -17,7 +17,7 @@
 
 #include "plexe/scenarios/BrakingScenario.h"
 
-using namespace Veins;
+using namespace veins;
 
 namespace plexe {
 

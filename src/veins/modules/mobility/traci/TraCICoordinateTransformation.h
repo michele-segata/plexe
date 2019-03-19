@@ -26,12 +26,12 @@
 
 #include <list>
 
-namespace Veins {
+namespace veins {
 
 /**
  * Helper class for converting SUMO coordinates to OMNeT++ Coordinates for a given network.
  */
-class TraCICoordinateTransformation {
+class VEINS_API TraCICoordinateTransformation {
 public:
     using OmnetCoord = Coord;
     using OmnetCoordList = std::list<OmnetCoord>;
@@ -54,4 +54,4 @@ private:
     float margin;
 }; // end class NetworkCoordinateTranslator
 
-} // end namespace Veins
+} // end namespace veins

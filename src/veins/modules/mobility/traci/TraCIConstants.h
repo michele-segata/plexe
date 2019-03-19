@@ -16,7 +16,6 @@
 /****************************************************************************/
 // SUMO, Simulation of Urban MObility; see http://sumo-sim.org/
 // Copyright (C) 2001-2013 DLR (http://www.dlr.de/) and contributors
-// Copyright (C) 2012-2018 Michele Segata (segata@ccs-labs.org)
 /****************************************************************************/
 //
 //   This file is part of SUMO.
@@ -28,7 +27,7 @@
 /****************************************************************************/
 #pragma once
 
-namespace Veins {
+namespace veins {
 namespace TraCIConstants {
 
 // ****************************************
@@ -679,7 +678,7 @@ const uint8_t VAR_STOP_ENDING_VEHICLES_IDS = 0x6b;
 const uint8_t CMD_CLEAR_PENDING_VEHICLES = 0x94;
 
 // sets/retrieves abstract parameter
-#define VAR_PARAMETER 0x7e
+const uint8_t VAR_PARAMETER = 0x7e;
 
 // add an instance (poi, polygon, vehicle, route)
 const uint8_t ADD = 0x80;
@@ -730,4 +729,4 @@ const uint8_t VAR_TRACK_VEHICLE = 0xa6;
 const uint8_t VAR_HEIGHT = 0xbc;
 
 } // namespace TraCIConstants
-} // namespace Veins
+} // namespace veins

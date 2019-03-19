@@ -29,7 +29,7 @@
 #include "veins/modules/obstacle/Obstacle.h"
 #include "veins/modules/world/annotations/AnnotationManager.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * ObstacleControl models obstacles that block radio transmissions.
@@ -38,7 +38,7 @@ namespace Veins {
  * Transmissions that cross one of the polygon's lines will have
  * their receive power set to zero.
  */
-class ObstacleControl : public cSimpleModule {
+class VEINS_API ObstacleControl : public cSimpleModule {
 public:
     ~ObstacleControl() override;
     void initialize(int stage) override;
@@ -59,7 +59,12 @@ public:
     double getAttenuationPerMeter(std::string type);
 
     /**
-     * calculate additional attenuation by obstacles, return signal strength
+     * get hit obstacles (along with a list of points (in [0, 1]) along the line between sender and receiver where the beam intersects with the respective obstacle)
+     */
+    std::map<Obstacle*, std::multiset<double>> getIntersections(const Coord& senderPos, const Coord& receiverPos) const;
+
+    /**
+     * calculate additional attenuation by obstacles, return multiplicative factor
      */
     double calculateAttenuation(const Coord& senderPos, const Coord& receiverPos) const;
 
@@ -108,7 +113,7 @@ protected:
     mutable CacheEntries cacheEntries;
 };
 
-class ObstacleControlAccess {
+class VEINS_API ObstacleControlAccess {
 public:
     ObstacleControlAccess()
     {
@@ -120,4 +125,4 @@ public:
     }
 };
 
-} // namespace Veins
+} // namespace veins

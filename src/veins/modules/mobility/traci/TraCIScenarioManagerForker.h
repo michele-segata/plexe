@@ -25,7 +25,7 @@
 #include "veins/modules/mobility/traci/TraCIScenarioManager.h"
 #include "veins/modules/mobility/traci/TraCILauncher.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief
@@ -42,7 +42,7 @@ namespace Veins {
  * @see TraCIScenarioManager
  *
  */
-class TraCIScenarioManagerForker : public TraCIScenarioManager {
+class VEINS_API TraCIScenarioManagerForker : public TraCIScenarioManager {
 public:
     TraCIScenarioManagerForker();
     ~TraCIScenarioManagerForker() override;
@@ -50,9 +50,8 @@ public:
     void finish() override;
 
 protected:
-    std::string sumoCommand; // command line to run sumo (no gui)
-    std::string sumoGuiCommand; // command line to run sumo (with gui)
-    std::string commandLine; /**< command line parameters for running TraCI server (substituting $configFile, $seed, $port) */
+    std::string commandLine; /**< command line for running TraCI server (substituting $configFile, $seed, $port) */
+    std::string command; /**< substitution for $command parameter */
     std::string configFile; /**< substitution for $configFile parameter */
     int seed; /**< substitution for $seed parameter (-1: current run number) */
 
@@ -62,11 +61,11 @@ protected:
     virtual void killServer();
 };
 
-class TraCIScenarioManagerForkerAccess {
+class VEINS_API TraCIScenarioManagerForkerAccess {
 public:
     TraCIScenarioManagerForker* get()
     {
         return FindModule<TraCIScenarioManagerForker*>::findGlobalModule();
     };
 };
-} // namespace Veins
+} // namespace veins

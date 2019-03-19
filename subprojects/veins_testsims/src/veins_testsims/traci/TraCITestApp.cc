@@ -26,12 +26,12 @@
 #include "veins/modules/mobility/traci/TraCIColor.h"
 #include "veins_testsims/traci/TraCITrafficLightTestLogic.h"
 
-using Veins::BaseMobility;
-using Veins::TraCIMobility;
-using Veins::TraCIMobilityAccess;
-using Veins::TraCITestApp;
+using veins::BaseMobility;
+using veins::TraCIMobility;
+using veins::TraCIMobilityAccess;
+using veins::TraCITestApp;
 
-Define_Module(Veins::TraCITestApp);
+Define_Module(veins::TraCITestApp);
 
 void TraCITestApp::initialize(int stage)
 {
@@ -122,8 +122,10 @@ void TraCITestApp::handlePositionUpdate()
 
     if (testNumber == testCounter++) {
         if (t == 1) {
-            assertClose("(TraCICommandInterface::getDistance) air", 859., floor(traci->getDistance(Coord(25, 7030), Coord(883, 6980), false)));
-            assertClose("(TraCICommandInterface::getDistance) driving", 847., floor(traci->getDistance(Coord(25, 7030), Coord(883, 6980), true)));
+            const Coord pointA(27.6, 76.65);
+            const Coord pointB(631.41, 26.65);
+            assertClose("(TraCICommandInterface::getDistance) air", 605., floor(traci->getDistance(pointA, pointB, false)));
+            assertClose("(TraCICommandInterface::getDistance) driving", 650., floor(traci->getDistance(pointA, pointB, true)));
         }
     }
 
@@ -304,7 +306,7 @@ void TraCITestApp::handlePositionUpdate()
             traciVehicle->setMaxSpeed(1 / 3.6);
         }
         if (t == 30) {
-            assertClose("(TraCICommandInterface::Vehicle::setMaxSpeed)", 0.2280344208055693489, mobility->getSpeed());
+            assertTrue("(TraCICommandInterface::Vehicle::setMaxSpeed)", mobility->getSpeed() <= 1 / 3.6);
         }
     }
 
@@ -481,6 +483,26 @@ void TraCITestApp::handlePositionUpdate()
     if (testNumber == testCounter++) {
         if (t == 1) {
             assertClose("(TraCICommandInterface::Vehicle::getAccumulatedWaitingTime)", 0.0, traciVehicle->getAccumulatedWaitingTime());
+        }
+    }
+
+    if (testNumber == testCounter++) {
+        if (t == 1) {
+            int x = 0;
+            double y = 0;
+            std::string z = "";
+
+            traciVehicle->setParameter("int", 23);
+            traciVehicle->setParameter("double", 42.0);
+            traciVehicle->setParameter("string", "foo");
+
+            traciVehicle->getParameter("int", x);
+            traciVehicle->getParameter("double", y);
+            traciVehicle->getParameter("string", z);
+
+            assertEqual("(TraCICommandInterface::Vehicle::getParameter)", 23, x);
+            assertClose("(TraCICommandInterface::Vehicle::getParameter)", 42.0, y);
+            assertEqual("(TraCICommandInterface::Vehicle::getParameter)", "foo", z);
         }
     }
 
@@ -848,7 +870,7 @@ void TraCITestApp::handlePositionUpdate()
     }
 
     //
-    // Veins::TraCITrafficLightAbstractLogic (see org.car2x.veins.subprojects.veins_testsims.traci.TraCITrafficLightTestLogic class)
+    // veins::TraCITrafficLightAbstractLogic (see org.car2x.veins.subprojects.veins_testsims.traci.TraCITrafficLightTestLogic class)
     //
 
     if (testNumber == testCounter++) {

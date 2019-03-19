@@ -26,7 +26,7 @@
 
 using namespace omnetpp;
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief
@@ -38,7 +38,7 @@ namespace Veins {
  *
  */
 
-class MyVeinsApp : public DemoBaseApplLayer {
+class VEINS_API MyVeinsApp : public DemoBaseApplLayer {
 public:
     void initialize(int stage) override;
     void finish() override;
@@ -52,4 +52,4 @@ protected:
     void handlePositionUpdate(cObject* obj) override;
 };
 
-} // namespace Veins
+} // namespace veins

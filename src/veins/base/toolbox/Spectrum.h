@@ -31,9 +31,9 @@
 
 #include "veins/veins.h"
 
-namespace Veins {
+namespace veins {
 
-class Spectrum {
+class VEINS_API Spectrum {
 public:
     using Frequency = double;
     using Frequencies = std::vector<Frequency>;
@@ -57,4 +57,4 @@ private:
     Frequencies frequencies;
 };
 
-} // namespace Veins
+} // namespace veins

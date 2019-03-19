@@ -23,12 +23,12 @@
 
 #include "veins/veins.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * Helper class for logging from classes not derived from cComponent
  */
-class HasLogProxy {
+class VEINS_API HasLogProxy {
 public:
     HasLogProxy(cComponent* owner);
     const cComponent* getThisPtr() const;
@@ -37,4 +37,4 @@ protected:
     cComponent* owner;
 };
 
-} // namespace Veins
+} // namespace veins

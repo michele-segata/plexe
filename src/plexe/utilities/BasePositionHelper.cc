@@ -17,7 +17,7 @@
 
 #include "plexe/utilities/BasePositionHelper.h"
 
-using namespace Veins;
+using namespace veins;
 
 namespace plexe {
 
@@ -29,7 +29,7 @@ void BasePositionHelper::initialize(int stage)
     BaseApplLayer::initialize(stage);
 
     if (stage == 0) {
-        mobility = Veins::TraCIMobilityAccess().get(getParentModule());
+        mobility = veins::TraCIMobilityAccess().get(getParentModule());
         traci = mobility->getCommandInterface();
         traciVehicle = mobility->getVehicleCommandInterface();
         nLanes = par("nLanes");

@@ -32,7 +32,7 @@
 #include "veins/modules/mobility/traci/VehicleSignal.h"
 #include "veins/base/utils/Heading.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief
@@ -50,9 +50,9 @@ namespace Veins {
  *
  * @ingroup mobility
  */
-class TraCIMobility : public BaseMobility {
+class VEINS_API TraCIMobility : public BaseMobility {
 public:
-    class Statistics {
+    class VEINS_API Statistics {
     public:
         double firstRoadNumber; /**< for statistics: number of first road we encountered (if road id can be expressed as a number) */
         simtime_t startTime; /**< for statistics: start time */
@@ -211,7 +211,7 @@ protected:
     }
 };
 
-class TraCIMobilityAccess {
+class VEINS_API TraCIMobilityAccess {
 public:
     TraCIMobility* get(cModule* host)
     {
@@ -221,4 +221,4 @@ public:
     };
 };
 
-} // namespace Veins
+} // namespace veins

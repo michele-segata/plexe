@@ -22,6 +22,8 @@
 
 #include <vector>
 
+#include "veins_inet/veins_inet.h"
+
 #include "inet/common/INETDefs.h"
 
 #include "inet/applications/base/ApplicationBase.h"
@@ -29,14 +31,14 @@
 #include "veins_inet/VeinsInetMobility.h"
 #include "veins/modules/utility/TimerManager.h"
 
-namespace Veins {
+namespace veins {
 
-class VeinsInetApplicationBase : public inet::ApplicationBase, public inet::UdpSocket::ICallback {
+class VEINS_INET_API VeinsInetApplicationBase : public inet::ApplicationBase, public inet::UdpSocket::ICallback {
 protected:
-    Veins::VeinsInetMobility* mobility;
-    Veins::TraCICommandInterface* traci;
-    Veins::TraCICommandInterface::Vehicle* traciVehicle;
-    Veins::TimerManager timerManager{this};
+    veins::VeinsInetMobility* mobility;
+    veins::TraCICommandInterface* traci;
+    veins::TraCICommandInterface::Vehicle* traciVehicle;
+    veins::TimerManager timerManager{this};
 
     inet::L3Address destAddress;
     const int portNumber = 9001;
@@ -45,11 +47,11 @@ protected:
 protected:
     virtual int numInitStages() const override;
     virtual void initialize(int stage) override;
-    virtual bool handleNodeStart(inet::IDoneCallback* doneCallback) override;
+    virtual void handleStartOperation(inet::LifecycleOperation* doneCallback) override;
     virtual bool startApplication();
     virtual bool stopApplication();
-    virtual bool handleNodeShutdown(inet::IDoneCallback* doneCallback) override;
-    virtual void handleNodeCrash() override;
+    virtual void handleStopOperation(inet::LifecycleOperation* doneCallback) override;
+    virtual void handleCrashOperation(inet::LifecycleOperation* doneCallback) override;
     virtual void finish() override;
 
     virtual void refreshDisplay() const override;
@@ -57,6 +59,7 @@ protected:
 
     virtual void socketDataArrived(inet::UdpSocket* socket, inet::Packet* packet) override;
     virtual void socketErrorArrived(inet::UdpSocket* socket, inet::Indication* indication) override;
+    virtual void socketClosed(inet::UdpSocket* socket) override;
 
     virtual std::unique_ptr<inet::Packet> createPacket(std::string name);
     virtual void processPacket(std::shared_ptr<inet::Packet> pk);
@@ -68,4 +71,4 @@ public:
     ~VeinsInetApplicationBase();
 };
 
-} // namespace Veins
+} // namespace veins

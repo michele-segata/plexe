@@ -25,7 +25,7 @@
 #include "veins/base/modules/BaseWorldUtility.h"
 #include "veins/base/messages/AirFrame_m.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief
@@ -40,7 +40,7 @@ namespace Veins {
  *
  * @ingroup analogueModels
  */
-class NakagamiFading : public AnalogueModel {
+class VEINS_API NakagamiFading : public AnalogueModel {
 
 public:
     NakagamiFading(cComponent* owner, bool constM, double m)
@@ -64,4 +64,4 @@ protected:
     double m;
 };
 
-} // namespace Veins
+} // namespace veins

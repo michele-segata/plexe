@@ -21,18 +21,18 @@
 
 #include "veins/veins.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * AnnotationDummy is just a workaround to visualize annotations
  *
  * @author Christoph Sommer
  */
-class AnnotationDummy : public cSimpleModule {
+class VEINS_API AnnotationDummy : public cSimpleModule {
 public:
     ~AnnotationDummy() override;
 
 protected:
 };
 
-} // namespace Veins
+} // namespace veins

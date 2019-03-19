@@ -23,7 +23,7 @@
 #include "veins/base/utils/NetwToMacControlInfo.h"
 #include "veins/modules/utility/Consts80211p.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief
@@ -33,7 +33,7 @@ namespace Veins {
  *
  * @ingroup macLayer
  */
-class DemoBaseApplLayerToMac1609_4Interface {
+class VEINS_API DemoBaseApplLayerToMac1609_4Interface {
 public:
     virtual bool isChannelSwitchingActive() = 0;
 
@@ -51,4 +51,4 @@ public:
     virtual const LAddress::L2Type& getMACAddress() = 0;
 };
 
-} // namespace Veins
+} // namespace veins

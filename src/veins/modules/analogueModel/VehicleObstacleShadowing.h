@@ -26,12 +26,12 @@
 #include "veins/base/utils/Move.h"
 #include "veins/base/messages/AirFrame_m.h"
 
-using Veins::AirFrame;
-using Veins::VehicleObstacleControl;
+using veins::AirFrame;
+using veins::VehicleObstacleControl;
 
 #include <cstdlib>
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief Basic implementation of a VehicleObstacleShadowing that uses
@@ -39,7 +39,7 @@ namespace Veins {
  *
  * @ingroup analogueModels
  */
-class VehicleObstacleShadowing : public AnalogueModel {
+class VEINS_API VehicleObstacleShadowing : public AnalogueModel {
 protected:
     /** @brief reference to global VehicleObstacleControl instance */
     VehicleObstacleControl& vehicleObstacleControl;
@@ -77,4 +77,4 @@ public:
     }
 };
 
-} // namespace Veins
+} // namespace veins

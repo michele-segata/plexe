@@ -4,17 +4,19 @@
 #include <veins/modules/mobility/traci/TraCIConstants.h>
 #include <veins/modules/mobility/traci/ParBuffer.h>
 
-using Veins::TraCIBuffer;
-using namespace Veins::TraCIConstants;
+using veins::ParBuffer;
+using veins::TraCIBuffer;
+using namespace veins::TraCIConstants;
 
 namespace plexe {
 namespace traci {
 
-CommandInterface::CommandInterface(cComponent* owner, Veins::TraCICommandInterface* veinsCommandInterface, Veins::TraCIConnection* connection)
+CommandInterface::CommandInterface(cComponent* owner, veins::TraCICommandInterface* veinsCommandInterface, veins::TraCIConnection* connection)
     : HasLogProxy(owner)
     , veinsCommandInterface(veinsCommandInterface)
     , connection(connection)
-{}
+{
+}
 
 void CommandInterface::Vehicle::setLaneChangeMode(int mode)
 {

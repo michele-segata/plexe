@@ -10,11 +10,11 @@
 #include "veins/base/utils/Heading.h"
 #include "veins/modules/utility/HasLogProxy.h"
 
-namespace Veins {
+namespace veins {
 
-class TraCIConnection : public HasLogProxy {
+class VEINS_API TraCIConnection : public HasLogProxy {
 public:
-    class Result {
+    class VEINS_API Result {
     public:
         Result();
         Result(bool success, bool not_impl, std::string message);
@@ -80,4 +80,4 @@ private:
  */
 std::string makeTraCICommand(uint8_t commandId, const TraCIBuffer& buf = TraCIBuffer());
 
-} // namespace Veins
+} // namespace veins

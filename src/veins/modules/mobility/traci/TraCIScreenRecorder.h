@@ -22,7 +22,7 @@
 
 #include "veins/veins.h"
 
-namespace Veins {
+namespace veins {
 
 /**
  * @brief
@@ -40,7 +40,7 @@ namespace Veins {
  * @see TraCIScenarioManager
  *
  */
-class TraCIScreenRecorder : public cSimpleModule {
+class VEINS_API TraCIScreenRecorder : public cSimpleModule {
 public:
     void initialize(int stage) override;
     void handleMessage(cMessage* msg) override;
@@ -50,4 +50,4 @@ protected:
     cMessage* takeScreenshot;
 };
 
-} // namespace Veins
+} // namespace veins
