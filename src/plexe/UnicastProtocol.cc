@@ -315,11 +315,11 @@ void UnicastProtocol::handleLowerMsg(cMessage* msg)
     ASSERT2(unicast, "no unicast message inside the WSM message");
 
     // pass up also received power information
-    PhyToMacControlInfo* ctlInfo = dynamic_cast<PhyToMacControlInfo*>(wsm->getControlInfo());
-    ASSERT2(ctlInfo, "no control info into mac packet");
-    DeciderResult80211* res = dynamic_cast<DeciderResult80211*>(ctlInfo->getDeciderResult());
-    ASSERT2(res, "no decider result into control info");
-    unicast->setRecvPower_dBm(res->getRecvPower_dBm());
+    if (auto ctlInfo = dynamic_cast<PhyToMacControlInfo*>(wsm->getControlInfo())) {
+        if (auto res = dynamic_cast<DeciderResult80211*>(ctlInfo->getDeciderResult())) {
+            unicast->setRecvPower_dBm(res->getRecvPower_dBm());
+        }
+    }
 
     delete wsm;
 
