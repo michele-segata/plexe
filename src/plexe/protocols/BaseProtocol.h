@@ -148,6 +148,8 @@ protected:
      */
     void sendPlatooningMessage(int destinationAddress);
 
+    virtual std::unique_ptr<UnicastMessage> createBeacon(int destinationAddress);
+
     /**
      * This method must be overridden by subclasses to take decisions
      * about what to do.

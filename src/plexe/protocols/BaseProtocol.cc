@@ -160,15 +160,19 @@ void BaseProtocol::handleSelfMsg(cMessage* msg)
 
 void BaseProtocol::sendPlatooningMessage(int destinationAddress)
 {
+    sendDown(createBeacon(destinationAddress).release());
+}
 
+std::unique_ptr<UnicastMessage> BaseProtocol::createBeacon(int destinationAddress)
+{
     // vehicle's data to be included in the message
     VEHICLE_DATA data;
     // get information about the vehicle via traci
     plexeTraciVehicle->getVehicleData(&data);
 
     // create and send beacon
-    UnicastMessage* unicast = new UnicastMessage("", BEACON_TYPE);
-    unicast->setDestination(-1);
+    auto unicast = veins::make_unique<UnicastMessage>("", BEACON_TYPE);
+    unicast->setDestination(destinationAddress);
     unicast->setPriority(priority);
     unicast->setChannel(static_cast<int>(Channel::cch));
 
@@ -192,7 +196,8 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress)
 
     // put platooning beacon into the message for the UnicastProtocol
     unicast->encapsulate(pkt);
-    sendDown(unicast);
+
+    return unicast;
 }
 
 void BaseProtocol::handleUnicastMsg(UnicastMessage* unicast)
