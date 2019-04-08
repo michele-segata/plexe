@@ -1,0 +1,13 @@
+all: plexe_catch$(D)
+
+plexe_catch$(D): $(O)/plexe_catch$(D)
+	$(qecho) "Creating symlink: $@"
+	$(Q)$(LN) $(O)/plexe_catch$(D) .
+
+$(O)/plexe_catch$(D): $(OBJS) $(O)/$(TARGET)
+	$(qecho) "Creating binary: $@"
+	$(Q)$(CXX) -o $@ $(OBJS) $(LIBS) $(OMNETPP_LIBS) $(LDFLAGS) -L$(O)
+
+cleanbin:
+	$(Q)-rm -f $(O)/plexe_catch$(D)
+	$(Q)-rm -f plexe_catch$(D)

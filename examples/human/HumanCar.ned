@@ -21,8 +21,8 @@
 
 import org.car2x.veins.base.modules.IBaseApplLayer;
 
-import org.car2x.veins.modules.application.platooning.protocols.HumanInterferingProtocol;
-import org.car2x.veins.modules.application.platooning.UnicastProtocol;
+import org.car2x.plexe.protocols.HumanInterferingProtocol;
+import org.car2x.plexe.UnicastProtocol;
 import org.car2x.veins.modules.mobility.traci.TraCIMobility;
 import org.car2x.veins.modules.nic.Nic80211p;
 

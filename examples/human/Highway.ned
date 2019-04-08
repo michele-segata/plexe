@@ -23,9 +23,11 @@
 import org.car2x.veins.base.connectionManager.ConnectionManager;
 import org.car2x.veins.base.modules.BaseWorldUtility;
 import org.car2x.veins.modules.mobility.traci.TraCIScenarioManagerForker;
-import org.car2x.veins.modules.mobility.traci.TraCIBaseTrafficManager;
 import org.car2x.veins.modules.obstacle.ObstacleControl;
 import org.car2x.veins.modules.world.annotations.AnnotationManager;
+
+import org.car2x.plexe.PlexeManager;
+import org.car2x.plexe.mobility.TraCIBaseTrafficManager;
 
 network Highway
 {
@@ -56,6 +58,9 @@ network Highway
         manager: TraCIScenarioManagerForker {
             parameters:
                 @display("p=512,128");
+        }
+        plexe: PlexeManager {
+            @display("p=280,50");
         }
         traffic: <traffic_type> like TraCIBaseTrafficManager {
             parameters:
