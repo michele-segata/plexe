@@ -186,8 +186,6 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress)
     pkt->setSpeedX(data.speedX);
     pkt->setSpeedY(data.speedY);
     pkt->setAngle(data.angle);
-    // i generated the message, i send it
-    pkt->setRelayerId(myId);
     pkt->setKind(BEACON_TYPE);
     pkt->setByteLength(packetSize);
     pkt->setSequenceNumber(seq_n++);

@@ -21,8 +21,6 @@
 packet PlatooningBeacon {
     //id of the originator
     int vehicleId = 0;
-    //id of the sender. relayerId == vehicleId on first hope
-    int relayerId = 0;
     double controllerAcceleration = 0;
     double acceleration = 0;
     double speed = 0;
