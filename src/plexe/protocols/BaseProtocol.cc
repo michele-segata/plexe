@@ -29,8 +29,8 @@ namespace plexe {
 Define_Module(BaseProtocol);
 
 // set signals for channel busy and collisions
-const simsignal_t BaseProtocol::sigChannelBusy = registerSignal("org.car2x.plexe.sigChannelBusy");
-const simsignal_t BaseProtocol::sigCollision = registerSignal("org.car2x.plexe.sigCollision");
+const simsignal_t BaseProtocol::sigChannelBusy = registerSignal("org.car2x.veins.modules.mac.sigChannelBusy");
+const simsignal_t BaseProtocol::sigCollision = registerSignal("org.car2x.veins.modules.mac.sigCollision");
 
 void BaseProtocol::initialize(int stage)
 {
