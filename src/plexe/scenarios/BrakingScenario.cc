@@ -37,10 +37,12 @@ void BrakingScenario::initialize(int stage)
         brakingDeceleration = par("brakingDeceleration").doubleValue();
         // average speed
         leaderSpeed = par("leaderSpeed").doubleValue() / 3.6;
+        // number of lanes
+        nLanes = par("nLanes").intValue();
         // start braking time
         startBraking = SimTime(par("startBraking").doubleValue());
 
-        if (positionHelper->getId() < positionHelper->getLanesCount()) {
+        if (positionHelper->getId() < nLanes) {
             // setup braking message, only if i'm part of the first leaders
             changeSpeed = new cMessage("changeSpeed");
             if (simTime() > startBraking) {

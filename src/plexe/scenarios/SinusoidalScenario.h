@@ -34,6 +34,8 @@ protected:
     double oscillationAmplitude;
     // leader average speed
     double leaderSpeed;
+    // number of lanes in the scenario
+    int nLanes;
     // message used to tell the leader to continuously change its desired speed
     cMessage* changeSpeed;
     // start oscillation time
@@ -45,6 +47,7 @@ public:
         leaderOscillationFrequency = 0;
         oscillationAmplitude = 0;
         leaderSpeed = 0;
+        nLanes = 0;
         changeSpeed = nullptr;
         startOscillating = SimTime(0);
     }

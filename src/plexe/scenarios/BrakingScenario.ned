@@ -26,6 +26,8 @@ simple BrakingScenario extends BBaseScenario
         double brakingDeceleration @unit("mpsps") = default(4mpsps);
         //start braking at time
         double startBraking @unit("s") = default(5s);
+        //number of lanes of the scenario
+        int nLanes;
 
         @display("i=block/app2");
         @class(plexe::BrakingScenario);

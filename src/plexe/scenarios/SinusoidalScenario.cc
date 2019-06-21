@@ -33,10 +33,12 @@ void SinusoidalScenario::initialize(int stage)
         oscillationAmplitude = par("oscillationAmplitude").doubleValue() / 3.6;
         // average speed
         leaderSpeed = par("leaderSpeed").doubleValue() / 3.6;
+        // number of lanes
+        nLanes = par("nLanes").intValue();
         // start oscillation time
         startOscillating = SimTime(par("startOscillating").doubleValue());
 
-        if (positionHelper->getId() < positionHelper->getLanesCount()) {
+        if (positionHelper->getId() < nLanes) {
             // setup oscillation message, only if i'm part of the first leaders
             changeSpeed = new cMessage("changeSpeed");
             if (simTime() > startOscillating) {

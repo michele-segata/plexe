@@ -33,6 +33,8 @@ protected:
     double leaderSpeed;
     // braking intensity in m/s/s
     double brakingDeceleration;
+    // number of lanes in the scenario
+    int nLanes;
     // message used to tell the leader to start braking
     cMessage* changeSpeed;
     // start braking time
@@ -45,6 +47,7 @@ public:
     {
         leaderSpeed = 0;
         brakingDeceleration = 0;
+        nLanes = 0;
         changeSpeed = nullptr;
         startBraking = SimTime(0);
         appl = 0;

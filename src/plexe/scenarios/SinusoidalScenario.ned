@@ -28,6 +28,8 @@ simple SinusoidalScenario extends BBaseScenario
         double oscillationAmplitude @unit("kmph") = default(10kmph);
         //start oscillation at time
         double startOscillating @unit("s") = default(5s);
+        //number of lanes of the scenario
+        int nLanes;
 
         @display("i=block/app2");
         @class(plexe::SinusoidalScenario);
