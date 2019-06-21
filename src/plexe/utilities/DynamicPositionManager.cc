@@ -17,6 +17,7 @@
 
 #include "plexe/utilities/DynamicPositionManager.h"
 
+#include <algorithm>
 #include <iostream>
 
 namespace plexe {
@@ -70,6 +71,51 @@ void DynamicPositionManager::printPlatoons()
     for (auto i = vehToPlatoons.begin(); i != vehToPlatoons.end(); i++) {
         std::cout << "Veh " << i->first << ": Platoon " << i->second << "\n";
     }
+}
+
+void DynamicPositionManager::setPlatoonInformation(int platoonId, const PlatoonInfo& info)
+{
+    information[platoonId] = info;
+}
+
+PlatoonInfo DynamicPositionManager::getPlatoonInformation(int platoonId) const
+{
+    PlatoonInfo info;
+    info.lane = -1;
+    info.speed = -1;
+    auto i = information.find(platoonId);
+    if (i == information.end()) return info;
+    else return i->second;
+}
+
+int DynamicPositionManager::getPlatoonId(int vehicleId) const
+{
+    auto i = vehToPlatoons.find(vehicleId);
+    if (i == vehToPlatoons.end()) return -1;
+    int platoonId = i->second;
+    return platoonId;
+}
+
+std::vector<int> DynamicPositionManager::getPlatoonFormation(int vehicleId) const
+{
+    auto m = platoons.find(getPlatoonId(vehicleId))->second;
+    std::vector<int> formation;
+    // we do not need to sort the vehicles by their position,
+    // since the map<pos, id> is sorted by default by its key (i.e. pos)
+    formation.resize(m.size());
+    std::transform(m.begin(), m.end(), formation.begin(), [](const decltype(m)::value_type& p) { return p.second; });
+    return formation;
+}
+
+int DynamicPositionManager::getPosition(int vehicleId) const
+{
+    int platoonId = getPlatoonId(vehicleId);
+    return positions.find(platoonId)->second.find(vehicleId)->second;
+}
+
+int DynamicPositionManager::getMemberId(int platoonId, int position) const
+{
+    return platoons.find(platoonId)->second.find(position)->second;
 }
 
 } // namespace plexe

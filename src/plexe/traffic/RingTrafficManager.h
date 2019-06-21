@@ -35,7 +35,6 @@ public:
         , nPlatoons(0)
         , injectedCars(0)
         , injectedPlatoons(0)
-        , positions(DynamicPositionManager::getInstance())
     {
         platoonInsertDistance = 0;
         platoonInsertHeadway = 0;
@@ -49,7 +48,6 @@ protected:
     int nPlatoons;
     int injectedCars;
     int injectedPlatoons;
-    DynamicPositionManager& positions;
     // number of lanes
     int nLanes;
     // insert distance

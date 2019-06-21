@@ -20,6 +20,7 @@
 
 #include <omnetpp.h>
 #include <queue>
+#include "plexe/utilities/DynamicPositionManager.h"
 #include "veins/modules/mobility/traci/TraCIScenarioManager.h"
 #include "veins/modules/mobility/traci/TraCICommandInterface.h"
 
@@ -34,6 +35,7 @@ public:
 
 public:
     TraCIBaseTrafficManager()
+        : positions(DynamicPositionManager::getInstance())
     {
         insertVehiclesTrigger = 0;
     }
@@ -73,6 +75,8 @@ protected:
     std::map<std::string, std::vector<std::string>> laneIdsOnEdge;
     // mapping between the route id and the ids of the lanes at the start of the route
     std::map<std::string, std::vector<std::string>> routeStartLaneIds;
+    // storage class that the traffic manager uses to store the formation, used for the initial setup of the position helper
+    DynamicPositionManager& positions;
 
     struct Vehicle {
         int id; // id of the vehicle in sumo. this is the index of the vehicle type in the array of vehicle types

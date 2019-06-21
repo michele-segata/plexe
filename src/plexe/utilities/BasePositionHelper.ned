@@ -20,13 +20,6 @@ package org.car2x.plexe.utilities;
 moduleinterface BasePositionHelper
 {
     parameters:
-        //number of cars in the scenario
-        int nCars;
-        //number of lanes in the scenario
-        int nLanes;
-        //number of cars in the platoon
-        int platoonSize;
-
         @display("i=block/app2");
         @class(plexe::BasePositionHelper);
 

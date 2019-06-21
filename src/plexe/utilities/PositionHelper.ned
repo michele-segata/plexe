@@ -22,23 +22,7 @@ import org.car2x.plexe.utilities.BasePositionHelper;
 simple PositionHelper like BasePositionHelper
 {
     parameters:
-
-        //number of cars in the scenario
-        int nCars;
-        //number of cars per platoon
-        int platoonSize;
-        //number of lanes
-        int nLanes;
-
-        int headerLength @unit("bit") = default(0bit);
-
         @display("i=block/app2");
         @class(plexe::PositionHelper);
-
-    gates:
-        input lowerLayerIn; // from network layer
-        output lowerLayerOut; // to network layer
-        input lowerControlIn; // control from network layer
-        output lowerControlOut; // control to network layer
 
 }

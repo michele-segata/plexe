@@ -86,23 +86,34 @@ void PlatoonsPlusHumanTraffic::insertPlatoons()
     double* laneOffset = new double[nLanes];
     for (int l = 0; l < nLanes; l++) laneOffset[l] = uniform(0, 20);
 
-    double currentPos = totalLength;
-    int currentCar = 0;
+    double currentRoadPosition = totalLength;
+    int currentVehiclePosition = 0;
+    int currentVehicleId = 0;
+    int basePlatoonId = 0;
     for (int i = 0; i < nCars / nLanes; i++) {
         for (int l = 0; l < nLanes; l++) {
-            automated.position = currentPos + laneOffset[l];
+            automated.position = currentRoadPosition + laneOffset[l];
             automated.lane = l;
             addVehicleToQueue(0, automated);
+            positions.addVehicleToPlatoon(currentVehicleId, currentVehiclePosition, basePlatoonId + l);
+            currentVehicleId++;
+            if (currentVehiclePosition == 0) {
+                PlatoonInfo info;
+                info.speed = automated.speed;
+                info.lane = automated.lane;
+                positions.setPlatoonInformation(basePlatoonId + l, info);
+            }
         }
-        currentCar++;
-        if (currentCar == platoonSize) {
-            currentCar = 0;
+        currentVehiclePosition++;
+        if (currentVehiclePosition == platoonSize) {
+            currentVehiclePosition = 0;
             // add inter platoon gap
-            currentPos -= (platoonDistance + 4);
+            currentRoadPosition -= (platoonDistance + 4);
+            basePlatoonId += nLanes;
         }
         else {
             // add intra platoon gap
-            currentPos -= (4 + distance);
+            currentRoadPosition -= (4 + distance);
         }
     }
 

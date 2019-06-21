@@ -49,13 +49,7 @@ void JoinManeuverScenario::prepareManeuverCars(int platoonLane)
         plexeTraciVehicle->setCruiseControlDesiredSpeed(100.0 / 3.6);
         plexeTraciVehicle->setActiveController(ACC);
         plexeTraciVehicle->setFixedLane(platoonLane);
-
-        positionHelper->setIsLeader(true);
-        positionHelper->setPlatoonLane(platoonLane);
-        positionHelper->setPlatoonSpeed(100 / 3.6);
-        positionHelper->setPlatoonId(positionHelper->getId());
-        setupFormation();
-
+        app->setPlatoonRole(PlatoonRole::LEADER);
         break;
     }
 
@@ -66,13 +60,7 @@ void JoinManeuverScenario::prepareManeuverCars(int platoonLane)
         plexeTraciVehicle->setCruiseControlDesiredSpeed(130.0 / 3.6);
         plexeTraciVehicle->setActiveController(CACC);
         plexeTraciVehicle->setFixedLane(platoonLane);
-
-        positionHelper->setIsLeader(false);
-        positionHelper->setPlatoonLane(platoonLane);
-        positionHelper->setPlatoonSpeed(100 / 3.6);
-        setupFormation();
-        positionHelper->setPlatoonId(positionHelper->getLeaderId());
-
+        app->setPlatoonRole(PlatoonRole::FOLLOWER);
         break;
     }
 
@@ -81,10 +69,6 @@ void JoinManeuverScenario::prepareManeuverCars(int platoonLane)
         plexeTraciVehicle->setCruiseControlDesiredSpeed(100 / 3.6);
         plexeTraciVehicle->setFixedLane(2);
         plexeTraciVehicle->setActiveController(ACC);
-
-        positionHelper->setPlatoonId(-1);
-        positionHelper->setIsLeader(false);
-        positionHelper->setPlatoonLane(-1);
 
         // after 30 seconds of simulation, start the maneuver
         startManeuver = new cMessage();

@@ -17,6 +17,8 @@
 
 #include "plexe/utilities/BasePositionHelper.h"
 
+#include <iostream>
+
 using namespace veins;
 
 namespace plexe {
@@ -26,17 +28,48 @@ Define_Module(BasePositionHelper);
 void BasePositionHelper::initialize(int stage)
 {
 
-    BaseApplLayer::initialize(stage);
+    cSimpleModule::initialize(stage);
 
     if (stage == 0) {
         mobility = veins::TraCIMobilityAccess().get(getParentModule());
         traci = mobility->getCommandInterface();
         traciVehicle = mobility->getVehicleCommandInterface();
-        nLanes = par("nLanes");
-        platoonSize = par("platoonSize");
-        nCars = par("nCars");
-        highestId = nCars - 1;
+        myId = getIdFromExternalId(getExternalId());
     }
+
+    if (stage == 1) {
+        formation = positions.getPlatoonFormation(myId);
+        position = positions.getPosition(myId);
+        platoonId = positions.getPlatoonId(myId);
+        PlatoonInfo info = positions.getPlatoonInformation(platoonId);
+        platoonSpeed = info.speed;
+        platoonLane = info.lane;
+        setVariablesAfterFormationChange();
+    }
+}
+
+int BasePositionHelper::getIdFromExternalId(const std::string externalId)
+{
+    int dotIndex = externalId.find_last_of('.');
+    std::string strId = externalId.substr(dotIndex + 1);
+    return strtol(strId.c_str(), 0, 10);
+}
+
+
+int BasePositionHelper::numInitStages() const
+{
+    return 2;
+}
+
+void BasePositionHelper::setVariablesAfterFormationChange()
+{
+    memberToPosition.clear();
+    for (int i = 0; i < formation.size(); i++)
+        memberToPosition[formation[i]] = i;
+    position = getMemberPosition(myId);
+    leaderId = formation[0];
+    frontId = isLeader() ? -1 : formation[position - 1];
+    backId = isLast() ? -1 : formation[position + 1];
 }
 
 std::string BasePositionHelper::getExternalId() const
@@ -47,11 +80,6 @@ std::string BasePositionHelper::getExternalId() const
 int BasePositionHelper::getId() const
 {
     return myId;
-}
-
-int BasePositionHelper::getHighestId() const
-{
-    return highestId;
 }
 
 int BasePositionHelper::getPosition() const
@@ -69,6 +97,11 @@ bool BasePositionHelper::isLeader() const
     return getLeaderId() == myId;
 }
 
+bool BasePositionHelper::isLast() const
+{
+    return position == formation.size() - 1;
+}
+
 int BasePositionHelper::getFrontId() const
 {
     if (isLeader())
@@ -84,12 +117,15 @@ int BasePositionHelper::getBackId() const
 
 int BasePositionHelper::getMemberId(const int position) const
 {
-    return -1;
+    if (position < formation.size()) return formation[position];
+    else return -1;
 }
 
 int BasePositionHelper::getMemberPosition(const int vehicleId) const
 {
-    return -1;
+    auto i = memberToPosition.find(vehicleId);
+    if (i == memberToPosition.end()) return -1;
+    else return i->second;
 }
 
 int BasePositionHelper::getPlatoonId() const
@@ -109,52 +145,17 @@ double BasePositionHelper::getPlatoonSpeed() const
 
 bool BasePositionHelper::isInSamePlatoon(const int vehicleId) const
 {
-    return false;
-}
-
-int BasePositionHelper::getLanesCount() const
-{
-    return nLanes;
+    return getMemberPosition(vehicleId) != -1;
 }
 
 int BasePositionHelper::getPlatoonSize() const
 {
-    return platoonSize;
+    return formation.size();
 }
 
 void BasePositionHelper::setId(const int id)
 {
     myId = id;
-}
-
-void BasePositionHelper::setHighestId(const int id)
-{
-    highestId = id;
-}
-
-void BasePositionHelper::setPosition(const int position)
-{
-    this->position = position;
-}
-
-void BasePositionHelper::setLeaderId(const int id)
-{
-    leaderId = id;
-}
-
-void BasePositionHelper::setIsLeader(const bool isLeader)
-{
-    leader = isLeader;
-}
-
-void BasePositionHelper::setFrontId(const int id)
-{
-    frontId = id;
-}
-
-void BasePositionHelper::setBackId(const int id)
-{
-    backId = id;
 }
 
 void BasePositionHelper::setPlatoonId(const int id)
@@ -172,24 +173,31 @@ void BasePositionHelper::setPlatoonSpeed(double speed)
     platoonSpeed = speed;
 }
 
-void BasePositionHelper::setLanesCount(const int lanes)
-{
-    nLanes = lanes;
-}
-
-void BasePositionHelper::setPlatoonSize(const int size)
-{
-    platoonSize = size;
-}
-
 const std::vector<int>& BasePositionHelper::getPlatoonFormation() const
 {
-    throw cRuntimeError("not implemented in base class");
+    return formation;
 }
 
 void BasePositionHelper::setPlatoonFormation(const std::vector<int>& formation)
 {
-    throw cRuntimeError("not implemented in base class");
+    this->formation = formation;
+    setVariablesAfterFormationChange();
+}
+
+void BasePositionHelper::dumpVehicleData() const
+{
+    std::cout << "Vehicle ID: " << myId << "\n";
+    std::cout << "\tPlatoon ID      : " << platoonId << "\n";
+    std::cout << "\tLeader ID       : " << leaderId << "\n";
+    std::cout << "\tFront ID        : " << frontId << "\n";
+    std::cout << "\tBack ID         : " << backId << "\n";
+    std::cout << "\tPlatoon speed   : " << platoonSpeed << " (m/s)\n";
+    std::cout << "\tPlatoon lane    : " << platoonLane << "\n";
+    std::cout << "\tPlatoon size    : " << formation.size() << "\n";
+    std::cout << "\tStored formation: ";
+    for (auto& v : formation)
+        std::cout << v << " ";
+    std::cout << "\n";
 }
 
 } // namespace plexe

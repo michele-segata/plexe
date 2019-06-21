@@ -19,8 +19,15 @@
 #define DYNAMICPOSITIONMANAGER_H_
 
 #include <map>
+#include <vector>
 
 namespace plexe {
+
+// platoon information
+typedef struct {
+    double speed;
+    int lane;
+} PlatoonInfo;
 
 class DynamicPositionManager {
 
@@ -34,6 +41,8 @@ class DynamicPositionManager {
     typedef std::map<int, int> Position;
     // map from platoon id to positions
     typedef std::map<int, Position> Positions;
+    // map from platoon id to information
+    typedef std::map<int, PlatoonInfo> PlatoonInformation;
 
 public:
     void addVehicleToPlatoon(const int vehicleId, const int position, const int platoonId);
@@ -43,6 +52,12 @@ public:
         removeVehicleFromPlatoon(vehicleId);
     }
     void printPlatoons();
+    void setPlatoonInformation(int platoonId, const PlatoonInfo& info);
+    PlatoonInfo getPlatoonInformation(int platoonId) const;
+    int getPlatoonId(int vehicleId) const;
+    std::vector<int> getPlatoonFormation(int vehicleId) const;
+    int getPosition(int vehicleId) const;
+    int getMemberId(int platoonId, const int position) const;
 
     static DynamicPositionManager& getInstance();
 
@@ -55,6 +70,7 @@ public:
     Platoons platoons;
     Positions positions;
     VehicleToPlatoon vehToPlatoons;
+    PlatoonInformation information;
 };
 
 } // namespace plexe
