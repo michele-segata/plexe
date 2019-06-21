@@ -16,8 +16,8 @@
 //
 
 enum UnicastMessageType {
-	DATA = 0;
-	ACK = 1;
+    DATA = 0;
+    ACK = 1;
 };
 
 //
