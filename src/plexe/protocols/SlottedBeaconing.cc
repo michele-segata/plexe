@@ -65,7 +65,7 @@ void SlottedBeaconing::messageReceived(PlatooningBeacon* pkt, UnicastMessage* un
 
     int senderId = pkt->getVehicleId();
 
-    if (positionHelper->getLeaderId() == senderId) {
+    if (positionHelper->getLeaderId() == senderId && !positionHelper->isLast()) {
         // we received a message from the leader. use that for synchronization
 
         if (sendBeacon->isScheduled()) {
