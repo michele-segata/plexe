@@ -29,6 +29,8 @@ namespace plexe {
 Define_Module(BaseProtocol);
 
 
+const int BaseProtocol::BEACON_TYPE = 12345;
+
 void BaseProtocol::initialize(int stage)
 {
 

@@ -180,7 +180,7 @@ protected:
 
 public:
     // id for beacon message
-    static const int BEACON_TYPE = 12345;
+    static const int BEACON_TYPE;
 
     BaseProtocol()
     {
