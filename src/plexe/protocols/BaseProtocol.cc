@@ -230,7 +230,6 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage* unicast)
     ApplicationMap::iterator app = apps.find(unicast->getKind());
     if (app != apps.end() && app->second.size() != 0) {
         AppList applications = app->second;
-        AppList::iterator i;
         for (AppList::iterator i = applications.begin(); i != applications.end(); i++) {
             // send the message to the applications responsible for it
             send(unicast->dup(), std::get<1>(*i));
@@ -307,7 +306,6 @@ void BaseProtocol::handleLowerControl(cMessage* msg)
             ApplicationMap::iterator app = apps.find(unicast->getKind());
             if (app != apps.end() && app->second.size() != 0) {
                 AppList applications = app->second;
-                AppList::iterator i;
                 for (AppList::iterator i = applications.begin(); i != applications.end(); i++) {
                     // send the message to the applications responsible for it
                     send(ctrl->dup(), std::get<3>(*i));
