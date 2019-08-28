@@ -28,9 +28,6 @@ namespace plexe {
 
 Define_Module(BaseProtocol);
 
-// set signals for channel busy and collisions
-const simsignal_t BaseProtocol::sigChannelBusy = registerSignal("org.car2x.veins.modules.mac.sigChannelBusy");
-const simsignal_t BaseProtocol::sigCollision = registerSignal("org.car2x.veins.modules.mac.sigCollision");
 
 void BaseProtocol::initialize(int stage)
 {
@@ -85,8 +82,8 @@ void BaseProtocol::initialize(int stage)
         frontDelayOut.setName("frontDelay");
 
         // subscribe to signals for channel busy state and collisions
-        findHost()->subscribe(sigChannelBusy, this);
-        findHost()->subscribe(sigCollision, this);
+        findHost()->subscribe(veins::Mac1609_4::sigChannelBusy, this);
+        findHost()->subscribe(veins::Mac1609_4::sigCollision, this);
 
         // init statistics collection. round to second
         SimTime rounded = SimTime(floor(simTime().dbl() + 1), SIMTIME_S);
@@ -243,7 +240,7 @@ void BaseProtocol::receiveSignal(cComponent* source, simsignal_t signalID, bool 
 {
 
     Enter_Method_Silent();
-    if (signalID == sigChannelBusy) {
+    if (signalID == veins::Mac1609_4::sigChannelBusy) {
         if (v && !channelBusy) {
             // channel turned busy, was idle before
             startBusy = simTime();
@@ -259,7 +256,7 @@ void BaseProtocol::receiveSignal(cComponent* source, simsignal_t signalID, bool 
             return;
         }
     }
-    if (signalID == sigCollision) {
+    if (signalID == veins::Mac1609_4::sigCollision) {
         collision();
         nCollisions++;
     }

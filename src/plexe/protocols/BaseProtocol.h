@@ -179,9 +179,6 @@ protected:
     std::unique_ptr<traci::CommandInterface::Vehicle> plexeTraciVehicle;
 
 public:
-    static const simsignal_t sigChannelBusy;
-    static const simsignal_t sigCollision;
-
     // id for beacon message
     static const int BEACON_TYPE = 12345;
 
