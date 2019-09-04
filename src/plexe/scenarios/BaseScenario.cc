@@ -126,14 +126,9 @@ void BaseScenario::initializeControllers()
     traciVehicle->setParameter(CC_PAR_UMIN, uMin);
     traciVehicle->setParameter(CC_PAR_UMAX, uMax);
     // PATH's CACC parameters
-    traciVehicle->setParameter(CC_PAR_CACC_C1, caccC1);
-    traciVehicle->setParameter(CC_PAR_CACC_OMEGA_N, caccOmegaN);
-    traciVehicle->setParameter(CC_PAR_CACC_XI, caccXi);
-    traciVehicle->setParameter(CC_PAR_CACC_SPACING, 5);
+    plexeTraciVehicle->setPathCACCParameters(caccOmegaN, caccXi, caccC1, 5);
     // Ploeg's parameters
-    traciVehicle->setParameter(CC_PAR_PLOEG_H, ploegH);
-    traciVehicle->setParameter(CC_PAR_PLOEG_KP, ploegKp);
-    traciVehicle->setParameter(CC_PAR_PLOEG_KD, ploegKd);
+    plexeTraciVehicle->setPloegCACCParameters(ploegKp, ploegKd, ploegH);
     // flatbed's parameters
     traciVehicle->setParameter(CC_PAR_FLATBED_KA, flatbedKa);
     traciVehicle->setParameter(CC_PAR_FLATBED_KV, flatbedKv);
