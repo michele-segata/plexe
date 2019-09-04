@@ -129,6 +129,7 @@ void BaseScenario::initializeControllers()
     traciVehicle->setParameter(CC_PAR_CACC_C1, caccC1);
     traciVehicle->setParameter(CC_PAR_CACC_OMEGA_N, caccOmegaN);
     traciVehicle->setParameter(CC_PAR_CACC_XI, caccXi);
+    traciVehicle->setParameter(CC_PAR_CACC_SPACING, 5);
     // Ploeg's parameters
     traciVehicle->setParameter(CC_PAR_PLOEG_H, ploegH);
     traciVehicle->setParameter(CC_PAR_PLOEG_KP, ploegKp);
