@@ -41,6 +41,7 @@ simple BBaseScenario like BaseScenario
         double caccXi = default(1);
         double caccOmegaN @unit("Hz") = default(0.2Hz);
         double caccC1 = default(0.5);
+        double caccSpacing @unit("m") = default(5m);
         double engineTau @unit("s") = default(0.5s);
         double uMin @unit("mpsps") = default(-1e6 mpsps);
         double uMax @unit("mpsps") = default(1e6 mpsps);

@@ -57,6 +57,7 @@ protected:
     double caccXi;
     double caccOmegaN;
     double caccC1;
+    double caccSpacing;
     double engineTau;
     double uMin, uMax;
     double ploegH;

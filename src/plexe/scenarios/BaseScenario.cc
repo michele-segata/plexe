@@ -41,6 +41,7 @@ void BaseScenario::initialize(int stage)
         caccXi = par("caccXi").doubleValue();
         caccOmegaN = par("caccOmegaN").doubleValue();
         caccC1 = par("caccC1").doubleValue();
+        caccSpacing = par("caccSpacing").doubleValueInUnit("m");
         engineTau = par("engineTau").doubleValue();
         uMin = par("uMin").doubleValue();
         uMax = par("uMax").doubleValue();
@@ -126,7 +127,7 @@ void BaseScenario::initializeControllers()
     traciVehicle->setParameter(CC_PAR_UMIN, uMin);
     traciVehicle->setParameter(CC_PAR_UMAX, uMax);
     // PATH's CACC parameters
-    plexeTraciVehicle->setPathCACCParameters(caccOmegaN, caccXi, caccC1, 5);
+    plexeTraciVehicle->setPathCACCParameters(caccOmegaN, caccXi, caccC1, caccSpacing);
     // Ploeg's parameters
     plexeTraciVehicle->setPloegCACCParameters(ploegKp, ploegKd, ploegH);
     // flatbed's parameters

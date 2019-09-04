@@ -37,6 +37,7 @@ moduleinterface BaseScenario extends IBaseApplLayer
         double caccXi;
         double caccOmegaN @unit("Hz");
         double caccC1;
+        double caccSpacing @unit("m");
         double engineTau @unit("s");
         double uMin @unit("mpsps");
         double uMax @unit("mpsps");
