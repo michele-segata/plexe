@@ -100,6 +100,7 @@ public:
     static const omnetpp::simsignal_t sigTransmissionAttempts;
 
     virtual void initialize(int stage);
+    int getMacAddress() { return macAddress; }
 
 protected:
     virtual void onBeacon(veins::BaseFrame1609_4* wsm);
