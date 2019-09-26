@@ -213,6 +213,16 @@ void UnicastProtocol::resendMessage()
     nAttempts++;
 }
 
+void UnicastProtocol::finishedUnicastTransmission()
+{
+    ASSERT(currentMsg);
+    delete currentMsg;
+    currentMsg = nullptr;
+    nAttempts = 0;
+
+    processNextPacket();
+}
+
 void UnicastProtocol::handleUnicastMessage(const UnicastMessage* msg)
 {
 
@@ -294,11 +304,7 @@ void UnicastProtocol::handleAckMessage(const UnicastMessage* ack)
         // we've got the ack. stop timeout timer
         if (timeout->isScheduled()) cancelEvent(timeout);
         // message has been correctly received by the destination. move on to next packet
-        delete currentMsg;
-        currentMsg = 0;
-        nAttempts = 0;
-
-        processNextPacket();
+        finishedUnicastTransmission();
     }
 }
 
@@ -367,11 +373,7 @@ void UnicastProtocol::handleSelfMsg(cMessage* msg)
             send(sendError, upperControlOut);
 
             // the packet that we unsuccessfully tried to send is no more needed. delete it
-            delete currentMsg;
-            currentMsg = 0;
-            nAttempts = 0;
-
-            processNextPacket(); // start transmissions again after send fail
+            finishedUnicastTransmission();
         }
     }
 }

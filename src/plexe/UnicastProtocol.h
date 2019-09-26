@@ -156,6 +156,11 @@ protected:
     void resendMessage();
 
     /**
+     * Clean up fields associated with current unicast transmission and try to transmit next packet.
+     */
+    void finishedUnicastTransmission();
+
+    /**
      * After an ack is received or a message is discarded after a certain number of attempts,
      * this method can be called to process the next packet in the queue, if any.
      */
