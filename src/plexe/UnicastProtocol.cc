@@ -174,7 +174,6 @@ void UnicastProtocol::sendMessageDown(int destination, cPacket* msg, int encapsu
     }
     // if we are sending a broadcast, delete the packet from the queue
     else {
-        queue.pop();
         processNextPacket();
     }
 }
@@ -295,7 +294,6 @@ void UnicastProtocol::handleAckMessage(const UnicastMessage* ack)
         // we've got the ack. stop timeout timer
         if (timeout->isScheduled()) cancelEvent(timeout);
         // message has been correctly received by the destination. move on to next packet
-        queue.pop();
         delete currentMsg;
         currentMsg = 0;
         nAttempts = 0;
@@ -369,7 +367,6 @@ void UnicastProtocol::handleSelfMsg(cMessage* msg)
             send(sendError, upperControlOut);
 
             // the packet that we unsuccessfully tried to send is no more needed. delete it
-            queue.pop();
             delete currentMsg;
             currentMsg = 0;
             nAttempts = 0;
@@ -383,12 +380,13 @@ void UnicastProtocol::processNextPacket()
 {
 
     // the queue is empty. no packet to process
-    if (queue.empty()) {
+    if (currentMsg || queue.empty()) {
         return;
     }
 
     // get the message from the queue
     UnicastMessage* toSend = queue.front();
+    queue.pop();
 
     // send message down
     sendMessageDown(toSend->getDestination(), toSend->decapsulate(), toSend->getEncapsulationId(), toSend->getPriority(), toSend->getTimestamp(), (Channel) toSend->getChannel(), toSend->getKind());
@@ -414,6 +412,15 @@ UnicastProtocol::~UnicastProtocol()
 {
     cancelAndDelete(timeout);
     timeout = nullptr;
+
+    if (currentMsg) {
+        delete currentMsg;
+        currentMsg = nullptr;
+    }
+    while (!queue.empty()) {
+        delete queue.front();
+        queue.pop();
+    }
 }
 
 } // namespace plexe
