@@ -26,6 +26,7 @@
 #include "plexe/utilities/DynamicPositionManager.h"
 #include "veins/modules/mobility/traci/TraCIScenarioManager.h"
 #include "veins/modules/mobility/traci/TraCICommandInterface.h"
+#include "veins/modules/utility/SignalManager.h"
 
 namespace plexe {
 
@@ -51,8 +52,6 @@ private:
 
     // total number of vehicles generated
     int vehCounter;
-    // has the data about the scenario been loaded?
-    bool initScenario;
     // should vehicles be inserted in order, or whenever there is room for doing so?
     bool insertInOrder;
 
@@ -93,35 +92,8 @@ protected:
     typedef std::map<int, std::deque<struct Vehicle>> InsertQueue;
 
 private:
-    class InsertTrigger : public cListener {
-    public:
-        InsertTrigger(TraCIBaseTrafficManager* owner)
-            : owner(owner)
-        {
-        }
-
-        void receiveSignal(cComponent*, simsignal_t signalID, const simtime_t&, cObject*) override;
-
-    private:
-        TraCIBaseTrafficManager* owner;
-    };
-
-    class LoadTrigger : public cListener {
-    public:
-        LoadTrigger(TraCIBaseTrafficManager* owner)
-            : owner(owner)
-        {
-        }
-
-        void receiveSignal(cComponent* source, simsignal_t signalID, bool b, cObject* details) override;
-
-    private:
-        TraCIBaseTrafficManager* owner;
-    };
-
     InsertQueue vehicleInsertQueue;
-    InsertTrigger insertTrigger{this};
-    LoadTrigger loadTrigger{this};
+    veins::SignalManager signalManager;
 
 protected:
     void addVehicleToQueue(int routeId, struct Vehicle v);

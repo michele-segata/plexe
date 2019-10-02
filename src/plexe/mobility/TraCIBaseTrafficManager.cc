@@ -50,11 +50,10 @@ void TraCIBaseTrafficManager::initialize(int stage)
 
         // reset vehicles counter
         vehCounter = 0;
-        initScenario = false;
 
         // subscribe to signals
-        manager->subscribe(veins::TraCIScenarioManager::traciInitializedSignal, &loadTrigger);
-        manager->subscribe(veins::TraCIScenarioManager::traciTimestepEndSignal, &insertTrigger);
+        auto init = [this](veins::SignalPayload<bool>) { loadSumoScenario(); };
+        signalManager.subscribeCallback(manager, veins::TraCIScenarioManager::traciInitializedSignal, init);
     }
 }
 
@@ -133,13 +132,12 @@ void TraCIBaseTrafficManager::loadSumoScenario()
     // inform inheriting classes that scenario is loaded
     scenarioLoaded();
 
-    initScenario = true;
+    auto timestep = [this](veins::SignalPayload<simtime_t const&>) { insertVehicles(); };
+    signalManager.subscribeCallback(manager, veins::TraCIScenarioManager::traciTimestepEndSignal, timestep);
 }
 
 void TraCIBaseTrafficManager::insertVehicles()
 {
-    ASSERT(initScenario);
-
     // insert the vehicles in the queue
     for (InsertQueue::iterator i = vehicleInsertQueue.begin(); i != vehicleInsertQueue.end(); ++i) {
         std::string route = routeIds[i->first];
@@ -200,20 +198,6 @@ void TraCIBaseTrafficManager::insertVehicles()
 void TraCIBaseTrafficManager::addVehicleToQueue(int routeId, struct Vehicle v)
 {
     vehicleInsertQueue[routeId].push_back(v);
-}
-
-void TraCIBaseTrafficManager::InsertTrigger::receiveSignal(cComponent*, simsignal_t signalID, const simtime_t&, cObject*)
-{
-    ASSERT(signalID == veins::TraCIScenarioManager::traciTimestepEndSignal);
-
-    owner->insertVehicles();
-}
-
-void TraCIBaseTrafficManager::LoadTrigger::receiveSignal(cComponent* source, simsignal_t signalID, bool b, cObject* details)
-{
-    ASSERT(signalID == veins::TraCIScenarioManager::traciInitializedSignal && b);
-
-    owner->loadSumoScenario();
 }
 
 } // namespace plexe
