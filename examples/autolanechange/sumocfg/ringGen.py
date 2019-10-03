@@ -1,15 +1,26 @@
 #!/usr/bin/env python2
-# -*- coding: utf-8 -*-
 #
-# Circular road creation utility
-#
-# Generate all necessary network SUMO files for simulating circular traffic.
-# Vehicle definition must be done by hand. SUMO must be correctly installed and
-# present in your system PATH (see SUMO wiki for details on installation).
-#
-# Copyright (C) 2017-2018 Luca Terruzzi <luca.terruzzi@studenti.unitn.it>
-# Copyright (C) 2017-2018 Riccardo Colombo <riccardo.colombo@studenti.unitn.it>
+# Copyright (C) 2017-2019 Luca Terruzzi <luca.terruzzi@studenti.unitn.it>
+# Copyright (C) 2017-2019 Riccardo Colombo <riccardo.colombo@studenti.unitn.it>
 # Successive modifications by Michele Segata <segata@ccs-labs.org>
+#
+# Documentation for these modules is at http://veins.car2x.org/
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
 import argparse
@@ -132,6 +143,39 @@ coord2 = ' '.join(["%.2f,%.2f" % x for x in shape2])
 
 print ("Creating node file..."),
 gen_string = "<!-- Generated with %s -->\n" % (' '.join(sys.argv))
+gen_string += """
+<!--
+// Copyright (C) 2019 Michele Segata <segata@ccs-labs.org>
+//
+// Documentation for these modules is at http://veins.car2x.org/
+//
+// SPDX-License-Identifier: (GPL-2.0-or-later OR CC-BY-SA-4.0)
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//
+// -
+//
+// At your option, you can also redistribute and/or modify this file
+// under a
+// Creative Commons Attribution-ShareAlike 4.0 International License.
+//
+// You should have received a copy of the license along with this
+// work.  If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
+-->
+
+"""
 # Write the two nodes in the node file
 with open(args.name + ".nod.xml", "w") as node_file:
     node_file.write(gen_string)
