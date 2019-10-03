@@ -22,7 +22,6 @@
 import org.car2x.veins.base.connectionManager.ConnectionManager;
 import org.car2x.veins.base.modules.BaseWorldUtility;
 import org.car2x.veins.modules.mobility.traci.TraCIScenarioManagerForker;
-import org.car2x.veins.modules.obstacle.ObstacleControl;
 import org.car2x.veins.modules.world.annotations.AnnotationManager;
 
 import org.car2x.plexe.PlexeManager;
@@ -37,9 +36,6 @@ network Highway
         string traffic_type;
         @display("bgb=$playgroundSizeX,$playgroundSizeY");
     submodules:
-        obstacles: ObstacleControl {
-            @display("p=240,50");
-        }
         annotations: AnnotationManager {
             @display("p=260,50");
         }

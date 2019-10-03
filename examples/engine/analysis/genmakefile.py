@@ -21,7 +21,7 @@
 #
 
 import sys
-import ConfigParser
+import configparser
 
 
 CONFIG = 0
@@ -33,7 +33,7 @@ MERGE = 5
 OUTTYPE = 6
 
 
-class multidict(dict):
+class Multidict(dict):
     _unique = 0
 
     def __setitem__(self, key, val):
@@ -42,8 +42,9 @@ class multidict(dict):
             key += str(self._unique)
         dict.__setitem__(self, key, val)
 
+
 # instantiate a config parser
-cfg = ConfigParser.ConfigParser(None, multidict)
+cfg = configparser.ConfigParser(None, Multidict, strict=False)
 
 # parse the config file
 if len(sys.argv) != 2:
@@ -51,11 +52,11 @@ if len(sys.argv) != 2:
     sys.exit(1)
 
 try:
-    cfgFile = file(sys.argv[1])
-    cfg.readfp(cfgFile)
+    cfgFile = open(sys.argv[1])
+    cfg.read_file(cfgFile)
 except Exception as e:
-    print("Unable to parse " + sys.argv[1])
-    print(e.message)
+    print(("Unable to parse " + sys.argv[1]))
+    print(e)
     sys.exit(1)
 
 # where the results are stored
@@ -71,19 +72,19 @@ for s in cfg.sections():
 
     if s.startswith("config"):
         if not cfg.has_option(s, "out"):
-            print("section " + s + " misses out option")
+            print(("section " + s + " misses out option"))
             sys.exit(1)
         if not cfg.has_option(s, "config"):
-            print("section " + s + " misses config option")
+            print(("section " + s + " misses config option"))
             sys.exit(1)
         if not cfg.has_option(s, "map"):
-            print("section " + s + " misses map option")
+            print(("section " + s + " misses map option"))
             sys.exit(1)
         if not cfg.has_option(s, "mapFile"):
-            print("section " + s + " misses mapFile option")
+            print(("section " + s + " misses mapFile option"))
             sys.exit(1)
         if not cfg.has_option(s, "prefix"):
-            print("section " + s + " misses prefix name")
+            print(("section " + s + " misses prefix name"))
             sys.exit(1)
         out_type = "Rdata"
         if cfg.has_option(s, "type"):
@@ -94,11 +95,11 @@ for s in cfg.sections():
         configs.append([cfg.get(s, "config"), cfg.get(s, "map"), cfg.get(s, "mapFile"), cfg.get(s, "prefix"), cfg.get(s, "out"), cfg.get(s, "merge"), out_type])
 
 
-def getSpaces(string, length):
+def get_spaces(string, length):
     return ' ' * (length - len(string))
 
 
-def getLonger(configs):
+def get_longer(configs):
     longer = 0
     for c in configs:
         if len(c[OUT]) > longer:
@@ -113,18 +114,18 @@ print("SCAVETOOL = scavetool")
 print("# scripts location")
 print("SCRIPTDIR = .")
 print("# results location")
-print("RESDIR = " + resultDir)
+print(("RESDIR = " + resultDir))
 print("# script for merging")
 print("MERGESCRIPT = $(SCRIPTDIR)/merge.R")
 print("")
 
-longer = getLonger(configs)
+longer = get_longer(configs)
 
 for c in configs:
-    print("# match all .vec files for the " + c[CONFIG] + " config")
-    print(c[OUT].upper() + getSpaces(c[OUT], longer) + " = $(wildcard $(RESDIR)/" + c[CONFIG] + "*.vec)")
-    print("# change suffix from .vec to ." + c[OUTTYPE] + " and add the " + c[PREFIX] + " prefix")
-    print(c[OUT].upper() + "_DATA" + getSpaces(c[OUT] + "_DATA", longer) + " = $(" + c[OUT].upper() + ":$(RESDIR)/%.vec=$(RESDIR)/" + c[PREFIX] + ".%." + c[OUTTYPE] + ")")
+    print(("# match all .vec files for the " + c[CONFIG] + " config"))
+    print((c[OUT].upper() + get_spaces(c[OUT], longer) + " = $(wildcard $(RESDIR)/" + c[CONFIG] + "*.vec)"))
+    print(("# change suffix from .vec to ." + c[OUTTYPE] + " and add the " + c[PREFIX] + " prefix"))
+    print((c[OUT].upper() + "_DATA" + get_spaces(c[OUT] + "_DATA", longer) + " = $(" + c[OUT].upper() + ":$(RESDIR)/%.vec=$(RESDIR)/" + c[PREFIX] + ".%." + c[OUTTYPE] + ")"))
 
 print("")
 print("# vector index files and Rdata files")
@@ -141,20 +142,20 @@ print("")
 print("")
 
 for c in configs:
-    print("# to make " + c[OUT] + "." + c[OUTTYPE] + " we need to merge all files starting with " + c[PREFIX] + "." + c[CONFIG])
-    print("# before this, check that all " + c[OUT].upper() + "_DATA files have been processed")
-    print("$(RESDIR)/" + c[OUT] + "." + c[OUTTYPE] + ": $(" + c[OUT].upper() + "_DATA)")
+    print(("# to make " + c[OUT] + "." + c[OUTTYPE] + " we need to merge all files starting with " + c[PREFIX] + "." + c[CONFIG]))
+    print(("# before this, check that all " + c[OUT].upper() + "_DATA files have been processed"))
+    print(("$(RESDIR)/" + c[OUT] + "." + c[OUTTYPE] + ": $(" + c[OUT].upper() + "_DATA)"))
     if c[MERGE] == '1':
-        print("\tRscript $(MERGESCRIPT) $(RESDIR)/ " + c[PREFIX] + "." + c[CONFIG] + " $(notdir $@) " + c[MAPFILE] + " " + c[MAP] + " " + c[OUTTYPE])
+        print(("\tRscript $(MERGESCRIPT) $(RESDIR)/ " + c[PREFIX] + "." + c[CONFIG] + " $(notdir $@) " + c[MAPFILE] + " " + c[MAP] + " " + c[OUTTYPE]))
     else:
         print("\tRscript $(MERGESCRIPT)")
-    print(c[OUT] + "." + c[OUTTYPE] + ": $(RESDIR)/" + c[OUT] + "." + c[OUTTYPE])
+    print((c[OUT] + "." + c[OUTTYPE] + ": $(RESDIR)/" + c[OUT] + "." + c[OUTTYPE]))
     print("")
 
 for c in configs:
-    print("# to make all " + c[PREFIX] + ".*." + c[OUTTYPE] + " files we need to run the generic parser")
-    print(c[PREFIX] + ".%." + c[OUTTYPE] + ": %.vec %.vci")
-    print("\tRscript generic-parser.R $< " + c[MAPFILE] + " " + c[MAP] + " " + c[PREFIX] + " " + c[OUTTYPE])
+    print(("# to make all " + c[PREFIX] + ".*." + c[OUTTYPE] + " files we need to run the generic parser"))
+    print((c[PREFIX] + ".%." + c[OUTTYPE] + ": %.vec %.vci"))
+    print(("\tRscript generic-parser.R $< " + c[MAPFILE] + " " + c[MAP] + " " + c[PREFIX] + " " + c[OUTTYPE]))
     print("")
 
 print("# if vec files are not indexed, index them")
