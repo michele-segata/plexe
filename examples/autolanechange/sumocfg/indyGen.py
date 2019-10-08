@@ -4,8 +4,6 @@
 # Copyright (C) 2017-2019 Riccardo Colombo <riccardo.colombo@studenti.unitn.it>
 # Successive modifications by Michele Segata <segata@ccs-labs.org>
 #
-# Documentation for these modules is at http://veins.car2x.org/
-#
 # SPDX-License-Identifier: GPL-2.0-or-later
 #
 # This program is free software; you can redistribute it and/or modify

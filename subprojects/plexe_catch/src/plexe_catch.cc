@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2019 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2018 Christoph Sommer <sommer@ccs-labs.org>
 //
 // Documentation for these modules is at http://veins.car2x.org/
 //
