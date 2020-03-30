@@ -25,6 +25,7 @@
 #include "veins/modules/messages/BaseFrame1609_4_m.h"
 
 #include "plexe/PlexeManager.h"
+#include "plexe/driver/Veins11pRadioDriver.h"
 
 using namespace veins;
 
@@ -114,8 +115,8 @@ void BaseProtocol::initialize(int stage)
         // this is the id of the vehicle. used also as network address
         myId = positionHelper->getId();
         length = traciVehicle->getLength();
-        if (BaseMacLayer* mac = FindModule<BaseMacLayer*>::findSubModule(getParentModule())) {
-            mac->setMACAddress(myId);
+        if (Veins11pRadioDriver* driver = FindModule<Veins11pRadioDriver*>::findSubModule(getParentModule())) {
+            driver->registerNode(myId);
         }
     }
 }

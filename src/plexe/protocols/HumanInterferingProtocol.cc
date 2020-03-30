@@ -22,6 +22,7 @@
 
 #include "plexe/messages/InterferingBeacon_m.h"
 #include "veins/modules/messages/PhyControlMessage_m.h"
+#include "plexe/driver/Veins11pRadioDriver.h"
 
 using namespace veins;
 
@@ -51,8 +52,8 @@ void HumanInterferingProtocol::initialize(int stage)
         // get pointer to mac
         mac = FindModule<Mac1609_4*>::findSubModule(getParentModule());
 
-        if (BaseMacLayer* mac = FindModule<BaseMacLayer*>::findSubModule(getParentModule())) {
-            mac->setMACAddress(getParentModule()->getIndex() + 1e6);
+        if (Veins11pRadioDriver* driver = FindModule<Veins11pRadioDriver*>::findSubModule(getParentModule())) {
+            driver->registerNode(getParentModule()->getIndex() + 1e6);
         }
 
         // beaconing interval in seconds

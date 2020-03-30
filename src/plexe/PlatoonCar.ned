@@ -29,6 +29,7 @@ import org.car2x.plexe.utilities.BasePositionHelper;
 import org.car2x.plexe.scenarios.BaseScenario;
 import org.car2x.plexe.protocols.BaseProtocol;
 import org.car2x.plexe.apps.BaseApp;
+import org.car2x.plexe.driver.Veins11pRadioDriver;
 
 module PlatoonCar
 {
@@ -62,6 +63,10 @@ module PlatoonCar
                 @display("p=60,200");
         }
 
+        veins11pDriver: Veins11pRadioDriver {
+            parameters:
+                @display("p=60,200");
+        }
 
         nic: Nic80211p {
             parameters:
@@ -73,8 +78,10 @@ module PlatoonCar
                 @display("p=130,172;i=block/cogwheel");
         }
     connections allowunconnected:
-        nic.upperLayerIn <-- prot.lowerLayerOut;
-        nic.upperLayerOut --> prot.lowerLayerIn;
+        nic.upperLayerIn <-- veins11pDriver.lowerLayerOut;
+        nic.upperLayerOut --> veins11pDriver.lowerLayerIn;
+        veins11pDriver.upperLayerIn <-- prot.lowerLayerOut;
+        veins11pDriver.upperLayerOut --> prot.lowerLayerIn;
 
         radioIn --> nic.radioIn;
 
