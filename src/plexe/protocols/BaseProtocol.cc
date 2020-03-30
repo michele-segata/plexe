@@ -22,6 +22,7 @@
 
 #include "veins/modules/mac/ieee80211p/Mac1609_4.h"
 #include "veins/base/utils/FindModule.h"
+#include "veins/modules/messages/BaseFrame1609_4_m.h"
 
 #include "plexe/PlexeManager.h"
 
@@ -113,11 +114,9 @@ void BaseProtocol::initialize(int stage)
         // this is the id of the vehicle. used also as network address
         myId = positionHelper->getId();
         length = traciVehicle->getLength();
-        // tell the unicast protocol below which mac address to use via control message
-        UnicastProtocolControlMessage* setMacAddress = new UnicastProtocolControlMessage("");
-        setMacAddress->setControlCommand(SET_MAC_ADDRESS);
-        setMacAddress->setCommandValue(myId);
-        send(setMacAddress, lowerControlOut);
+        if (BaseMacLayer* mac = FindModule<BaseMacLayer*>::findSubModule(getParentModule())) {
+            mac->setMACAddress(myId);
+        }
     }
 }
 
@@ -163,7 +162,7 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress)
     sendDown(createBeacon(destinationAddress).release());
 }
 
-std::unique_ptr<UnicastMessage> BaseProtocol::createBeacon(int destinationAddress)
+std::unique_ptr<BaseFrame1609_4> BaseProtocol::createBeacon(int destinationAddress)
 {
     // vehicle's data to be included in the message
     VEHICLE_DATA data;
@@ -171,10 +170,10 @@ std::unique_ptr<UnicastMessage> BaseProtocol::createBeacon(int destinationAddres
     plexeTraciVehicle->getVehicleData(&data);
 
     // create and send beacon
-    auto unicast = veins::make_unique<UnicastMessage>("", BEACON_TYPE);
-    unicast->setDestination(destinationAddress);
-    unicast->setPriority(priority);
-    unicast->setChannel(static_cast<int>(Channel::cch));
+    auto wsm = veins::make_unique<BaseFrame1609_4>("", BEACON_TYPE);
+    wsm->setRecipientAddress(LAddress::L2BROADCAST());
+    wsm->setChannelNumber(static_cast<int>(Channel::cch));
+    wsm->setUserPriority(priority);
 
     // create platooning beacon with data about the car
     PlatooningBeacon* pkt = new PlatooningBeacon();
@@ -194,13 +193,12 @@ std::unique_ptr<UnicastMessage> BaseProtocol::createBeacon(int destinationAddres
     pkt->setByteLength(packetSize);
     pkt->setSequenceNumber(seq_n++);
 
-    // put platooning beacon into the message for the UnicastProtocol
-    unicast->encapsulate(pkt);
+    wsm->encapsulate(pkt);
 
-    return unicast;
+    return wsm;
 }
 
-void BaseProtocol::handleUnicastMsg(UnicastMessage* unicast)
+void BaseProtocol::handleUnicastMsg(BaseFrame1609_4* unicast)
 {
 
     ASSERT2(unicast, "received a frame not of type UnicastMessage");
@@ -281,49 +279,16 @@ void BaseProtocol::handleMessage(cMessage* msg)
 
 void BaseProtocol::handleLowerMsg(cMessage* msg)
 {
-    handleUnicastMsg(check_and_cast<UnicastMessage*>(msg));
+    handleUnicastMsg(check_and_cast<BaseFrame1609_4*>(msg));
 }
 
 void BaseProtocol::handleUpperMsg(cMessage* msg)
 {
-    sendDown(check_and_cast<UnicastMessage*>(msg));
+    sendDown(check_and_cast<BaseFrame1609_4*>(msg));
 }
 
-void BaseProtocol::handleUpperControl(cMessage* msg)
+void BaseProtocol::messageReceived(PlatooningBeacon* pkt, BaseFrame1609_4* unicast)
 {
-    UnicastProtocolControlMessage* ctrl = dynamic_cast<UnicastProtocolControlMessage*>(msg);
-    if (ctrl) {
-        if (ctrl->getControlCommand() == SET_MAC_ADDRESS) {
-            // set id to be the address we want to set to the NIC card
-            myId = ctrl->getCommandValue();
-        }
-        sendControlDown(ctrl);
-    }
-}
-
-void BaseProtocol::handleLowerControl(cMessage* msg)
-{
-    UnicastProtocolControlMessage* ctrl = dynamic_cast<UnicastProtocolControlMessage*>(msg);
-    if (ctrl) {
-        UnicastMessage* unicast = dynamic_cast<UnicastMessage*>(ctrl->getEncapsulatedPacket());
-        if (unicast) {
-            // find the application responsible for this beacon
-            ApplicationMap::iterator app = apps.find(unicast->getKind());
-            if (app != apps.end() && app->second.size() != 0) {
-                AppList applications = app->second;
-                for (AppList::iterator i = applications.begin(); i != applications.end(); i++) {
-                    // send the message to the applications responsible for it
-                    send(ctrl->dup(), std::get<3>(*i));
-                }
-            }
-        }
-        delete ctrl;
-    }
-}
-
-void BaseProtocol::messageReceived(PlatooningBeacon* pkt, UnicastMessage* unicast)
-{
-    ASSERT2(false, "BaseProtocol::messageReceived() not overridden by subclass");
 }
 
 void BaseProtocol::registerApplication(int applicationId, InputGate* appInputGate, OutputGate* appOutputGate, ControlInputGate* appControlInputGate, ControlOutputGate* appControlOutputGate)

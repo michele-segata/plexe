@@ -89,7 +89,7 @@ BaseApp::~BaseApp()
 
 void BaseApp::handleLowerMsg(cMessage* msg)
 {
-    UnicastMessage* unicast = check_and_cast<UnicastMessage*>(msg);
+    BaseFrame1609_4* unicast = check_and_cast<BaseFrame1609_4*>(msg);
 
     cPacket* enc = unicast->decapsulate();
     ASSERT2(enc, "received a UnicastMessage with nothing inside");
@@ -134,8 +134,8 @@ void BaseApp::handleLowerControl(cMessage* msg)
 
 void BaseApp::sendUnicast(cPacket* msg, int destination)
 {
-    UnicastMessage* unicast = new UnicastMessage();
-    unicast->setDestination(destination);
+    BaseFrame1609_4* unicast = new BaseFrame1609_4();
+    unicast->setRecipientAddress(destination);
     unicast->encapsulate(msg);
     sendDown(unicast);
 }

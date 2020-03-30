@@ -23,7 +23,6 @@
 
 #include "veins/base/modules/BaseApplLayer.h"
 
-#include "plexe/UnicastProtocol.h"
 #include "plexe/messages/PlatooningBeacon_m.h"
 
 #include "veins/modules/mobility/traci/TraCIMobility.h"

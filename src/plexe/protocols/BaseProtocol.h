@@ -23,8 +23,8 @@
 
 #include "veins/base/modules/BaseApplLayer.h"
 #include "veins/modules/mobility/traci/TraCIMobility.h"
+#include "veins/modules/messages/BaseFrame1609_4_m.h"
 
-#include "plexe/UnicastProtocol.h"
 #include "plexe/messages/PlatooningBeacon_m.h"
 #include "plexe/mobility/CommandInterface.h"
 #include "plexe/utilities/BasePositionHelper.h"
@@ -36,6 +36,8 @@
 #define MAX_GATES_COUNT 10
 
 namespace plexe {
+
+using veins::BaseFrame1609_4;
 
 class BaseProtocol : public veins::BaseApplLayer {
 
@@ -122,14 +124,8 @@ protected:
     // handle unicast messages coming from above layers
     virtual void handleUpperMsg(cMessage* msg) override;
 
-    // handle control messages coming from above
-    virtual void handleUpperControl(cMessage* msg) override;
-
-    // handle control messages coming from below
-    virtual void handleLowerControl(cMessage* msg) override;
-
     // handles and application layer message
-    void handleUnicastMsg(UnicastMessage* unicast);
+    void handleUnicastMsg(BaseFrame1609_4* unicast);
 
     // override handleMessage to manager upper layer gate array
     virtual void handleMessage(cMessage* msg) override;
@@ -148,7 +144,7 @@ protected:
      */
     void sendPlatooningMessage(int destinationAddress);
 
-    virtual std::unique_ptr<UnicastMessage> createBeacon(int destinationAddress);
+    virtual std::unique_ptr<BaseFrame1609_4> createBeacon(int destinationAddress);
 
     /**
      * This method must be overridden by subclasses to take decisions
@@ -159,7 +155,7 @@ protected:
      * \param pkt the platooning beacon
      * \param unicast the original unicast packet which was containing pkt
      */
-    virtual void messageReceived(PlatooningBeacon* pkt, UnicastMessage* unicast);
+    virtual void messageReceived(PlatooningBeacon* pkt, BaseFrame1609_4* unicast);
 
     /**
      * These methods signal changes in channel busy status to subclasses

@@ -25,7 +25,6 @@
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 
 #include "plexe/CC_Const.h"
-#include "plexe/UnicastProtocol.h"
 #include "plexe/messages/PlatooningBeacon_m.h"
 #include "plexe/mobility/CommandInterface.h"
 #include "plexe/utilities/BasePositionHelper.h"

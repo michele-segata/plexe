@@ -89,6 +89,11 @@ void JoinAtBack::onPlatoonBeacon(const PlatooningBeacon* pb)
     }
 }
 
+void JoinAtBack::onFailedTransmissionAttempt(const ManeuverMessage* mm)
+{
+    throw cRuntimeError("Impossible to send this packet: %s. Maximum number of unicast retries reached", mm->getName());
+}
+
 void JoinAtBack::handleJoinPlatoonRequest(const JoinPlatoonRequest* msg)
 {
 

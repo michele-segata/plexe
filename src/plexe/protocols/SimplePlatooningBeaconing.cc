@@ -46,11 +46,6 @@ void SimplePlatooningBeaconing::handleSelfMsg(cMessage* msg)
     }
 }
 
-void SimplePlatooningBeaconing::messageReceived(PlatooningBeacon* pkt, UnicastMessage* unicast)
-{
-    // nothing to do for static beaconing
-}
-
 SimplePlatooningBeaconing::SimplePlatooningBeaconing()
 {
 }

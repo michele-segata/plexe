@@ -29,7 +29,6 @@ import org.car2x.plexe.utilities.BasePositionHelper;
 import org.car2x.plexe.scenarios.BaseScenario;
 import org.car2x.plexe.protocols.BaseProtocol;
 import org.car2x.plexe.apps.BaseApp;
-import org.car2x.plexe.UnicastProtocol;
 
 module PlatoonCar
 {
@@ -63,10 +62,6 @@ module PlatoonCar
                 @display("p=60,200");
         }
 
-        unicast: UnicastProtocol {
-            parameters:
-                @display("p=60,300");
-        }
 
         nic: Nic80211p {
             parameters:
@@ -78,12 +73,8 @@ module PlatoonCar
                 @display("p=130,172;i=block/cogwheel");
         }
     connections allowunconnected:
-        unicast.upperControlIn <-- prot.lowerControlOut;
-        unicast.upperControlOut --> prot.lowerControlIn;
-        unicast.upperLayerIn <-- prot.lowerLayerOut;
-        unicast.upperLayerOut --> prot.lowerLayerIn;
-        nic.upperLayerIn <-- unicast.lowerLayerOut;
-        nic.upperLayerOut --> unicast.lowerLayerIn;
+        nic.upperLayerIn <-- prot.lowerLayerOut;
+        nic.upperLayerOut --> prot.lowerLayerIn;
 
         radioIn --> nic.radioIn;
 

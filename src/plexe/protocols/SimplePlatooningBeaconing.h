@@ -28,7 +28,6 @@ namespace plexe {
 class SimplePlatooningBeaconing : public BaseProtocol {
 protected:
     virtual void handleSelfMsg(cMessage* msg);
-    virtual void messageReceived(PlatooningBeacon* pkt, UnicastMessage* unicast);
 
 public:
     SimplePlatooningBeaconing();

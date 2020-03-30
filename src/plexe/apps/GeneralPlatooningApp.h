@@ -32,6 +32,7 @@
 #include "plexe/messages/ManeuverMessage_m.h"
 
 #include "veins/modules/mobility/traci/TraCIConstants.h"
+#include "veins/modules/utility/SignalManager.h"
 
 namespace plexe {
 
@@ -215,6 +216,9 @@ protected:
 
     /** am i in a maneuver? */
     bool inManeuver;
+
+    /** used to receive the "retries exceeded" signal **/
+    virtual void receiveSignal(cComponent* src, simsignal_t id, cObject* value, cObject* details) override;
 
 private:
     /** the role of this vehicle */

@@ -51,12 +51,9 @@ void HumanInterferingProtocol::initialize(int stage)
         // get pointer to mac
         mac = FindModule<Mac1609_4*>::findSubModule(getParentModule());
 
-        // tell the unicast protocol below which mac address to use via control message
-        UnicastProtocolControlMessage* setMacAddress = new UnicastProtocolControlMessage("");
-        setMacAddress->setControlCommand(SET_MAC_ADDRESS);
-        // set a mac address not interfering with platooning vehicles
-        setMacAddress->setCommandValue(getParentModule()->getIndex() + 1e6);
-        send(setMacAddress, lowerControlOut);
+        if (BaseMacLayer* mac = FindModule<BaseMacLayer*>::findSubModule(getParentModule())) {
+            mac->setMACAddress(getParentModule()->getIndex() + 1e6);
+        }
 
         // beaconing interval in seconds
         beaconingInterval = SimTime(par("beaconingInterval").doubleValue());
@@ -102,10 +99,10 @@ void HumanInterferingProtocol::sendInterferingMessage()
 {
 
     // create and send beacon
-    UnicastMessage* unicast = new UnicastMessage("", INTERFERENCE_TYPE);
-    unicast->setDestination(-1);
-    unicast->setPriority(priority);
-    unicast->setChannel(static_cast<int>(Channel::cch));
+    BaseFrame1609_4* unicast = new BaseFrame1609_4("", INTERFERENCE_TYPE);
+    unicast->setRecipientAddress(LAddress::L2BROADCAST());
+    unicast->setUserPriority(priority);
+    unicast->setChannelNumber(static_cast<int>(Channel::cch));
 
     // create platooning beacon with data about the car
     InterferingBeacon* pkt = new InterferingBeacon();

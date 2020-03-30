@@ -28,7 +28,7 @@ namespace plexe {
 class SlottedBeaconing : public BaseProtocol {
 protected:
     virtual void handleSelfMsg(cMessage* msg);
-    virtual void messageReceived(PlatooningBeacon* pkt, UnicastMessage* unicast);
+    virtual void messageReceived(PlatooningBeacon* pkt, veins::BaseFrame1609_4* unicast);
 
     // number of the slot where we should send our message
     int slotNumber;

@@ -65,6 +65,12 @@ public:
     virtual void onPlatoonBeacon(const PlatooningBeacon* pb) override;
 
     /**
+     * This method is invoked by the generic application when a failed transmission occurred, indicating the packet for which transmission has failed
+     * The manuever must not free the memory of the message, as this might be needed by other maneuvers as well.
+     */
+    virtual void onFailedTransmissionAttempt(const ManeuverMessage* mm) override;
+
+    /**
      * Handles a JoinPlatoonRequest in the context of this application
      *
      * @param JoinPlatoonRequest msg to handle

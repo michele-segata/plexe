@@ -21,10 +21,12 @@
 
 #include "plexe/apps/GeneralPlatooningApp.h"
 
-#include "plexe/UnicastProtocol.h"
 #include "plexe/protocols/BaseProtocol.h"
 #include "veins/modules/mobility/traci/TraCIColor.h"
 #include "veins/modules/mobility/traci/TraCIScenarioManager.h"
+#include "veins/modules/messages/BaseFrame1609_4_m.h"
+#include "veins/modules/utility/Consts80211p.h"
+#include "veins/modules/mac/ieee80211p/Mac1609_4.h"
 
 using namespace veins;
 
@@ -39,6 +41,8 @@ void GeneralPlatooningApp::initialize(int stage)
     if (stage == 1) {
         // connect maneuver application to protocol
         protocol->registerApplication(MANEUVER_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"), gate("lowerControlIn"), gate("lowerControlOut"));
+        // register to the signal indicating failed unicast transmissions
+        findHost()->subscribe(Mac1609_4::sigRetriesExceeded, this);
 
         std::string joinManeuverName = par("joinManeuver").stdstringValue();
         if (joinManeuverName == "JoinAtBack")
@@ -69,16 +73,16 @@ void GeneralPlatooningApp::sendUnicast(cPacket* msg, int destination)
 {
     Enter_Method_Silent();
     take(msg);
-    UnicastMessage* unicast = new UnicastMessage("UnicastMessage", msg->getKind());
-    unicast->setDestination(destination);
-    unicast->setChannel(static_cast<int>(Channel::cch));
+    BaseFrame1609_4* unicast = new BaseFrame1609_4("UnicastMessage", msg->getKind());
+    unicast->setRecipientAddress(destination);
+    unicast->setChannelNumber(static_cast<int>(Channel::cch));
     unicast->encapsulate(msg);
     sendDown(unicast);
 }
 
 void GeneralPlatooningApp::handleLowerMsg(cMessage* msg)
 {
-    UnicastMessage* unicast = check_and_cast<UnicastMessage*>(msg);
+    BaseFrame1609_4* unicast = check_and_cast<BaseFrame1609_4*>(msg);
 
     cPacket* enc = unicast->getEncapsulatedPacket();
     ASSERT2(enc, "received a UnicastMessage with nothing inside");
@@ -151,6 +155,17 @@ UpdatePlatoonFormation* GeneralPlatooningApp::createUpdatePlatoonFormation(int v
         msg->setPlatoonFormation(i, platoonFormation[i]);
     }
     return msg;
+}
+
+void GeneralPlatooningApp::receiveSignal(cComponent* src, simsignal_t id, cObject* value, cObject* details)
+{
+    if (id == Mac1609_4::sigRetriesExceeded) {
+        BaseFrame1609_4* frame = check_and_cast<BaseFrame1609_4*>(value);
+        ManeuverMessage* mm = check_and_cast<ManeuverMessage*>(frame->getEncapsulatedPacket());
+        if (frame) {
+            joinManeuver->onFailedTransmissionAttempt(mm);
+        }
+    }
 }
 
 GeneralPlatooningApp::~GeneralPlatooningApp()

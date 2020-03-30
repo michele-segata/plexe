@@ -60,7 +60,7 @@ void SlottedBeaconing::handleSelfMsg(cMessage* msg)
     }
 }
 
-void SlottedBeaconing::messageReceived(PlatooningBeacon* pkt, UnicastMessage* unicast)
+void SlottedBeaconing::messageReceived(PlatooningBeacon* pkt, BaseFrame1609_4* unicast)
 {
 
     int senderId = pkt->getVehicleId();

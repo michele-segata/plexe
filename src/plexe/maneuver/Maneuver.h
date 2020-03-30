@@ -68,6 +68,12 @@ public:
      */
     virtual void onPlatoonBeacon(const PlatooningBeacon* pb) = 0;
 
+    /**
+     * This method is invoked by the generic application when a failed transmission occurred, indicating the packet for which transmission has failed
+     * The manuever must not free the memory of the message, as this might be needed by other maneuvers as well.
+     */
+    virtual void onFailedTransmissionAttempt(const ManeuverMessage* mm) = 0;
+
 protected:
     GeneralPlatooningApp* app;
     BasePositionHelper* positionHelper;
