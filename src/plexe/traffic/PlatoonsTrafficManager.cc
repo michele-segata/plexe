@@ -39,6 +39,7 @@ void PlatoonsTrafficManager::initialize(int stage)
         platoonInsertDistance = par("platoonInsertDistance").doubleValue();
         platoonInsertHeadway = par("platoonInsertHeadway").doubleValue();
         platoonLeaderHeadway = par("platoonLeaderHeadway").doubleValue();
+        platoonAdditionalDistance = par("platoonAdditionalDistance").doubleValue();
         platooningVType = par("platooningVType").stdstringValue();
         insertPlatoonMessage = new cMessage("");
         scheduleAt(platoonInsertTime, insertPlatoonMessage);
@@ -73,7 +74,7 @@ void PlatoonsTrafficManager::insertPlatoons()
     // length of 1 platoon
     double platoonLength = platoonSize * 4 + (platoonSize - 1) * distance;
     // inter-platoon distance
-    double platoonDistance = platoonInsertSpeed / 3.6 * platoonLeaderHeadway;
+    double platoonDistance = platoonInsertSpeed / 3.6 * platoonLeaderHeadway + platoonAdditionalDistance;
     // total length for one lane
     double totalLength = nPlatoons * platoonLength + (nPlatoons - 1) * platoonDistance;
 

@@ -38,6 +38,7 @@ public:
         platoonInsertSpeed = 0;
         platoonInsertTime = SimTime(0);
         platoonLeaderHeadway = 0;
+        platoonAdditionalDistance = 0;
         platoonSize = 0;
         nCars = 0;
         nLanes = 0;
@@ -69,6 +70,8 @@ protected:
     double platoonInsertHeadway;
     // headway for leader vehicles
     double platoonLeaderHeadway;
+    // additional distance between consecutive platoons
+    double platoonAdditionalDistance;
     // sumo vehicle type of platooning cars
     std::string platooningVType;
 
