@@ -1,0 +1,8 @@
+<config>
+    <!-- Assign to the wlan interface of all eNodeBs and UEs one address of type 10.x.x.x, since dynamic-created UEs will be assigned one such address -->
+    <interface hosts="eNodeB*" names="wlan" address="10.x.x.x" netmask="255.0.0.0"/>
+    <!-- This is not used and it is left just as a reference, as the IPv4NetworkConfigurator of INET doesn't configure dynamically-generated nodes-->
+    <interface hosts="node*" names="wlan" address="10.x.x.x" netmask="255.0.0.0"/>
+    <!-- All other interfaces (PGW, router, traffic authority) will be configured using the following networks -->
+    <interface hosts="*" address="192.168.x.x" netmask="255.255.255.0"/>
+</config>

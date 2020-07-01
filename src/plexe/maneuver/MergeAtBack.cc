@@ -78,6 +78,7 @@ void MergeAtBack::handleMergePlatoonRequest(const MergePlatoonRequest* msg)
 void MergeAtBack::handleJoinFormation(const JoinFormation* msg)
 {
     // when we are allowed to join the platoon, periodically check the distance to the front vehicle
+    if (checkDistance->isScheduled()) return;
     app->scheduleAt(simTime() + 0.5, checkDistance);
     JoinAtBack::handleJoinFormation(msg);
 }

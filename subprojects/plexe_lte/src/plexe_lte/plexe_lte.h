@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2020-2021 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2019 Christoph Sommer <sommer@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
@@ -20,25 +20,24 @@
 
 #pragma once
 
-#include <string>
-#include "plexe/messages/PlexeInterfaceControlInfo_m.h"
+#include "plexe/plexe.h"
 
-namespace plexe {
+// Version number of last release ("major.minor.patch") or an alpha version, if nonzero
+#define PLEXE_LTE_VERSION_MAJOR 1
+#define PLEXE_LTE_VERSION_MINOR 0
+#define PLEXE_LTE_VERSION_PATCH 0
+#define PLEXE_LTE_VERSION_ALPHA 0
 
-enum PlexeRadioInterfaces {
-    // up to 16 interfaces
-    ALL = 65535,
-    VEINS_11P = 1,
-    LTE_CV2X_MODE3 = 2,
-};
+// Explicitly check Plexe version number
+#if !(PLEXE_VERSION_MAJOR == 3 && PLEXE_VERSION_MINOR >= 0)
+#error Plexe version 3.0 or compatible required
+#endif
 
-class PlexeRadioDriverInterface {
-public:
-    PlexeRadioDriverInterface(){};
-    virtual ~PlexeRadioDriverInterface(){};
-
-    // returns the type of the device which is used by the protocols to choose the proper radio interface
-    virtual int getDeviceType() = 0;
-};
-
-} /* namespace plexe */
+// PLEXE_LTE_API macro. Allows us to use the same .h files for both building a .dll and linking against it
+#if defined(PLEXE_LTE_EXPORT)
+#define PLEXE_LTE_API OPP_DLLEXPORT
+#elif defined(PLEXE_LTE_IMPORT)
+#define PLEXE_LTE_API OPP_DLLIMPORT
+#else
+#define PLEXE_LTE_API
+#endif

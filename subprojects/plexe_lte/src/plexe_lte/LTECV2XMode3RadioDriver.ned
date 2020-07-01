@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2020-2021 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2020 Michele Segata <segata@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
@@ -17,28 +17,25 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
+// Adapted from AlertSender from SimuLTE
+//
 
-#pragma once
+package org.car2x.plexe.subprojects.plexe_lte;
 
-#include <string>
-#include "plexe/messages/PlexeInterfaceControlInfo_m.h"
+import inet.applications.contract.IUDPApp;
 
-namespace plexe {
+simple LTECV2XMode3RadioDriver like IUDPApp
+{
+    parameters:
+        @class(plexe::LTECV2XMode3RadioDriver);
+        int destinationPort = default(3000);
+        string multicastAddress = default("224.0.0.1");
+        string interfaceTableModule;
 
-enum PlexeRadioInterfaces {
-    // up to 16 interfaces
-    ALL = 65535,
-    VEINS_11P = 1,
-    LTE_CV2X_MODE3 = 2,
-};
-
-class PlexeRadioDriverInterface {
-public:
-    PlexeRadioDriverInterface(){};
-    virtual ~PlexeRadioDriverInterface(){};
-
-    // returns the type of the device which is used by the protocols to choose the proper radio interface
-    virtual int getDeviceType() = 0;
-};
-
-} /* namespace plexe */
+        @display("i=block/ifcard");
+    gates:
+        output udpOut;
+        input udpIn;
+        output upperLayerOut;
+        input upperLayerIn;
+}

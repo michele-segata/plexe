@@ -1,5 +1,7 @@
 //
-// Copyright (C) 2020-2021 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2017 Christoph Sommer <sommer@ccs-labs.org>
+//
+// Documentation for these modules is at http://veins.car2x.org/
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
@@ -18,27 +20,4 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-#pragma once
-
-#include <string>
-#include "plexe/messages/PlexeInterfaceControlInfo_m.h"
-
-namespace plexe {
-
-enum PlexeRadioInterfaces {
-    // up to 16 interfaces
-    ALL = 65535,
-    VEINS_11P = 1,
-    LTE_CV2X_MODE3 = 2,
-};
-
-class PlexeRadioDriverInterface {
-public:
-    PlexeRadioDriverInterface(){};
-    virtual ~PlexeRadioDriverInterface(){};
-
-    // returns the type of the device which is used by the protocols to choose the proper radio interface
-    virtual int getDeviceType() = 0;
-};
-
-} /* namespace plexe */
+package org.car2x.plexe.subprojects.plexe_lte;

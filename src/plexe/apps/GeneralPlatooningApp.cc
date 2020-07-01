@@ -58,6 +58,9 @@ void GeneralPlatooningApp::initialize(int stage)
         else
             throw new cRuntimeError("Invalid merge maneuver implementation chosen");
 
+        if (positionHelper->isLeader()) setPlatoonRole(PlatoonRole::LEADER);
+        else setPlatoonRole(PlatoonRole::FOLLOWER);
+
         scenario = FindModule<BaseScenario*>::findSubModule(getParentModule());
     }
 }
