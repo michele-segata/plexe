@@ -39,8 +39,6 @@ module PlatoonCar
         string appl_type;
         string protocol_type;
 
-    gates:
-        input radioIn; // gate for sendDirect
     submodules:
 
         helper: <helper_type> like BasePositionHelper {
@@ -82,7 +80,5 @@ module PlatoonCar
         nic.upperLayerOut --> veins11pDriver.lowerLayerIn;
         veins11pDriver.upperLayerIn <-- prot.lowerLayerOut;
         veins11pDriver.upperLayerOut --> prot.lowerLayerIn;
-
-        radioIn --> nic.radioIn;
 
 }
