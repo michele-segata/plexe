@@ -116,7 +116,7 @@ void HumanInterferingProtocol::sendInterferingMessage()
     ctrl->setMcs(static_cast<int>(getMCS(bitrate, Bandwidth::ofdm_10_mhz)));
     pkt->setControlInfo(ctrl);
 
-    // put platooning beacon into the message for the UnicastProtocol
+    // put platooning beacon into the message for the NIC
     unicast->encapsulate(pkt);
     sendDown(unicast);
 }
