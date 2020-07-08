@@ -78,6 +78,13 @@ public:
     virtual void handleJoinPlatoonRequest(const JoinPlatoonRequest* msg) override;
 
     /**
+     * Handles a MergePlatoonRequest in the context of this application
+     *
+     * @param MergePlatoonRequest msg to handle
+     */
+    virtual void handleMergePlatoonRequest(const MergePlatoonRequest* msg) override;
+
+    /**
      * Handles a JoinPlatoonResponse in the context of this application
      *
      * @param JoinPlatoonResponse msg to handle
@@ -216,6 +223,12 @@ protected:
 
     /** the data about the current joiner */
     std::unique_ptr<JoinerData> joinerData;
+
+    /** initializes a join maneuver, setting up required data */
+    bool initializeJoinManeuver(const void* parameters);
+
+    /** initializes the handling of a join request */
+    bool processJoinRequest(const JoinPlatoonRequest* msg);
 };
 
 } // namespace plexe

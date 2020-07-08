@@ -49,7 +49,20 @@ void GeneralPlatooningApp::initialize(int stage)
             joinManeuver = new JoinAtBack(this);
         else
             throw new cRuntimeError("Invalid join maneuver implementation chosen");
+
+        std::string mergeManeuverName = par("mergeManeuver").stdstringValue();
+        if (mergeManeuverName == "MergeAtBack")
+            mergeManeuver = new MergeAtBack(this);
+        else
+            throw new cRuntimeError("Invalid merge maneuver implementation chosen");
     }
+}
+
+void GeneralPlatooningApp::handleSelfMsg(cMessage* msg)
+{
+    if (joinManeuver && joinManeuver->handleSelfMsg(msg)) return;
+    if (mergeManeuver && mergeManeuver->handleSelfMsg(msg)) return;
+    BaseApp::handleSelfMsg(msg);
 }
 
 bool GeneralPlatooningApp::isJoinAllowed() const
@@ -67,6 +80,18 @@ void GeneralPlatooningApp::startJoinManeuver(int platoonId, int leaderId, int po
     params.leaderId = leaderId;
     params.position = position;
     joinManeuver->startManeuver(&params);
+}
+
+void GeneralPlatooningApp::startMergeManeuver(int platoonId, int leaderId, int position)
+{
+    ASSERT(getPlatoonRole() == PlatoonRole::LEADER);
+    ASSERT(!isInManeuver());
+
+    JoinManeuverParameters params;
+    params.platoonId = platoonId;
+    params.leaderId = leaderId;
+    params.position = position;
+    mergeManeuver->startManeuver(&params);
 }
 
 void GeneralPlatooningApp::sendUnicast(cPacket* msg, int destination)
@@ -89,7 +114,11 @@ void GeneralPlatooningApp::handleLowerMsg(cMessage* msg)
 
     if (enc->getKind() == MANEUVER_TYPE) {
         ManeuverMessage* mm = check_and_cast<ManeuverMessage*>(unicast->decapsulate());
-        if (UpdatePlatoonFormation* msg = dynamic_cast<UpdatePlatoonFormation*>(mm)) {
+        if (UpdatePlatoonData* msg = dynamic_cast<UpdatePlatoonData*>(mm)) {
+            handleUpdatePlatoonData(msg);
+            delete msg;
+        }
+        else if (UpdatePlatoonFormation* msg = dynamic_cast<UpdatePlatoonFormation*>(mm)) {
             handleUpdatePlatoonFormation(msg);
             delete msg;
         }
@@ -103,6 +132,18 @@ void GeneralPlatooningApp::handleLowerMsg(cMessage* msg)
     }
 }
 
+void GeneralPlatooningApp::handleUpdatePlatoonData(const UpdatePlatoonData* msg)
+{
+    if (getPlatoonRole() != PlatoonRole::FOLLOWER) return;
+    if (msg->getPlatoonId() != positionHelper->getPlatoonId()) return;
+    if (msg->getVehicleId() != positionHelper->getLeaderId()) return;
+
+    handleUpdatePlatoonFormation(msg);
+    LOG << positionHelper->getId() << " changing platoon id from " << positionHelper->getPlatoonId() << " to " << msg->getNewPlatoonId() << "\n";
+    positionHelper->setPlatoonId(msg->getNewPlatoonId());
+
+}
+
 void GeneralPlatooningApp::handleUpdatePlatoonFormation(const UpdatePlatoonFormation* msg)
 {
     if (getPlatoonRole() != PlatoonRole::FOLLOWER) return;
@@ -110,10 +151,13 @@ void GeneralPlatooningApp::handleUpdatePlatoonFormation(const UpdatePlatoonForma
     if (msg->getVehicleId() != positionHelper->getLeaderId()) return;
 
     // update formation information
+    LOG << positionHelper->getId() << " changing platoon formation: ";
     std::vector<int> f;
     for (unsigned int i = 0; i < msg->getPlatoonFormationArraySize(); i++) {
         f.push_back(msg->getPlatoonFormation(i));
+        LOG << msg->getPlatoonFormation(i) << " ";
     }
+    LOG << "\n";
     positionHelper->setPlatoonFormation(f);
 }
 
@@ -125,13 +169,20 @@ void GeneralPlatooningApp::setPlatoonRole(PlatoonRole r)
 void GeneralPlatooningApp::onPlatoonBeacon(const PlatooningBeacon* pb)
 {
     joinManeuver->onPlatoonBeacon(pb);
+    mergeManeuver->onPlatoonBeacon(pb);
     // maintain platoon
     BaseApp::onPlatoonBeacon(pb);
 }
 
 void GeneralPlatooningApp::onManeuverMessage(ManeuverMessage* mm)
 {
-    joinManeuver->onManeuverMessage(mm);
+    if (activeManeuver) {
+        activeManeuver->onManeuverMessage(mm);
+    }
+    else {
+        joinManeuver->onManeuverMessage(mm);
+        mergeManeuver->onManeuverMessage(mm);
+    }
     delete mm;
 }
 
@@ -142,6 +193,20 @@ void GeneralPlatooningApp::fillManeuverMessage(ManeuverMessage* msg, int vehicle
     msg->setExternalId(externalId.c_str());
     msg->setPlatoonId(platoonId);
     msg->setDestinationId(destinationId);
+}
+
+UpdatePlatoonData* GeneralPlatooningApp::createUpdatePlatoonData(int vehicleId, std::string externalId, int platoonId, int destinationId, double platoonSpeed, int platoonLane, const std::vector<int>& platoonFormation, int newPlatoonId)
+{
+    UpdatePlatoonData* msg = new UpdatePlatoonData("UpdatePlatoonData");
+    fillManeuverMessage(msg, vehicleId, externalId, platoonId, destinationId);
+    msg->setPlatoonSpeed(platoonSpeed);
+    msg->setPlatoonLane(platoonLane);
+    msg->setPlatoonFormationArraySize(platoonFormation.size());
+    for (unsigned int i = 0; i < platoonFormation.size(); i++) {
+        msg->setPlatoonFormation(i, platoonFormation[i]);
+    }
+    msg->setNewPlatoonId(newPlatoonId);
+    return msg;
 }
 
 UpdatePlatoonFormation* GeneralPlatooningApp::createUpdatePlatoonFormation(int vehicleId, std::string externalId, int platoonId, int destinationId, double platoonSpeed, int platoonLane, const std::vector<int>& platoonFormation)
@@ -164,13 +229,20 @@ void GeneralPlatooningApp::receiveSignal(cComponent* src, simsignal_t id, cObjec
         ManeuverMessage* mm = check_and_cast<ManeuverMessage*>(frame->getEncapsulatedPacket());
         if (frame) {
             joinManeuver->onFailedTransmissionAttempt(mm);
+            mergeManeuver->onFailedTransmissionAttempt(mm);
         }
     }
+}
+
+void GeneralPlatooningApp::scheduleSelfMsg(simtime_t t, cMessage* msg)
+{
+    scheduleAt(t, msg);
 }
 
 GeneralPlatooningApp::~GeneralPlatooningApp()
 {
     delete joinManeuver;
+    delete mergeManeuver;
 }
 
 } // namespace plexe

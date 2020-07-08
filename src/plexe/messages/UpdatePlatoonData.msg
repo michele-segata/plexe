@@ -19,26 +19,14 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-package org.car2x.plexe.apps;
+cplusplus{{
+#include "UpdatePlatoonFormation_m.h"
+}};
 
-import org.car2x.plexe.apps.BaseApp;
+packet UpdatePlatoonFormation;
 
-simple GeneralPlatooningApp like BaseApp {
-
-parameters:
-
-    // implementation of the join maneuver to be used
-    string joinManeuver;
-    // implementation of the platoons merge maneuver
-    string mergeManeuver;
-
-    int headerLength @unit("bit") = default(0 bit);
-    @display("i=block/app2");
-    @class(plexe::GeneralPlatooningApp);
-
-gates:
-    input lowerLayerIn;
-    output lowerLayerOut;
-    input lowerControlIn;
-    output lowerControlOut;
+// Message to inform the all vehicles in the Platoon of the updated formation.
+// Is similar to a PlatoonBeacon.
+packet UpdatePlatoonData extends UpdatePlatoonFormation {
+    int newPlatoonId;
 }

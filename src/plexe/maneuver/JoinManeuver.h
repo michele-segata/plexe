@@ -30,6 +30,7 @@
 #include "plexe/messages/ManeuverMessage_m.h"
 #include "plexe/messages/MoveToPositionAck_m.h"
 #include "plexe/messages/MoveToPosition_m.h"
+#include "plexe/messages/MergePlatoonRequest_m.h"
 
 namespace plexe {
 
@@ -62,6 +63,17 @@ protected:
      * @param int currentLaneIndex the index of the current lane of the vehicle
      */
     JoinPlatoonRequest* createJoinPlatoonRequest(int vehicleId, std::string externalId, int platoonId, int destinationId, int currentLaneIndex, double xPos, double yPos);
+
+    /**
+     * Creates a MergePlatoonRequest message
+     *
+     * @param int vehicleId the id of the sending vehicle
+     * @param int platoonId the id of the platoon of the sending vehicle
+     * @param int destinationId the id of the destination
+     * @param int currentLaneIndex the index of the current lane of the vehicle
+     * @param vector<int> members followers of the leader of the merging platoon
+     */
+    MergePlatoonRequest* createMergePlatoonRequest(int vehicleId, std::string externalId, int platoonId, int destinationId, int currentLaneIndex, double xPos, double yPos, const std::vector<int>& members);
 
     /**
      * Creates a JoinPlatoonResponse message
@@ -131,6 +143,13 @@ protected:
      * @param JoinPlatoonRequest msg to handle
      */
     virtual void handleJoinPlatoonRequest(const JoinPlatoonRequest* msg) = 0;
+
+    /**
+     * Handles a MergePlatoonRequest in the context of this application
+     *
+     * @param MergePlatoonRequest msg to handle
+     */
+    virtual void handleMergePlatoonRequest(const MergePlatoonRequest* msg) = 0;
 
     /**
      * Handles a JoinPlatoonResponse in the context of this application

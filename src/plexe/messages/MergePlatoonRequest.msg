@@ -19,26 +19,15 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-package org.car2x.plexe.apps;
+cplusplus{{
+#include "JoinPlatoonRequest_m.h"
+}};
 
-import org.car2x.plexe.apps.BaseApp;
+packet JoinPlatoonRequest;
 
-simple GeneralPlatooningApp like BaseApp {
-
-parameters:
-
-    // implementation of the join maneuver to be used
-    string joinManeuver;
-    // implementation of the platoons merge maneuver
-    string mergeManeuver;
-
-    int headerLength @unit("bit") = default(0 bit);
-    @display("i=block/app2");
-    @class(plexe::GeneralPlatooningApp);
-
-gates:
-    input lowerLayerIn;
-    output lowerLayerOut;
-    input lowerControlIn;
-    output lowerControlOut;
+// Request to merge two platoons
+// Is sent from a leader to the leader of the Platoon to be merged with
+packet MergePlatoonRequest extends JoinPlatoonRequest {
+    // list of members following the leader of the merging platoon
+    int members[];
 }

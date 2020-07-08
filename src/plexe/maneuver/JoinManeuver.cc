@@ -31,7 +31,10 @@ JoinManeuver::JoinManeuver(GeneralPlatooningApp* app)
 
 void JoinManeuver::onManeuverMessage(const ManeuverMessage* mm)
 {
-    if (const JoinPlatoonRequest* msg = dynamic_cast<const JoinPlatoonRequest*>(mm)) {
+    if (const MergePlatoonRequest* msg = dynamic_cast<const MergePlatoonRequest*>(mm)) {
+        handleMergePlatoonRequest(msg);
+    }
+    else if (const JoinPlatoonRequest* msg = dynamic_cast<const JoinPlatoonRequest*>(mm)) {
         handleJoinPlatoonRequest(msg);
     }
     else if (const JoinPlatoonResponse* msg = dynamic_cast<const JoinPlatoonResponse*>(mm)) {
@@ -60,6 +63,22 @@ JoinPlatoonRequest* JoinManeuver::createJoinPlatoonRequest(int vehicleId, std::s
     msg->setYPos(yPos);
     return msg;
 }
+
+MergePlatoonRequest* JoinManeuver::createMergePlatoonRequest(int vehicleId, std::string externalId, int platoonId, int destinationId, int currentLaneIndex, double xPos, double yPos, const std::vector<int>& members)
+{
+    MergePlatoonRequest* msg = new MergePlatoonRequest("MergePlatoonRequest");
+    app->fillManeuverMessage(msg, vehicleId, externalId, platoonId, destinationId);
+    msg->setCurrentLaneIndex(currentLaneIndex);
+    msg->setXPos(xPos);
+    msg->setYPos(yPos);
+    if (members.size() != 0) {
+        msg->setMembersArraySize(members.size());
+        for (size_t i = 0; i < members.size(); i++)
+            msg->setMembers(i, members[i]);
+    }
+    return msg;
+}
+
 
 JoinPlatoonResponse* JoinManeuver::createJoinPlatoonResponse(int vehicleId, std::string externalId, int platoonId, int destinationId, bool permitted)
 {
