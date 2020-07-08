@@ -28,6 +28,8 @@ namespace {
 const std::string parameter_prefix = "carFollowModel.";
 } // namespace
 
+#define LOG EV_INFO
+
 namespace plexe {
 
 /**
