@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
-# Copyright (C) 2016-2019 Bastian Bloessl <bloessl@ccs-labs.org>
-# Copyright (C) 2016-2019 Michele Segata <segata@ccs-labs.org>
+# Copyright (C) 2016-2020 Bastian Bloessl <bloessl@ccs-labs.org>
+# Copyright (C) 2016-2020 Michele Segata <segata@ccs-labs.org>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 #

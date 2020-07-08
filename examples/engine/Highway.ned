@@ -1,6 +1,6 @@
 //
 // Copyright (C) 2008 Christoph Sommer <christoph.sommer@informatik.uni-erlangen.de>
-// Copyright (C) 2012-2019 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2020 Michele Segata <segata@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //

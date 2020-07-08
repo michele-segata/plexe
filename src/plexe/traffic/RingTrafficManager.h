@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2013-2019 Michele Segata <segata@ccs-labs.org>, Stefan Joerer <joerer@ccs-labs.org>
+// Copyright (C) 2013-2020 Michele Segata <segata@ccs-labs.org>, Stefan Joerer <joerer@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
