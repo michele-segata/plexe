@@ -30,8 +30,6 @@ import org.car2x.plexe.driver.Veins11pRadioDriver;
 module HumanCar
 {
 
-    gates:
-        input radioIn; // gate for sendDirect
     submodules:
 
 
@@ -60,7 +58,4 @@ module HumanCar
         nic.upperLayerOut --> veins11pDriver.lowerLayerIn;
         veins11pDriver.upperLayerIn <-- prot.lowerLayerOut;
         veins11pDriver.upperLayerOut --> prot.lowerLayerIn;
-
-        radioIn --> nic.radioIn;
-
 }
