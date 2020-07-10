@@ -18,11 +18,19 @@ examples/**/.qtenvrc
 examples/**/.cmdenv-log
 examples/**/valgrind.out
 
-subprojects/plexe_catch/out
-subprojects/plexe_catch/run
-subprojects/plexe_catch/src/*.dll
-subprojects/plexe_catch/src/*.dylib
-subprojects/plexe_catch/src/*.so
-subprojects/plexe_catch/src/Makefile
 subprojects/plexe_catch/src/plexe_catch
 subprojects/plexe_catch/src/plexe_catch_dbg
+
+subprojects/**/out
+subprojects/**/run
+subprojects/**/src/*.dll
+subprojects/**/src/*.dylib
+subprojects/**/src/*.so
+subprojects/**/src/Makefile
+subprojects/**/*_m.h
+subprojects/**/*_m.cc
+subprojects/**/examples/**/results
+subprojects/**/examples/**/.tkenvrc
+subprojects/**/examples/**/.qtenvrc
+subprojects/**/examples/**/.cmdenv-log
+subprojects/**/examples/**/valgrind.out
