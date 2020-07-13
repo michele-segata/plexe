@@ -27,6 +27,7 @@
 #include "veins/modules/messages/BaseFrame1609_4_m.h"
 #include "veins/modules/utility/Consts80211p.h"
 #include "veins/modules/mac/ieee80211p/Mac1609_4.h"
+#include "plexe/messages/PlexeInterfaceControlInfo_m.h"
 
 using namespace veins;
 
@@ -102,6 +103,10 @@ void GeneralPlatooningApp::sendUnicast(cPacket* msg, int destination)
     unicast->setRecipientAddress(destination);
     unicast->setChannelNumber(static_cast<int>(Channel::cch));
     unicast->encapsulate(msg);
+    // send unicast frames using 11p only
+    PlexeInterfaceControlInfo* ctrl = new PlexeInterfaceControlInfo();
+    ctrl->setInterfaces(PlexeRadioInterfaces::VEINS_11P);
+    unicast->setControlInfo(ctrl);
     sendDown(unicast);
 }
 

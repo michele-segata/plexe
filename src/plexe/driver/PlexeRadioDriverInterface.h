@@ -18,19 +18,27 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-#include "veins/base/modules/BaseApplLayer.h"
-#include "plexe/driver/PlexeRadioDriverInterface.h"
+#pragma once
+
+#include <string>
+#include "plexe/messages/PlexeInterfaceControlInfo_m.h"
 
 namespace plexe {
 
-class Veins11pRadioDriver : public PlexeRadioDriverInterface, public veins::BaseApplLayer {
-
-public:
-    bool registerNode(int nodeId);
-    virtual int getDeviceType() override {return PlexeRadioInterfaces::VEINS_11P;}
-protected:
-    virtual void handleLowerMsg(cMessage* msg) override;
-    virtual void handleUpperMsg(cMessage* msg) override;
-
+enum PlexeRadioInterfaces {
+    // up to 16 interfaces
+    ALL = 65535,
+    VEINS_11P = 1,
 };
-} // namespace plexe
+
+class PlexeRadioDriverInterface {
+public:
+    PlexeRadioDriverInterface() {};
+    virtual ~PlexeRadioDriverInterface() {};
+
+    // returns the type of the device which is used by the protocols to choose the proper radio interface
+    virtual int getDeviceType() = 0;
+};
+
+} /* namespace plexe */
+

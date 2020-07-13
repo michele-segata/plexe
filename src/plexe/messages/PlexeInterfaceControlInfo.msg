@@ -18,28 +18,15 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-package org.car2x.plexe.protocols;
+cplusplus {{
+#include "plexe/driver/PlexeRadioDriverInterface.h"
+}}
+enum plexe::PlexeRadioInterfaces;
 
 //
-// Define the base protocol for platooning. every improved
-// protocol must derive from this
+// Control data used to choose which network interface to use
 //
-moduleinterface BaseProtocol
-{
-
-    parameters:
-        volatile double beaconingInterval @unit(seconds);// = default(0.1 seconds);
-        //priority (AC) for the messages. 0 = AC_BK, 3 = AC_VO
-        int priority;// = default(0);
-        //size of platooning messages
-        int packetSize;// = default(25);
-        @display("i=block/network2");
-        @class(plexe::BaseProtocol);
-     gates:
-         input upperLayerIn[10];
-         output upperLayerOut[10];
-         input upperControlIn[10];
-         output upperControlOut[10];
-         output radiosOut[];
-         input radiosIn[];
+message PlexeInterfaceControlInfo {
+    // binary map indicating which interface to use (can be multiple of them)
+    int interfaces @enum(plexe::PlexeRadioInterfaces) = plexe::ALL;
 }

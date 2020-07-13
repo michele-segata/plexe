@@ -26,6 +26,7 @@
 
 #include "plexe/PlexeManager.h"
 #include "plexe/driver/Veins11pRadioDriver.h"
+#include "plexe/messages/PlexeInterfaceControlInfo_m.h"
 
 using namespace veins;
 
@@ -60,6 +61,14 @@ void BaseProtocol::initialize(int stage)
         maxUpperId = gate("upperLayerIn", MAX_GATES_COUNT - 1)->getId();
         minUpperControlId = gate("upperControlIn", 0)->getId();
         maxUpperControlId = gate("upperControlIn", MAX_GATES_COUNT - 1)->getId();
+        minRadioId = gate("radiosIn", 0)->getId();
+        maxRadioId = gate("radiosIn", gateSize("radiosIn")-1)->getId();
+
+        // get information about output radio interfaces and store them
+        for (int i = 0; i < gateSize("radiosOut"); i++) {
+            PlexeRadioDriverInterface* radio = check_and_cast<PlexeRadioDriverInterface*>(gate("radiosOut", i)->getNextGate()->getOwnerModule());
+            radioOuts[radio->getDeviceType()] = gate("radiosOut", i);
+        }
 
         // beaconing interval in seconds
         beaconingInterval = SimTime(par("beaconingInterval").doubleValue());
@@ -158,9 +167,19 @@ void BaseProtocol::handleSelfMsg(cMessage* msg)
     }
 }
 
-void BaseProtocol::sendPlatooningMessage(int destinationAddress)
+void BaseProtocol::sendPlatooningMessage(int destinationAddress, enum PlexeRadioInterfaces interfaces)
 {
-    sendDown(createBeacon(destinationAddress).release());
+    sendTo(createBeacon(destinationAddress).release(), interfaces);
+}
+
+void BaseProtocol::sendTo(BaseFrame1609_4* frame, enum PlexeRadioInterfaces interfaces)
+{
+    for (auto interface : radioOuts) {
+        BaseFrame1609_4* dup = frame->dup();
+        if (frame->getControlInfo()) dup->setControlInfo(frame->getControlInfo()->dup());
+        if (interface.first & interfaces) send(dup, interface.second);
+    }
+    delete frame;
 }
 
 std::unique_ptr<BaseFrame1609_4> BaseProtocol::createBeacon(int destinationAddress)
@@ -199,6 +218,14 @@ std::unique_ptr<BaseFrame1609_4> BaseProtocol::createBeacon(int destinationAddre
     return wsm;
 }
 
+bool BaseProtocol::isDuplicated(const PlatooningBeacon* beacon)
+{
+    auto sequenceNumber = knownBeacons.find(beacon->getVehicleId());
+    if (sequenceNumber == knownBeacons.end()) return false;
+    if (beacon->getSequenceNumber() > sequenceNumber->second) return false;
+    return true;
+}
+
 void BaseProtocol::handleUnicastMsg(BaseFrame1609_4* unicast)
 {
 
@@ -208,6 +235,13 @@ void BaseProtocol::handleUnicastMsg(BaseFrame1609_4* unicast)
     ASSERT2(enc, "received a UnicastMessage with nothing inside");
 
     if (PlatooningBeacon* epkt = dynamic_cast<PlatooningBeacon*>(enc)) {
+
+        // if we're using multiple radios simultaneously, we might get duplicated beacons
+        if (isDuplicated(epkt)) {
+            delete unicast;
+            return;
+        }
+        knownBeacons[epkt->getVehicleId()] = epkt->getSequenceNumber();
 
         // invoke messageReceived() method of subclass
         messageReceived(epkt, unicast);
@@ -274,6 +308,8 @@ void BaseProtocol::handleMessage(cMessage* msg)
         handleUpperMsg(msg);
     else if (msg->getArrivalGateId() >= minUpperControlId && msg->getArrivalGateId() <= maxUpperControlId)
         handleUpperControl(msg);
+    else if (msg->getArrivalGateId() >= minRadioId && msg->getArrivalGateId() <= maxRadioId)
+        handleLowerMsg(msg);
     else
         BaseApplLayer::handleMessage(msg);
 }
@@ -285,7 +321,14 @@ void BaseProtocol::handleLowerMsg(cMessage* msg)
 
 void BaseProtocol::handleUpperMsg(cMessage* msg)
 {
-    sendDown(check_and_cast<BaseFrame1609_4*>(msg));
+    PlexeInterfaceControlInfo* itf = dynamic_cast<PlexeInterfaceControlInfo*>(msg->getControlInfo());
+    BaseFrame1609_4* frame = check_and_cast<BaseFrame1609_4*>(msg);
+
+    enum PlexeRadioInterfaces interfaces;
+    if (itf) interfaces = (enum PlexeRadioInterfaces)itf->getInterfaces();
+    else interfaces = PlexeRadioInterfaces::VEINS_11P;
+
+    sendTo(frame, interfaces);
 }
 
 void BaseProtocol::messageReceived(PlatooningBeacon* pkt, BaseFrame1609_4* unicast)

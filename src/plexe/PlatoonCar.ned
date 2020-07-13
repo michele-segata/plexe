@@ -78,7 +78,7 @@ module PlatoonCar
     connections allowunconnected:
         nic.upperLayerIn <-- veins11pDriver.lowerLayerOut;
         nic.upperLayerOut --> veins11pDriver.lowerLayerIn;
-        veins11pDriver.upperLayerIn <-- prot.lowerLayerOut;
-        veins11pDriver.upperLayerOut --> prot.lowerLayerIn;
+        veins11pDriver.upperLayerIn <-- prot.radiosOut++;
+        veins11pDriver.upperLayerOut --> prot.radiosIn++;
 
 }

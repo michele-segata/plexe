@@ -29,6 +29,8 @@
 #include "plexe/mobility/CommandInterface.h"
 #include "plexe/utilities/BasePositionHelper.h"
 
+#include "plexe/driver/PlexeRadioDriverInterface.h"
+
 #include <memory>
 #include <tuple>
 
@@ -64,6 +66,15 @@ private:
     // output vector for delays
     cOutVector leaderDelayIdOut, frontDelayIdOut, leaderDelayOut, frontDelayOut;
 
+    // map of radio interfaces from radio ids
+    std::map<int, cGate*> radioOuts;
+
+    // map of known beacons (vehicle id, sequence number)
+    std::map<int, int> knownBeacons;
+
+    // indicates whether a beacon has already been received or not
+    bool isDuplicated(const PlatooningBeacon* beacon);
+
 protected:
     // determines position and role of each vehicle
     BasePositionHelper* positionHelper;
@@ -86,6 +97,8 @@ protected:
     int upperControlIn, upperControlOut, lowerLayerIn, lowerLayerOut;
     // id range of input gates from upper layer
     int minUpperId, maxUpperId, minUpperControlId, maxUpperControlId;
+    // id range of lower radio gates
+    int minRadioId, maxRadioId;
 
     // registered upper layer applications. this is a mapping between
     // beacon id inside packets coming from upper layer and the gate they
@@ -130,6 +143,8 @@ protected:
     // override handleMessage to manager upper layer gate array
     virtual void handleMessage(cMessage* msg) override;
 
+    virtual void sendTo(BaseFrame1609_4* frame, enum PlexeRadioInterfaces interfaces);
+
     // signal handler
     using BaseApplLayer::receiveSignal;
     void receiveSignal(cComponent* source, simsignal_t signalID, bool v, cObject* details) override;
@@ -142,7 +157,7 @@ protected:
      * Sends a platooning message with all information about the car. This is an utility function for
      * subclasses
      */
-    void sendPlatooningMessage(int destinationAddress);
+    void sendPlatooningMessage(int destinationAddress, enum PlexeRadioInterfaces interfaces = PlexeRadioInterfaces::ALL);
 
     virtual std::unique_ptr<BaseFrame1609_4> createBeacon(int destinationAddress);
 
