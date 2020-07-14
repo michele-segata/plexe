@@ -100,10 +100,10 @@ void HumanInterferingProtocol::sendInterferingMessage()
 {
 
     // create and send beacon
-    BaseFrame1609_4* unicast = new BaseFrame1609_4("", INTERFERENCE_TYPE);
-    unicast->setRecipientAddress(LAddress::L2BROADCAST());
-    unicast->setUserPriority(priority);
-    unicast->setChannelNumber(static_cast<int>(Channel::cch));
+    BaseFrame1609_4* frame = new BaseFrame1609_4("", INTERFERENCE_TYPE);
+    frame->setRecipientAddress(LAddress::L2BROADCAST());
+    frame->setUserPriority(priority);
+    frame->setChannelNumber(static_cast<int>(Channel::cch));
 
     // create platooning beacon with data about the car
     InterferingBeacon* pkt = new InterferingBeacon();
@@ -117,8 +117,8 @@ void HumanInterferingProtocol::sendInterferingMessage()
     pkt->setControlInfo(ctrl);
 
     // put platooning beacon into the message for the NIC
-    unicast->encapsulate(pkt);
-    sendDown(unicast);
+    frame->encapsulate(pkt);
+    sendDown(frame);
 }
 
 void HumanInterferingProtocol::handleLowerMsg(cMessage* msg)

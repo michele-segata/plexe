@@ -89,10 +89,10 @@ BaseApp::~BaseApp()
 
 void BaseApp::handleLowerMsg(cMessage* msg)
 {
-    BaseFrame1609_4* unicast = check_and_cast<BaseFrame1609_4*>(msg);
+    BaseFrame1609_4* frame = check_and_cast<BaseFrame1609_4*>(msg);
 
-    cPacket* enc = unicast->decapsulate();
-    ASSERT2(enc, "received a UnicastMessage with nothing inside");
+    cPacket* enc = frame->decapsulate();
+    ASSERT2(enc, "received a BaseFrame1609_4 with nothing inside");
 
     if (enc->getKind() == BaseProtocol::BEACON_TYPE) {
         onPlatoonBeacon(check_and_cast<PlatooningBeacon*>(enc));
@@ -101,7 +101,7 @@ void BaseApp::handleLowerMsg(cMessage* msg)
         error("received unknown message type");
     }
 
-    delete unicast;
+    delete frame;
 }
 
 void BaseApp::logVehicleData(bool crashed)
@@ -132,12 +132,12 @@ void BaseApp::handleLowerControl(cMessage* msg)
     delete msg;
 }
 
-void BaseApp::sendUnicast(cPacket* msg, int destination)
+void BaseApp::sendFrame(cPacket* msg, int destination)
 {
-    BaseFrame1609_4* unicast = new BaseFrame1609_4();
-    unicast->setRecipientAddress(destination);
-    unicast->encapsulate(msg);
-    sendDown(unicast);
+    BaseFrame1609_4* frame = new BaseFrame1609_4();
+    frame->setRecipientAddress(destination);
+    frame->encapsulate(msg);
+    sendDown(frame);
 }
 
 void BaseApp::handleSelfMsg(cMessage* msg)

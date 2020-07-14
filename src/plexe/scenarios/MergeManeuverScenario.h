@@ -39,9 +39,6 @@ public:
 
     virtual void initialize(int stage) override;
 
-protected:
-    void sendUnicast(cPacket* msg, int destination);
-
 private:
 public:
     MergeManeuverScenario()

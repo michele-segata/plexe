@@ -83,12 +83,12 @@ public:
     virtual ~BaseApp();
 
     /**
-     * Sends a unicast message
+     * Sends a frame
      *
-     * @param msg message to be encapsulated into the unicast message
+     * @param msg message to be encapsulated into the frame
      * @param destination id of the destination
      */
-    void sendUnicast(cPacket* msg, int destination);
+    void sendFrame(cPacket* msg, int destination);
 
 protected:
     virtual void handleLowerMsg(cMessage* msg) override;

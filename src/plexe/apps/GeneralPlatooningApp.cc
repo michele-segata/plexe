@@ -99,26 +99,26 @@ void GeneralPlatooningApp::sendUnicast(cPacket* msg, int destination)
 {
     Enter_Method_Silent();
     take(msg);
-    BaseFrame1609_4* unicast = new BaseFrame1609_4("UnicastMessage", msg->getKind());
-    unicast->setRecipientAddress(destination);
-    unicast->setChannelNumber(static_cast<int>(Channel::cch));
-    unicast->encapsulate(msg);
+    BaseFrame1609_4* frame = new BaseFrame1609_4("BaseFrame1609_4", msg->getKind());
+    frame->setRecipientAddress(destination);
+    frame->setChannelNumber(static_cast<int>(Channel::cch));
+    frame->encapsulate(msg);
     // send unicast frames using 11p only
     PlexeInterfaceControlInfo* ctrl = new PlexeInterfaceControlInfo();
     ctrl->setInterfaces(PlexeRadioInterfaces::VEINS_11P);
-    unicast->setControlInfo(ctrl);
-    sendDown(unicast);
+    frame->setControlInfo(ctrl);
+    sendDown(frame);
 }
 
 void GeneralPlatooningApp::handleLowerMsg(cMessage* msg)
 {
-    BaseFrame1609_4* unicast = check_and_cast<BaseFrame1609_4*>(msg);
+    BaseFrame1609_4* frame = check_and_cast<BaseFrame1609_4*>(msg);
 
-    cPacket* enc = unicast->getEncapsulatedPacket();
-    ASSERT2(enc, "received a UnicastMessage with nothing inside");
+    cPacket* enc = frame->getEncapsulatedPacket();
+    ASSERT2(enc, "received a BaseFrame1609_4s with nothing inside");
 
     if (enc->getKind() == MANEUVER_TYPE) {
-        ManeuverMessage* mm = check_and_cast<ManeuverMessage*>(unicast->decapsulate());
+        ManeuverMessage* mm = check_and_cast<ManeuverMessage*>(frame->decapsulate());
         if (UpdatePlatoonData* msg = dynamic_cast<UpdatePlatoonData*>(mm)) {
             handleUpdatePlatoonData(msg);
             delete msg;
@@ -130,7 +130,7 @@ void GeneralPlatooningApp::handleLowerMsg(cMessage* msg)
         else {
             onManeuverMessage(mm);
         }
-        delete unicast;
+        delete frame;
     }
     else {
         BaseApp::handleLowerMsg(msg);

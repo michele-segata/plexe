@@ -134,11 +134,8 @@ protected:
     // TODO: implement method and pass info to upper layer (bogus platooning) as it is (msg)
     virtual void handleLowerMsg(cMessage* msg) override;
 
-    // handle unicast messages coming from above layers
+    // handle messages coming from above layers
     virtual void handleUpperMsg(cMessage* msg) override;
-
-    // handles and application layer message
-    void handleUnicastMsg(BaseFrame1609_4* unicast);
 
     // override handleMessage to manager upper layer gate array
     virtual void handleMessage(cMessage* msg) override;
@@ -168,9 +165,9 @@ protected:
      * superclass
      *
      * \param pkt the platooning beacon
-     * \param unicast the original unicast packet which was containing pkt
+     * \param frame the original frame which was containing pkt
      */
-    virtual void messageReceived(PlatooningBeacon* pkt, BaseFrame1609_4* unicast);
+    virtual void messageReceived(PlatooningBeacon* pkt, BaseFrame1609_4* frame);
 
     /**
      * These methods signal changes in channel busy status to subclasses

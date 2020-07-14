@@ -226,56 +226,6 @@ bool BaseProtocol::isDuplicated(const PlatooningBeacon* beacon)
     return true;
 }
 
-void BaseProtocol::handleUnicastMsg(BaseFrame1609_4* unicast)
-{
-
-    ASSERT2(unicast, "received a frame not of type UnicastMessage");
-
-    cPacket* enc = unicast->getEncapsulatedPacket();
-    ASSERT2(enc, "received a UnicastMessage with nothing inside");
-
-    if (PlatooningBeacon* epkt = dynamic_cast<PlatooningBeacon*>(enc)) {
-
-        // if we're using multiple radios simultaneously, we might get duplicated beacons
-        if (isDuplicated(epkt)) {
-            delete unicast;
-            return;
-        }
-        knownBeacons[epkt->getVehicleId()] = epkt->getSequenceNumber();
-
-        // invoke messageReceived() method of subclass
-        messageReceived(epkt, unicast);
-
-        if (positionHelper->getLeaderId() == epkt->getVehicleId()) {
-            // check if this is at least the second message we have received
-            if (lastLeaderMsgTime.dbl() > 0) {
-                leaderDelayOut.record(simTime() - lastLeaderMsgTime);
-                leaderDelayIdOut.record(myId);
-            }
-            lastLeaderMsgTime = simTime();
-        }
-        if (positionHelper->getFrontId() == epkt->getVehicleId()) {
-            // check if this is at least the second message we have received
-            if (lastFrontMsgTime.dbl() > 0) {
-                frontDelayOut.record(simTime() - lastFrontMsgTime);
-                frontDelayIdOut.record(myId);
-            }
-            lastFrontMsgTime = simTime();
-        }
-    }
-
-    // find the application responsible for this beacon
-    ApplicationMap::iterator app = apps.find(unicast->getKind());
-    if (app != apps.end() && app->second.size() != 0) {
-        AppList applications = app->second;
-        for (AppList::iterator i = applications.begin(); i != applications.end(); i++) {
-            // send the message to the applications responsible for it
-            send(unicast->dup(), std::get<1>(*i));
-        }
-    }
-    delete unicast;
-}
-
 void BaseProtocol::receiveSignal(cComponent* source, simsignal_t signalID, bool v, cObject* details)
 {
 
@@ -316,7 +266,52 @@ void BaseProtocol::handleMessage(cMessage* msg)
 
 void BaseProtocol::handleLowerMsg(cMessage* msg)
 {
-    handleUnicastMsg(check_and_cast<BaseFrame1609_4*>(msg));
+    BaseFrame1609_4* frame = check_and_cast<BaseFrame1609_4*>(msg);
+    ASSERT2(frame, "received a frame not of type BaseFrame1609_4");
+
+    cPacket* enc = frame->getEncapsulatedPacket();
+    ASSERT2(enc, "received a BaseFrame1609_4 with nothing inside");
+
+    if (PlatooningBeacon* epkt = dynamic_cast<PlatooningBeacon*>(enc)) {
+
+        // if we're using multiple radios simultaneously, we might get duplicated beacons
+        if (isDuplicated(epkt)) {
+            delete frame;
+            return;
+        }
+        knownBeacons[epkt->getVehicleId()] = epkt->getSequenceNumber();
+
+        // invoke messageReceived() method of subclass
+        messageReceived(epkt, frame);
+
+        if (positionHelper->getLeaderId() == epkt->getVehicleId()) {
+            // check if this is at least the second message we have received
+            if (lastLeaderMsgTime.dbl() > 0) {
+                leaderDelayOut.record(simTime() - lastLeaderMsgTime);
+                leaderDelayIdOut.record(myId);
+            }
+            lastLeaderMsgTime = simTime();
+        }
+        if (positionHelper->getFrontId() == epkt->getVehicleId()) {
+            // check if this is at least the second message we have received
+            if (lastFrontMsgTime.dbl() > 0) {
+                frontDelayOut.record(simTime() - lastFrontMsgTime);
+                frontDelayIdOut.record(myId);
+            }
+            lastFrontMsgTime = simTime();
+        }
+    }
+
+    // find the application responsible for this beacon
+    ApplicationMap::iterator app = apps.find(frame->getKind());
+    if (app != apps.end() && app->second.size() != 0) {
+        AppList applications = app->second;
+        for (AppList::iterator i = applications.begin(); i != applications.end(); i++) {
+            // send the message to the applications responsible for it
+            send(frame->dup(), std::get<1>(*i));
+        }
+    }
+    delete frame;
 }
 
 void BaseProtocol::handleUpperMsg(cMessage* msg)
@@ -331,7 +326,7 @@ void BaseProtocol::handleUpperMsg(cMessage* msg)
     sendTo(frame, interfaces);
 }
 
-void BaseProtocol::messageReceived(PlatooningBeacon* pkt, BaseFrame1609_4* unicast)
+void BaseProtocol::messageReceived(PlatooningBeacon* pkt, BaseFrame1609_4* frame)
 {
 }
 
