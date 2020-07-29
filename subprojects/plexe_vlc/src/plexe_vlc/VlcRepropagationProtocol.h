@@ -36,6 +36,7 @@ private:
 protected:
     virtual void handleSelfMsg(cMessage* msg);
     virtual void messageReceived(PlatooningBeacon* pkt, veins::BaseFrame1609_4* frame);
+    virtual void duplicatedMessageReceived(PlatooningBeacon* pkt, veins::BaseFrame1609_4* frame) override;
 
 public:
     VlcRepropagationProtocol();

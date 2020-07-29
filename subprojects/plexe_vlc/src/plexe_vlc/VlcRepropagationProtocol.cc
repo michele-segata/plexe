@@ -104,18 +104,27 @@ void VlcRepropagationProtocol::messageReceived(PlatooningBeacon* pkt, veins::Bas
 
     // the leader and the last car don't need to re-propagate
     if (!positionHelper->isLeader() && !positionHelper->isLast()) {
-        // if it is the first time we see this packet
-        if (updateAndCheckRepropagation(pkt)) {
-            // make a copy of the frame and send it
-            BaseFrame1609_4* repropagatedFrame = frame->dup();
-            PlexeInterfaceControlInfo* ctrl = new PlexeInterfaceControlInfo();
-            ctrl->setInterfaces(interfaces);
-            repropagatedFrame->setControlInfo(ctrl);
-            // send the frame with a random delay to avoid collisions, as there is no real MAC protocol in VLC
-            scheduleAt(simTime() + SimTime(uniform(0, 0.02)), repropagatedFrame);
+        // check for duplicates and repropagation only if the frame comes from the VLC interface
+        // we can receive the frame from 11p before than from VLC, so it would be wrongly marked as already known and not repropagated
+        if (itf && ((itf->getInterfaces() & VEINS_VLC_FRONT) || (itf->getInterfaces() & VEINS_VLC_BACK))) {
+            // if it is the first time we see this packet
+            if (updateAndCheckRepropagation(pkt)) {
+                // make a copy of the frame and send it
+                BaseFrame1609_4* repropagatedFrame = frame->dup();
+                PlexeInterfaceControlInfo* ctrl = new PlexeInterfaceControlInfo();
+                ctrl->setInterfaces(interfaces);
+                repropagatedFrame->setControlInfo(ctrl);
+                // send the frame with a random delay to avoid collisions, as there is no real MAC protocol in VLC
+                scheduleAt(simTime() + SimTime(uniform(0, 0.02)), repropagatedFrame);
+            }
         }
     }
 
+}
+
+void VlcRepropagationProtocol::duplicatedMessageReceived(PlatooningBeacon* pkt, veins::BaseFrame1609_4* frame)
+{
+    messageReceived(pkt, frame);
 }
 
 VlcRepropagationProtocol::VlcRepropagationProtocol()
