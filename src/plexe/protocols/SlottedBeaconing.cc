@@ -52,7 +52,7 @@ void SlottedBeaconing::handleSelfMsg(cMessage* msg)
     BaseProtocol::handleSelfMsg(msg);
 
     if (msg == sendBeacon) {
-        sendPlatooningMessage(0);
+        sendPlatooningMessage(-1);
         // we might not be able to receive a message from the leader, so we schedule the next beacon
         // after one beacon interval. if we will receive the message from the leader, we will
         // delete this event and synchronize on the beacon of the leader
