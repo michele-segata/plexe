@@ -43,13 +43,13 @@ with open(header_file_name) as f:
     for line in f:
         line = line.strip()
         if line.startswith('#define PLEXE_LTE_VERSION_MAJOR '):
-            major = int(line[33:])
+            major = int(line.split(' ')[2])
         if line.startswith('#define PLEXE_LTE_VERSION_MINOR '):
-            minor = int(line[33:])
+            minor = int(line.split(' ')[2])
         if line.startswith('#define PLEXE_LTE_VERSION_PATCH '):
-            patch = int(line[33:])
+            patch = int(line.split(' ')[2])
         if line.startswith('#define PLEXE_LTE_VERSION_ALPHA '):
-            alpha = int(line[33:])
+            alpha = int(line.split(' ')[2])
 
 if None in (major, minor, patch, alpha):
     print('Could not parse "{}". Aborting.'.format(header_file_name), file=sys.stderr)
