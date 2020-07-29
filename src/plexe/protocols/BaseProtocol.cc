@@ -276,6 +276,7 @@ void BaseProtocol::handleLowerMsg(cMessage* msg)
 
         // if we're using multiple radios simultaneously, we might get duplicated beacons
         if (isDuplicated(epkt)) {
+            duplicatedMessageReceived(epkt, frame);
             delete frame;
             return;
         }
@@ -327,6 +328,10 @@ void BaseProtocol::handleUpperMsg(cMessage* msg)
 }
 
 void BaseProtocol::messageReceived(PlatooningBeacon* pkt, BaseFrame1609_4* frame)
+{
+}
+
+void BaseProtocol::duplicatedMessageReceived(PlatooningBeacon* pkt, BaseFrame1609_4* frame)
 {
 }
 

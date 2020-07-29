@@ -170,6 +170,19 @@ protected:
     virtual void messageReceived(PlatooningBeacon* pkt, BaseFrame1609_4* frame);
 
     /**
+     * This method must be overridden by subclasses to take decisions
+     * about what to do.
+     * Passed packet MUST NOT be freed, but just be read. Freeing is a duty of the
+     * superclass
+     * Differently from the messageReceived method, this method is invoked for frames that has already been received.
+     * This can happen, for example, when using multiple communication technologies or redundancy
+     *
+     * \param pkt the platooning beacon
+     * \param frame the original frame which was containing pkt
+     */
+    virtual void duplicatedMessageReceived(PlatooningBeacon* pkt, BaseFrame1609_4* frame);
+
+    /**
      * These methods signal changes in channel busy status to subclasses
      * or occurrences of collisions.
      * Subclasses which are interested should ovverride these methods.
