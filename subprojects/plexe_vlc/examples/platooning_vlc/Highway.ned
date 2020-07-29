@@ -70,7 +70,7 @@ network Highway
             parameters:
                 @display("p=200,200");
         }
-                vehicleObstacles: VehicleObstacleControl {
+        vehicleObstacles: VehicleObstacleControl {
             @display("p=261,35");
         }
         vlcConnectionManager: VlcConnectionManager {
