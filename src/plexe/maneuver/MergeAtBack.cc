@@ -88,7 +88,7 @@ bool MergeAtBack::handleSelfMsg(cMessage* msg)
         double distance, relativeSpeed;
         plexeTraciVehicle->getRadarMeasurements(distance, relativeSpeed);
         // we are close enough to the front platoon. tell the followers to change the platoon composition
-        if (distance < 6) {
+        if (distance < app->getTargetDistance(targetPlatoonData->platoonSpeed) + 1) {
             for (unsigned int i = 1; i < oldFormation.size(); i++) {
                 UpdatePlatoonData* mm = app->createUpdatePlatoonData(positionHelper->getId(), positionHelper->getExternalId(), oldPlatoonId, oldFormation[i], targetPlatoonData->platoonSpeed, targetPlatoonData->platoonLane, targetPlatoonData->newFormation, targetPlatoonData->platoonId);
                 app->sendUnicast(mm, oldFormation[i]);

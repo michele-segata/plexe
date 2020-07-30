@@ -116,6 +116,23 @@ void BaseScenario::initialize(int stage)
     }
 }
 
+double BaseScenario::getTargetDistance(double speed)
+{
+    switch (controller) {
+    case ACC:
+        return 2 + accHeadway * speed;
+    case CACC:
+    case FLATBED:
+        return caccSpacing;
+    case PLOEG:
+        return 2 + ploegH * speed;
+    case CONSENSUS:
+        return 15 + 0.8 * speed;
+    default:
+        throw cRuntimeError("Unkown controller in BaseScenario::getTargetDistance()");
+    }
+}
+
 void BaseScenario::handleSelfMsg(cMessage* msg)
 {
 }

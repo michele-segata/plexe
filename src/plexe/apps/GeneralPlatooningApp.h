@@ -33,6 +33,8 @@
 #include "plexe/messages/ManeuverMessage_m.h"
 #include "plexe/messages/UpdatePlatoonData_m.h"
 
+#include "plexe/scenarios/BaseScenario.h"
+
 #include "veins/modules/mobility/traci/TraCIConstants.h"
 #include "veins/modules/utility/SignalManager.h"
 
@@ -68,6 +70,7 @@ public:
     GeneralPlatooningApp()
         : inManeuver(false)
         , activeManeuver(nullptr)
+        , scenario(nullptr)
         , role(PlatoonRole::NONE)
         , joinManeuver(nullptr)
         , mergeManeuver(nullptr)
@@ -237,6 +240,16 @@ public:
 
     bool isJoinAllowed() const;
 
+    /**
+     * Returns the controller that has been chosen for the scenario
+     */
+    enum ACTIVE_CONTROLLER getController();
+
+    /**
+     * Returns the inter-vehicle distance for the chosen controller and the given speed
+     */
+    double getTargetDistance(double speed);
+
 protected:
     /** override this method of BaseApp. we want to handle it ourself */
     virtual void handleLowerMsg(cMessage* msg) override;
@@ -265,6 +278,8 @@ protected:
 
     /** used by maneuvers to schedule self messages, as they are not omnet modules */
     virtual void scheduleSelfMsg(simtime_t t, cMessage* msg);
+
+    BaseScenario* scenario;
 
 private:
     /** the role of this vehicle */

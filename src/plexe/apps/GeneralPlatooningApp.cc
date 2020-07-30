@@ -28,6 +28,7 @@
 #include "veins/modules/utility/Consts80211p.h"
 #include "veins/modules/mac/ieee80211p/Mac1609_4.h"
 #include "plexe/messages/PlexeInterfaceControlInfo_m.h"
+#include "veins/base/utils/FindModule.h"
 
 using namespace veins;
 
@@ -56,6 +57,8 @@ void GeneralPlatooningApp::initialize(int stage)
             mergeManeuver = new MergeAtBack(this);
         else
             throw new cRuntimeError("Invalid merge maneuver implementation chosen");
+
+        scenario = FindModule<BaseScenario*>::findSubModule(getParentModule());
     }
 }
 
@@ -69,6 +72,16 @@ void GeneralPlatooningApp::handleSelfMsg(cMessage* msg)
 bool GeneralPlatooningApp::isJoinAllowed() const
 {
     return ((role == PlatoonRole::LEADER || role == PlatoonRole::NONE) && !inManeuver);
+}
+
+enum ACTIVE_CONTROLLER GeneralPlatooningApp::getController()
+{
+    return scenario->getController();
+}
+
+double GeneralPlatooningApp::getTargetDistance(double speed)
+{
+    return scenario->getTargetDistance(speed);
 }
 
 void GeneralPlatooningApp::startJoinManeuver(int platoonId, int leaderId, int position)

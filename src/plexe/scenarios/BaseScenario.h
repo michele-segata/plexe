@@ -92,6 +92,19 @@ public:
         usePrediction = true;
     }
 
+    /**
+     * Returns the controller being used in this simulation
+     */
+    enum ACTIVE_CONTROLLER getController()
+    {
+        return controller;
+    }
+
+    /**
+     * Returns the inter-vehicle distance for the controller in use given the current speed
+     */
+    double getTargetDistance(double speed);
+
 protected:
     virtual void handleSelfMsg(cMessage* msg);
 };
