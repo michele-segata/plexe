@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 #
 # Copyright (C) 2013-2020 Christoph Sommer <sommer@ccs-labs.org>
@@ -25,130 +25,150 @@
 """
 Creates Makefile(s) for building this project.
 """
-
-import os
+from os import mkdir
+from os.path import join, relpath, isdir
 import sys
 import subprocess
-from logging import info, warning, error
 from optparse import OptionParser
 
 
+class Library:
+    def __init__(self, name, library, default_path, versions, source_folder,
+                 lib_folder, images_folder, version_script, defs=[],
+                 run_version_script=True, ned_folder=None):
+        self.name = name
+        self.library = library
+        self.default_path = default_path
+        self.versions = versions
+        self.src_dir = source_folder
+        self.lib_dir = lib_folder
+        self.images_dir = images_folder
+        self.version_script = version_script
+        self.defs = defs
+        self.run_version_script = run_version_script
+        if ned_folder is None:
+            self.ned_dir = self.src_dir
+        else:
+            self.ned_dir = ned_folder
 
-if sys.version_info[0] == 3:
-    warning("Warning: running configure with python3 might result in subtle errors.")
+    def run_version(self, path):
+        fname = join(path, self.version_script)
+        return subprocess.check_output(["env", fname]).strip().decode()
 
-# Option handling
-parser = OptionParser()
-parser.add_option('--with-plexe', dest='plexe', help="link with a version of Plexe installed in PATH [default: %default", metavar="PATH", default="../../")
-parser.add_option('--with-veins', dest='veins', help="link with a version of Veins installed in PATH [default %default]", metavar="PATH", default="../../../veins")
-parser.add_option("--with-veins-vlc", dest="vlc", help="link with a version of Veins VLC installed in PATH [default: %default]", metavar="PATH", default="../../../veins_vlc")
-(options, args) = parser.parse_args()
+    def read_version(self, path):
+        fname = join(path, self.version_script)
+        with open(fname, "r") as file:
+            return file.read().rstrip()
 
+    def add_to_parser(self, parser):
+        help = "link with a version of {} installed in PATH [default %default]"
+        help = help.format(self.name)
+        parser.add_option("--with-{}".format(self.library), dest=self.library,
+                          help=help, metavar="PATH", default=self.default_path)
+
+    def print_unsupported_version(self, version):
+        txt = "Unsupported {} Version. Expecting {}, found {}"
+        txt = txt.format(self.name, " or ".join(self.versions), version)
+        print(txt)
+
+    def print_library_error(self, error):
+        versions = " or ".join(self.versions)
+        txt = "Could not determine {name} version (by running {script}): "\
+              "{error}. Check the path to {name} (--with-{lib}=... option) "\
+              "and the {name} version (should be version {versions})"
+        txt = txt.format(name=self.name, script=self.version_script,
+                         error=error, lib=self.library, versions=versions)
+        print(txt)
+
+    def check(self, options, flags, libs, neds, imgs):
+        if hasattr(options, self.library):
+            path = getattr(options, self.library)
+            name = self.name
+            try:
+                print("Determining {} version.".format(name))
+                if self.run_version_script:
+                    version = self.run_version(path)
+                else:
+                    version = self.read_version(path)
+                if version not in self.versions:
+                    print("")
+                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                    self.print_unsupported_version(version)
+                    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                    print("")
+                else:
+                    print("Found {} version {}. Okay.".format(name, version))
+
+                    header_dirs = [
+                        join(relpath(path, self.lib_dir), self.lib_dir)
+                    ]
+                    includes = ["-I" + s for s in header_dirs]
+                    link = [
+                        "-L" + join(relpath(path, self.lib_dir), self.lib_dir),
+                        "-l{}$(D)".format(self.library)
+                    ]
+                    defs = self.defs
+                    flags.extend(includes + link + defs)
+                    libs.append(relpath(join(path, self.src_dir)))
+                    neds.append(relpath(join(path, self.ned_dir)))
+                    imgs.append(relpath(join(path, self.images_dir)))
+
+            except subprocess.CalledProcessError as e:
+                self.print_library_error(e)
+                sys.exit(1)
+
+
+class LibraryChecker:
+    def __init__(self):
+        self.parser = OptionParser()
+        self.libs = []
+
+    def add_lib(self, lib):
+        lib.add_to_parser(self.parser)
+        self.libs.append(lib)
+
+    def check_libraries(self, flags, libs, neds, imgs):
+        options, args = self.parser.parse_args()
+        for lib in self.libs:
+            lib.check(options, flags, libs, neds, imgs)
+
+
+plexe = Library(name="Plexe", library="plexe", default_path="../../",
+                versions=["3.0-alpha3"], source_folder="src/plexe",
+                lib_folder="src", images_folder="images",
+                version_script="print-plexe-version")
+veins = Library(name="Veins", library="veins", default_path="../../../veins",
+                versions=["5.0", "5.1"], source_folder="src/veins", lib_folder="src",
+                images_folder="images", version_script="print-veins-version")
+veins_vlc = Library(name="Veins VLC", library="veins-vlc",
+                    default_path="../../../veins_vlc", versions=["1.0"],
+                    source_folder="src/veins-vlc", lib_folder="src",
+                    images_folder="images",
+                    version_script="print-veins_vlc-version")
+
+libraries = LibraryChecker()
+libraries.add_lib(plexe)
+libraries.add_lib(veins)
+libraries.add_lib(veins_vlc)
 
 # Start with default flags
-makemake_flags = ['-f', '--deep', '--no-deep-includes', '--make-so', '-I', '.', '-o', 'plexe_vlc', '-O', 'out', '-p', 'PLEXE_CV2X']
-run_libs = [os.path.join('src', 'plexe_vlc')]
-run_neds = [os.path.join('src', 'plexe_vlc')]
+makemake_flags = ["-f", "--deep", "--no-deep-includes", "--make-so", "-I", ".", "-o", "plexe_vlc", "-O", "out", "-p", "PLEXE_VLC"]
+run_libs = [join("src", "plexe_vlc")]
+run_neds = [join("src", "plexe_vlc")]
 run_imgs = []
 
-# Add flags for Plexe
-if options.plexe:
-    fname = os.path.join(options.plexe, 'print-plexe-version')
-    expect_version = ['3.0-alpha3']
-    try:
-        print 'Running "%s" to determine Plexe version.' % fname
-        version = subprocess.check_output(['env', fname]).strip()
-        if not version in expect_version:
-            print ''
-            print '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-            warning('Unsupported Plexe Version. Expecting %s, found "%s"' % (' or '.join(expect_version), version))
-            print '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-            print ''
-        else:
-            print 'Found Plexe version "%s". Okay.' % version
-
-            plexe_header_dirs = [os.path.join(os.path.relpath(options.plexe, 'src'), 'src')]
-            plexe_includes = ['-I' + s for s in plexe_header_dirs]
-            plexe_link = ["-L" + os.path.join(os.path.relpath(options.plexe, 'src'), 'src'), "-lplexe$(D)"]
-            plexe_defs = []
-            makemake_flags += plexe_includes + plexe_link + plexe_defs
-            run_libs = [os.path.relpath(os.path.join(options.plexe, 'src', 'plexe'))] + run_libs
-            run_neds = [os.path.relpath(os.path.join(options.plexe, 'src', 'plexe'))] + run_neds
-            run_imgs = [os.path.relpath(os.path.join(options.plexe, 'images'))] + run_imgs
-
-    except subprocess.CalledProcessError as e:
-        error('Could not determine Plexe Version (by running %s): %s. Check the path to Plexe (--with-plexe=... option) and the Veins version (should be version %s)' % (fname, e, ' or '.join(expect_version)))
-        sys.exit(1)
-
-# Add flags for Veins
-if options.veins:
-    fname = os.path.join(options.veins, 'print-veins-version')
-    expect_version = ['5.0', '5.1']
-    try:
-        print 'Running "%s" to determine Veins version.' % fname
-        version = subprocess.check_output(['env', fname]).strip()
-        if not version in expect_version:
-            print ''
-            print '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-            warning('Unsupported Veins Version. Expecting %s, found "%s"' % (' or '.join(expect_version), version))
-            print '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-            print ''
-        else:
-            print 'Found Veins version "%s". Okay.' % version
-
-            veins_header_dirs = [os.path.join(os.path.relpath(options.veins, 'src'), 'src')]
-            veins_includes = ['-I' + s for s in veins_header_dirs]
-            veins_link = ["-L" + os.path.join(os.path.relpath(options.veins, 'src'), 'src'), "-lveins$(D)"]
-            veins_defs = []
-            makemake_flags += veins_includes + veins_link + veins_defs
-            run_libs = [os.path.relpath(os.path.join(options.veins, 'src', 'veins'))] + run_libs
-            run_neds = [os.path.relpath(os.path.join(options.veins, 'src', 'veins'))] + run_neds
-            run_imgs = [os.path.relpath(os.path.join(options.veins, 'images'))] + run_imgs
-
-    except subprocess.CalledProcessError as e:
-        error('Could not determine Veins Version (by running %s): %s. Check the path to Veins (--with-veins=... option) and the Veins version (should be version %s)' % (fname, e, ' or '.join(expect_version)))
-        sys.exit(1)
-
-
-# Add flags for VLC
-if options.vlc:
-    fname = os.path.join(options.vlc, 'print-veins_vlc-version')
-    expect_version = ['1.0']
-    try:
-        print 'Running "%s" to determine Veins VLC version.' % fname
-        version = subprocess.check_output(['env', fname]).strip()
-        if not version in expect_version:
-            print ''
-            print '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-            warning('Unsupported Veins VLC Version. Expecting %s, found "%s"' % (' or '.join(expect_version), version))
-            print '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-            print ''
-        else:
-            print 'Found Veins VLC version "%s". Okay.' % version
-    except OSError as e:
-        error('Could not determine Veins VLC Version (by running %s): %s. Check the path to Veins VLC (--with-veins-vlc=... option) and the Veins VLC version (should be version %s)' % (fname, e, ' or '.join(expect_version)))
-        sys.exit(1)
-
-    vlc_header_dirs = [os.path.join(os.path.relpath(options.vlc, 'src'), 'src')]
-    vlc_includes = ['-I' + s for s in vlc_header_dirs]
-    vlc_link = ["-L" + os.path.join(os.path.relpath(options.vlc, 'src'), 'src'), "-lveins-vlc$(D)"]
-    vlc_defs = []
-
-    makemake_flags += vlc_includes + vlc_link + vlc_defs
-    run_libs = [os.path.relpath(os.path.join(options.vlc, 'src', 'veins-vlc'))] + run_libs
-    run_neds = [os.path.relpath(os.path.join(options.vlc, 'src', 'veins-vlc'))] + run_neds
-    run_imgs = [os.path.relpath(os.path.join(options.vlc, 'images'))] + run_imgs
+libraries.check_libraries(makemake_flags, run_libs, run_neds, run_imgs)
 
 # Start creating files
-if not os.path.isdir('out'):
-    os.mkdir('out')
+if not isdir("out"):
+    mkdir("out")
 
-f = open(os.path.join('out', 'config.py'), 'w')
-f.write('run_libs = %s\n' % repr(run_libs))
-f.write('run_neds = %s\n' % repr(run_neds))
-f.write('run_imgs = %s\n' % repr(run_imgs))
+f = open(join("out", "config.py"), "w")
+f.write("run_libs = %s\n" % repr(run_libs))
+f.write("run_neds = %s\n" % repr(run_neds))
+f.write("run_imgs = %s\n" % repr(run_imgs))
 f.close()
 
-subprocess.check_call(['env', 'opp_makemake'] + makemake_flags, cwd='src')
+subprocess.check_call(["env", "opp_makemake"] + makemake_flags, cwd="src")
 
-info('Configure done. You can now run "make".')
+print("Configure done. You can now run 'make'.")
