@@ -175,9 +175,11 @@ void BaseProtocol::sendPlatooningMessage(int destinationAddress, enum PlexeRadio
 void BaseProtocol::sendTo(BaseFrame1609_4* frame, enum PlexeRadioInterfaces interfaces)
 {
     for (auto interface : radioOuts) {
-        BaseFrame1609_4* dup = frame->dup();
-        if (frame->getControlInfo()) dup->setControlInfo(frame->getControlInfo()->dup());
-        if (interface.first & interfaces) send(dup, interface.second);
+        if (interface.first & interfaces) {
+            BaseFrame1609_4* dup = frame->dup();
+            if (frame->getControlInfo()) dup->setControlInfo(frame->getControlInfo()->dup());
+            send(dup, interface.second);
+        }
     }
     delete frame;
 }
