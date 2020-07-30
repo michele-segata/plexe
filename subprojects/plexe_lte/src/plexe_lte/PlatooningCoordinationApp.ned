@@ -37,6 +37,9 @@ simple PlatooningCoordinationApp like ITCPApp
         string dataTransferMode = default("object");
         string interfaceTableModule;
 
+        @signal[sentPk](type=cPacket);
+        @signal[rcvdPk](type=cPacket);
+        @signal[connect](type=long);  // 1 for open, -1 for close
         @display("i=block/source");
     gates:
         input tcpIn @labels(TCPCommand/up);

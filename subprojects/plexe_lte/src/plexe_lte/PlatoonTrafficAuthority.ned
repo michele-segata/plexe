@@ -32,6 +32,10 @@ simple PlatoonTrafficAuthority like ITCPApp
         // speed difference to be used to approach a platoon
         double approachSpeedDelta @unit(mps) = default(10mps);
         string interfaceTableModule;
+
+        @signal[sentPk](type=cPacket);
+        @signal[rcvdPk](type=cPacket);
+        @signal[connect](type=long);  // 1 for open, -1 for close
     gates:
         input tcpIn @labels(TCPCommand/up);
         output tcpOut @labels(TCPCommand/down);
