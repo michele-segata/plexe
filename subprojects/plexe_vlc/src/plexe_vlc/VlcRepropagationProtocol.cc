@@ -115,7 +115,7 @@ void VlcRepropagationProtocol::messageReceived(PlatooningBeacon* pkt, veins::Bas
                 ctrl->setInterfaces(interfaces);
                 repropagatedFrame->setControlInfo(ctrl);
                 // send the frame with a random delay to avoid collisions, as there is no real MAC protocol in VLC
-                scheduleAt(simTime() + SimTime(uniform(0, 0.02)), repropagatedFrame);
+                scheduleAt(simTime() + SimTime(uniform(0, 0.01)), repropagatedFrame);
             }
         }
     }
