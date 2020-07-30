@@ -34,15 +34,15 @@ private:
      */
     bool updateAndCheckRepropagation(PlatooningBeacon* pkt);
 protected:
-    virtual void handleSelfMsg(cMessage* msg);
-    virtual void messageReceived(PlatooningBeacon* pkt, veins::BaseFrame1609_4* frame);
+    virtual void handleSelfMsg(cMessage* msg) override;
+    virtual void messageReceived(PlatooningBeacon* pkt, veins::BaseFrame1609_4* frame) override;
     virtual void duplicatedMessageReceived(PlatooningBeacon* pkt, veins::BaseFrame1609_4* frame) override;
 
 public:
     VlcRepropagationProtocol();
     virtual ~VlcRepropagationProtocol();
 
-    virtual void initialize(int stage);
+    virtual void initialize(int stage) override;
 };
 
 } // namespace plexe
