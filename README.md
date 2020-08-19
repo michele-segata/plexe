@@ -1,5 +1,5 @@
 
-Plexe - The platooning extension for Veins
+# Plexe - The platooning extension for Veins
 
 See the Plexe website <http://plexe.car2x.org/> for a tutorial, documentation,
 and publications.
@@ -20,9 +20,29 @@ are available with the source distribution.
 Besides myself (Michele Segata), Plexe has been improved over the years thanks
 to some incredibly valuable contributors:
 
-Bastian Bloessl
-Tobias Hardes
-Julian Heinovski
-Stefan Joerer
-Max Schettler
-Christoph Sommer
+* Bastian Bloessl
+* Tobias Hardes
+* Julian Heinovski
+* Stefan Joerer
+* Max Schettler
+* Christoph Sommer
+
+## Installation
+Assuming SUMO and OMNeT++ are already installed
+
+```
+cd ~/src
+git clone https://github.com/sommer/veins
+cd veins
+./configure
+make -j <n cpus> MODE=release
+```
+
+```
+cd ~/src
+git clone https://github.com/michele-segata/plexe-veins
+cd plexe-veins
+git checkout plexe-3.0a2
+./configure --with-veins ~/src/veins
+make -j <n cpus> MODE=release
+```
