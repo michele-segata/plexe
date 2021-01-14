@@ -26,7 +26,7 @@
 #define PLEXE_VERSION_MAJOR 3
 #define PLEXE_VERSION_MINOR 0
 #define PLEXE_VERSION_PATCH 0
-#define PLEXE_VERSION_ALPHA 2
+#define PLEXE_VERSION_ALPHA 3
 
 // Explicitly check Veins version number
 #if !(VEINS_VERSION_MAJOR == 5 && VEINS_VERSION_MINOR >= 0)
