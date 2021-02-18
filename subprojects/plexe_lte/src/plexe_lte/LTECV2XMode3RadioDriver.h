@@ -24,14 +24,14 @@
 
 #include <string.h>
 #include <omnetpp.h>
-#include "inet/transportlayer/contract/udp/UDPSocket.h"
+#include "inet/transportlayer/contract/udp/UdpSocket.h"
 #include "inet/networklayer/common/L3Address.h"
 #include "inet/networklayer/common/L3AddressResolver.h"
 #include "plexe/driver/PlexeRadioDriverInterface.h"
 
 namespace plexe {
 
-class LTECV2XMode3RadioDriver : public PlexeRadioDriverInterface, public cSimpleModule {
+class LTECV2XMode3RadioDriver : public PlexeRadioDriverInterface, public omnetpp::cSimpleModule {
 public:
     ~LTECV2XMode3RadioDriver();
     LTECV2XMode3RadioDriver();
@@ -41,19 +41,19 @@ public:
 
 protected:
 
-    inet::UDPSocket socket;
+    inet::UdpSocket socket;
 
     int destinationPort;
     inet::L3Address multicastAddress;
 
-    int udpInGate;
-    int udpOutGate;
+    int socketInGate;
+    int socketOutGate;
     int upperLayerIn;
     int upperLayerOut;
 
     virtual int numInitStages() const override { return inet::NUM_INIT_STAGES; }
     virtual void initialize(int stage) override;
-    virtual void handleMessage(cMessage* msg) override;
+    virtual void handleMessage(omnetpp::cMessage* msg) override;
 };
 
 } // namespace plexe

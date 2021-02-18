@@ -27,6 +27,8 @@
 #include "veins/base/utils/FindModule.h"
 #include "plexe/PlexeManager.h"
 
+#include "plexe_lte/PlexeInetUtils.h"
+
 #define LOG EV_INFO
 
 using namespace veins;
@@ -67,7 +69,7 @@ PlatooningCoordinationApp::~PlatooningCoordinationApp()
 void PlatooningCoordinationApp::initialize(int stage)
 {
 
-    TCPAppBase::initialize(stage);
+    TcpAppBase::initialize(stage);
 
     if (stage != inet::INITSTAGE_APPLICATION_LAYER)
         return;
@@ -118,21 +120,23 @@ void PlatooningCoordinationApp::handleTimer(cMessage* msg)
     }
 }
 
-void PlatooningCoordinationApp::socketDataArrived(int connId, void* yourPtr, cPacket* msg, bool urgent)
+void PlatooningCoordinationApp::socketDataArrived(inet::TcpSocket* socket, inet::Packet* msg, bool urgent)
 {
-    if (PlatoonSearchResponse* response = dynamic_cast<PlatoonSearchResponse*>(msg)) {
+    cPacket* packet = PlexeInetUtils::decapsulate(msg);
+    if (PlatoonSearchResponse* response = dynamic_cast<PlatoonSearchResponse*>(packet)) {
         onPlatoonSearchResponse(response);
     }
-    else if (PlatoonSpeedCommand* speedCommand = dynamic_cast<PlatoonSpeedCommand*>(msg)) {
+    else if (PlatoonSpeedCommand* speedCommand = dynamic_cast<PlatoonSpeedCommand*>(packet)) {
         onPlatoonSpeedCommand(speedCommand);
     }
-    else if (PlatoonContactCommand* contactCommand = dynamic_cast<PlatoonContactCommand*>(msg)) {
+    else if (PlatoonContactCommand* contactCommand = dynamic_cast<PlatoonContactCommand*>(packet)) {
         onPlatoonContactCommand(contactCommand);
     }
+    delete packet;
     delete msg;
 }
 
-void PlatooningCoordinationApp::socketEstablished(int connId, void* yourPtr)
+void PlatooningCoordinationApp::socketEstablished(inet::TcpSocket* socket)
 {
     connectedToTA = true;
     sendUpdateToTA();
@@ -145,6 +149,12 @@ void PlatooningCoordinationApp::populatePlatooningTAQuery(PlatoonTAQuery* msg)
     msg->setQueryType(REQUEST);
 }
 
+void PlatooningCoordinationApp::sendInetPacket(cPacket* packet)
+{
+    inet::Packet* container = PlexeInetUtils::encapsulate(packet, "Plexe_Container");
+    sendPacket(container);
+}
+
 void PlatooningCoordinationApp::sendUpdateToTA()
 {
     PlatoonUpdateMessage* msg = new PlatoonUpdateMessage();
@@ -154,7 +164,7 @@ void PlatooningCoordinationApp::sendUpdateToTA()
     msg->setY(pos.y);
     msg->setSpeed(mobility->getSpeed());
     msg->setByteLength(PLATOON_UPDATE_SIZE_B);
-    sendPacket(msg);
+    sendInetPacket(msg);
     scheduleAt(simTime() + sendUpdateInterval, sendUpdateMsg);
     LOG << "Platoon " << positionHelper->getPlatoonId() << " sending update to traffic authority\n";
 }
@@ -166,7 +176,7 @@ void PlatooningCoordinationApp::sendPlatoonSearch()
     PlatoonSearchCriterion criterion = PlatoonSearchCriterion::DISTANCE;
     msg->setSearchCriterion(criterion);
     msg->setByteLength(PLATOON_SEARCH_SIZE_B);
-    sendPacket(msg);
+    sendInetPacket(msg);
     LOG << "Platoon " << positionHelper->getPlatoonId() << " searching for nearby platoons\n";
 }
 
@@ -177,7 +187,7 @@ void PlatooningCoordinationApp::sendPlatoonApproachRequest(int platoonId)
     populatePlatooningTAQuery(msg);
     msg->setApproachId(platoonId);
     msg->setByteLength(PLATOON_APPROACH_SIZE_B);
-    sendPacket(msg);
+    sendInetPacket(msg);
     mySpeed = mobility->getSpeed();
 }
 

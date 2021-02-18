@@ -20,9 +20,9 @@
 
 package org.car2x.plexe.subprojects.plexe_lte;
 
-import inet.applications.contract.ITCPApp;
+import inet.applications.contract.IApp;
 
-simple PlatooningCoordinationApp like ITCPApp
+simple PlatooningCoordinationApp like IApp
 {
     parameters:
         @class(plexe::PlatooningCoordinationApp);
@@ -36,12 +36,15 @@ simple PlatooningCoordinationApp like ITCPApp
         int connectPort = default(3000); // port number to connect to 
         string dataTransferMode = default("object");
         string interfaceTableModule;
+        int timeToLive = default(-1);
+        int dscp = default(-1);
+        int tos = default(-1);
 
-        @signal[sentPk](type=cPacket);
-        @signal[rcvdPk](type=cPacket);
+        @signal[packetSent](type=inet::Packet);
+        @signal[packetReceived](type=inet::Packet);
         @signal[connect](type=long);  // 1 for open, -1 for close
         @display("i=block/source");
     gates:
-        input tcpIn @labels(TCPCommand/up);
-        output tcpOut @labels(TCPCommand/down);
+        input socketIn;
+        output socketOut;
 }

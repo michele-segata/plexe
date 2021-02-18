@@ -20,23 +20,30 @@
 
 package org.car2x.plexe.subprojects.plexe_lte;
 
-import inet.applications.contract.ITCPApp;
+import inet.applications.contract.IApp;
 
-simple PlatoonTrafficAuthority like ITCPApp
+simple PlatoonTrafficAuthority like IApp
 {
     parameters:
         @class(plexe::PlatoonTrafficAuthority);
-        int localPort = default(3000); // local port number 
+        int localPort = default(3000); // local port number
+        string localAddress = default("");
         // distance from the approached platoon at which the TA stops commanding the approaching platoon
         double approachDistanceThreshold @unit(m) = default(200m);
         // speed difference to be used to approach a platoon
         double approachSpeedDelta @unit(mps) = default(10mps);
+        string serverThreadModuleType = default("org.car2x.plexe.subprojects.plexe_lte.PlatoonTrafficAuthorityThread"); // module type of "thread" module to launch on incoming connections
         string interfaceTableModule;
 
         @signal[sentPk](type=cPacket);
         @signal[rcvdPk](type=cPacket);
         @signal[connect](type=long);  // 1 for open, -1 for close
     gates:
-        input tcpIn @labels(TCPCommand/up);
-        output tcpOut @labels(TCPCommand/down);
+        input socketIn;
+        output socketOut;
+}
+
+simple PlatoonTrafficAuthorityThread {
+    parameters:
+        @class(plexe::PlatoonTrafficAuthorityThread);
 }

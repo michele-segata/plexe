@@ -17,25 +17,21 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
-// Adapted from AlertSender from SimuLTE
-//
 
-package org.car2x.plexe.subprojects.plexe_lte;
+#pragma once
 
-import inet.applications.contract.IApp;
+#include "omnetpp/cpacket.h"
+#include "inet/common/packet/Packet.h"
 
-simple LTECV2XMode3RadioDriver like IApp
-{
-    parameters:
-        @class(plexe::LTECV2XMode3RadioDriver);
-        int destinationPort = default(3000);
-        string multicastAddress = default("224.0.0.1");
-        string interfaceTableModule;
+namespace plexe {
 
-        @display("i=block/ifcard");
-    gates:
-        output socketOut;
-        input socketIn;
-        output upperLayerOut;
-        input upperLayerIn;
-}
+class PlexeInetUtils {
+public:
+    PlexeInetUtils();
+    virtual ~PlexeInetUtils();
+
+    static inet::Packet* encapsulate(omnetpp::cPacket* packet, const char* name = "");
+    static omnetpp::cPacket* decapsulate(inet::Packet* packet);
+};
+
+} /* namespace plexe */

@@ -22,7 +22,7 @@
 
 #include <string.h>
 #include <omnetpp.h>
-#include "inet/applications/tcpapp/TCPAppBase.h"
+#include "inet/applications/tcpapp/TcpAppBase.h"
 #include "inet/networklayer/common/L3Address.h"
 #include "inet/networklayer/common/L3AddressResolver.h"
 
@@ -38,14 +38,14 @@
 
 namespace plexe {
 
-class PlatooningCoordinationApp : public inet::TCPAppBase {
+class PlatooningCoordinationApp : public inet::TcpAppBase {
 
     // invoked when data is received from the traffic authority
-    virtual void socketDataArrived(int connId, void* yourPtr, cPacket* msg, bool urgent) override;
+    virtual void socketDataArrived(inet::TcpSocket* socket, inet::Packet* msg, bool urgent) override;
     // invoked on self messages
     virtual void handleTimer(cMessage* msg) override;
     // invoked when the connection to the traffic authority has been established
-    virtual void socketEstablished(int connId, void* yourPtr) override;
+    virtual void socketEstablished(inet::TcpSocket* socket) override;
     // sends a platoon update (platoon id, position) to the traffic authority
     void sendUpdateToTA();
     // sends a query to the traffic authority searching for other platoons
@@ -60,6 +60,10 @@ class PlatooningCoordinationApp : public inet::TCPAppBase {
     void onPlatoonSpeedCommand(PlatoonSpeedCommand* msg);
     // invoked when a command to contact a platoon is received from the traffic authority
     void onPlatoonContactCommand(PlatoonContactCommand* msg);
+
+    virtual void handleStartOperation(inet::LifecycleOperation* operation) override {};
+    virtual void handleStopOperation(inet::LifecycleOperation* operation) override {};
+    virtual void handleCrashOperation(inet::LifecycleOperation* operation) override {};
 
 public:
     ~PlatooningCoordinationApp();
@@ -94,6 +98,8 @@ protected:
     std::unique_ptr<traci::CommandInterface::Vehicle> plexeTraciVehicle;
     // general platooning app, storing implementation of maneuvers
     GeneralPlatooningApp* app;
+
+    void sendInetPacket(cPacket* packet);
 };
 
 } // namespace plexe

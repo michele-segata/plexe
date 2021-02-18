@@ -23,6 +23,7 @@
 #include "LTECV2XMode3RadioDriver.h"
 #include "inet/common/ModuleAccess.h"
 #include "veins/modules/messages/BaseFrame1609_4_m.h"
+#include "plexe_lte/PlexeInetUtils.h"
 
 using namespace veins;
 
@@ -32,8 +33,8 @@ Define_Module(LTECV2XMode3RadioDriver);
 
 LTECV2XMode3RadioDriver::LTECV2XMode3RadioDriver()
     : destinationPort(3000)
-    , udpInGate(-1)
-    , udpOutGate(-1)
+    , socketInGate(-1)
+    , socketOutGate(-1)
     , upperLayerIn(-1)
     , upperLayerOut(-1)
 {}
@@ -46,8 +47,8 @@ void LTECV2XMode3RadioDriver::initialize(int stage)
 
     cSimpleModule::initialize(stage);
 
-    udpInGate = findGate("udpIn");
-    udpOutGate = findGate("udpOut");
+    socketInGate = findGate("socketIn");
+    socketOutGate = findGate("socketOut");
     upperLayerIn = findGate("upperLayerIn");
     upperLayerOut = findGate("upperLayerOut");
 
@@ -55,7 +56,7 @@ void LTECV2XMode3RadioDriver::initialize(int stage)
         return;
 
     destinationPort = par("destinationPort");
-    socket.setOutputGate(gate("udpOut"));
+    socket.setOutputGate(gate("socketOut"));
     socket.bind(destinationPort);
     setMulticastAddress(par("multicastAddress").stdstringValue());
 }
@@ -68,7 +69,7 @@ void LTECV2XMode3RadioDriver::setMulticastAddress(std::string address)
     }
     multicastAddress = inet::L3AddressResolver().resolve(address.c_str());
     inet::IInterfaceTable* ift = inet::getModuleFromPar<inet::IInterfaceTable>(par("interfaceTableModule"), this);
-    inet::InterfaceEntry* ie = ift->getInterfaceByName("wlan");
+    inet::InterfaceEntry* ie = ift->findInterfaceByName("cellular");
     if (!ie)
         throw cRuntimeError("Wrong multicastInterface setting: no interface named wlan");
     socket.setMulticastOutputInterface(ie->getInterfaceId());
@@ -79,15 +80,12 @@ void LTECV2XMode3RadioDriver::handleMessage(cMessage* msg)
 {
     if (msg->getArrivalGateId() == upperLayerIn) {
         BaseFrame1609_4* frame = check_and_cast<BaseFrame1609_4*>(msg);
-        // the UDP layer overwrites the message kind value, so on reception plexe can't distinguish the packet anymore
-        // as a hack, simply encapsulate the frame inside an empty packet
-        cPacket* container = new cPacket("BaseFrame1609_4_Container");
-        container->encapsulate(frame);
+        inet::Packet* container = PlexeInetUtils::encapsulate(frame, "BaseFrame1609_4_Container");
         socket.sendTo(container, multicastAddress, destinationPort);
     }
-    else if (msg->getArrivalGateId() == udpInGate) {
-        cPacket* container = check_and_cast<cPacket*>(msg);
-        BaseFrame1609_4* frame = check_and_cast<BaseFrame1609_4*>(container->decapsulate());
+    else if (msg->getArrivalGateId() == socketInGate) {
+        inet::Packet* container = check_and_cast<inet::Packet*>(msg);
+        BaseFrame1609_4* frame = check_and_cast<BaseFrame1609_4*>(PlexeInetUtils::decapsulate(container));
         send(frame, upperLayerOut);
         delete container;
     }

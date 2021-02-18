@@ -23,6 +23,7 @@
 
 #include "plexe_lte/messages/PlatoonSpeedCommand_m.h"
 #include "plexe_lte/messages/PlatoonContactCommand_m.h"
+#include "plexe_lte/PlexeInetUtils.h"
 
 #include "plexe/CC_Const.h"
 
@@ -31,6 +32,7 @@ namespace plexe {
 using namespace inet;
 
 Define_Module(PlatoonTrafficAuthority);
+Define_Module(PlatoonTrafficAuthorityThread);
 
 #define PLATOON_QUERY_SIZE_B (4 + 4)
 #define PLATOON_SEARCH_RESPONSE_SIZE_B (PLATOON_QUERY_SIZE_B + 4 + 4 + 4 + 1)
@@ -48,57 +50,30 @@ PlatoonTrafficAuthority::~PlatoonTrafficAuthority()
 
 void PlatoonTrafficAuthority::initialize(int stage)
 {
-    cSimpleModule::initialize(stage);
-
+    TcpServerHostApp::initialize(stage);
     if (stage == INITSTAGE_APPLICATION_LAYER) {
-        int localPort = par("localPort");
         approachDistanceThreshold = par("approachDistanceThreshold");
         approachSpeedDelta = par("approachSpeedDelta");
-        inet::TCPSocket listensocket;
-        listensocket.setOutputGate(gate("tcpOut"));
-        listensocket.setDataTransferMode(TCP_TRANSFER_OBJECT);
-        listensocket.bind(localPort);
-        listensocket.setCallbackObject(this);
-        listensocket.listen();
     }
 }
 
-void PlatoonTrafficAuthority::handleMessage(cMessage* msg)
+
+void PlatoonTrafficAuthority::finish()
 {
-    if (msg->isSelfMessage()) {
-        // Self messages not used at the moment
-    }
-    else {
-        TCPSocket* socket = sockCollection.findSocketFor(msg);
-        if (!socket) {
-            EV_DEBUG << "No socket found for the message. Create a new one" << endl;
-            // new connection -- create new socket object and server process
-            socket = new TCPSocket(msg);
-            socket->setOutputGate(gate("tcpOut"));
-            socket->setDataTransferMode(TCP_TRANSFER_OBJECT);
-            socket->setCallbackObject(this, socket);
-            sockCollection.addSocket(socket);
-        }
-        socket->processMessage(msg);
-    }
+    TcpServerHostApp::finish();
 }
 
-void PlatoonTrafficAuthority::socketEstablished(int connId, void* yourPtr)
+void PlatoonTrafficAuthorityThread::established()
 {
-    LOG << "connected socket with id=" << connId << endl;
+    LOG << "connected socket with id=" << sock->getSocketId() << endl;
 }
 
-void PlatoonTrafficAuthority::socketDataArrived(int connId, void* yourPtr, cPacket* msg, bool urgent)
+void PlatoonTrafficAuthorityThread::dataArrived(inet::Packet* packet, bool urgent)
 {
-    if (yourPtr == nullptr) {
-        EV_ERROR << "Socket establish failure. Null pointer" << endl;
-        return;
-    }
-
-    TCPSocket* socket = (TCPSocket*)yourPtr;
+    cPacket* msg = PlexeInetUtils::decapsulate(packet);
 
     if (PlatoonUpdateMessage* update = dynamic_cast<PlatoonUpdateMessage*>(msg)) {
-        onPlatoonUpdate(update, socket);
+        onPlatoonUpdate(update, sock);
     }
     else if (PlatoonSearchRequest* search = dynamic_cast<PlatoonSearchRequest*>(msg)) {
         onPlatoonSearch(search);
@@ -107,10 +82,11 @@ void PlatoonTrafficAuthority::socketDataArrived(int connId, void* yourPtr, cPack
         onPlatoonApproachRequest(request);
     }
 
+    delete packet;
     delete msg;
 }
 
-void PlatoonTrafficAuthority::onPlatoonUpdate(const PlatoonUpdateMessage* msg, TCPSocket* socket)
+void PlatoonTrafficAuthorityThread::onPlatoonUpdate(const PlatoonUpdateMessage* msg, TcpSocket* socket)
 {
     int platoonId = msg->getPlatoonId();
     PlatoonInfo platoonInfo;
@@ -120,18 +96,18 @@ void PlatoonTrafficAuthority::onPlatoonUpdate(const PlatoonUpdateMessage* msg, T
     platoonInfo.x = msg->getX();
     platoonInfo.y = msg->getY();
     platoonInfo.speed = msg->getSpeed();
-    platoonData[platoonId] = platoonInfo;
+    pta->platoonData[platoonId] = platoonInfo;
     LOG << "Traffic authority got update from platoon " << platoonId << ": position x=" << platoonInfo.x << " y=" << platoonInfo.y << " speed=" << platoonInfo.speed << "\n";
 
-    auto approachingManeuver = approachingManeuvers.find(platoonId);
-    if (approachingManeuver != approachingManeuvers.end()) {
+    auto approachingManeuver = pta->approachingManeuvers.find(platoonId);
+    if (approachingManeuver != pta->approachingManeuvers.end()) {
         // there is an ongoing approaching maneuver for this platoon, so we need to compute the control action
         computeApproachAction(platoonId, approachingManeuver->second);
     }
 
 }
 
-void PlatoonTrafficAuthority::onPlatoonSearch(const PlatoonSearchRequest* msg)
+void PlatoonTrafficAuthorityThread::onPlatoonSearch(const PlatoonSearchRequest* msg)
 {
     PlatoonInfo searchingPlatoon, matchingPlatoon;
     double minDistance = 1e9, matchingDistance;
@@ -139,17 +115,17 @@ void PlatoonTrafficAuthority::onPlatoonSearch(const PlatoonSearchRequest* msg)
     bool matchingAhead;
 
     // search data about the platoon currently searching for another one
-    auto thisPlatoon = platoonData.find(msg->getPlatoonId());
+    auto thisPlatoon = pta->platoonData.find(msg->getPlatoonId());
     // we don't have data about the platoon that sent the query. stop here
-    if (thisPlatoon == platoonData.end()) return;
+    if (thisPlatoon == pta->platoonData.end()) return;
     searchingPlatoon = thisPlatoon->second;
 
     //    veins::Coord searchingPosition(searchingPlatoon.x, searchingPlatoon.y);
     double searchingSpeed = searchingPlatoon.speed;
 
-    if (!traci) traci = veins::TraCIScenarioManagerAccess().get()->getCommandInterface();
+    if (!pta->traci) pta->traci = veins::TraCIScenarioManagerAccess().get()->getCommandInterface();
 
-    for (auto platoon = platoonData.begin(); platoon != platoonData.end(); platoon++) {
+    for (auto platoon = pta->platoonData.begin(); platoon != pta->platoonData.end(); platoon++) {
         // ignore platoon that is currently searching
         if (platoon->first == msg->getPlatoonId()) continue;
 
@@ -181,7 +157,7 @@ void PlatoonTrafficAuthority::onPlatoonSearch(const PlatoonSearchRequest* msg)
 
 }
 
-void PlatoonTrafficAuthority::sendPlatoonSearchResponse(const PlatoonInfo& searchingPlatoon, const PlatoonInfo& matchingPlatoon, double distance, double speedDifference, bool ahead)
+void PlatoonTrafficAuthorityThread::sendPlatoonSearchResponse(const PlatoonInfo& searchingPlatoon, const PlatoonInfo& matchingPlatoon, double distance, double speedDifference, bool ahead)
 {
     LOG << "Sending response back to platoon number " << searchingPlatoon.platoonId << " with candidate platoon " << matchingPlatoon.platoonId << "\n";
     PlatoonSearchResponse* msg = new PlatoonSearchResponse("platoonSearchResponse");
@@ -191,80 +167,80 @@ void PlatoonTrafficAuthority::sendPlatoonSearchResponse(const PlatoonInfo& searc
     msg->setSpeedDifference(speedDifference);
     msg->setAhead(ahead);
     msg->setByteLength(PLATOON_SEARCH_RESPONSE_SIZE_B);
-    searchingPlatoon.socket->send(msg);
+    sendInetPacket(searchingPlatoon.socket, msg);
 }
 
-void PlatoonTrafficAuthority::sendSpeedCommand(const PlatoonInfo& platoon, double speed)
+void PlatoonTrafficAuthorityThread::sendSpeedCommand(const PlatoonInfo& platoon, double speed)
 {
     LOG << "Sending speed command to platoon number " << platoon.platoonId << ": set speed to " << speed << "m/s\n";
     PlatoonSpeedCommand* msg = new PlatoonSpeedCommand("platoonSpeedCommand");
     populateResponse(*msg, platoon);
     msg->setSpeed(speed);
     msg->setByteLength(PLATOON_SPEED_SIZE_B);
-    platoon.socket->send(msg);
+    sendInetPacket(platoon.socket, msg);
 }
 
-void PlatoonTrafficAuthority::sendContactPlatoonCommand(const PlatoonInfo& platoon, int contactPlatoonId, int contactLeaderId)
+void PlatoonTrafficAuthorityThread::sendContactPlatoonCommand(const PlatoonInfo& platoon, int contactPlatoonId, int contactLeaderId)
 {
     PlatoonContactCommand* msg = new PlatoonContactCommand("platoonContactCommand");
     populateResponse(*msg, platoon);
     msg->setContactPlatoonId(contactPlatoonId);
     msg->setContactLeaderId(contactLeaderId);
     msg->setByteLength(PLATOON_CONTACT_SIZE_B);
-    platoon.socket->send(msg);
+    sendInetPacket(platoon.socket, msg);
 }
 
-void PlatoonTrafficAuthority::populateResponse(PlatoonTAQuery& msg, const PlatoonInfo& destination)
+void PlatoonTrafficAuthorityThread::populateResponse(PlatoonTAQuery& msg, const PlatoonInfo& destination)
 {
     msg.setPlatoonId(destination.platoonId);
     msg.setVehicleId(destination.platoonLeader);
 }
 
-void PlatoonTrafficAuthority::onPlatoonApproachRequest(const PlatoonApproachRequest* msg)
+void PlatoonTrafficAuthorityThread::onPlatoonApproachRequest(const PlatoonApproachRequest* msg)
 {
     computeApproachAction(msg->getPlatoonId(), msg->getApproachId());
 }
 
-void PlatoonTrafficAuthority::computeApproachAction(int approachingId, int approachedId)
+void PlatoonTrafficAuthorityThread::computeApproachAction(int approachingId, int approachedId)
 {
     bool ahead;
-    auto approaching = platoonData.find(approachingId);
-    auto approached = platoonData.find(approachedId);
+    auto approaching = pta->platoonData.find(approachingId);
+    auto approached = pta->platoonData.find(approachedId);
     // if one of the two platoons doesn't exist, simply ignore the request
-    if (approaching == platoonData.end() || approached == platoonData.end()) return;
+    if (approaching == pta->platoonData.end() || approached == pta->platoonData.end()) return;
 
     double distance = getDistance(approaching->second, approached->second, ahead);
     LOG << "Computing approach action between " << approaching->second.platoonId << " and " << approached->second.platoonId << ": distance=" << distance << "\n";
-    if (distance < approachDistanceThreshold) {
+    if (distance < pta->approachDistanceThreshold) {
         LOG << "Distance smaller than threshold. Telling platoon to switch to autonomous mode\n";
         // if the platoon is close enough to the other, they can communicate and coordinate themself
         sendContactPlatoonCommand(approaching->second, approached->second.platoonId, approached->second.platoonLeader);
         // if there is an ongoing maneuver managed by the TA, remove it after giving autonomous control to platoons
-        if (auto approachingManeuver = approachingManeuvers.find(approachingId) != approachingManeuvers.end()) {
-            approachingManeuvers.erase(approachingManeuver);
+        if (auto approachingManeuver = pta->approachingManeuvers.find(approachingId) != pta->approachingManeuvers.end()) {
+            pta->approachingManeuvers.erase(approachingManeuver);
         }
     }
     else {
         double approachSpeed;
         // if the platoon to approach is ahead, the approaching one should speed up
-        if (ahead) approachSpeed = approached->second.speed + approachSpeedDelta;
+        if (ahead) approachSpeed = approached->second.speed + pta->approachSpeedDelta;
         // otherwise it should slow down
-        else approachSpeed = approached->second.speed - approachSpeedDelta;
+        else approachSpeed = approached->second.speed - pta->approachSpeedDelta;
         LOG << "Distance larger than threshold. Approaching platoon is " << (ahead ? "ahead" : "behind") << ". Sending set speed command (" << approachSpeed << "m/s)\n";
         // send the approach speed to the approaching platoon
         sendSpeedCommand(approaching->second, approachSpeed);
         // keep trace that we are currently sending approach commands to the approaching vehicle
-        approachingManeuvers[approaching->second.platoonId] = approached->second.platoonId;
+        pta->approachingManeuvers[approaching->second.platoonId] = approached->second.platoonId;
     }
 }
 
-double PlatoonTrafficAuthority::getDistance(const PlatoonInfo& first, const PlatoonInfo& second, bool& ahead)
+double PlatoonTrafficAuthorityThread::getDistance(const PlatoonInfo& first, const PlatoonInfo& second, bool& ahead)
 {
     veins::Coord firstPosition(first.x, first.y);
     veins::Coord secondPosition(second.x, second.y);
     // if the vehicles are on the same edge and one is ahead of the other, SUMO cannot compute the route all around the circle
-    double distanceFirstToSecond = traci->getDistance(firstPosition, secondPosition, true);
-    double distanceSecondToFirst = traci->getDistance(secondPosition, firstPosition, true);
+    double distanceFirstToSecond = pta->traci->getDistance(firstPosition, secondPosition, true);
+    double distanceSecondToFirst = pta->traci->getDistance(secondPosition, firstPosition, true);
     double distance;
     if (distanceFirstToSecond < distanceSecondToFirst) {
         distance = distanceFirstToSecond;
@@ -276,6 +252,14 @@ double PlatoonTrafficAuthority::getDistance(const PlatoonInfo& first, const Plat
     }
     return distance;
 }
+
+void PlatoonTrafficAuthorityThread::sendInetPacket(TcpSocket* socket, cPacket* packet)
+{
+    inet::Packet* container = PlexeInetUtils::encapsulate(packet, "Plexe_Container");
+    socket->send(container);
+}
+
+void PlatoonTrafficAuthorityThread::timerExpired(cMessage* timer) {}
 
 } // namespace plexe
 

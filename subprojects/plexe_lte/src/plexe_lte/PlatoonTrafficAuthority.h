@@ -21,8 +21,10 @@
 #pragma once
 
 #include "inet/common/INETDefs.h"
-#include "inet/transportlayer/contract/tcp/TCPSocket.h"
-#include "inet/transportlayer/contract/tcp/TCPSocketMap.h"
+#include "inet/transportlayer/contract/tcp/TcpSocket.h"
+#include "inet/common/socket/SocketMap.h"
+
+#include "inet/applications/tcpapp/TcpServerHostApp.h"
 
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 
@@ -33,16 +35,24 @@
 
 namespace plexe {
 
-class PlatoonTrafficAuthority : public cSimpleModule, public inet::TCPSocket::CallbackInterface {
+struct PlatoonInfo {
+    int platoonId;
+    int platoonLeader;
+    inet::TcpSocket* socket;
+    double x;
+    double y;
+    double speed;
+};
+
+class PlatoonTrafficAuthority : public inet::TcpServerHostApp {
+
+    virtual void initialize(int stage) override;
+    virtual int numInitStages() const override { return inet::NUM_INIT_STAGES; }
+    virtual void finish() override;
+
+    friend class PlatoonTrafficAuthorityThread;
+
 private:
-    struct PlatoonInfo {
-        int platoonId;
-        int platoonLeader;
-        inet::TCPSocket* socket;
-        double x;
-        double y;
-        double speed;
-    };
     // map from platoon id to its information
     typedef std::map<int, struct PlatoonInfo> PlatoonData;
 
@@ -62,8 +72,6 @@ public:
     virtual ~PlatoonTrafficAuthority();
 protected:
 
-    inet::TCPSocket socket;
-    inet::TCPSocketMap sockCollection;
     PlatoonData platoonData;
     // map from approaching platoon id to id of platoon being approached
     std::map<int, int> approachingManeuvers;
@@ -76,18 +84,17 @@ protected:
 
     veins::TraCICommandInterface* traci;
 
-    virtual void handleMessage(cMessage* msg) override;
+};
 
-    // invoked when a new connection has been established
-    virtual void socketEstablished(int connId, void* yourPtr) override;
-    // invoked when received data from a connected socket
-    virtual void socketDataArrived(int connId, void* yourPtr, cPacket* msg, bool urgent) override;
+class PlatoonTrafficAuthorityThread : public inet::TcpServerThreadBase {
+protected:
+    PlatoonTrafficAuthority* pta = nullptr;
 
     /**
      * Handles a platoon update message, which includes information such as speed and position.
      * If there is an ongoing approach maneuver for the platoon sending the update (@see onPlatoonApproachRequest), updates the control command
      */
-    virtual void onPlatoonUpdate(const PlatoonUpdateMessage* msg, inet::TCPSocket* socket);
+    virtual void onPlatoonUpdate(const PlatoonUpdateMessage* msg, inet::TcpSocket* socket);
     /**
      * Handles a platoon search. A platoon might search for a nearby platoon to merge with.
      * The request includes a simple criterion, i.e., find the platoon that is the closest in terms of distance or of relative speed
@@ -143,9 +150,25 @@ protected:
      */
     double getDistance(const PlatoonInfo& first, const PlatoonInfo& second, bool& ahead);
 
-    virtual int numInitStages() const override { return inet::NUM_INIT_STAGES; }
-    virtual void initialize(int stage) override;
+public:
+    /**
+     * Called when connection is established.
+     */
+    virtual void established() override;
 
+    /*
+     * Called when a data packet arrives. To be redefined.
+     */
+    virtual void dataArrived(inet::Packet* packet, bool urgent) override;
+
+    /*
+     * Called when a timer (scheduled via scheduleAt()) expires. To be redefined.
+     */
+    virtual void timerExpired(cMessage* timer) override;
+
+    virtual void init(inet::TcpServerHostApp* hostmodule, inet::TcpSocket* socket) override { TcpServerThreadBase::init(hostmodule, socket); pta = check_and_cast<PlatoonTrafficAuthority*>(hostmod); }
+
+    void sendInetPacket(inet::TcpSocket* socketc, cPacket* packet);
 };
 
 } // namespace plexe
