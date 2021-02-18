@@ -22,9 +22,9 @@
 import org.car2x.veins.base.modules.IBaseApplLayer;
 
 import org.car2x.plexe.protocols.HumanInterferingProtocol;
-import org.car2x.plexe.UnicastProtocol;
 import org.car2x.veins.modules.mobility.traci.TraCIMobility;
 import org.car2x.veins.modules.nic.Nic80211p;
+import org.car2x.plexe.driver.Veins11pRadioDriver;
 
 
 module HumanCar
@@ -40,6 +40,12 @@ module HumanCar
                 @display("p=60,200");
         }
 
+        veins11pDriver: Veins11pRadioDriver {
+            parameters:
+                @display("p=60,200");
+        }
+
+
         nic: Nic80211p {
             parameters:
                 @display("p=60,400");
@@ -50,8 +56,10 @@ module HumanCar
                 @display("p=130,172;i=block/cogwheel");
         }
     connections allowunconnected:
-        nic.upperLayerIn <-- prot.lowerLayerOut;
-        nic.upperLayerOut --> prot.lowerLayerIn;
+        nic.upperLayerIn <-- veins11pDriver.lowerLayerOut;
+        nic.upperLayerOut --> veins11pDriver.lowerLayerIn;
+        veins11pDriver.upperLayerIn <-- prot.lowerLayerOut;
+        veins11pDriver.upperLayerOut --> prot.lowerLayerIn;
 
         radioIn --> nic.radioIn;
 
