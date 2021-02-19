@@ -34,7 +34,7 @@ import lte.corenetwork.nodes.eNodeB;
 import inet.node.ethernet.Eth10G;
 import lte.corenetwork.binder.LteBinder;
 import lte.world.radio.LteChannelControl;
-import inet.networklayer.configurator.ipv4.IPv4NetworkConfigurator;
+import lte.common.LteNetworkConfigurator;
 import lte.epc.PgwStandardSimplified;
 import inet.node.inet.Router;
 import inet.node.inet.StandardHost;
@@ -57,7 +57,7 @@ network Highway
         channelControl: LteChannelControl {
             @display("p=50,25;is=s");
         }
-        configurator: IPv4NetworkConfigurator {
+        configurator: LteNetworkConfigurator {
             @display("p=50,125");
             config = xmldoc("demo.xml");
         }

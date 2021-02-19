@@ -3,7 +3,7 @@
 	<name>plexe_hetnet</name>
 	<comment></comment>
 	<projects>
-		<project>inet</project>
+		<project>inet4</project>
 		<project>lte</project>
 		<project>plexe_lte</project>
 		<project>plexe_vlc</project>
