@@ -8,7 +8,7 @@ src/**/*_m.cc
 doc/doxy
 doc/neddoc
 
-/run
+/bin/plexe_run
 
 /out
 
