@@ -3,7 +3,7 @@
 # ^-- contents of out/config.py go here
 
 #
-# Copyright (C) 2013-2020 Christoph Sommer <sommer@ccs-labs.org>
+# Copyright (C) 2013-2021 Christoph Sommer <sommer@ccs-labs.org>
 #
 # Documentation for these modules is at http://veins.car2x.org/
 #

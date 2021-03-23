@@ -1,7 +1,7 @@
 #
-# Copyright (C) 2016-2020 Stefan Joerer <joerer@ccs-labs.org>
-# Copyright (C) 2016-2020 Bastian Bloessl <bloessl@ccs-labs.org>
-# Copyright (C) 2016-2020 Michele Segata <segata@ccs-labs.org>
+# Copyright (C) 2016-2021 Stefan Joerer <joerer@ccs-labs.org>
+# Copyright (C) 2016-2021 Bastian Bloessl <bloessl@ccs-labs.org>
+# Copyright (C) 2016-2021 Michele Segata <segata@ccs-labs.org>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 #
