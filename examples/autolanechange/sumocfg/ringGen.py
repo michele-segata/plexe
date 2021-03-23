@@ -70,7 +70,17 @@ parser.add_argument('-s', '--speed', type=float, default=13.9,
 parser.add_argument('-d', '--dimension', type=float,
                     help='Total length of the ring. If present overrides '
                          'radius.')
+parser.add_argument('-f', '--fix-net', action='store_true', dest='fix',
+                    help='Fixes the final .net.xml file to change the length '
+                         'of each lane according to its radius. This is NOT '
+                         'recommended as, while fixing geometrical issues, '
+                         'can cause crashes on lane changes as the SUMO logic'
+                         'cannot handle different length lanes on the same'
+                         'edge.')
 args = parser.parse_args()
+
+if args.fix:
+    print("WARNING: enabling the fix net file option. This is not recommended")
 
 # Arguments validity check
 if args.dimension is not None:
@@ -243,7 +253,8 @@ with open(args.name + ".add.xml", "w") as additional_file:
 
 print ("OK")
 
-fix_net_file(net_file, args.radius, args.edges, args.lanes, 3.2)
+if args.fix:
+    fix_net_file(net_file, args.radius, args.edges, args.lanes, 3.2)
 length = get_half_circle_lane_length(args.radius, args.edges, args.lanes, 0,
                                      3.2)
 
