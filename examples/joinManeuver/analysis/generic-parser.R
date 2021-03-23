@@ -65,6 +65,7 @@ cat("run: ", params$runNumber, "\n")
 selector <- get.selector(map[[config]]$module, map[[config]]$names)
 condition <- get.subset.condition(map[[config]]$names)
 toclean <- prepare.vector(infile, selector)
+names(toclean) <- rename.columns(names(toclean))
 toclean <- subset(toclean, eval(parse(text=condition)))
 gc()
 runData <- toclean

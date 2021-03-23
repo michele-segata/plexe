@@ -37,8 +37,14 @@ get.selector <- function(module, names) {
 # given the list of names, generates a subset condition to remove NAs
 get.subset.condition <- function(names) {
     names <- gsub("name\\(", "!is.na(", names)
+    names <- gsub(":vector", "", names)
     sel <- paste(names, collapse=" & ", sep='')
     return (sel)
+}
+
+# removes ":vector" from dataframe column names
+rename.columns <- function(names) {
+    gsub(":vector", "", names)
 }
 
 # gets the list of files with a certain prefix and suffix in a folder

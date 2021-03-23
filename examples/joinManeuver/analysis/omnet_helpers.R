@@ -25,6 +25,18 @@ if (!suppressWarnings(require(reshape, warn.conflicts = F, quietly=T))) {
     library(reshape2, warn.conflicts = F)
 }
 
+rVersion4OrGreater <- function() {
+    return(as.numeric(version$major) >= 4)
+}
+
+getVectorNames <- function(dataset) {
+    if (rVersion4OrGreater()) {
+        return(unique(dataset$vectors$name))
+    } else {
+        return(levels(dataset$vectors$name))
+    }
+}
+
 getScalars <- function(scaFiles, module, scalarName, attributeName) {
 
     selectString <- paste('module(', module, ') AND name("', scalarName,'")', sep='')
@@ -32,7 +44,11 @@ getScalars <- function(scaFiles, module, scalarName, attributeName) {
 
     # attrvalues is a factor with levels
     attrvalues <- unique(subset(dataset$runattrs$attrvalue, dataset$runattrs$attrname == attributeName))
-    attrvalues <- sort(as.integer(levels(attrvalues)[as.integer(attrvalues)]))
+    if (rVersion4OrGreater()) {
+        attrvalues <- sort(as.integer(attrvalues[as.integer(attrvalues)]))
+    } else {
+        attrvalues <- sort(as.integer(levels(attrvalues)[as.integer(attrvalues)]))
+    }
 
     res <- matrix(0, nrow=0, ncol=2)
 
@@ -50,7 +66,7 @@ getScalars <- function(scaFiles, module, scalarName, attributeName) {
 loadVectorsShaped <- function(vecFiles, ...){
     d <- loadDataset(vecFiles, ...)
 
-    vectornames <- levels(d$vectors$name)
+    vectornames <- getVectorNames(d)
     if(length(vectornames) == 0) {
         warning("no vectors loaded!")
         return
@@ -78,7 +94,7 @@ loadVectorsShaped <- function(vecFiles, ...){
 
 listVectors <- function(vecFiles, ...){
     d <- loadDataset(vecFiles, ...)
-    return (levels(d$vectors$name))
+    return (getVectorNames(d))
 }
 
 print.runs <- function(vecFiles) {
