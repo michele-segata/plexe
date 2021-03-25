@@ -3,9 +3,9 @@
 	<name>plexe_vlc</name>
 	<comment></comment>
 	<projects>
-		<project>plexe-veins</project>
 		<project>veins</project>
 		<project>veins-vlc</project>
+		<project>plexe</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

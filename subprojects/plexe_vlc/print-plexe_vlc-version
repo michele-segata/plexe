@@ -3,6 +3,8 @@
 #
 # Copyright (C) 2019 Christoph Sommer <sommer@ccs-labs.org>
 #
+# Documentation for these modules is at http://veins.car2x.org/
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 #
 # This program is free software; you can redistribute it and/or modify
@@ -20,12 +22,11 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-from __future__ import print_function
 import argparse
 import os
 import sys
 
-parser = argparse.ArgumentParser(description='Print version number of plexe_vlc (e.g., "3.0") or a component thereof.', epilog='Not all combinations of switches are supported.')
+parser = argparse.ArgumentParser(description='Print version number of Plexe VLC (e.g., "3.0") or a component thereof.', epilog='Not all combinations of switches are supported.')
 parser.add_argument('-M', '--major', action='store_true', help='print only the major version')
 parser.add_argument('-m', '--minor', action='store_true', help='print only the minor version')
 parser.add_argument('-p', '--patch', action='store_true', help='print only the patch level')

@@ -134,11 +134,11 @@ class LibraryChecker:
 
 
 plexe = Library(name="Plexe", library="plexe", default_path="../../",
-                versions=["3.0-alpha3"], source_folder="src/plexe",
+                versions=["3.0"], source_folder="src/plexe",
                 lib_folder="src", images_folder="images",
                 version_script="print-plexe-version")
 veins = Library(name="Veins", library="veins", default_path="../../../veins",
-                versions=["5.0", "5.1"], source_folder="src/veins", lib_folder="src",
+                versions=["5.1"], source_folder="src/veins", lib_folder="src",
                 images_folder="images", version_script="print-veins-version")
 veins_vlc = Library(name="Veins VLC", library="veins-vlc",
                     default_path="../../../veins_vlc", versions=["1.0"],

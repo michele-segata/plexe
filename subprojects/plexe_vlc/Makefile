@@ -26,7 +26,7 @@
 ADDL_TARGETS =
 ifeq ($(wildcard out/config.py),)
 else
-    ADDL_TARGETS += run
+    ADDL_TARGETS += bin/plexe_vlc_run
 endif
 
 # default target
@@ -39,8 +39,8 @@ else
 endif
 
 # command line scripts
-run: % : src/scripts/%.in.py out/config.py
-	@echo "Creating script \"./$@\""
+bin/plexe_vlc_run: src/scripts/plexe_vlc_run.in.py out/config.py
+	@echo "Creating script \"$@\""
 	@sed '/# v-- contents of out\/config.py go here/r out/config.py' "$<" > "$@"
 	@chmod a+x "$@"
 
@@ -69,7 +69,7 @@ endif
 cleanall: clean
 	rm -f src/Makefile
 	rm -f out/config.py
-	rm -f run
+	rm -f bin/plexe_vlc_run
 
 src/Makefile:
 	@echo
@@ -88,3 +88,4 @@ out/config.py:
 	@echo '====================================================================='
 	@echo
 	@exit 1
+

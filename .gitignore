@@ -23,7 +23,7 @@ subprojects/plexe_catch/src/plexe_catch
 subprojects/plexe_catch/src/plexe_catch_dbg
 
 subprojects/**/out
-subprojects/**/run
+subprojects/**/bin/**_run
 subprojects/**/src/*.dll
 subprojects/**/src/*.dylib
 subprojects/**/src/*.so
