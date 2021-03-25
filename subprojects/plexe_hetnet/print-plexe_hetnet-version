@@ -3,6 +3,8 @@
 #
 # Copyright (C) 2019 Christoph Sommer <sommer@ccs-labs.org>
 #
+# Documentation for these modules is at http://veins.car2x.org/
+#
 # SPDX-License-Identifier: GPL-2.0-or-later
 #
 # This program is free software; you can redistribute it and/or modify
@@ -20,19 +22,18 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-from __future__ import print_function
 import argparse
 import os
 import sys
 
-parser = argparse.ArgumentParser(description='Print version number of plexe_lte (e.g., "3.0") or a component thereof.', epilog='Not all combinations of switches are supported.')
+parser = argparse.ArgumentParser(description='Print version number of Plexe HetNet (e.g., "3.0") or a component thereof.', epilog='Not all combinations of switches are supported.')
 parser.add_argument('-M', '--major', action='store_true', help='print only the major version')
 parser.add_argument('-m', '--minor', action='store_true', help='print only the minor version')
 parser.add_argument('-p', '--patch', action='store_true', help='print only the patch level')
 parser.add_argument('-a', '--alpha', action='store_true', help='print only the alpha stage')
 args = parser.parse_args()
 
-header_file_name = os.path.join(os.path.dirname(__file__), 'src', 'plexe_lte', 'plexe_lte.h')
+header_file_name = os.path.join(os.path.dirname(__file__), 'src', 'plexe_hetnet', 'plexe_hetnet.h')
 
 major = None
 minor = None
@@ -43,13 +44,13 @@ with open(header_file_name) as f:
     for line in f:
         line = line.strip()
         if line.startswith('#define PLEXE_HETNET_VERSION_MAJOR '):
-            major = int(line[33:])
+            major = int(line.split(' ')[2])
         if line.startswith('#define PLEXE_HETNET_VERSION_MINOR '):
-            minor = int(line[33:])
+            minor = int(line.split(' ')[2])
         if line.startswith('#define PLEXE_HETNET_VERSION_PATCH '):
-            patch = int(line[33:])
+            patch int(line.split(' ')[2])
         if line.startswith('#define PLEXE_HETNET_VERSION_ALPHA '):
-            alpha = int(line[33:])
+            alpha = int(line.split(' ')[2])
 
 if None in (major, minor, patch, alpha):
     print('Could not parse "{}". Aborting.'.format(header_file_name), file=sys.stderr)

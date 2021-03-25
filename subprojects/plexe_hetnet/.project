@@ -3,13 +3,13 @@
 	<name>plexe_hetnet</name>
 	<comment></comment>
 	<projects>
-		<project>inet4</project>
+		<project>inet</project>
 		<project>lte</project>
 		<project>plexe_lte</project>
 		<project>plexe_vlc</project>
-		<project>plexe-veins</project>
+		<project>plexe</project>
 		<project>veins</project>
-		<project>veins_inet3</project>
+		<project>veins_inet</project>
 		<project>veins-vlc</project>
 	</projects>
 	<buildSpec>
