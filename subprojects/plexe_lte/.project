@@ -3,11 +3,11 @@
 	<name>plexe_lte</name>
 	<comment></comment>
 	<projects>
-		<project>inet4</project>
+		<project>inet</project>
 		<project>lte</project>
-		<project>plexe-veins</project>
 		<project>veins</project>
 		<project>veins_inet</project>
+		<project>plexe</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

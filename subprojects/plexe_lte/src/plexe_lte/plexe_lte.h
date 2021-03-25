@@ -1,6 +1,8 @@
 //
 // Copyright (C) 2019 Christoph Sommer <sommer@ccs-labs.org>
 //
+// Documentation for these modules is at http://veins.car2x.org/
+//
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
 // This program is free software; you can redistribute it and/or modify
