@@ -21,8 +21,10 @@
 #
 
 from os.path import join, relpath
-import subprocess
+from subprocess import check_output, DEVNULL, CalledProcessError
 from optparse import OptionParser
+import sys
+
 
 class Library:
     def __init__(self, name, library, default_path, versions, source_folder,
@@ -45,7 +47,7 @@ class Library:
 
     def run_version(self, path):
         fname = join(path, self.version_script)
-        return subprocess.check_output(["env", fname]).strip().decode()
+        return check_output(["env", fname], stderr=DEVNULL).strip().decode()
 
     def read_version(self, path):
         fname = join(path, self.version_script)
@@ -63,13 +65,22 @@ class Library:
         txt = txt.format(self.name, " or ".join(self.versions), version)
         print(txt)
 
-    def print_library_error(self, error):
+    def print_library_error(self):
         versions = " or ".join(self.versions)
         txt = "Could not determine {name} version (by running {script}): "\
-              "{error}. Check the path to {name} (--with-{lib}=... option) "\
+              "Check the path to {name} (--with-{lib}=... option) "\
               "and the {name} version (should be version {versions})"
         txt = txt.format(name=self.name, script=self.version_script,
-                         error=error, lib=self.library, versions=versions)
+                         lib=self.library, versions=versions)
+        print(txt)
+
+    def print_file_error(self):
+        versions = " or ".join(self.versions)
+        txt = "Could not determine {name} version (by reading {script}): " \
+              "Check the path to {name} (--with-{lib}=... option) " \
+              "and the {name} version (should be version {versions})"
+        txt = txt.format(name=self.name, script=self.version_script,
+                         lib=self.library, versions=versions)
         print(txt)
 
     def check(self, options, flags, libs, neds, imgs):
@@ -105,8 +116,11 @@ class Library:
                     neds.append(relpath(join(path, self.ned_dir)))
                     imgs.append(relpath(join(path, self.images_dir)))
 
-            except subprocess.CalledProcessError as e:
-                self.print_library_error(e)
+            except CalledProcessError:
+                self.print_library_error()
+                sys.exit(1)
+            except FileNotFoundError:
+                self.print_file_error()
                 sys.exit(1)
 
 
