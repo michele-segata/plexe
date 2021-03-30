@@ -187,6 +187,8 @@ protected:
 
     virtual void setVariablesAfterFormationChange();
 
+    virtual void colorVehicle();
+
 public:
     BasePositionHelper()
         : mobility(nullptr)

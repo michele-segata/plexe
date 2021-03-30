@@ -26,6 +26,17 @@ using namespace veins;
 
 namespace plexe {
 
+static veins::TraCIColor PlatoonIdToColor[] = {
+       veins::TraCIColor(234, 85, 70, 255),
+       veins::TraCIColor(163, 99, 216, 255),
+       veins::TraCIColor(249, 162, 40, 255),
+       veins::TraCIColor(254, 204, 47, 255),
+       veins::TraCIColor(64, 164, 216, 255),
+       veins::TraCIColor(178, 194, 37, 255),
+       veins::TraCIColor(51, 190, 184, 255),
+       veins::TraCIColor(107, 192, 120, 255)
+};
+
 Define_Module(BasePositionHelper);
 
 void BasePositionHelper::initialize(int stage)
@@ -73,6 +84,14 @@ void BasePositionHelper::setVariablesAfterFormationChange()
     leaderId = formation[0];
     frontId = isLeader() ? -1 : formation[position - 1];
     backId = isLast() ? -1 : formation[position + 1];
+    colorVehicle();
+}
+
+void BasePositionHelper::colorVehicle() {
+    if (platoonId == -1)
+        traciVehicle->setColor(veins::TraCIColor::fromTkColor("white"));
+    else
+        traciVehicle->setColor(PlatoonIdToColor[platoonId % (sizeof(PlatoonIdToColor) / sizeof(*PlatoonIdToColor))]);
 }
 
 std::string BasePositionHelper::getExternalId() const
@@ -164,6 +183,7 @@ void BasePositionHelper::setId(const int id)
 void BasePositionHelper::setPlatoonId(const int id)
 {
     platoonId = id;
+    colorVehicle();
 }
 
 void BasePositionHelper::setPlatoonLane(const int lane)
