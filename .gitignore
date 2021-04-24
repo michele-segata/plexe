@@ -1,4 +1,5 @@
 src/Makefile
+src/scripts/__pycache__/
 src/*.so
 src/*.dll
 src/*.dylib
