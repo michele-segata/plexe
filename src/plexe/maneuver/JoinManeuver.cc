@@ -79,7 +79,6 @@ MergePlatoonRequest* JoinManeuver::createMergePlatoonRequest(int vehicleId, std:
     return msg;
 }
 
-
 JoinPlatoonResponse* JoinManeuver::createJoinPlatoonResponse(int vehicleId, std::string externalId, int platoonId, int destinationId, bool permitted)
 {
     JoinPlatoonResponse* msg = new JoinPlatoonResponse("JoinPlatoonResponse");

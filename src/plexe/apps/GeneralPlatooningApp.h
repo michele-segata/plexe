@@ -123,7 +123,6 @@ public:
      */
     void startMergeManeuver(int platoonId, int leaderId, int position);
 
-
     /** Abort join maneuver */
     void abortJoinManeuver();
 
@@ -144,8 +143,10 @@ public:
     void setInManeuver(bool b, Maneuver* maneuver)
     {
         inManeuver = b;
-        if (inManeuver) activeManeuver = maneuver;
-        else activeManeuver = nullptr;
+        if (inManeuver)
+            activeManeuver = maneuver;
+        else
+            activeManeuver = nullptr;
     }
 
     BasePositionHelper* getPositionHelper()

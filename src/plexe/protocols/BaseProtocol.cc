@@ -34,7 +34,6 @@ namespace plexe {
 
 Define_Module(BaseProtocol);
 
-
 const int BaseProtocol::BEACON_TYPE = 12345;
 
 void BaseProtocol::initialize(int stage)
@@ -62,7 +61,7 @@ void BaseProtocol::initialize(int stage)
         minUpperControlId = gate("upperControlIn", 0)->getId();
         maxUpperControlId = gate("upperControlIn", MAX_GATES_COUNT - 1)->getId();
         minRadioId = gate("radiosIn", 0)->getId();
-        maxRadioId = gate("radiosIn", gateSize("radiosIn")-1)->getId();
+        maxRadioId = gate("radiosIn", gateSize("radiosIn") - 1)->getId();
 
         // get information about output radio interfaces and store them
         for (int i = 0; i < gateSize("radiosOut"); i++) {
@@ -323,8 +322,10 @@ void BaseProtocol::handleUpperMsg(cMessage* msg)
     BaseFrame1609_4* frame = check_and_cast<BaseFrame1609_4*>(msg);
 
     enum PlexeRadioInterfaces interfaces;
-    if (itf) interfaces = (enum PlexeRadioInterfaces)itf->getInterfaces();
-    else interfaces = PlexeRadioInterfaces::VEINS_11P;
+    if (itf)
+        interfaces = (enum PlexeRadioInterfaces) itf->getInterfaces();
+    else
+        interfaces = PlexeRadioInterfaces::VEINS_11P;
 
     sendTo(frame, interfaces);
 }

@@ -24,8 +24,8 @@
 #include "veins/modules/mac/ieee80211p/Mac1609_4.h"
 #include "veins/base/utils/FindModule.h"
 
-#define VEH_ID_TO_MAC(x) (x+1)
-#define MAC_TO_VEH_ID(x) (x-1)
+#define VEH_ID_TO_MAC(x) (x + 1)
+#define MAC_TO_VEH_ID(x) (x - 1)
 
 using namespace veins;
 

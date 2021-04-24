@@ -78,7 +78,6 @@ public:
     virtual bool handleSelfMsg(cMessage* msg) override;
 
 protected:
-
     // store the old formation this vehicle is leader for to communicate it to the leader of the platoon we are merging with
     std::vector<int> oldFormation;
     // store the old platoon id before changing it
@@ -86,7 +85,6 @@ protected:
 
     // message used to periodically check for the distance while performing the final approach
     cMessage* checkDistance;
-
 };
 
 } // namespace plexe

@@ -159,7 +159,6 @@ void GeneralPlatooningApp::handleUpdatePlatoonData(const UpdatePlatoonData* msg)
     handleUpdatePlatoonFormation(msg);
     LOG << positionHelper->getId() << " changing platoon id from " << positionHelper->getPlatoonId() << " to " << msg->getNewPlatoonId() << "\n";
     positionHelper->setPlatoonId(msg->getNewPlatoonId());
-
 }
 
 void GeneralPlatooningApp::handleUpdatePlatoonFormation(const UpdatePlatoonFormation* msg)

@@ -33,12 +33,11 @@ enum PlexeRadioInterfaces {
 
 class PlexeRadioDriverInterface {
 public:
-    PlexeRadioDriverInterface() {};
-    virtual ~PlexeRadioDriverInterface() {};
+    PlexeRadioDriverInterface(){};
+    virtual ~PlexeRadioDriverInterface(){};
 
     // returns the type of the device which is used by the protocols to choose the proper radio interface
     virtual int getDeviceType() = 0;
 };
 
 } /* namespace plexe */
-

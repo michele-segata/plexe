@@ -29,10 +29,13 @@ class Veins11pRadioDriver : public PlexeRadioDriverInterface, public veins::Base
 
 public:
     bool registerNode(int nodeId);
-    virtual int getDeviceType() override {return PlexeRadioInterfaces::VEINS_11P;}
+    virtual int getDeviceType() override
+    {
+        return PlexeRadioInterfaces::VEINS_11P;
+    }
+
 protected:
     virtual void handleLowerMsg(cMessage* msg) override;
     virtual void handleUpperMsg(cMessage* msg) override;
-
 };
 } // namespace plexe

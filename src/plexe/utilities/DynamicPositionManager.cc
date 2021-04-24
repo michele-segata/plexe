@@ -87,8 +87,10 @@ PlatoonInfo DynamicPositionManager::getPlatoonInformation(int platoonId) const
     info.lane = -1;
     info.speed = -1;
     auto i = information.find(platoonId);
-    if (i == information.end()) return info;
-    else return i->second;
+    if (i == information.end())
+        return info;
+    else
+        return i->second;
 }
 
 int DynamicPositionManager::getPlatoonId(int vehicleId) const

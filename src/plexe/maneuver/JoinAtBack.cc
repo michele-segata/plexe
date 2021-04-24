@@ -54,7 +54,6 @@ bool JoinAtBack::initializeJoinManeuver(const void* parameters)
     else {
         return false;
     }
-
 }
 
 void JoinAtBack::startManeuver(const void* parameters)
@@ -146,7 +145,6 @@ bool JoinAtBack::processJoinRequest(const JoinPlatoonRequest* msg)
     // after processing the request we are sending a MoveToPosition message and wait for the joiner
     joinManeuverState = JoinManeuverState::L_WAIT_JOINER_IN_POSITION;
     return true;
-
 }
 
 void JoinAtBack::handleJoinPlatoonRequest(const JoinPlatoonRequest* msg)
