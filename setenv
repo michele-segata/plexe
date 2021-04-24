@@ -29,7 +29,7 @@ if [ "$?" -ne 0 ]; then
 	return 1
 fi
 
-# Add Veins directory to PATH
+# Add Plexe directory to PATH
 PLEXE_DIR="$(pwd)"
 export PATH="$PATH":"$PLEXE_DIR/bin"
 

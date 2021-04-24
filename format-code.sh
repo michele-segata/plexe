@@ -22,11 +22,11 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-echo "WARNING: the format-code.sh script is deprecated in favor of bin/veins_format_code. Redirecting." >&2
-echo "WARNING: the format-code.sh script is deprecated in favor of bin/veins_format_code. Redirecting."
+echo "WARNING: the format-code.sh script is deprecated in favor of bin/plexe_format_code. Redirecting." >&2
+echo "WARNING: the format-code.sh script is deprecated in favor of bin/plexe_format_code. Redirecting."
 
-$(dirname "$0")/bin/veins_format_code "$@"
+$(dirname "$0")/bin/plexe_format_code "$@"
 
-echo "WARNING: the format-code.sh script is deprecated in favor of bin/veins_format_code. Redirection done." >&2
-echo "WARNING: the format-code.sh script is deprecated in favor of bin/veins_format_code. Redirection done."
+echo "WARNING: the format-code.sh script is deprecated in favor of bin/plexe_format_code. Redirection done." >&2
+echo "WARNING: the format-code.sh script is deprecated in favor of bin/plexe_format_code. Redirection done."
 
