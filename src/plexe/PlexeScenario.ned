@@ -23,11 +23,12 @@ package org.car2x.plexe;
 
 import org.car2x.veins.base.connectionManager.ConnectionManager;
 import org.car2x.veins.base.modules.BaseWorldUtility;
-import org.car2x.veins.modules.mobility.traci.TraCIScenarioManagerForker;
-import org.car2x.veins.modules.mobility.traci.TraCIScenarioManagerLaunchd;
 import org.car2x.veins.modules.world.annotations.AnnotationManager;
 
 import org.car2x.plexe.PlexeManager;
+import org.car2x.plexe.traci.PlexeScenarioManager;
+import org.car2x.plexe.traci.PlexeScenarioManagerLaunchd;
+import org.car2x.plexe.traci.PlexeScenarioManagerForker;
 import org.car2x.plexe.mobility.TraCIBaseTrafficManager;
 
 network PlexeScenario
@@ -37,6 +38,8 @@ network PlexeScenario
         double playgroundSizeY @unit(m); // y size of the area the nodes are in (in meters)
         double playgroundSizeZ @unit(m); // z size of the area the nodes are in (in meters)
         string traffic_type;
+        bool useLaunchd = default(false);
+        string manager_type = useLaunchd ? "PlexeScenarioManagerLaunchd" : "PlexeScenarioManagerForker";
         @display("bgb=$playgroundSizeX,$playgroundSizeY");
     submodules:
         annotations: AnnotationManager {
@@ -53,7 +56,7 @@ network PlexeScenario
                 playgroundSizeZ = playgroundSizeZ;
                 @display("p=30,0;i=misc/globe");
         }
-        manager: TraCIScenarioManagerForker {
+        manager: <manager_type> like PlexeScenarioManager {
             parameters:
                 @display("p=512,128");
         }
