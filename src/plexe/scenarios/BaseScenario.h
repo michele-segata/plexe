@@ -32,7 +32,7 @@ namespace plexe {
 class BaseScenario : public veins::BaseApplLayer {
 
 public:
-    virtual void initialize(int stage);
+    virtual void initialize(int stage) override;
 
 protected:
     // traci interfaces
@@ -108,7 +108,7 @@ public:
     int numInitStages() const override { return 3; }
 
 protected:
-    virtual void handleSelfMsg(cMessage* msg);
+    virtual void handleSelfMsg(cMessage* msg) override;
 };
 
 } // namespace plexe
