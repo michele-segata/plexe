@@ -29,7 +29,7 @@ void JoinManeuverScenario::initialize(int stage)
 
     BaseScenario::initialize(stage);
 
-    if (stage == 1) {
+    if (stage == 2) {
         app = FindModule<GeneralPlatooningApp*>::findSubModule(getParentModule());
         prepareManeuverCars(0);
     }

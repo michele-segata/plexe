@@ -35,7 +35,7 @@ void SimpleScenario::initialize(int stage)
         // get pointer to application
         appl = FindModule<BaseApp*>::findSubModule(getParentModule());
 
-    if (stage == 1) {
+    if (stage == 2) {
         // average speed
         leaderSpeed = par("leaderSpeed").doubleValue() / 3.6;
 

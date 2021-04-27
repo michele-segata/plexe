@@ -35,7 +35,7 @@ void AutoLaneChangeScenario::initialize(int stage)
         // get pointer to application
         appl = FindModule<BaseApp*>::findSubModule(getParentModule());
 
-    if (stage == 1) {
+    if (stage == 2) {
         platooningVType = par("platooningVType").stdstringValue();
 
         plexeTraciVehicle->setFixedLane(traciVehicle->getLaneIndex(), false);

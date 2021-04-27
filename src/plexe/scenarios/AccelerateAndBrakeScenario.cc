@@ -35,7 +35,7 @@ void AccelerateAndBrakeScenario::initialize(int stage)
         // get pointer to application
         appl = FindModule<BaseApp*>::findSubModule(getParentModule());
 
-    if (stage == 1) {
+    if (stage == 2) {
         // get acceleration
         acceleration = par("acceleration").doubleValue();
         // get braking deceleration

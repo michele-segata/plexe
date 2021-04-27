@@ -29,7 +29,7 @@ void SinusoidalScenario::initialize(int stage)
 
     BaseScenario::initialize(stage);
 
-    if (stage == 1) {
+    if (stage == 2) {
         // get the oscillation frequency of the leader as parameter
         leaderOscillationFrequency = par("leaderOscillationFrequency").doubleValue();
         // oscillation amplitude

@@ -35,7 +35,7 @@ void BrakingScenario::initialize(int stage)
         // get pointer to application
         appl = FindModule<BaseApp*>::findSubModule(getParentModule());
 
-    if (stage == 1) {
+    if (stage == 2) {
         // get braking deceleration
         brakingDeceleration = par("brakingDeceleration").doubleValue();
         // average speed

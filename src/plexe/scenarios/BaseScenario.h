@@ -105,6 +105,8 @@ public:
      */
     double getTargetDistance(double speed);
 
+    int numInitStages() const override { return 3; }
+
 protected:
     virtual void handleSelfMsg(cMessage* msg);
 };

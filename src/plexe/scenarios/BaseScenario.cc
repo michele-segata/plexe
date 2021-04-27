@@ -23,6 +23,7 @@
 #include "veins/base/utils/FindModule.h"
 
 #include "plexe/PlexeManager.h"
+#include "plexe/utilities/DynamicPositionManager.h"
 
 using namespace veins;
 
@@ -83,8 +84,7 @@ void BaseScenario::initialize(int stage)
             throw cRuntimeError("Invalid controller selected");
         }
     }
-
-    if (stage == 1) {
+    else if (stage == 1) {
         mobility = veins::TraCIMobilityAccess().get(getParentModule());
         ASSERT(mobility);
         traci = mobility->getCommandInterface();
@@ -96,6 +96,8 @@ void BaseScenario::initialize(int stage)
         plexeTraci = plexe->getCommandInterface();
         plexeTraciVehicle.reset(new traci::CommandInterface::Vehicle(plexeTraci, mobility->getExternalId()));
         positionHelper = FindModule<BasePositionHelper*>::findSubModule(getParentModule());
+    }
+    else if (stage == 2) {
         initializeControllers();
 
         // set the active controller
