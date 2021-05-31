@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2013-2022 Michele Segata <segata@ccs-labs.org>, Stefan Joerer <joerer@ccs-labs.org>
+// Copyright (C) 2012-2021 Michele Segata <segata@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
@@ -18,11 +18,15 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-package org.car2x.plexe.mobility;
+package org.car2x.plexe.scenarios;
 
-simple TestTrafficManager extends BTraCIBaseTrafficManager {
+import org.car2x.plexe.scenarios.BBaseScenario;
 
+simple ManeuverScenario extends BBaseScenario
+{
     parameters:
-        int nCars = default(8); //number of cars to inject
-        @class(plexe::TestTrafficManager);
+        // controller to engage when joining the platoon
+        string targetController;
+        @display("i=block/app2");
+        @class(plexe::ManeuverScenario);
 }

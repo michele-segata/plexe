@@ -29,9 +29,6 @@ simple BBaseScenario like BaseScenario
         //average speed
         double leaderSpeed @unit("kmph") = default(100kmph);
 
-        //base scenario inherited parameters
-        //controller used by followers
-        string controller;
         //list of various controller parameters
         //headway time to be used for the ACC
         double accHeadway @unit("s") = default(1.2s);

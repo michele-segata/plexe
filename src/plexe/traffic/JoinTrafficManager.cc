@@ -51,6 +51,14 @@ void JoinTrafficManager::insertJoiner()
     automated.position = 0;
     automated.lane = 2;
     addVehicleToQueue(0, automated);
+    VehicleInfo vehicleInfo;
+    vehicleInfo.id = 4;
+    vehicleInfo.platoonId = -1;
+    vehicleInfo.position = -1;
+    vehicleInfo.controller = ACC;
+    vehicleInfo.distance = 2;
+    vehicleInfo.headway = 1.2;
+    positions.vehicleInfo[4] = vehicleInfo;
 }
 
 JoinTrafficManager::~JoinTrafficManager()

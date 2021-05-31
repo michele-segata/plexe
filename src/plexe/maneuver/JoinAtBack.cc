@@ -93,7 +93,7 @@ void JoinAtBack::onPlatoonBeacon(const PlatooningBeacon* pb)
             double distance = position.distance(frontPosition) - pb->getLength();
             plexeTraciVehicle->setFrontVehicleFakeData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed(), distance);
             // if we are in position, tell the leader about that
-            if (distance < app->getTargetDistance(targetPlatoonData->platoonSpeed) + 11) {
+            if (distance < app->getTargetDistance(app->getTargetController(), targetPlatoonData->platoonSpeed) + 11) {
                 // controller and headway time
                 // send move to position response to confirm the parameters
                 LOG << positionHelper->getId() << " sending MoveToPositionAck to platoon with id " << targetPlatoonData->platoonId << " (leader id " << targetPlatoonData->platoonLeader << ")\n";
@@ -251,9 +251,11 @@ void JoinAtBack::handleJoinFormation(const JoinFormation* msg)
 
     // we got confirmation from the leader
     // switch from faked CACC to real CACC
-    plexeTraciVehicle->setActiveController(app->getController());
+    plexeTraciVehicle->setActiveController(app->getTargetController());
+    positionHelper->setDistance(app->getStandstillDistance(app->getTargetController()));
+    positionHelper->setHeadway(app->getHeadway(app->getTargetController()));
     // set spacing to the target distance to get close to the platoon
-    if (app->getController() == CACC || app->getController() == FLATBED) plexeTraciVehicle->setCACCConstantSpacing(app->getTargetDistance(targetPlatoonData->platoonSpeed));
+    if (positionHelper->getController() == CACC || positionHelper->getController() == FLATBED) plexeTraciVehicle->setCACCConstantSpacing(app->getTargetDistance(targetPlatoonData->platoonSpeed));
 
     // update platoon information
     positionHelper->setPlatoonId(msg->getPlatoonId());

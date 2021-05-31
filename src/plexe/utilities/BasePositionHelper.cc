@@ -19,6 +19,7 @@
 //
 
 #include "plexe/utilities/BasePositionHelper.h"
+#include "plexe/PlexeManager.h"
 
 #include <iostream>
 
@@ -48,6 +49,10 @@ void BasePositionHelper::initialize(int stage)
         traci = mobility->getCommandInterface();
         traciVehicle = mobility->getVehicleCommandInterface();
         myId = getIdFromExternalId(getExternalId());
+        auto plexe = FindModule<PlexeManager*>::findGlobalModule();
+        ASSERT(plexe);
+        plexeTraci = plexe->getCommandInterface();
+        plexeTraciVehicle.reset(new traci::CommandInterface::Vehicle(plexeTraci, mobility->getExternalId()));
     }
 
     if (stage == 1) {
@@ -57,6 +62,10 @@ void BasePositionHelper::initialize(int stage)
         PlatoonInfo info = positions.getPlatoonInformation(platoonId);
         platoonSpeed = info.speed;
         platoonLane = info.lane;
+        VehicleInfo vehicleInfo = positions.getVehicleInfo(myId);
+        plexeTraciVehicle->setActiveController(vehicleInfo.controller);
+        distance = vehicleInfo.distance;
+        headway = vehicleInfo.headway;
         setVariablesAfterFormationChange();
     }
 }
@@ -224,6 +233,36 @@ void BasePositionHelper::dumpVehicleData() const
     for (auto& v : formation)
         std::cout << v << " ";
     std::cout << "\n";
+}
+
+enum ACTIVE_CONTROLLER BasePositionHelper::getController()
+{
+    return (enum ACTIVE_CONTROLLER)plexeTraciVehicle->getActiveController();
+}
+
+void BasePositionHelper::setController(enum ACTIVE_CONTROLLER controller)
+{
+    plexeTraciVehicle->setActiveController(controller);
+}
+
+double BasePositionHelper::getDistance()
+{
+    return distance;
+}
+
+void BasePositionHelper::setDistance(double distance)
+{
+    this->distance = distance;
+}
+
+double BasePositionHelper::getHeadway()
+{
+    return headway;
+}
+
+void BasePositionHelper::setHeadway(double headway)
+{
+    this->headway = headway;
 }
 
 } // namespace plexe

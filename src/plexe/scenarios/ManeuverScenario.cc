@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2013-2022 Michele Segata <segata@ccs-labs.org>, Stefan Joerer <joerer@ccs-labs.org>
+// Copyright (C) 2012-2021 Michele Segata <segata@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
@@ -18,11 +18,33 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-package org.car2x.plexe.mobility;
+#include "plexe/scenarios/ManeuverScenario.h"
+#include "plexe/mobility/TraCIBaseTrafficManager.h"
 
-simple TestTrafficManager extends BTraCIBaseTrafficManager {
+namespace plexe {
 
-    parameters:
-        int nCars = default(8); //number of cars to inject
-        @class(plexe::TestTrafficManager);
+Define_Module(ManeuverScenario);
+
+void ManeuverScenario::initialize(int stage)
+{
+
+    BaseScenario::initialize(stage);
+
+    if (stage == 2) {
+        app = FindModule<GeneralPlatooningApp*>::findSubModule(getParentModule());
+        targetController = TraCIBaseTrafficManager::strToController(par("targetController"));
+    }
 }
+
+enum ACTIVE_CONTROLLER ManeuverScenario::getTargetController() const
+{
+    return targetController;
+}
+
+ManeuverScenario::~ManeuverScenario()
+{
+    cancelAndDelete(startManeuver);
+    startManeuver = nullptr;
+}
+
+} // namespace plexe

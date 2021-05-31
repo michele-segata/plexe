@@ -20,7 +20,7 @@
 
 package org.car2x.plexe.mobility;
 
-simple SumoTrafficManager like TraCIBaseTrafficManager {
+simple SumoTrafficManager extends BTraCIBaseTrafficManager {
     parameters:
         @class(plexe::SumoTrafficManager);
 }

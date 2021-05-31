@@ -26,8 +26,6 @@ moduleinterface BaseScenario extends IBaseApplLayer
 {
     parameters:
 
-        //controller used by followers
-        string controller;
         //list of various controller parameters
         //headway time to be used for the ACC
         double accHeadway @unit("s");

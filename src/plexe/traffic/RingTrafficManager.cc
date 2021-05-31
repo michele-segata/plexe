@@ -90,7 +90,16 @@ void RingTrafficManager::scenarioLoaded()
                 automated.position = totalLength;
                 automated.lane = l;
                 addVehicleToQueue(0, automated);
-                positions.addVehicleToPlatoon(injectedCars, v, injectedPlatoons);
+
+                VehicleInfo vehicleInfo;
+                vehicleInfo.controller = v == 0 ? ACC : controller;
+                vehicleInfo.id = injectedCars;
+                vehicleInfo.position = v;
+                vehicleInfo.platoonId = injectedPlatoons;
+                vehicleInfo.distance = v == 0 ? 2 : platoonInsertDistance;
+                vehicleInfo.headway = v == 0 ? platoonLeaderHeadway : platoonInsertHeadway;
+
+                positions.addVehicleToPlatoon(injectedCars, vehicleInfo);
                 injectedCars++;
                 if (v < ps[p].size - 1)
                     totalLength -= (4 + platoonInsertDistance + platoonInsertHeadway * automated.speed);

@@ -98,7 +98,16 @@ void PlatoonsPlusHumanTraffic::insertPlatoons()
             automated.position = currentRoadPosition + laneOffset[l];
             automated.lane = l;
             addVehicleToQueue(0, automated);
-            positions.addVehicleToPlatoon(currentVehicleId, currentVehiclePosition, basePlatoonId + l);
+
+            VehicleInfo vehicleInfo;
+            vehicleInfo.controller = currentVehiclePosition == 0 ? ACC : controller;
+            vehicleInfo.id = currentVehicleId;
+            vehicleInfo.position = currentVehiclePosition;
+            vehicleInfo.platoonId = basePlatoonId + l;
+            vehicleInfo.distance = currentVehiclePosition == 0 ? 2 : platoonInsertDistance;
+            vehicleInfo.headway = currentVehiclePosition == 0 ? platoonLeaderHeadway : platoonInsertHeadway;
+
+            positions.addVehicleToPlatoon(currentVehicleId, vehicleInfo);
             currentVehicleId++;
             if (currentVehiclePosition == 0) {
                 PlatoonInfo info;

@@ -29,6 +29,7 @@
 #include "veins/modules/mac/ieee80211p/Mac1609_4.h"
 #include "plexe/messages/PlexeInterfaceControlInfo_m.h"
 #include "veins/base/utils/FindModule.h"
+#include "plexe/scenarios/ManeuverScenario.h"
 
 using namespace veins;
 
@@ -77,14 +78,31 @@ bool GeneralPlatooningApp::isJoinAllowed() const
     return ((role == PlatoonRole::LEADER || role == PlatoonRole::NONE) && !inManeuver);
 }
 
-enum ACTIVE_CONTROLLER GeneralPlatooningApp::getController()
+double GeneralPlatooningApp::getStandstillDistance(enum ACTIVE_CONTROLLER controller)
 {
-    return scenario->getController();
+    return scenario->getStandstillDistance(controller);
+}
+
+double GeneralPlatooningApp::getHeadway(enum ACTIVE_CONTROLLER controller)
+{
+    return scenario->getHeadway(controller);
+}
+
+double GeneralPlatooningApp::getTargetDistance(enum ACTIVE_CONTROLLER controller, double speed)
+{
+    return scenario->getTargetDistance(controller, speed);
 }
 
 double GeneralPlatooningApp::getTargetDistance(double speed)
 {
     return scenario->getTargetDistance(speed);
+}
+
+enum ACTIVE_CONTROLLER GeneralPlatooningApp::getTargetController()
+{
+    ManeuverScenario* maneuverScenario = dynamic_cast<ManeuverScenario*>(scenario);
+    if (!maneuverScenario) throw cRuntimeError("getTargetController() invoked from a simulation not inheriting from ManeuverScenario");
+    return maneuverScenario->getTargetController();
 }
 
 void GeneralPlatooningApp::startJoinManeuver(int platoonId, int leaderId, int position)

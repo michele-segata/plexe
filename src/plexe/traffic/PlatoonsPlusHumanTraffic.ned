@@ -20,9 +20,9 @@
 
 package org.car2x.plexe.traffic;
 
-import org.car2x.plexe.mobility.TraCIBaseTrafficManager;
+import org.car2x.plexe.mobility.BTraCIBaseTrafficManager;
 
-simple PlatoonsPlusHumanTraffic like TraCIBaseTrafficManager {
+simple PlatoonsPlusHumanTraffic extends BTraCIBaseTrafficManager {
 
     parameters:
         //platoon insertion time

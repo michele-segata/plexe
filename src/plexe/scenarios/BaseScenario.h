@@ -45,9 +45,6 @@ protected:
     // determines position and role of each vehicle
     BasePositionHelper* positionHelper;
 
-    // controller used by followers
-    enum ACTIVE_CONTROLLER controller;
-
     // list of various controller parameters
     // headway time to be used for the ACC
     double accHeadway;
@@ -92,13 +89,13 @@ public:
         usePrediction = true;
     }
 
+    double getStandstillDistance(enum ACTIVE_CONTROLLER controller);
+    double getHeadway(enum ACTIVE_CONTROLLER controller);
+
     /**
-     * Returns the controller being used in this simulation
+     * Returns the inter-vehicle distance for the given controller and the current speed
      */
-    enum ACTIVE_CONTROLLER getController()
-    {
-        return controller;
-    }
+    double getTargetDistance(enum ACTIVE_CONTROLLER controller, double speed);
 
     /**
      * Returns the inter-vehicle distance for the controller in use given the current speed

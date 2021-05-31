@@ -63,26 +63,6 @@ void BaseScenario::initialize(int stage)
             vehicleType = par("vehicleType").stdstringValue();
         }
 
-        const char* strController = par("controller").stringValue();
-        // for now we have only two possibilities
-        if (strcmp(strController, "ACC") == 0) {
-            controller = ACC;
-        }
-        else if (strcmp(strController, "CACC") == 0) {
-            controller = CACC;
-        }
-        else if (strcmp(strController, "PLOEG") == 0) {
-            controller = PLOEG;
-        }
-        else if (strcmp(strController, "CONSENSUS") == 0) {
-            controller = CONSENSUS;
-        }
-        else if (strcmp(strController, "FLATBED") == 0) {
-            controller = FLATBED;
-        }
-        else {
-            throw cRuntimeError("Invalid controller selected");
-        }
     }
     else if (stage == 1) {
         mobility = veins::TraCIMobilityAccess().get(getParentModule());
@@ -100,15 +80,10 @@ void BaseScenario::initialize(int stage)
     else if (stage == 2) {
         initializeControllers();
 
-        // set the active controller
-        if (positionHelper->isLeader()) {
-            plexeTraciVehicle->setActiveController(ACC);
-            plexeTraciVehicle->setACCHeadwayTime(leaderHeadway);
-        }
-        else {
-            plexeTraciVehicle->setActiveController(controller);
-            plexeTraciVehicle->setACCHeadwayTime(accHeadway);
-        }
+        // set headway for the ACC
+        if (positionHelper->isLeader()) plexeTraciVehicle->setACCHeadwayTime(leaderHeadway);
+        else plexeTraciVehicle->setACCHeadwayTime(accHeadway);
+
         // set the current lane
         plexeTraciVehicle->setFixedLane(positionHelper->getPlatoonLane());
         traciVehicle->setSpeedMode(0);
@@ -118,21 +93,46 @@ void BaseScenario::initialize(int stage)
     }
 }
 
-double BaseScenario::getTargetDistance(double speed)
+double BaseScenario::getStandstillDistance(enum ACTIVE_CONTROLLER controller)
 {
     switch (controller) {
     case ACC:
-        return 2 + accHeadway * speed;
+    case PLOEG:
+        return 2;
     case CACC:
     case FLATBED:
         return caccSpacing;
-    case PLOEG:
-        return 2 + ploegH * speed;
     case CONSENSUS:
-        return 15 + 0.8 * speed;
+        return 15;
     default:
         throw cRuntimeError("Unkown controller in BaseScenario::getTargetDistance()");
     }
+}
+double BaseScenario::getHeadway(enum ACTIVE_CONTROLLER controller)
+{
+    switch (controller) {
+    case ACC:
+        return accHeadway;
+    case CACC:
+    case FLATBED:
+        return 0;
+    case PLOEG:
+        return ploegH;
+    case CONSENSUS:
+        return 0.8;
+    default:
+        throw cRuntimeError("Unkown controller in BaseScenario::getTargetDistance()");
+    }
+}
+
+double BaseScenario::getTargetDistance(enum ACTIVE_CONTROLLER controller, double speed)
+{
+    return speed * getHeadway(controller) + getStandstillDistance(controller);
+}
+
+double BaseScenario::getTargetDistance(double speed)
+{
+    return getTargetDistance(positionHelper->getController(), speed);
 }
 
 void BaseScenario::handleSelfMsg(cMessage* msg)

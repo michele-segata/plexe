@@ -20,9 +20,7 @@
 
 package org.car2x.plexe.scenarios;
 
-import org.car2x.plexe.scenarios.BBaseScenario;
-
-simple MergeManeuverScenario extends BBaseScenario
+simple MergeManeuverScenario extends ManeuverScenario
 {
     parameters:
         @display("i=block/app2");

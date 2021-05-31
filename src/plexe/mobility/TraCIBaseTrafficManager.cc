@@ -55,6 +55,37 @@ void TraCIBaseTrafficManager::initialize(int stage)
         auto init = [this](veins::SignalPayload<bool>) { loadSumoScenario(); };
         signalManager.subscribeCallback(manager, veins::TraCIScenarioManager::traciInitializedSignal, init);
     }
+
+    if (stage == 1) {
+        parseController();
+    }
+}
+
+enum ACTIVE_CONTROLLER TraCIBaseTrafficManager::strToController(const char* controller)
+{
+    if (strcmp(controller, "ACC") == 0) {
+        return ACC;
+    }
+    else if (strcmp(controller, "CACC") == 0) {
+        return CACC;
+    }
+    else if (strcmp(controller, "PLOEG") == 0) {
+        return PLOEG;
+    }
+    else if (strcmp(controller, "CONSENSUS") == 0) {
+        return CONSENSUS;
+    }
+    else if (strcmp(controller, "FLATBED") == 0) {
+        return FLATBED;
+    }
+    else {
+        throw cRuntimeError("Invalid controller selected");
+    }
+}
+
+void TraCIBaseTrafficManager::parseController()
+{
+    controller = strToController(par("controller").stringValue());
 }
 
 void TraCIBaseTrafficManager::handleMessage(cMessage* msg)
