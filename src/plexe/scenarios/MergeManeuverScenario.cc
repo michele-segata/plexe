@@ -27,10 +27,9 @@ Define_Module(MergeManeuverScenario);
 void MergeManeuverScenario::initialize(int stage)
 {
 
-    BaseScenario::initialize(stage);
+    ManeuverScenario::initialize(stage);
 
     if (stage == 2) {
-        app = FindModule<GeneralPlatooningApp*>::findSubModule(getParentModule());
         prepareManeuverCars(0);
     }
 }
@@ -40,14 +39,14 @@ void MergeManeuverScenario::prepareManeuverCars(int platoonLane)
     if (positionHelper->getId() == 0) {
         // this is the leader of the platoon ahead
         plexeTraciVehicle->setCruiseControlDesiredSpeed(100.0 / 3.6);
-        plexeTraciVehicle->setActiveController(ACC);
+        plexeTraciVehicle->setActiveController(positionHelper->getController());
         plexeTraciVehicle->setFixedLane(platoonLane);
         app->setPlatoonRole(PlatoonRole::LEADER);
     }
     else if (!positionHelper->isLeader()) {
         // these are the followers which are already in the platoon
         plexeTraciVehicle->setCruiseControlDesiredSpeed(130.0 / 3.6);
-        plexeTraciVehicle->setActiveController(CACC);
+        plexeTraciVehicle->setActiveController(positionHelper->getController());
         plexeTraciVehicle->setFixedLane(platoonLane);
         app->setPlatoonRole(PlatoonRole::FOLLOWER);
     }
@@ -55,6 +54,7 @@ void MergeManeuverScenario::prepareManeuverCars(int platoonLane)
         // this is the leader which will merge
         plexeTraciVehicle->setCruiseControlDesiredSpeed(100 / 3.6);
         plexeTraciVehicle->setFixedLane(platoonLane);
+        // the vehicle is the leader of the second platoon, so it starts with an ACC
         plexeTraciVehicle->setActiveController(ACC);
         app->setPlatoonRole(PlatoonRole::LEADER);
 
@@ -64,17 +64,11 @@ void MergeManeuverScenario::prepareManeuverCars(int platoonLane)
     }
 }
 
-MergeManeuverScenario::~MergeManeuverScenario()
-{
-    cancelAndDelete(startManeuver);
-    startManeuver = nullptr;
-}
-
 void MergeManeuverScenario::handleSelfMsg(cMessage* msg)
 {
 
     // this takes car of feeding data into CACC and reschedule the self message
-    BaseScenario::handleSelfMsg(msg);
+    ManeuverScenario::handleSelfMsg(msg);
 
     LOG << "Starting the merge maneuver\n";
     if (msg == startManeuver) app->startMergeManeuver(0, 0, -1);

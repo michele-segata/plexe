@@ -20,36 +20,24 @@
 
 #pragma once
 
-#include "plexe/scenarios/BaseScenario.h"
+#include "plexe/scenarios/ManeuverScenario.h"
 #include "plexe/apps/GeneralPlatooningApp.h"
 #include "plexe/messages/ManeuverMessage_m.h"
 
 namespace plexe {
 
-class MergeManeuverScenario : public BaseScenario {
-
-protected:
-    // message used to start the maneuver
-    cMessage* startManeuver;
-    // pointer to protocol
-    GeneralPlatooningApp* app;
+class MergeManeuverScenario : public ManeuverScenario {
 
 public:
-    static const int MANEUVER_TYPE = 12347;
-
     virtual void initialize(int stage) override;
+    virtual void handleSelfMsg(cMessage* msg) override;
 
-private:
 public:
     MergeManeuverScenario()
     {
-        startManeuver = nullptr;
-        app = nullptr;
     }
-    virtual ~MergeManeuverScenario();
 
 protected:
-    virtual void handleSelfMsg(cMessage* msg) override;
 
     void prepareManeuverCars(int platoonLane);
     void setupFormation();

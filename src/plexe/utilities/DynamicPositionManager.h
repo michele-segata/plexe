@@ -24,6 +24,8 @@
 #include <map>
 #include <vector>
 
+#include "plexe/CC_Const.h"
+
 namespace plexe {
 
 // platoon information
@@ -31,6 +33,15 @@ typedef struct {
     double speed;
     int lane;
 } PlatoonInfo;
+
+typedef struct {
+    enum ACTIVE_CONTROLLER controller;
+    double distance;
+    double headway;
+    int id;
+    int platoonId;
+    int position;
+} VehicleInfo;
 
 class DynamicPositionManager {
 
@@ -46,9 +57,11 @@ class DynamicPositionManager {
     typedef std::map<int, Position> Positions;
     // map from platoon id to information
     typedef std::map<int, PlatoonInfo> PlatoonInformation;
+    // map from vehicle id to vehicle info
+    typedef std::map<int, VehicleInfo> VehicleInformation;
 
 public:
-    void addVehicleToPlatoon(const int vehicleId, const int position, const int platoonId);
+    void addVehicleToPlatoon(const int vehicleId, VehicleInfo info);
     void removeVehicleFromPlatoon(const int vehicleId);
     void removeVehicleFromPlatoon(const int vehicleId, const int position, const int platoonId)
     {
@@ -61,6 +74,8 @@ public:
     std::vector<int> getPlatoonFormation(int vehicleId) const;
     int getPosition(int vehicleId) const;
     int getMemberId(int platoonId, const int position) const;
+    void setVehicleInfo(int vehicleId, VehicleInfo info);
+    VehicleInfo getVehicleInfo(int vehicleId) const;
 
     static DynamicPositionManager& getInstance();
 
@@ -74,6 +89,7 @@ public:
     Positions positions;
     VehicleToPlatoon vehToPlatoons;
     PlatoonInformation information;
+    VehicleInformation vehicleInfo;
 };
 
 } // namespace plexe

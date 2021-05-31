@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2013-2022 Michele Segata <segata@ccs-labs.org>, Stefan Joerer <joerer@ccs-labs.org>
+// Copyright (C) 2013-2021 Michele Segata <segata@ccs-labs.org>, Stefan Joerer <joerer@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
@@ -20,9 +20,9 @@
 
 package org.car2x.plexe.mobility;
 
-simple TestTrafficManager extends BTraCIBaseTrafficManager {
-
+simple BTraCIBaseTrafficManager like TraCIBaseTrafficManager {
     parameters:
-        int nCars = default(8); //number of cars to inject
-        @class(plexe::TestTrafficManager);
+        // controller to be assigned to platoon members (not the leader)
+        // the semantic of this parameter can be modified by subclasses
+        string controller;
 }

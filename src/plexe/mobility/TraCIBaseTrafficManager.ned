@@ -21,5 +21,8 @@
 package org.car2x.plexe.mobility;
 
 moduleinterface TraCIBaseTrafficManager {
-
+    parameters:
+        // controller to be assigned to platoon members (not the leader)
+        // the semantic of this parameter can be modified by subclasses
+        string controller;
 }

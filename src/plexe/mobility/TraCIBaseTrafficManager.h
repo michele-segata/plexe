@@ -34,6 +34,7 @@ class TraCIBaseTrafficManager : public cSimpleModule {
 
 public:
     virtual void initialize(int stage);
+    virtual int numInitStages() const override { return 2; }
 
     int findVehicleTypeIndex(std::string vehType);
 
@@ -43,6 +44,8 @@ public:
     {
         insertVehiclesTrigger = 0;
     }
+
+    static enum ACTIVE_CONTROLLER strToController(const char* controller);
 
 private:
     /**
@@ -79,6 +82,9 @@ protected:
     std::map<std::string, std::vector<std::string>> routeStartLaneIds;
     // storage class that the traffic manager uses to store the formation, used for the initial setup of the position helper
     DynamicPositionManager& positions;
+    // controller to be used
+    std::string strController;
+    enum ACTIVE_CONTROLLER controller;
 
     struct Vehicle {
         int id; // id of the vehicle in sumo. this is the index of the vehicle type in the array of vehicle types
@@ -111,6 +117,11 @@ protected:
      * virtual function that inheriting classes can override to get informed when scenario is loaded
      */
     virtual void scenarioLoaded(){};
+
+    /**
+     * Function used to parse the controller parameter, which can be overloaded by subclasses
+     */
+    virtual void parseController();
 };
 
 } // namespace plexe

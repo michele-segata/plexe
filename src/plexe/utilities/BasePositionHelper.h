@@ -24,6 +24,7 @@
 #include "plexe/utilities/DynamicPositionManager.h"
 #include <string>
 #include "veins/modules/mobility/traci/TraCIMobility.h"
+#include "plexe/mobility/CommandInterface.h"
 
 #define INVALID_PLATOON_ID -99
 
@@ -150,10 +151,43 @@ public:
      */
     virtual void dumpVehicleData() const;
 
+    /**
+     * Returns the active controller for this vehicle
+     */
+    virtual enum ACTIVE_CONTROLLER getController();
+
+    /**
+     * Sets the active controller for this vehicle
+     */
+    virtual void setController(enum ACTIVE_CONTROLLER controller);
+
+    /**
+     * Returns the stand still distance for this vehicle
+     */
+    virtual double getDistance();
+
+    /**
+     * Sets the stand still distance for this vehicle
+     */
+    virtual void setDistance(double distance);
+
+    /**
+     * Returns the time headway for this vehicle
+     */
+    virtual double getHeadway();
+
+    /**
+     * Sets the headway for this vehicle
+     */
+    virtual void setHeadway(double headway);
+
+
 protected:
     veins::TraCIMobility* mobility;
     veins::TraCICommandInterface* traci;
     veins::TraCICommandInterface::Vehicle* traciVehicle;
+    traci::CommandInterface* plexeTraci;
+    std::unique_ptr<traci::CommandInterface::Vehicle> plexeTraciVehicle;
 
     // id of this vehicle
     int myId;
@@ -177,6 +211,12 @@ protected:
      */
     std::vector<int> formation;
 
+    // controller used by the vehicle
+    //    enum ACTIVE_CONTROLLER controller;
+    // stand still distance and time headway
+    double distance;
+    double headway;
+
     /** Maps the IDs of the vehicles to their position in the formation.
      * This is useful to search for members without going through the complete formation vector.
      */
@@ -194,6 +234,7 @@ public:
         : mobility(nullptr)
         , traci(nullptr)
         , traciVehicle(nullptr)
+        , plexeTraci(nullptr)
         , myId(INVALID_PLATOON_ID)
         , leaderId(INVALID_PLATOON_ID)
         , frontId(INVALID_PLATOON_ID)

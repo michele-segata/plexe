@@ -20,9 +20,9 @@
 
 package org.car2x.plexe.traffic;
 
-import org.car2x.plexe.mobility.TraCIBaseTrafficManager;
+import org.car2x.plexe.mobility.BTraCIBaseTrafficManager;
 
-simple RingTrafficManager like TraCIBaseTrafficManager {
+simple RingTrafficManager extends BTraCIBaseTrafficManager {
 
     parameters:
         //number of vehicles per platoon. can be a random distribution

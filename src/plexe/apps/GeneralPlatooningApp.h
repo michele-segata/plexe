@@ -242,14 +242,30 @@ public:
     bool isJoinAllowed() const;
 
     /**
-     * Returns the controller that has been chosen for the scenario
+     * Returns the stand still distance for the active controller
      */
-    enum ACTIVE_CONTROLLER getController();
+    double getStandstillDistance(enum ACTIVE_CONTROLLER controller);
+
+    /**
+     * Returns the time headway for the active controller
+     */
+    double getHeadway(enum ACTIVE_CONTROLLER controller);
 
     /**
      * Returns the inter-vehicle distance for the chosen controller and the given speed
      */
     double getTargetDistance(double speed);
+
+    /**
+     * Returns the inter-vehicle distance for the given controller and the given speed
+     */
+    double getTargetDistance(enum ACTIVE_CONTROLLER controller, double speed);
+
+    /**
+     * Returns the target controller to be used after joining a platoon
+     * This only works if the scenario inherits from ManeuverScenario
+     */
+    enum ACTIVE_CONTROLLER getTargetController();
 
 protected:
     /** override this method of BaseApp. we want to handle it ourself */

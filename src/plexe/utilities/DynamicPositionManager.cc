@@ -31,11 +31,12 @@ DynamicPositionManager& DynamicPositionManager::getInstance()
     return instance;
 }
 
-void DynamicPositionManager::addVehicleToPlatoon(const int vehicleId, const int position, const int platoonId)
+void DynamicPositionManager::addVehicleToPlatoon(const int vehicleId, VehicleInfo info)
 {
-    platoons[platoonId][position] = vehicleId;
-    positions[platoonId][vehicleId] = position;
-    vehToPlatoons[vehicleId] = platoonId;
+    platoons[info.platoonId][info.position] = vehicleId;
+    positions[info.platoonId][vehicleId] = info.position;
+    vehToPlatoons[vehicleId] = info.platoonId;
+    setVehicleInfo(vehicleId, info);
 }
 
 void DynamicPositionManager::removeVehicleFromPlatoon(const int vehicleId)
@@ -88,6 +89,23 @@ PlatoonInfo DynamicPositionManager::getPlatoonInformation(int platoonId) const
     info.speed = -1;
     auto i = information.find(platoonId);
     if (i == information.end())
+        return info;
+    else
+        return i->second;
+}
+
+void DynamicPositionManager::setVehicleInfo(int vehicleId, VehicleInfo info)
+{
+    vehicleInfo[vehicleId] = info;
+}
+
+VehicleInfo DynamicPositionManager::getVehicleInfo(int vehicleId) const
+{
+    VehicleInfo info;
+    info.id = -1;
+    info.platoonId = -1;
+    auto i = vehicleInfo.find(vehicleId);
+    if (i == vehicleInfo.end())
         return info;
     else
         return i->second;

@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2012-2022 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2021 Michele Segata <segata@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
@@ -18,33 +18,39 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-#ifndef JOINMANEUVERSCENARIO_H_
-#define JOINMANEUVERSCENARIO_H_
+#pragma once
 
-#include "plexe/scenarios/ManeuverScenario.h"
+#include "plexe/scenarios/BaseScenario.h"
 #include "plexe/apps/GeneralPlatooningApp.h"
 #include "plexe/messages/ManeuverMessage_m.h"
 
 namespace plexe {
 
-class JoinManeuverScenario : public ManeuverScenario {
-
-public:
-
-    virtual void initialize(int stage) override;
-    virtual void handleSelfMsg(cMessage* msg) override;
-
-    JoinManeuverScenario()
-    {
-    }
+class ManeuverScenario : public BaseScenario {
 
 protected:
+    // message used to start the maneuver
+    cMessage* startManeuver;
+    // pointer to protocol
+    GeneralPlatooningApp* app;
 
-    void prepareManeuverCars(int platoonLane);
-    void setupFormation();
+public:
+    static const int MANEUVER_TYPE = 12347;
 
+    virtual void initialize(int stage) override;
+
+    enum ACTIVE_CONTROLLER getTargetController() const;
+
+private:
+public:
+    ManeuverScenario()
+    {
+        startManeuver = nullptr;
+        app = nullptr;
+    }
+    virtual ~ManeuverScenario();
+
+    enum ACTIVE_CONTROLLER targetController;
 };
 
 } // namespace plexe
-
-#endif
