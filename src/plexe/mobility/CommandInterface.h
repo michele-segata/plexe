@@ -39,6 +39,8 @@ class CommandInterface : public veins::HasLogProxy {
 public:
     class Vehicle {
     public:
+        typedef std::tuple<std::string, double> neighbor;
+
         Vehicle(CommandInterface* cifc, const std::string& nodeId)
             : cifc(cifc)
             , nodeId(nodeId)
@@ -48,6 +50,11 @@ public:
         void setLaneChangeMode(int mode);
         void getLaneChangeState(int direction, int& state1, int& state2);
         void changeLane(int lane, double duration);
+        /**
+         * Get neighbors (i.e. a pair <name, distance>) of the vehicle.
+         */
+        std::vector<neighbor> getNeighbors(uint8_t lateralDirection, uint8_t longitudinalDirection, uint8_t blocking = 0);
+
         /**
          * Sets the data about the leader of the platoon. This data is usually received
          * by means of wireless communications

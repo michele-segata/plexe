@@ -82,6 +82,43 @@ void CommandInterface::Vehicle::changeLane(int lane, double duration)
     ASSERT(buf.eof());
 }
 
+std::vector<CommandInterface::Vehicle::neighbor> CommandInterface::Vehicle::getNeighbors(uint8_t lateralDirection, uint8_t longitudinalDirection, uint8_t blocking)
+{
+    TraCIBuffer response = cifc->connection->query(CMD_GET_VEHICLE_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(CMD_NEIGHBORING_VEHICLES)
+            << nodeId
+            << static_cast<uint8_t>(TYPE_UBYTE)
+            << static_cast<uint8_t>(blocking<<2 | longitudinalDirection<<1 | lateralDirection));
+
+    uint8_t cmdLength;
+    response >> cmdLength;
+    uint8_t responseId;
+    response >> responseId;
+    ASSERT(responseId == RESPONSE_GET_VEHICLE_VARIABLE);
+    uint8_t variable;
+    response >> variable;
+    ASSERT(variable == CMD_NEIGHBORING_VEHICLES);
+    std::string id;
+    response >> id;
+    uint8_t type;
+    response >> type;
+    ASSERT(type == TYPE_STRINGLIST);
+    int len;
+    response >> len;
+
+    std::vector<neighbor> neighbors;
+    std::string vehicleName;
+    double distance;
+    for (int i=0; i<len; i++)
+    {
+        response >> vehicleName;
+        response >> distance;
+
+        neighbors.push_back(neighbor(vehicleName, distance));
+    }
+
+    return neighbors;
+}
+
 void CommandInterface::Vehicle::setLeaderVehicleData(double controllerAcceleration, double acceleration, double speed, double positionX, double positionY, double time)
 {
     ParBuffer buf;
