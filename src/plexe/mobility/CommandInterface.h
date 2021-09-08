@@ -35,6 +35,10 @@ class TraCIConnection;
 namespace plexe {
 namespace traci {
 
+#ifndef VAR_NEIGHBORS
+#define VAR_NEIGHBORS 0xbf
+#endif
+
 class CommandInterface : public veins::HasLogProxy {
 public:
     class Vehicle {
