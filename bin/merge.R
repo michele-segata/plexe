@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 #
-# Copyright (C) 2016-2021 Bastian Bloessl <bloessl@ccs-labs.org>
-# Copyright (C) 2016-2021 Michele Segata <segata@ccs-labs.org>
+# Copyright (C) 2016-2019 Bastian Bloessl <bloessl@ccs-labs.org>
+# Copyright (C) 2016-2019 Michele Segata <segata@ccs-labs.org>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 #
@@ -21,7 +21,17 @@
 #
 
 library(data.table)
-source('generic-parsing-util.R')
+to.source <- c("generic-parsing-util.R")
+plexe.dir <- Sys.getenv("PLEXE_DIR")
+if (plexe.dir == "") {
+    plexe.bin.dir <- "."
+} else {
+    plexe.bin.dir <- paste(plexe.dir, "bin", sep="/")
+}
+for (f in paste(plexe.bin.dir, to.source, sep="/")) {
+    if (file.exists(f)) source(f)
+    else stop(paste(f, "not found. Did you define PLEXE_DIR by running 'source setenv'?"))
+}
 
 args <- commandArgs(trailingOnly = T)
 

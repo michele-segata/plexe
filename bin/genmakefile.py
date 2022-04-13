@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
-# Copyright (C) 2016-2021 Bastian Bloessl <bloessl@ccs-labs.org>
-# Copyright (C) 2016-2021 Michele Segata <segata@ccs-labs.org>
+# Copyright (C) 2016-2019 Bastian Bloessl <bloessl@ccs-labs.org>
+# Copyright (C) 2016-2019 Michele Segata <segata@ccs-labs.org>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 #
@@ -111,12 +111,10 @@ def get_longer(configs):
 # output some variables
 print("# tool for indexing vec files")
 print("SCAVETOOL = scavetool")
-print("# scripts location")
-print("SCRIPTDIR = .")
 print("# results location")
 print(("RESDIR = " + resultDir))
 print("# script for merging")
-print("MERGESCRIPT = $(SCRIPTDIR)/merge.R")
+print("MERGESCRIPT = merge.R")
 print("")
 
 longer = get_longer(configs)
@@ -146,16 +144,16 @@ for c in configs:
     print(("# before this, check that all " + c[OUT].upper() + "_DATA files have been processed"))
     print(("$(RESDIR)/" + c[OUT] + "." + c[OUTTYPE] + ": $(" + c[OUT].upper() + "_DATA)"))
     if c[MERGE] == '1':
-        print(("\tRscript $(MERGESCRIPT) $(RESDIR)/ " + c[PREFIX] + "." + c[CONFIG] + " $(notdir $@) " + c[MAPFILE] + " " + c[MAP] + " " + c[OUTTYPE]))
+        print(("\t$(MERGESCRIPT) $(RESDIR)/ " + c[PREFIX] + "." + c[CONFIG] + " $(notdir $@) " + c[MAPFILE] + " " + c[MAP] + " " + c[OUTTYPE]))
     else:
-        print("\tRscript $(MERGESCRIPT)")
+        print("\t$(MERGESCRIPT)")
     print((c[OUT] + "." + c[OUTTYPE] + ": $(RESDIR)/" + c[OUT] + "." + c[OUTTYPE]))
     print("")
 
 for c in configs:
     print(("# to make all " + c[PREFIX] + ".*." + c[OUTTYPE] + " files we need to run the generic parser"))
     print((c[PREFIX] + ".%." + c[OUTTYPE] + ": %.vec %.vci"))
-    print(("\tRscript generic-parser.R $< " + c[MAPFILE] + " " + c[MAP] + " " + c[PREFIX] + " " + c[OUTTYPE]))
+    print(("\tgeneric-parser.R $< " + c[MAPFILE] + " " + c[MAP] + " " + c[PREFIX] + " " + c[OUTTYPE]))
     print("")
 
 print("# if vec files are not indexed, index them")

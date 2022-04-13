@@ -30,6 +30,6 @@ if [ "$?" -ne 0 ]; then
 fi
 
 # Add Plexe directory to PATH
-PLEXE_DIR="$(pwd)"
+export PLEXE_DIR="$(pwd)"
 export PATH="$PATH":"$PLEXE_DIR/bin"
 
