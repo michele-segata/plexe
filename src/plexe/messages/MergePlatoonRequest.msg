@@ -19,11 +19,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-cplusplus{{
-#include "JoinPlatoonRequest_m.h"
-}};
-
-packet JoinPlatoonRequest;
+import JoinPlatoonRequest;
 
 // Request to merge two platoons
 // Is sent from a leader to the leader of the Platoon to be merged with

@@ -21,7 +21,6 @@
 #pragma once
 
 #include <string>
-#include "plexe/messages/PlexeInterfaceControlInfo_m.h"
 
 namespace plexe {
 
