@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019 Michele Segata <segata@ccs-labs.org>
+# Copyright (C) 2016-2022 Michele Segata <segata@ccs-labs.org>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 #
@@ -127,7 +127,10 @@ parse.map <- function(mapfile) {
             } else if (e[1] == "module") {
                 module <- e[2]
             } else if (e[1] == "names") {
-                names <- paste('name(', strsplit(e[2], ",")[[1]], ')', sep='')
+                all.n <- strsplit(e[2], ",")[[1]]
+                names <- paste('name(', all.n, ')', sep='')
+                all.n.vector <- paste(all.n, ":vector", sep='')
+                names <- c(names, paste('name(', all.n.vector, ')', sep=''))
             } else if (is.number(e[1])) {
                 idx <- e[1]
                 fd <- e[2]
