@@ -34,19 +34,19 @@ sys.path.insert(0, "../../src/scripts/")
 from library import Library, LibraryChecker
 
 plexe = Library(name="Plexe", library="plexe", default_path="../../",
-                versions=["3.0"], source_folder="src/plexe",
+                versions=["3.0", "3.1"], source_folder="src/plexe",
                 lib_folder="src", images_folder="images",
                 version_script="print-plexe-version")
 veins = Library(name="Veins", library="veins", default_path="../../../veins",
-                versions=["5.1"], source_folder="src/veins", lib_folder="src",
+                versions=["5.2"], source_folder="src/veins", lib_folder="src",
                 images_folder="images", version_script="print-veins-version")
 veins_inet = Library(name="Veins INET 4", library="veins_inet",
                      default_path="../../../veins/subprojects/veins_inet",
-                     versions=["4.0"], source_folder="src/veins_inet",
+                     versions=["5.2"], source_folder="src/veins_inet",
                      lib_folder="src", images_folder="images",
                      version_script="print-veins_inet-version")
-inet = Library(name="INET", library="inet", default_path="../../../inet",
-               versions=["4.2.0"], source_folder="src/inet", lib_folder="src",
+inet = Library(name="INET", library="INET", default_path="../../../inet4",
+               versions=["4.2.1"], source_folder="src/inet", lib_folder="src",
                images_folder="images", version_script="_scripts/get_version")
 simulte = Library(name="SimuLTE", library="lte",
                   default_path="../../../simulte", versions=["v1.2.0-inet4.2.2"],
