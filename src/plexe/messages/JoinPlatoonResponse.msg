@@ -19,11 +19,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-cplusplus{{
-#include "ManeuverMessage_m.h"
-}};
-
-packet ManeuverMessage;
+import ManeuverMessage;
 
 // Response to a JoinRequest.
 // Is sent from the leader of the Platoon to a possible joiner to answer a

@@ -42,11 +42,14 @@ libraries.add_lib(veins)
 
 # Start with default flags
 makemake_flags = ["-f", "--deep", "--no-deep-includes", "--make-so", "-I", ".", "-o", "plexe", "-O", "out", "-p", "PLEXE"]
-run_libs = [join("src", "plexe")]
-run_neds = [join("src", "plexe")]
-run_imgs = []
 
+run_libs = []
+run_neds = []
+run_imgs = []
 libraries.check_libraries(makemake_flags, run_libs, run_neds, run_imgs)
+
+run_libs.append(join("src", "plexe"))
+run_neds.append(join("src", "plexe"))
 
 # Start creating files
 if not isdir("out"):

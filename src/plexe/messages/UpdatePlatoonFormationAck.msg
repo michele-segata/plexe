@@ -19,11 +19,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-cplusplus{{
-#include "ManeuverMessage_m.h"
-}};
-
-packet ManeuverMessage;
+import ManeuverMessage;
 
 // Message from all vehicles in the Platoon to the leader to acknoledge the updated formation.
 // Is similar to a PlatoonBeacon.

@@ -30,6 +30,7 @@ import org.car2x.plexe.traci.PlexeScenarioManager;
 import org.car2x.plexe.traci.PlexeScenarioManagerLaunchd;
 import org.car2x.plexe.traci.PlexeScenarioManagerForker;
 import org.car2x.plexe.mobility.TraCIBaseTrafficManager;
+import org.car2x.plexe.PlatoonCar;
 
 network PlexeScenario
 {
@@ -51,9 +52,9 @@ network PlexeScenario
         }
         world: BaseWorldUtility {
             parameters:
-                playgroundSizeX = playgroundSizeX;
-                playgroundSizeY = playgroundSizeY;
-                playgroundSizeZ = playgroundSizeZ;
+                playgroundSizeX = veins_eval_by_version(veins_omnetpp_buildnum(), "playgroundSizeX", 1525, "parent.playgroundSizeX");
+                playgroundSizeY = veins_eval_by_version(veins_omnetpp_buildnum(), "playgroundSizeY", 1525, "parent.playgroundSizeY");
+                playgroundSizeZ = veins_eval_by_version(veins_omnetpp_buildnum(), "playgroundSizeZ", 1525, "parent.playgroundSizeZ");
                 @display("p=30,0;i=misc/globe");
         }
         manager: <manager_type> like PlexeScenarioManager {
@@ -66,6 +67,8 @@ network PlexeScenario
         traffic: <traffic_type> like TraCIBaseTrafficManager {
             parameters:
                 @display("p=200,200");
+        }
+        node[0]: PlatoonCar {
         }
 
     connections allowunconnected:

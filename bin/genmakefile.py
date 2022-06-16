@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
-# Copyright (C) 2016-2021 Bastian Bloessl <bloessl@ccs-labs.org>
-# Copyright (C) 2016-2021 Michele Segata <segata@ccs-labs.org>
+# Copyright (C) 2016-2022 Bastian Bloessl <bloessl@ccs-labs.org>
+# Copyright (C) 2016-2022 Michele Segata <segata@ccs-labs.org>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 #
@@ -22,7 +22,8 @@
 
 import sys
 import configparser
-
+from re import search
+from subprocess import run, PIPE
 
 CONFIG = 0
 MAP = 1
@@ -43,20 +44,45 @@ class Multidict(dict):
         dict.__setitem__(self, key, val)
 
 
+def err(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
+
+def get_omnet_version():
+    major = 0
+    try:
+        result = run(['opp_run', '-v'], stdout=PIPE)
+        if not result.returncode == 0:
+            err("Cannot check for OMNeT++ version. Is opp_run in your PATH?")
+            exit(1)
+        version = search("Version: (.*?),", result.stdout.decode())
+        if version:
+            version_string = version.group(1)
+            version_parts = version_string.split(".")
+            major = int(version_parts[0])
+    except FileNotFoundError:
+        err("Cannot check for OMNeT++ version. Is opp_run in your PATH?")
+        exit(1)
+    return major
+
+
+# get omnet version
+opp_version = get_omnet_version()
+
 # instantiate a config parser
 cfg = configparser.ConfigParser(None, Multidict, strict=False)
 
 # parse the config file
 if len(sys.argv) != 2:
-    print("Usage: genmakefile.py <config file>")
+    err("Usage: genmakefile.py <config file>")
     sys.exit(1)
 
 try:
     cfgFile = open(sys.argv[1])
     cfg.read_file(cfgFile)
 except Exception as e:
-    print(("Unable to parse " + sys.argv[1]))
-    print(e)
+    err(("Unable to parse " + sys.argv[1]))
+    err(e)
     sys.exit(1)
 
 # where the results are stored
@@ -72,25 +98,25 @@ for s in cfg.sections():
 
     if s.startswith("config"):
         if not cfg.has_option(s, "out"):
-            print(("section " + s + " misses out option"))
+            err(("section " + s + " misses out option"))
             sys.exit(1)
         if not cfg.has_option(s, "config"):
-            print(("section " + s + " misses config option"))
+            err(("section " + s + " misses config option"))
             sys.exit(1)
         if not cfg.has_option(s, "map"):
-            print(("section " + s + " misses map option"))
+            err(("section " + s + " misses map option"))
             sys.exit(1)
         if not cfg.has_option(s, "mapFile"):
-            print(("section " + s + " misses mapFile option"))
+            err(("section " + s + " misses mapFile option"))
             sys.exit(1)
         if not cfg.has_option(s, "prefix"):
-            print(("section " + s + " misses prefix name"))
+            err(("section " + s + " misses prefix name"))
             sys.exit(1)
         out_type = "Rdata"
         if cfg.has_option(s, "type"):
             out_type = cfg.get(s, "type")
             if out_type not in ['csv', 'Rdata']:
-                print("output type should either be 'csv' or 'Rdata'")
+                err("output type should either be 'csv' or 'Rdata'")
                 sys.exit(1)
         configs.append([cfg.get(s, "config"), cfg.get(s, "map"), cfg.get(s, "mapFile"), cfg.get(s, "prefix"), cfg.get(s, "out"), cfg.get(s, "merge"), out_type])
 
@@ -108,15 +134,23 @@ def get_longer(configs):
     return longer + 5
 
 
+# output safety checks for OMNeT version
+print("REQUIRED_VERSION=\"{}\"".format(get_omnet_version()))
+print("ifeq (, $(shell which opp_run))")
+print("$(error Cannot determine OMNeT++ version. Is opp_run in your PATH?)")
+print("endif")
+print("OPP_VERSION=\"$(shell opp_run -v | grep Version | sed -e \"s/Version: //\" -e \"s/,.*//\" | cut -d'.' -f 1)\"")
+print("ifneq (\"$(OPP_VERSION)\",\"$(REQUIRED_VERSION)\")")
+print("$(error This Makefile has been generated for OMNeT++ version $(REQUIRED_VERSION), but version $(OPP_VERSION) has been found. Please re-generate the Makefile using genmakefile.py)")
+print("endif\n")
+
 # output some variables
 print("# tool for indexing vec files")
-print("SCAVETOOL = scavetool")
-print("# scripts location")
-print("SCRIPTDIR = .")
+print("SCAVETOOL = opp_scavetool")
 print("# results location")
 print(("RESDIR = " + resultDir))
 print("# script for merging")
-print("MERGESCRIPT = $(SCRIPTDIR)/merge.R")
+print("MERGESCRIPT = merge.R")
 print("")
 
 longer = get_longer(configs)
@@ -146,16 +180,31 @@ for c in configs:
     print(("# before this, check that all " + c[OUT].upper() + "_DATA files have been processed"))
     print(("$(RESDIR)/" + c[OUT] + "." + c[OUTTYPE] + ": $(" + c[OUT].upper() + "_DATA)"))
     if c[MERGE] == '1':
-        print(("\tRscript $(MERGESCRIPT) $(RESDIR)/ " + c[PREFIX] + "." + c[CONFIG] + " $(notdir $@) " + c[MAPFILE] + " " + c[MAP] + " " + c[OUTTYPE]))
+        print(("\t$(MERGESCRIPT) $(RESDIR)/ " + c[PREFIX] + "." + c[CONFIG] + " $(notdir $@) " + c[MAPFILE] + " " + c[MAP] + " " + c[OUTTYPE]))
     else:
-        print("\tRscript $(MERGESCRIPT)")
+        print("\t$(MERGESCRIPT)")
     print((c[OUT] + "." + c[OUTTYPE] + ": $(RESDIR)/" + c[OUT] + "." + c[OUTTYPE]))
     print("")
 
 for c in configs:
     print(("# to make all " + c[PREFIX] + ".*." + c[OUTTYPE] + " files we need to run the generic parser"))
-    print((c[PREFIX] + ".%." + c[OUTTYPE] + ": %.vec %.vci"))
-    print(("\tRscript generic-parser.R $< " + c[MAPFILE] + " " + c[MAP] + " " + c[PREFIX] + " " + c[OUTTYPE]))
+    # vec to csv
+    if opp_version == 5:
+        print((c[PREFIX] + ".%." + c[OUTTYPE] + ": %.vec %.vci"))
+        print(("\tgeneric-parser.R $< " + c[MAPFILE] + " " + c[MAP] + " " + c[PREFIX] + " " + c[OUTTYPE]))
+    elif opp_version >= 6:
+        print((c[PREFIX] + ".%.csv: %.vec %.vci"))
+        print(("\tgeneric-parser.py $< " + c[MAPFILE] + " " + c[MAP] + " " + c[PREFIX] + " csv"))
+        if c[OUTTYPE] == "Rdata":
+            # if needed, csv to Rdata
+            print(
+                (c[PREFIX] + ".%." + c[OUTTYPE] + ": " + c[PREFIX] + ".%.csv"))
+            print("\tcsv-to-rdata.R $<")
+            print("\trm $<")
+    else:
+        err("OMNeT++ version {} is not supported.".format(opp_version))
+        sys.exit(1)
+
     print("")
 
 print("# if vec files are not indexed, index them")

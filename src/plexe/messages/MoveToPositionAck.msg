@@ -19,11 +19,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-cplusplus{{
-#include "ManeuverMessage_m.h"
-}};
-
-packet ManeuverMessage;
+import ManeuverMessage;
 
 // Response to a MoveToPosition.
 // Is sent from an accepted joiner to the leader of the Platoon.

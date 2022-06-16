@@ -1,9 +1,6 @@
-#!/bin/echo Error. Aborting. Instead of running this script, please use: source
-
+#!/usr/bin/env Rscript
 #
-# Copyright (C) 2020-2021 Christoph Sommer <sommer@ccs-labs.org>
-#
-# Documentation for these modules is at http://veins.car2x.org/
+# Copyright (C) 2016-2022 Michele Segata <segata@ccs-labs.org>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 #
@@ -22,14 +19,14 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-# Check if called from Plexe directory
-test -f print-plexe-version >/dev/null 2>&1
-if [ "$?" -ne 0 ]; then
-	echo 'Error: current working directory does not look like a Plexe root directory. Aborting.' >&2
-	return 1
-fi
 
-# Add Plexe directory to PATH
-export PLEXE_DIR="$(pwd)"
-export PATH="$PATH":"$PLEXE_DIR/bin"
+args <- commandArgs(trailingOnly = T)
 
+if (length(args) != 1) {
+    stop("Usage: Rscript csv-to-rdata.R </path/to/file.csv>")
+}
+
+infile <- args[1]
+outfile <- gsub(".csv", ".Rdata", infile)
+runData <- read.csv(infile)
+save(runData, file=outfile)
