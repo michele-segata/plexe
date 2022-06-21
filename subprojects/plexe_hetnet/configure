@@ -38,12 +38,12 @@ plexe = Library(name="Plexe", library="plexe", default_path="../../",
                 lib_folder="src", images_folder="images",
                 version_script="print-plexe-version")
 plexe_lte = Library(name="Plexe LTE", library="plexe_lte",
-                    default_path="../plexe_lte", versions=["1.0"],
+                    default_path="../plexe_lte", versions=["3.1"],
                     source_folder="src/plexe_lte", lib_folder="src",
                     images_folder="images",
                     version_script="print-plexe_lte-version")
 plexe_vlc = Library(name="Plexe VLC", library="plexe_vlc",
-                    default_path="../plexe_vlc", versions=["1.0"],
+                    default_path="../plexe_vlc", versions=["3.1"],
                     source_folder="src/plexe_vlc", lib_folder="src",
                     images_folder="images",
                     version_script="print-plexe_vlc-version")

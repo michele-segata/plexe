@@ -23,8 +23,8 @@
 #include "plexe/plexe.h"
 
 // Version number of last release ("major.minor.patch") or an alpha version, if nonzero
-#define PLEXE_VLC_VERSION_MAJOR 1
-#define PLEXE_VLC_VERSION_MINOR 0
+#define PLEXE_VLC_VERSION_MAJOR 3
+#define PLEXE_VLC_VERSION_MINOR 1
 #define PLEXE_VLC_VERSION_PATCH 0
 #define PLEXE_VLC_VERSION_ALPHA 0
 
