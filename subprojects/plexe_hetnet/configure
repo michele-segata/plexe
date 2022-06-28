@@ -62,7 +62,8 @@ veins_vlc = Library(name="Veins VLC", library="veins-vlc",
                     version_script="print-veins_vlc-version")
 inet = Library(name="INET", library="inet", default_path="../../../inet",
                versions=["4.2.1"], source_folder="src/inet", lib_folder="src",
-               images_folder="images", version_script="_scripts/get_version")
+               images_folder="images",
+               version_script=["_scripts/get_version", "bin/inet_version"])
 simulte = Library(name="SimuLTE", library="lte",
                   default_path="../../../simulte", versions=["v1.2.0-inet4.2.2"],
                   source_folder="src/lte", lib_folder="src",
