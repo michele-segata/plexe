@@ -60,7 +60,7 @@ veins_vlc = Library(name="Veins VLC", library="veins-vlc",
                     source_folder="src/veins-vlc", lib_folder="src",
                     images_folder="images",
                     version_script="print-veins_vlc-version")
-inet = Library(name="INET", library="inet", default_path="../../../inet",
+inet = Library(name="INET", library="INET", default_path="../../../inet",
                versions=["4.2.1"], source_folder="src/inet", lib_folder="src",
                images_folder="images",
                version_script=["_scripts/get_version", "bin/inet_version"])
