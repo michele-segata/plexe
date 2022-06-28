@@ -20,7 +20,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-from os.path import join, relpath
+from os.path import join, relpath, isfile
 from subprocess import check_output, DEVNULL, CalledProcessError
 from optparse import OptionParser
 import sys
@@ -83,10 +83,26 @@ class Library:
                          lib=self.library, versions=versions)
         print(txt)
 
+    def print_invalid_version_files(self):
+        scripts = ", ".join(self.version_script)
+        txt = "None of the provided version files exist ({})".format(scripts)
+        print(txt)
+
     def check(self, options, flags, libs, neds, imgs):
         if hasattr(options, self.library):
             path = getattr(options, self.library)
             name = self.name
+            found = False
+            if isinstance(self.version_script, list):
+                for script in self.version_script:
+                    fname = join(path, script)
+                    if isfile(fname):
+                        self.version_script = script
+                        found = True
+                        break
+                if not found:
+                    self.print_invalid_version_files()
+                    sys.exit(1)
             try:
                 print("Determining {} version.".format(name))
                 if self.run_version_script:
