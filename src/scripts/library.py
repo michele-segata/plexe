@@ -20,7 +20,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-from os.path import join, relpath, isfile
+from os.path import join, relpath, isfile, dirname
 from subprocess import check_output, DEVNULL, CalledProcessError
 from optparse import OptionParser
 import sys
@@ -128,7 +128,8 @@ class Library:
                     ]
                     defs = self.defs
                     flags.extend(includes + link + defs)
-                    libs.append(relpath(join(path, self.src_dir)))
+                    lib = join(dirname(self.src_dir), self.library)
+                    libs.append(relpath(join(path, lib)))
                     neds.append(relpath(join(path, self.ned_dir)))
                     imgs.append(relpath(join(path, self.images_dir)))
 
