@@ -83,7 +83,6 @@ void VeinsVLCRadioDriver::handleUpperMsg(cMessage* msg)
     default:
         throw cRuntimeError("VeinsVLCRadioDriver received a frame to send that should not be handled by the VLC driver");
     }
-    vlcMsg->setSentAt(simTime());
     vlcMsg->encapsulate(frame);
     sendDown(vlcMsg.release());
 }
