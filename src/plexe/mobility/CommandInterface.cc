@@ -85,9 +85,9 @@ void CommandInterface::Vehicle::changeLane(int lane, double duration)
 std::vector<CommandInterface::Vehicle::neighbor> CommandInterface::Vehicle::getNeighbors(uint8_t lateralDirection, uint8_t longitudinalDirection, uint8_t blocking)
 {
     TraCIBuffer response = cifc->connection->query(CMD_GET_VEHICLE_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(VAR_NEIGHBORS)
-            << nodeId
-            << static_cast<uint8_t>(TYPE_UBYTE)
-            << static_cast<uint8_t>(blocking<<2 | longitudinalDirection<<1 | lateralDirection));
+        << nodeId
+        << static_cast<uint8_t>(TYPE_UBYTE)
+        << static_cast<uint8_t>(blocking<<2 | longitudinalDirection<<1 | lateralDirection));
 
     uint8_t cmdLength;
     response >> cmdLength;
@@ -108,7 +108,7 @@ std::vector<CommandInterface::Vehicle::neighbor> CommandInterface::Vehicle::getN
     std::vector<neighbor> neighbors;
     std::string vehicleName;
     double distance;
-    for (int i=0; i<len; i++)
+    for (int i= 0; i < len; i++)
     {
         response >> vehicleName;
         response >> distance;
