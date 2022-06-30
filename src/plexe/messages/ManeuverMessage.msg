@@ -1,6 +1,6 @@
 //
-// Copyright (C) 2012-2021 Michele Segata <segata@ccs-labs.org>
-// Copyright (C) 2018-2021 Julian Heinovski <julian.heinovski@ccs-labs.org>
+// Copyright (C) 2012-2022 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2018-2022 Julian Heinovski <julian.heinovski@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
