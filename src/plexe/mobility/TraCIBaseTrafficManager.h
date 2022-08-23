@@ -91,6 +91,7 @@ protected:
         int lane; // index of the lane where to insert (set to -1 to choose first free)
         float position; // position on the first edge
         float speed; // start speed (-1 for lane speed?)
+        int vehicleId = -1;
     };
 
     // queue of vehicles to be inserted. maps the index of a route in routeIds to a list of indexes of vehicle

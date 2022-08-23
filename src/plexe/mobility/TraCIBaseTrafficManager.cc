@@ -179,7 +179,8 @@ void TraCIBaseTrafficManager::insertVehicles()
             struct Vehicle v = *vi;
             std::string type = vehicleTypeIds[v.id];
             std::stringstream veh;
-            veh << type << "." << vehiclesCount[v.id];
+            int id = v.vehicleId < 0 ? vehiclesCount[v.id] : v.vehicleId;
+            veh << type << "." << id;
 
             // do we need to put this vehicle on a particular lane, or can we put it on any?
 
