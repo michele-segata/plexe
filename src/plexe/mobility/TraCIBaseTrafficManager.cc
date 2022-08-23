@@ -231,4 +231,15 @@ void TraCIBaseTrafficManager::addVehicleToQueue(int routeId, struct Vehicle v)
     vehicleInsertQueue[routeId].push_back(v);
 }
 
+void TraCIBaseTrafficManager::addVehicleToQueue(std::string route, struct Vehicle v)
+{
+    for (int i = 0; i < routeIds.size(); i++) {
+        if (routeIds[i].compare(route) == 0) {
+            addVehicleToQueue(i, v);
+            return;
+        }
+    }
+    throw cRuntimeError("Invalid route selected (%s)", route.c_str());
+}
+
 } // namespace plexe
