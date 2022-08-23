@@ -103,6 +103,7 @@ private:
 
 protected:
     void addVehicleToQueue(int routeId, struct Vehicle v);
+    void addVehicleToQueue(std::string route, struct Vehicle v);
 
     /**
      * Inserts the vehicles which have been put into the queue
