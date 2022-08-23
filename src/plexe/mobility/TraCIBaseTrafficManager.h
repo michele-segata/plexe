@@ -33,7 +33,7 @@ namespace plexe {
 class TraCIBaseTrafficManager : public cSimpleModule {
 
 public:
-    virtual void initialize(int stage);
+    virtual void initialize(int stage) override;
     virtual int numInitStages() const override { return 2; }
 
     int findVehicleTypeIndex(std::string vehType);
@@ -112,7 +112,7 @@ protected:
     virtual void handleSelfMsg(cMessage* msg)
     {
     }
-    virtual void handleMessage(cMessage* msg);
+    virtual void handleMessage(cMessage* msg) override;
     /**
      * virtual function that inheriting classes can override to get informed when scenario is loaded
      */
