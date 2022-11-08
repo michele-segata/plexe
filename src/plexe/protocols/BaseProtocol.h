@@ -69,6 +69,9 @@ private:
     // map of radio interfaces from radio ids
     std::map<int, cGate*> radioOuts;
 
+    // map of radio gates to radio interfaces type
+    std::map<int, int> radioIns;
+
     // map of known beacons (vehicle id, sequence number)
     std::map<int, int> knownBeacons;
 
@@ -168,6 +171,8 @@ protected:
      * \param frame the original frame which was containing pkt
      */
     virtual void messageReceived(PlatooningBeacon* pkt, BaseFrame1609_4* frame);
+
+    virtual void messageReceived(PlatooningBeacon* pkt, BaseFrame1609_4* frame, enum PlexeRadioInterfaces interface);
 
     /**
      * This method must be overridden by subclasses to take decisions

@@ -67,6 +67,8 @@ void BaseProtocol::initialize(int stage)
         for (int i = 0; i < gateSize("radiosOut"); i++) {
             PlexeRadioDriverInterface* radio = check_and_cast<PlexeRadioDriverInterface*>(gate("radiosOut", i)->getNextGate()->getOwnerModule());
             radioOuts[radio->getDeviceType()] = gate("radiosOut", i);
+            radio = check_and_cast<PlexeRadioDriverInterface*>(gate("radiosIn", i)->getPreviousGate()->getOwnerModule());
+            radioIns[gate("radiosIn", i)->getId()] = radio->getDeviceType();
         }
 
         // beaconing interval in seconds
@@ -285,6 +287,7 @@ void BaseProtocol::handleLowerMsg(cMessage* msg)
 
         // invoke messageReceived() method of subclass
         messageReceived(epkt, frame);
+        messageReceived(epkt, frame, (enum PlexeRadioInterfaces) radioIns[msg->getArrivalGateId()]);
 
         if (positionHelper->getLeaderId() == epkt->getVehicleId()) {
             // check if this is at least the second message we have received
@@ -331,6 +334,10 @@ void BaseProtocol::handleUpperMsg(cMessage* msg)
 }
 
 void BaseProtocol::messageReceived(PlatooningBeacon* pkt, BaseFrame1609_4* frame)
+{
+}
+
+void BaseProtocol::messageReceived(PlatooningBeacon* pkt, BaseFrame1609_4* frame, enum PlexeRadioInterfaces interface)
 {
 }
 
