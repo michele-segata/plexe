@@ -66,4 +66,6 @@ simple PlexeScenarioManagerForker like PlexeScenarioManager
         string configFile = default("my.sumo.cfg"); // substitution for $configFile parameter
         @class(veins::TraCIScenarioManagerForker);
         @display("i=block/network2");
+        int order = default(-1); // specific position in the multi-client execution order of the TraCI server to request upon connecting (-1: do not request a position)
+        bool ignoreUnknownSubscriptionResults = default(false); // whether to (try and) ignore any subscription result we did not request (but another client might have)
 }
