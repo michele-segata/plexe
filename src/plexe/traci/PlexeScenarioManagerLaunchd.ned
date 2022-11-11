@@ -65,5 +65,7 @@ simple PlexeScenarioManagerLaunchd like PlexeScenarioManager
         bool ignoreGuiCommands = default(false); // whether to ignore all TraCI commands that only make sense when the server has a graphical user interface
         @class(veins::TraCIScenarioManagerLaunchd);
         xml launchConfig; // launch configuration to send to sumo-launchd.py
+        int order = default(-1); // specific position in the multi-client execution order of the TraCI server to request upon connecting (-1: do not request a position)
+        bool ignoreUnknownSubscriptionResults = default(false); // whether to (try and) ignore any subscription result we did not request (but another client might have)
 }
 
