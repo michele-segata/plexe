@@ -41,7 +41,7 @@ void SimpleScenario::initialize(int stage)
 
         if (positionHelper->isLeader()) {
             // set base cruising speed
-            plexeTraciVehicle->setCruiseControlDesiredSpeed(leaderSpeed);
+            plexeTraciVehicle->setCruiseControlDesiredSpeed(positionHelper->getPlatoonSpeed());
         }
         else {
             // let the follower set a higher desired speed to stay connected
