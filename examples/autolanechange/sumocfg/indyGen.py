@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 #
-# Copyright (C) 2017-2021 Luca Terruzzi <luca.terruzzi@studenti.unitn.it>
-# Copyright (C) 2017-2021 Riccardo Colombo <riccardo.colombo@studenti.unitn.it>
+# Copyright (C) 2017-2023 Luca Terruzzi <luca.terruzzi@studenti.unitn.it>
+# Copyright (C) 2017-2023 Riccardo Colombo <riccardo.colombo@studenti.unitn.it>
 # Successive modifications by Michele Segata <segata@ccs-labs.org>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later

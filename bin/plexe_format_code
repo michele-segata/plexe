@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Copyright (C) 2019-2021 Julian Heinovski <heinovski@ccs-labs.org>
+# Copyright (C) 2019-2023 Julian Heinovski <heinovski@ccs-labs.org>
 #
 # Documentation for these modules is at http://veins.car2x.org/
 #
