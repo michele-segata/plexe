@@ -372,6 +372,11 @@ void CommandInterface::Vehicle::enableAutoLaneChanging(bool enable)
     veinsVehicle().setParameter(PAR_ENABLE_AUTO_LANE_CHANGE, enable ? 1 : 0);
 }
 
+void CommandInterface::Vehicle::performPlatoonLaneChange(int lane)
+{
+    veinsVehicle().setParameter(PAR_PLATOON_FIXED_LANE, lane);
+}
+
 unsigned int CommandInterface::Vehicle::getLanesCount()
 {
     int v;

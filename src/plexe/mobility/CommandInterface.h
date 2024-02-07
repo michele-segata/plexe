@@ -275,10 +275,21 @@ public:
          * Enables/disables automatic, coordinated, whole-platoon lane changes.
          * This function should be invoked on the leader which decides whether
          * the platoon can gain speed by changing lane. The leader will then
-         * check whether lane changing is possible and, in case, do so
+         * check whether lane changing is possible and, in case, do so.
+         * Enabling auto lane changing disables a platoon lane change
+         * requested through performPlatoonLaneChange().
          * @param enable: enable or disable automatic platoon lane changes
          */
         void enableAutoLaneChanging(bool enable);
+
+        /**
+         * Performs a platoon lane change towards a desired lane. Before doing
+         * so, the leader checks whether it is safe to do so for all the
+         * members.
+         * Calling this method disables automatic lane changing.
+         * @param lane: lane index the platoon should move to
+         */
+        void performPlatoonLaneChange(int lane);
 
         /**
          * Gets the total number of lanes on the edge the vehicle is currently traveling
