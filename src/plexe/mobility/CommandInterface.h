@@ -317,6 +317,12 @@ public:
          */
         void setLaneChangeAction(int action);
 
+        /**
+         * Remove a lane change action created with setFixedLane
+         * @param nodeId vehicle id
+         */
+        void removeExistingLaneChangeActions(std::string nodeId);
+
         CommandInterface* cifc;
         const std::string nodeId;
     };

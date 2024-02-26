@@ -367,13 +367,25 @@ void CommandInterface::Vehicle::removePlatoonMember(std::string memberId)
     veinsVehicle().setParameter(PAR_REMOVE_MEMBER, memberId);
 }
 
+void CommandInterface::Vehicle::removeExistingLaneChangeActions(std::string nodeId)
+{
+    auto laneChangeAction = cifc->laneChanges.find(nodeId);
+    if (laneChangeAction != cifc->laneChanges.end())
+        cifc->laneChanges.erase(laneChangeAction);
+}
+
 void CommandInterface::Vehicle::enableAutoLaneChanging(bool enable)
 {
+    if (enable) {
+        // if we are enabling auto lane change, we have to remove existing lane change actions created with setFixedLane
+        removeExistingLaneChangeActions(nodeId);
+    }
     veinsVehicle().setParameter(PAR_ENABLE_AUTO_LANE_CHANGE, enable ? 1 : 0);
 }
 
 void CommandInterface::Vehicle::performPlatoonLaneChange(int lane)
 {
+    removeExistingLaneChangeActions(nodeId);
     veinsVehicle().setParameter(PAR_PLATOON_FIXED_LANE, lane);
 }
 
