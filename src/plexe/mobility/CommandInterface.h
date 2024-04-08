@@ -173,7 +173,7 @@ public:
          * or simply avoid collisions
          * Set the lane index to -1 to give control back to the human driver
          */
-        void setFixedLane(int8_t laneIndex, bool safe = false);
+        void setFixedLane(int8_t laneIndex, bool safe = true);
 
         /**
          * Gets the data measured by the radar, i.e., distance and relative speed.
@@ -302,26 +302,6 @@ public:
         }
 
     protected:
-        /**
-         * Tells to the CC mobility model the desired lane change action to be performed
-         *
-         * @param vehicleId the vehicle id to communicate the action to
-         * @param action the action to be performed. this can be either:
-         * 0 = driver choice: the application protocol wants to let the driver chose the lane
-         * 1 = management lane: the application protocol wants the driver to move the car
-         * to the management lane, i.e., the leftmost minus one
-         * 2 = platooning lane: the application protocol wants the driver to move the car
-         * to the platooning lane, i.e., the leftmost
-         * 3 = stay there: the application protocol wants the driver to keep the car
-         * into the platooning lane because the car is a part of a platoon
-         */
-        void setLaneChangeAction(int action);
-
-        /**
-         * Remove a lane change action created with setFixedLane
-         * @param nodeId vehicle id
-         */
-        void removeExistingLaneChangeActions(std::string nodeId);
 
         CommandInterface* cifc;
         const std::string nodeId;
@@ -329,28 +309,14 @@ public:
 
     CommandInterface(cComponent* owner, veins::TraCICommandInterface* commandInterface, veins::TraCIConnection* connection);
 
-    void executePlexeTimestep();
-
     Vehicle vehicle(const std::string& nodeId)
     {
         return {this, nodeId};
     }
 
 private:
-    struct PlexeLaneChange {
-        int lane;
-        bool safe;
-        bool wait;
-    };
-    using PlexeLaneChanges = std::map<std::string, PlexeLaneChange>;
-
-    static const unsigned lca_overlapping = 1 << 13;
-
-    void __changeLane(std::string veh, int current, int direction, bool safe = true);
-
     veins::TraCICommandInterface* veinsCommandInterface;
     veins::TraCIConnection* connection;
-    PlexeLaneChanges laneChanges;
 };
 
 } // namespace traci

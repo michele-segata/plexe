@@ -75,11 +75,7 @@ void CommandInterface::Vehicle::getLaneChangeState(int direction, int& state1, i
 
 void CommandInterface::Vehicle::changeLane(int lane, double duration)
 {
-    uint8_t commandType = TYPE_COMPOUND;
-    int nParameters = 2;
-    uint8_t variableId = CMD_CHANGELANE;
-    TraCIBuffer buf = cifc->connection->query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << commandType << nParameters << static_cast<uint8_t>(TYPE_BYTE) << (uint8_t) lane << static_cast<uint8_t>(TYPE_DOUBLE) << duration);
-    ASSERT(buf.eof());
+    performPlatoonLaneChange(lane);
 }
 
 std::vector<CommandInterface::Vehicle::neighbor> CommandInterface::Vehicle::getNeighbors(uint8_t lateralDirection, uint8_t longitudinalDirection, uint8_t blocking)
@@ -234,16 +230,15 @@ bool CommandInterface::Vehicle::isCrashed()
 
 void CommandInterface::Vehicle::setFixedLane(int8_t laneIndex, bool safe)
 {
-    if (laneIndex == -1) {
-        setLaneChangeMode(DEFAULT_NOTRACI_LC);
-        return;
-    }
 
-    PlexeLaneChange lc;
-    lc.lane = laneIndex;
-    lc.safe = safe;
-    lc.wait = false;
-    cifc->laneChanges[nodeId] = lc;
+    if (laneIndex == -1) {
+        // give back total control to sumo (e.g., when using human driven vehicles)
+        setLaneChangeMode(DEFAULT_NOTRACI_LC);
+    }
+    else {
+        setLaneChangeMode(FIX_LC);
+        changeLane(laneIndex, 0);
+    }
 }
 
 void CommandInterface::Vehicle::getRadarMeasurements(double& distance, double& relativeSpeed)
@@ -367,25 +362,13 @@ void CommandInterface::Vehicle::removePlatoonMember(std::string memberId)
     veinsVehicle().setParameter(PAR_REMOVE_MEMBER, memberId);
 }
 
-void CommandInterface::Vehicle::removeExistingLaneChangeActions(std::string nodeId)
-{
-    auto laneChangeAction = cifc->laneChanges.find(nodeId);
-    if (laneChangeAction != cifc->laneChanges.end())
-        cifc->laneChanges.erase(laneChangeAction);
-}
-
 void CommandInterface::Vehicle::enableAutoLaneChanging(bool enable)
 {
-    if (enable) {
-        // if we are enabling auto lane change, we have to remove existing lane change actions created with setFixedLane
-        removeExistingLaneChangeActions(nodeId);
-    }
     veinsVehicle().setParameter(PAR_ENABLE_AUTO_LANE_CHANGE, enable ? 1 : 0);
 }
 
 void CommandInterface::Vehicle::performPlatoonLaneChange(int lane)
 {
-    removeExistingLaneChangeActions(nodeId);
     veinsVehicle().setParameter(PAR_PLATOON_FIXED_LANE, lane);
 }
 
@@ -394,69 +377,6 @@ unsigned int CommandInterface::Vehicle::getLanesCount()
     int v;
     veinsVehicle().getParameter(PAR_LANES_COUNT, v);
     return (unsigned int) v;
-}
-
-void CommandInterface::Vehicle::setLaneChangeAction(int action)
-{
-    std::cout << "setLaneChangeAction API is deprecated. Please remove it from your code\n";
-    uint8_t variableId = VAR_LANECHANGE_MODE;
-    uint8_t type = TYPE_INTEGER;
-    int traciAction;
-    if (action == MOVE_TO_FIXED_LANE || action == STAY_IN_CURRENT_LANE)
-        traciAction = FIX_LC;
-    else
-        traciAction = DEFAULT_NOTRACI_LC;
-    TraCIBuffer buf = cifc->connection->query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << type << traciAction);
-    ASSERT(buf.eof());
-}
-
-void CommandInterface::executePlexeTimestep()
-{
-    std::vector<PlexeLaneChanges::iterator> satisfied;
-    for (auto i = laneChanges.begin(); i != laneChanges.end(); i++) {
-        if (i->second.wait) {
-            i->second.wait = false;
-            continue;
-        }
-        int current = vehicle(i->first).veinsVehicle().getLaneIndex();
-        int nLanes = i->second.lane - current;
-        int direction;
-        if (nLanes > 0)
-            direction = 1;
-        else if (nLanes < 0)
-            direction = -1;
-        else
-            direction = 0;
-
-        if (direction == 0) {
-            satisfied.push_back(i);
-            if (i->second.safe)
-                vehicle(i->first).setLaneChangeMode(FIX_LC);
-            else
-                vehicle(i->first).setLaneChangeMode(FIX_LC_AGGRESSIVE);
-        }
-        else {
-            __changeLane(i->first, current, direction, i->second.safe);
-        }
-    }
-    for (int i = 0; i < satisfied.size(); i++) laneChanges.erase(satisfied[i]);
-}
-
-void CommandInterface::__changeLane(std::string veh, int current, int direction, bool safe)
-{
-    if (safe) {
-        vehicle(veh).setLaneChangeMode(FIX_LC);
-        vehicle(veh).changeLane(current + direction, 0);
-    }
-    else {
-        int state, state2;
-        vehicle(veh).getLaneChangeState(direction, state, state2);
-        if ((state & lca_overlapping) == 0) {
-            vehicle(veh).setLaneChangeMode(FIX_LC_AGGRESSIVE);
-            vehicle(veh).changeLane(current + direction, 0);
-            laneChanges[veh].wait = true;
-        }
-    }
 }
 
 } // namespace traci
