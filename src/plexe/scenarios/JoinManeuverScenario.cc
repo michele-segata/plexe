@@ -72,6 +72,7 @@ void JoinManeuverScenario::prepareManeuverCars(int platoonLane)
         plexeTraciVehicle->setCruiseControlDesiredSpeed(100 / 3.6);
         plexeTraciVehicle->setFixedLane(2);
         plexeTraciVehicle->setActiveController(positionHelper->getController());
+        app->setPlatoonRole(PlatoonRole::NONE);
 
         // after 30 seconds of simulation, start the maneuver
         startManeuver = new cMessage();
