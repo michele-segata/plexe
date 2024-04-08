@@ -85,6 +85,10 @@ void RingTrafficManager::scenarioLoaded()
         for (int p = 0; p < ps.size(); p++) {
             automated.id = vehTypeId;
             automated.speed = ps[p].speed;
+            PlatoonInfo info;
+            info.speed = automated.speed;
+            info.lane = l;
+            positions.setPlatoonInformation(injectedPlatoons, info);
             totalLength -= platoonLeaderHeadway * ps[p].speed;
             for (int v = 0; v < ps[p].size; v++) {
                 automated.position = totalLength;
