@@ -41,11 +41,6 @@ void AutoLaneChangeScenario::initialize(int stage)
         plexeTraciVehicle->setFixedLane(traciVehicle->getLaneIndex(), false);
         traciVehicle->setSpeedMode(0);
         if (positionHelper->isLeader()) {
-            for (int i = 1; i < positionHelper->getPlatoonSize(); i++) {
-                std::stringstream ss;
-                ss << platooningVType << "." << positionHelper->getMemberId(i);
-                plexeTraciVehicle->addPlatoonMember(ss.str(), i);
-            }
             plexeTraciVehicle->enableAutoLaneChanging(true);
             plexeTraciVehicle->setCruiseControlDesiredSpeed(mobility->getSpeed());
         }
