@@ -44,7 +44,7 @@ import org.car2x.veins.subprojects.veins_inet.VeinsInetManagerForker;
 import org.car2x.veins.modules.obstacle.VehicleObstacleControl;
 import org.car2x.veinsvlc.VlcConnectionManager;
 
-network Highway
+network PlatooningHetnet
 {
     parameters:
         double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)

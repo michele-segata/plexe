@@ -33,7 +33,7 @@ import org.car2x.plexe.mobility.TraCIBaseTrafficManager;
 import org.car2x.veins.modules.obstacle.VehicleObstacleControl;
 import org.car2x.veinsvlc.VlcConnectionManager;
 
-network Highway
+network PlatooningVlc
 {
     parameters:
         double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)

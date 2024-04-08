@@ -41,7 +41,7 @@ import inet.node.inet.StandardHost;
 
 import org.car2x.veins.subprojects.veins_inet.VeinsInetManagerForker;
 
-network Highway
+network PlatooningLte
 {
     parameters:
         double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)

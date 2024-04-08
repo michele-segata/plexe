@@ -21,5 +21,5 @@
 
 import org.car2x.plexe.PlexeScenario;
 
-network Highway extends PlexeScenario
+network JoinManeuver extends PlexeScenario
 {}
