@@ -38,7 +38,6 @@ void AutoLaneChangeScenario::initialize(int stage)
     if (stage == 2) {
         platooningVType = par("platooningVType").stdstringValue();
 
-        plexeTraciVehicle->setFixedLane(traciVehicle->getLaneIndex(), false);
         traciVehicle->setSpeedMode(0);
         if (positionHelper->isLeader()) {
             plexeTraciVehicle->enableAutoLaneChanging(true);
