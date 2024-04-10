@@ -68,6 +68,7 @@ void JoinAtBack::startManeuver(const void* parameters)
 
 void JoinAtBack::abortManeuver()
 {
+    joinManeuverState = JoinManeuverState::IDLE;
 }
 
 void JoinAtBack::onPlatoonBeacon(const PlatooningBeacon* pb)
