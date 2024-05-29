@@ -31,6 +31,7 @@ moduleinterface PlexeScenarioManager
         @signal[org_car2x_veins_modules_mobility_traciModulePreInit](type=cModule);
         @signal[org_car2x_veins_modules_mobility_traciModuleAdded](type=cModule);
         @signal[org_car2x_veins_modules_mobility_traciModuleRemoved](type=cModule);
+        @signale[org_car2x_veins_modules_mobility_traciModuleUpdated](type=cModule);
         @signal[org_car2x_veins_modules_mobility_traciTimestepBegin](type=simtime_t);
         @signal[org_car2x_veins_modules_mobility_traciTimestepEnd](type=simtime_t);
         double connectAt @unit("s");  // when to connect to TraCI server (must be the initial timestep of the server)
