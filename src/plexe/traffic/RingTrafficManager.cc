@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2013-2022 Michele Segata <segata@ccs-labs.org>, Stefan Joerer <joerer@ccs-labs.org>
+// Copyright (C) 2013-2023 Michele Segata <segata@ccs-labs.org>, Stefan Joerer <joerer@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
@@ -85,6 +85,10 @@ void RingTrafficManager::scenarioLoaded()
         for (int p = 0; p < ps.size(); p++) {
             automated.id = vehTypeId;
             automated.speed = ps[p].speed;
+            PlatoonInfo info;
+            info.speed = automated.speed;
+            info.lane = l;
+            positions.setPlatoonInformation(injectedPlatoons, info);
             totalLength -= platoonLeaderHeadway * ps[p].speed;
             for (int v = 0; v < ps[p].size; v++) {
                 automated.position = totalLength;

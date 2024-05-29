@@ -1,6 +1,6 @@
 //
 // Copyright (C) 2008 Christoph Sommer <christoph.sommer@informatik.uni-erlangen.de>
-// Copyright (C) 2012-2020 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2023 Michele Segata <segata@ccs-labs.org>
 // Copyright (C) 2020 Piermaria Arvani <piermaria.arvani@gmail.com>
 //
 //
@@ -30,18 +30,53 @@ import org.car2x.veins.modules.world.annotations.AnnotationManager;
 import org.car2x.plexe.PlexeManager;
 import org.car2x.plexe.mobility.TraCIBaseTrafficManager;
 
+import lte.corenetwork.nodes.eNodeB;
+import inet.node.ethernet.Eth10G;
+import lte.corenetwork.binder.LteBinder;
+import lte.world.radio.LteChannelControl;
+import lte.common.LteNetworkConfigurator;
+import lte.epc.PgwStandardSimplified;
+import inet.node.inet.Router;
+import inet.node.inet.StandardHost;
+
+import org.car2x.veins.subprojects.veins_inet.VeinsInetManagerForker;
+
 import org.car2x.veins.modules.obstacle.VehicleObstacleControl;
 import org.car2x.veinsvlc.VlcConnectionManager;
 
-network Highway
+network PlatooningHetnet
 {
     parameters:
         double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)
         double playgroundSizeY @unit(m); // y size of the area the nodes are in (in meters)
         double playgroundSizeZ @unit(m); // z size of the area the nodes are in (in meters)
         string traffic_type;
-        @display("bgb=$playgroundSizeX,$playgroundSizeY");
+        @display("bgb=1164.825,450.9");
     submodules:
+        //# LTE modules
+        channelControl: LteChannelControl {
+            @display("p=50,25;is=s");
+        }
+        configurator: LteNetworkConfigurator {
+            @display("p=50,125");
+            config = xmldoc("demo.xml");
+        }
+        binder: LteBinder {
+            @display("p=50,175;is=s");
+        }
+        router: Router {
+            @display("p=321,136;i=device/smallrouter");
+        }
+        pgw: PgwStandardSimplified {
+            nodeType = "PGW";
+            @display("p=172,287;is=l");
+        }
+        eNodeB1: eNodeB {
+            @display("p=0,0;is=vl");
+        }
+        eNodeB2: eNodeB {
+            @display("p=1000,0;is=vl");
+        }
         obstacles: ObstacleControl {
             @display("p=240,50");
         }
@@ -59,7 +94,7 @@ network Highway
                 playgroundSizeZ = playgroundSizeZ;
                 @display("p=30,0;i=misc/globe");
         }
-        manager: TraCIScenarioManagerForker {
+        manager: VeinsInetManagerForker {
             parameters:
                 @display("p=512,128");
         }
@@ -79,5 +114,9 @@ network Highway
         }
 
     connections allowunconnected:
+        router.pppg++ <--> Eth10G <--> pgw.filterGate;
+        pgw.pppg++ <--> Eth10G <--> eNodeB1.ppp;
+        pgw.pppg++ <--> Eth10G <--> eNodeB2.ppp;
+        eNodeB1.x2++ <--> Eth10G <--> eNodeB2.x2++;
 }
 

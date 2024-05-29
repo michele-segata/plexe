@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2018-2022 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2018-2023 Michele Segata <segata@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
@@ -173,7 +173,7 @@ public:
          * or simply avoid collisions
          * Set the lane index to -1 to give control back to the human driver
          */
-        void setFixedLane(int8_t laneIndex, bool safe = false);
+        void setFixedLane(int8_t laneIndex, bool safe = true);
 
         /**
          * Gets the data measured by the radar, i.e., distance and relative speed.
@@ -275,10 +275,21 @@ public:
          * Enables/disables automatic, coordinated, whole-platoon lane changes.
          * This function should be invoked on the leader which decides whether
          * the platoon can gain speed by changing lane. The leader will then
-         * check whether lane changing is possible and, in case, do so
+         * check whether lane changing is possible and, in case, do so.
+         * Enabling auto lane changing disables a platoon lane change
+         * requested through performPlatoonLaneChange().
          * @param enable: enable or disable automatic platoon lane changes
          */
         void enableAutoLaneChanging(bool enable);
+
+        /**
+         * Performs a platoon lane change towards a desired lane. Before doing
+         * so, the leader checks whether it is safe to do so for all the
+         * members.
+         * Calling this method disables automatic lane changing.
+         * @param lane: lane index the platoon should move to
+         */
+        void performPlatoonLaneChange(int lane);
 
         /**
          * Gets the total number of lanes on the edge the vehicle is currently traveling
@@ -291,20 +302,6 @@ public:
         }
 
     protected:
-        /**
-         * Tells to the CC mobility model the desired lane change action to be performed
-         *
-         * @param vehicleId the vehicle id to communicate the action to
-         * @param action the action to be performed. this can be either:
-         * 0 = driver choice: the application protocol wants to let the driver chose the lane
-         * 1 = management lane: the application protocol wants the driver to move the car
-         * to the management lane, i.e., the leftmost minus one
-         * 2 = platooning lane: the application protocol wants the driver to move the car
-         * to the platooning lane, i.e., the leftmost
-         * 3 = stay there: the application protocol wants the driver to keep the car
-         * into the platooning lane because the car is a part of a platoon
-         */
-        void setLaneChangeAction(int action);
 
         CommandInterface* cifc;
         const std::string nodeId;
@@ -312,28 +309,14 @@ public:
 
     CommandInterface(cComponent* owner, veins::TraCICommandInterface* commandInterface, veins::TraCIConnection* connection);
 
-    void executePlexeTimestep();
-
     Vehicle vehicle(const std::string& nodeId)
     {
         return {this, nodeId};
     }
 
 private:
-    struct PlexeLaneChange {
-        int lane;
-        bool safe;
-        bool wait;
-    };
-    using PlexeLaneChanges = std::map<std::string, PlexeLaneChange>;
-
-    static const unsigned lca_overlapping = 1 << 13;
-
-    void __changeLane(std::string veh, int current, int direction, bool safe = true);
-
     veins::TraCICommandInterface* veinsCommandInterface;
     veins::TraCIConnection* connection;
-    PlexeLaneChanges laneChanges;
 };
 
 } // namespace traci

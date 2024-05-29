@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2012-2022 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2023 Michele Segata <segata@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
@@ -91,6 +91,18 @@ void BasePositionHelper::setVariablesAfterFormationChange()
     leaderId = formation[0];
     frontId = isLeader() ? -1 : formation[position - 1];
     backId = isLast() ? -1 : formation[position + 1];
+    // automatically tell sumo about the platoon formation
+    // TODO: this will not work if the traffic manager has not a platooningVType parameter
+    // OR in case of heterogeneous platoons
+    if (isLeader()) {
+        cModule *traffic = findModuleByPath("<root>.traffic");
+        std::string platooningVType = traffic->par("platooningVType");
+        for (int i = 1; i < getPlatoonSize(); i++) {
+            std::stringstream ss;
+            ss << platooningVType << "." << getMemberId(i);
+            plexeTraciVehicle->addPlatoonMember(ss.str(), i);
+        }
+    }
     colorVehicle();
 }
 

@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2019-2022 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2019-2023 Michele Segata <segata@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
@@ -45,9 +45,6 @@ void PlexeManager::initializeCommandInterface()
     const auto scenarioManager = veins::TraCIScenarioManagerAccess().get();
     ASSERT(scenarioManager);
     commandInterface.reset(new traci::CommandInterface(this, scenarioManager->getCommandInterface(), scenarioManager->getConnection()));
-
-    auto timestep = [this](veins::SignalPayload<simtime_t const&>) { commandInterface->executePlexeTimestep(); };
-    signalManager.subscribeCallback(scenarioManager, veins::TraCIScenarioManager::traciTimestepEndSignal, timestep);
 }
 
 } // namespace plexe

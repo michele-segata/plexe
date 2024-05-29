@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2012-2022 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2023 Michele Segata <segata@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
@@ -53,10 +53,11 @@ void MergeManeuverScenario::prepareManeuverCars(int platoonLane)
     else {
         // this is the leader which will merge
         plexeTraciVehicle->setCruiseControlDesiredSpeed(100 / 3.6);
-        plexeTraciVehicle->setFixedLane(platoonLane);
+        // the vehicle is the leader of the second platoon, so it starts with an ACC
         // the vehicle is the leader of the second platoon, so it starts with an ACC
         plexeTraciVehicle->setActiveController(ACC);
         app->setPlatoonRole(PlatoonRole::LEADER);
+        plexeTraciVehicle->performPlatoonLaneChange(platoonLane + 2);
 
         // after 30 seconds of simulation, start the maneuver
         startManeuver = new cMessage();

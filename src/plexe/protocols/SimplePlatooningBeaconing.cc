@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2012-2022 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2023 Michele Segata <segata@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
@@ -30,8 +30,10 @@ void SimplePlatooningBeaconing::initialize(int stage)
 
     if (stage == 0) {
         // random start time
-        SimTime beginTime = SimTime(uniform(0.001, beaconingInterval));
-        if (beaconingInterval > 0) scheduleAt(simTime() + beaconingInterval + beginTime, sendBeacon);
+        if (beaconingInterval > 0) {
+            SimTime beginTime = SimTime(uniform(0.001, beaconingInterval));
+            scheduleAt(simTime() + beaconingInterval + beginTime, sendBeacon);
+        }
     }
 }
 

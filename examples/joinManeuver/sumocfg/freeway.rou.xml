@@ -1,5 +1,5 @@
 <!--
-// Copyright (C) 2019-2022 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2019-2023 Michele Segata <segata@ccs-labs.org>
 //
 // Documentation for these modules is at http://veins.car2x.org/
 //
@@ -30,7 +30,8 @@
 -->
 
 <routes>
-    <vType id="vtypeauto" accel="2.5" decel="9.0" sigma="0.5" length="4" minGap="0" maxSpeed="1000" color="1,0,0" probability="1" speedFactor="2"
-        carFollowModel="CC" tauEngine="0.5" omegaN="0.2" xi="1" c1="0.5" lanesCount="4" ccAccel="1.5" ploegKp="0.2" ploegKd="0.7" ploegH="0.5" />
+    <vType id="vtypeauto" accel="2.5" decel="9.0" sigma="0.5" length="4" minGap="0" maxSpeed="1000" color="1,0,0" probability="1" tau="3.0" speedFactor="2"
+        carFollowModel="CC" tauEngine="0.5" omegaN="0.2" xi="1" c1="0.5" lanesCount="4" ccAccel="1.5" ploegKp="0.2" ploegKd="0.7" ploegH="0.5"
+        laneChangeModel="LC2013_CC" lcStrategic="5" lcCooperative="5" lcSpeedGain="5" lcKeepRight="5" />
     <route id="platoon_route" edges="edge_0_0 edge_0_1 edge_0_2 edge_0_3 edge_1_0 edge_1_1 edge_1_2 edge_1_3 edge_2_0 edge_2_1 edge_2_2 edge_2_3 edge_3_0 edge_3_1 edge_3_2 edge_3_3 edge_4_0 edge_4_1 edge_4_4 edge_4_6 absorption_4"/>
 </routes>

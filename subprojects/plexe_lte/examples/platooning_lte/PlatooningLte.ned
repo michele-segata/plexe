@@ -1,6 +1,6 @@
 //
 // Copyright (C) 2008 Christoph Sommer <christoph.sommer@informatik.uni-erlangen.de>
-// Copyright (C) 2012-2020 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2023 Michele Segata <segata@ccs-labs.org>
 // Copyright (C) 2020 Piermaria Arvani <piermaria.arvani@gmail.com>
 //
 //
@@ -41,7 +41,7 @@ import inet.node.inet.StandardHost;
 
 import org.car2x.veins.subprojects.veins_inet.VeinsInetManagerForker;
 
-network Highway
+network PlatooningLte
 {
     parameters:
         double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)

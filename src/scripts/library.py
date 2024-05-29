@@ -141,6 +141,39 @@ class Library:
                 sys.exit(1)
 
 
+class ExternalLibrary:
+    def __init__(self, name, library, lflags):
+        self.name = name
+        self.library = library
+        self.lflags = lflags
+        self.inc = "{}inc".format(library)
+        self.lib = "{}lib".format(library)
+
+    def add_to_parser(self, parser):
+        ihelp = "search for {name} includes in PATH. Hint: you can use pkg-config --cflags {lib} to find such directory"
+        lhelp = "search for {name} lib in PATH. Hint: you can use pkg-config --libs {lib} to find such directory"
+        ihelp = ihelp.format(name=self.name, lib=self.library)
+        lhelp = lhelp.format(name=self.name, lib=self.library)
+        parser.add_option("--with-{}-include".format(self.library), dest=self.inc, help=ihelp, metavar="PATH")
+        parser.add_option("--with-{}-lib".format(self.library), dest=self.lib, help=lhelp, metavar="PATH")
+
+    def check(self, options, flags, libs, neds, imgs):
+        inc = None
+        if hasattr(options, self.inc):
+            inc = getattr(options, self.inc)
+        lib = None
+        if hasattr(options, self.lib):
+            lib = getattr(options, self.lib)
+        if inc is not None and lib is not None:
+            includes = ["-I{}".format(inc)]
+            link = ["-L{}".format(lib)]
+            link.extend(self.lflags.split())
+            flags.extend(includes + link)
+        else:
+            print("This project requires the {name}. Please specify the PATH where include and lib files can be found using the --with-{lib}-include and --with-{lib}-lib arguments".format(name=self.name, lib=self.library))
+            sys.exit(1)
+
+
 class LibraryChecker:
     def __init__(self):
         self.parser = OptionParser()

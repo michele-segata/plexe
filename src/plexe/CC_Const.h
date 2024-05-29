@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2012-2022 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2023 Michele Segata <segata@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
@@ -199,6 +199,9 @@ struct VEHICLE_DATA {
 
 // let the leader automatically change lane for the whole platoon if there is a speed advantage
 #define PAR_ENABLE_AUTO_LANE_CHANGE (parameter_prefix + "ccalc")
+
+// perform a lane change for a whole platoon
+#define PAR_PLATOON_FIXED_LANE (parameter_prefix + "ccpfl")
 
 } // namespace plexe
 

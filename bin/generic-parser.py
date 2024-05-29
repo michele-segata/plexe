@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (C) 2016-2022 Michele Segata <segata@ccs-labs.org>
+# Copyright (C) 2016-2023 Michele Segata <segata@ccs-labs.org>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 #

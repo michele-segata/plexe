@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Copyright (C) 2020-2021 Christoph Sommer <sommer@cms-labs.org>
+# Copyright (C) 2020-2023 Christoph Sommer <sommer@cms-labs.org>
 #
 # Documentation for these modules is at http://veins.car2x.org/
 #

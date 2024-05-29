@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2012-2022 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2023 Michele Segata <segata@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
@@ -72,6 +72,7 @@ void JoinManeuverScenario::prepareManeuverCars(int platoonLane)
         plexeTraciVehicle->setCruiseControlDesiredSpeed(100 / 3.6);
         plexeTraciVehicle->setFixedLane(2);
         plexeTraciVehicle->setActiveController(positionHelper->getController());
+        app->setPlatoonRole(PlatoonRole::NONE);
 
         // after 30 seconds of simulation, start the maneuver
         startManeuver = new cMessage();

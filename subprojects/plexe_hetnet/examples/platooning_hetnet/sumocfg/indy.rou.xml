@@ -32,8 +32,9 @@
 -->
 
 <routes>
-    <vType id="vtypeauto" accel="2.5" decel="9.0" sigma="0.5" length="4" minGap="0" maxSpeed="42" color="1,0,0" probability="1" tau="2.0"
-        carFollowModel="CC" tauEngine="0.5" omegaN="0.2" xi="1" c1="0.5" lanesCount="4" ccAccel="1.5" ploegKp="0.2" ploegKd="0.7" ploegH="0.5" />
+    <vType id="vtypeauto" accel="2.5" decel="9.0" sigma="0.5" length="4" minGap="0" maxSpeed="42" color="1,0,0" probability="1" tau="3.0" speedFactor="2.0"
+        carFollowModel="CC" tauEngine="0.5" omegaN="0.2" xi="1" c1="0.5" lanesCount="4" ccAccel="1.5" ploegKp="0.2" ploegKd="0.7" ploegH="0.5"
+        laneChangeModel="LC2013_CC" lcStrategic="5" lcCooperative="5" lcSpeedGain="5" lcKeepRight="5" />
     <vType id="vtypehuman" accel="1.5" decel="4.5" sigma="0.5" length="4"
            minGap="0" maxSpeed="20" color="0.16,0.33,0.42" vClass="passenger"
            guiShape="passenger" speedFactor="1" departSpeed="max"

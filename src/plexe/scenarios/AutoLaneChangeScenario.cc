@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2012-2022 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2012-2023 Michele Segata <segata@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //
@@ -38,14 +38,8 @@ void AutoLaneChangeScenario::initialize(int stage)
     if (stage == 2) {
         platooningVType = par("platooningVType").stdstringValue();
 
-        plexeTraciVehicle->setFixedLane(traciVehicle->getLaneIndex(), false);
         traciVehicle->setSpeedMode(0);
         if (positionHelper->isLeader()) {
-            for (int i = 1; i < positionHelper->getPlatoonSize(); i++) {
-                std::stringstream ss;
-                ss << platooningVType << "." << positionHelper->getMemberId(i);
-                plexeTraciVehicle->addPlatoonMember(ss.str(), i);
-            }
             plexeTraciVehicle->enableAutoLaneChanging(true);
             plexeTraciVehicle->setCruiseControlDesiredSpeed(mobility->getSpeed());
         }
