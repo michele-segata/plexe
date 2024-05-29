@@ -23,7 +23,7 @@
 #
 
 # Check if called from Plexe CoopeRIS directory
-test -f print-plexe_ris-version >/dev/null 2>&1
+test -f print-plexe_cooperis-version >/dev/null 2>&1
 if [ "$?" -ne 0 ]; then
 	echo 'Error: current working directory does not look like a Plexe CoopeRIS root directory. Aborting.' >&2
 	return 1
