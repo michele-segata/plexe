@@ -32,9 +32,39 @@ parameters:
     // implementation of the platoons merge maneuver
     string mergeManeuver;
 
+    double joinSpeedIncrement @unit("kmph") = default(20 kmph);
+
+    bool enableLogging = default(true);
+    double loggingInterval @unit(s) = default(0.1 s);
+
     int headerLength @unit("bit") = default(0 bit);
     @display("i=block/app2");
     @class(plexe::GeneralPlatooningApp);
+
+    //https://doc.omnetpp.org/omnetpp/manual/#sec:simple-modules:available-result-filters-and-recorders
+    @signal[nodeId](type="long");
+    @statistic[nodeId](source="nodeId"; record=vector);
+
+    @signal[distance](type="double");
+    @statistic[distance](source="distance"; record=vector,stats?,timeavg?);
+
+    @signal[relativeSpeed](type="double");
+    @statistic[relativeSpeed](source="relativeSpeed"; record=vector,stats?,timeavg?);
+
+    @signal[speed](type="double");
+    @statistic[speed](source="speed"; record=vector,stats?,timeavg?);
+
+    @signal[posx](type="double");
+    @statistic[posx](source="posx"; record=vector,stats?,timeavg?);
+
+    @signal[posy](type="double");
+    @statistic[posy](source="posy"; record=vector,stats?,timeavg?);
+
+    @signal[acceleration](type="double");
+    @statistic[acceleration](source="acceleration"; record=vector,stats?,timeavg?);
+
+    @signal[controllerAcceleration](type="double");
+    @statistic[controllerAcceleration](source="controllerAcceleration"; record=vector,stats?,timeavg?);
 
 gates:
     input lowerLayerIn;

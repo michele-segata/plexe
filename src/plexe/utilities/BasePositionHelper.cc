@@ -95,7 +95,7 @@ void BasePositionHelper::setVariablesAfterFormationChange()
     // TODO: this will not work if the traffic manager has not a platooningVType parameter
     // OR in case of heterogeneous platoons
     if (isLeader()) {
-        cModule *traffic = findModuleByPath("<root>.traffic");
+        cModule* traffic = findModuleByPath("<root>.traffic");
         std::string platooningVType = traffic->par("platooningVType");
         for (int i = 1; i < getPlatoonSize(); i++) {
             std::stringstream ss;
@@ -124,6 +124,14 @@ int BasePositionHelper::getId() const
     return myId;
 }
 
+std::string BasePositionHelper::getVehicleType() const
+{
+    std::string extId = getExternalId();
+    int dotIndex = extId.find_last_of('.');
+    std::string vehType = extId.substr(0, dotIndex);
+    return vehType;
+}
+
 int BasePositionHelper::getPosition() const
 {
     return position;
@@ -150,6 +158,11 @@ int BasePositionHelper::getFrontId() const
         return -1;
     else
         return frontId;
+}
+
+int BasePositionHelper::getLastId() const
+{
+    return getMemberId(getPlatoonSize() - 1);
 }
 
 int BasePositionHelper::getBackId() const

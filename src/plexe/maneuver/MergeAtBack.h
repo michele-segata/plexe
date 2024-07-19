@@ -38,7 +38,10 @@ public:
      * @param app pointer to the generic application used to fetch parameters and inform it about a concluded maneuver
      */
     MergeAtBack(GeneralPlatooningApp* app);
+    MergeAtBack(GeneralPlatooningApp* app, double joinSpeedIncrement);
     virtual ~MergeAtBack();
+
+    virtual void abortManeuver() override;
 
     /**
      * This method is invoked by the generic application to start the maneuver
@@ -77,14 +80,14 @@ public:
 
     virtual bool handleSelfMsg(cMessage* msg) override;
 
+    // message used to periodically check for the distance while performing the final approach
+    cMessage* checkDistance;
+
 protected:
     // store the old formation this vehicle is leader for to communicate it to the leader of the platoon we are merging with
     std::vector<int> oldFormation;
     // store the old platoon id before changing it
     int oldPlatoonId;
-
-    // message used to periodically check for the distance while performing the final approach
-    cMessage* checkDistance;
 };
 
 } // namespace plexe

@@ -24,9 +24,16 @@
 namespace plexe {
 
 MergeAtBack::MergeAtBack(GeneralPlatooningApp* app)
-    : JoinAtBack(app)
-    , oldPlatoonId(-1)
+    : JoinAtBack(app, 30 / 3.6)
     , checkDistance(new cMessage("checkDistance"))
+    , oldPlatoonId(-1)
+{
+}
+
+MergeAtBack::MergeAtBack(GeneralPlatooningApp* app, double joinSpeedIncrement)
+    : JoinAtBack(app, joinSpeedIncrement)
+    , checkDistance(new cMessage("checkDistance"))
+    , oldPlatoonId(-1)
 {
 }
 
@@ -34,6 +41,11 @@ MergeAtBack::~MergeAtBack()
 {
     delete checkDistance;
     checkDistance = nullptr;
+}
+
+void MergeAtBack::abortManeuver()
+{
+    joinManeuverState = JoinManeuverState::IDLE;
 }
 
 void MergeAtBack::startManeuver(const void* parameters)

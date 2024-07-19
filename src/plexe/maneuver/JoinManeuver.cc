@@ -26,6 +26,13 @@ namespace plexe {
 
 JoinManeuver::JoinManeuver(GeneralPlatooningApp* app)
     : Maneuver(app)
+    , joinSpeedIncrement(30 / 3.6)
+{
+}
+
+JoinManeuver::JoinManeuver(GeneralPlatooningApp* app, double joinSpeedIncrement)
+    : Maneuver(app)
+    , joinSpeedIncrement(joinSpeedIncrement)
 {
 }
 

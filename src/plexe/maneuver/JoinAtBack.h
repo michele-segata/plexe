@@ -43,6 +43,7 @@ public:
      * @param app pointer to the generic application used to fetch parameters and inform it about a concluded maneuver
      */
     JoinAtBack(GeneralPlatooningApp* app);
+    JoinAtBack(GeneralPlatooningApp* app, double joinSpeedIncrement);
     virtual ~JoinAtBack(){};
 
     /**
@@ -119,7 +120,6 @@ public:
      */
     virtual void handleJoinFormationAck(const JoinFormationAck* msg) override;
 
-protected:
     /** Possible states a vehicle can be in during a join maneuver */
     enum class JoinManeuverState {
         IDLE, ///< The maneuver did not start
@@ -132,6 +132,11 @@ protected:
         L_WAIT_JOINER_IN_POSITION, ///< The leader waits for the joiner to be in position, the followers made space already
         L_WAIT_JOINER_TO_JOIN, ///< The leader waits for the joiner to join
     };
+    /** the current state in the join maneuver */
+    JoinManeuverState joinManeuverState;
+
+protected:
+
 
     /** data that a joiner stores about a Platoon it wants to join */
     struct TargetPlatoonData {
@@ -215,8 +220,7 @@ protected:
         }
     };
 
-    /** the current state in the join maneuver */
-    JoinManeuverState joinManeuverState;
+
 
     /** the data about the target platoon */
     std::unique_ptr<TargetPlatoonData> targetPlatoonData;

@@ -45,9 +45,6 @@ void BaseProtocol::initialize(int stage)
 
         // init class variables
         sendBeacon = 0;
-        channelBusy = false;
-        nCollisions = 0;
-        busyTime = SimTime(0);
         seq_n = 0;
         recordData = 0;
 
@@ -83,28 +80,35 @@ void BaseProtocol::initialize(int stage)
         sendBeacon = new cMessage("sendBeacon");
         recordData = new cMessage("recordData");
 
+        std::vector<Mac1609_4*> macs = FindModule<Mac1609_4*>::findSubModules(getParentModule());
+        nMacs = macs.size();
+
         // set names for output vectors
         // own id
-        nodeIdOut.setName("nodeId");
-        // channel busy time
-        busyTimeOut.setName("busyTime");
-        // mac layer collisions
-        collisionsOut.setName("collisions");
-        // delay metrics
-        lastLeaderMsgTime = SimTime(-1);
-        lastFrontMsgTime = SimTime(-1);
-        leaderDelayIdOut.setName("leaderDelayId");
-        frontDelayIdOut.setName("frontDelayId");
-        leaderDelayOut.setName("leaderDelay");
-        frontDelayOut.setName("frontDelay");
+//        nodeIdOut.setName("nodeId");
+//        channelPosOut.setName("channelPos");
+//
+//        for (size_t i = 0; i < nMacs; i++) {
+//            moduleToIndex[macs[i]] = i;
+//            startBusy.push_back(SimTime(0));
+//            channelBusy.push_back(false);
+//            nCollisions.push_back(0);
+//            busyTime.push_back(SimTime(0));
+//            // channel busy time
+//            busyTimeOut.push_back(make_unique<cOutVector>());
+//            busyTimeOut[i]->setName((std::string("busyTime") + std::to_string(i)).c_str());
+//            // mac layer collisions
+//            collisionsOut.push_back(make_unique<cOutVector>());
+//            collisionsOut[i]->setName((std::string("collisions") + std::to_string(i)).c_str());
+//        }
 
         // subscribe to signals for channel busy state and collisions
-        findHost()->subscribe(veins::Mac1609_4::sigChannelBusy, this);
-        findHost()->subscribe(veins::Mac1609_4::sigCollision, this);
+//        findHost()->subscribe(veins::Mac1609_4::sigChannelBusy, this);
+//        findHost()->subscribe(veins::Mac1609_4::sigCollision, this);
 
         // init statistics collection. round to second
-        SimTime rounded = SimTime(floor(simTime().dbl() + 1), SIMTIME_S);
-        scheduleAt(rounded, recordData);
+//        SimTime rounded = SimTime(floor(simTime().dbl() + 1), SIMTIME_S);
+//        scheduleAt(rounded, recordData);
     }
 
     if (stage == 1) {
@@ -144,35 +148,38 @@ BaseProtocol::~BaseProtocol()
 void BaseProtocol::handleSelfMsg(cMessage* msg)
 {
 
-    if (msg == recordData) {
-
-        // if channel is currently busy, we have to split the amount of time between
-        // this period and the successive. so we just compute the channel busy time
-        // up to now, and then reset the "startBusy" timer to now
-        if (channelBusy) {
-            busyTime += simTime() - startBusy;
-            startBusy = simTime();
-        }
-
-        // time for writing statistics
-        // node id
-        nodeIdOut.record(myId);
-        // record busy time for this period
-        busyTimeOut.record(busyTime);
-        // record collisions for this period
-        collisionsOut.record(nCollisions);
-
-        // and reset counter
-        busyTime = SimTime(0);
-        nCollisions = 0;
-
-        scheduleAt(simTime() + SimTime(1, SIMTIME_S), recordData);
-    }
+//    if (msg == recordData) {
+//
+//        // node id
+//        nodeIdOut.record(myId);
+//        channelPosOut.record(mobility->getPositionAt(simTime()).x);
+//        for (size_t i = 0; i < nMacs; i++) {
+//            // if channel is currently busy, we have to split the amount of time between
+//            // this period and the successive. so we just compute the channel busy time
+//            // up to now, and then reset the "startBusy" timer to now
+//            if (channelBusy[i]) {
+//                busyTime[i] += simTime() - startBusy[i];
+//                startBusy[i] = simTime();
+//            }
+//
+//            // time for writing statistics
+//            // record busy time for this period
+//            busyTimeOut[i]->record(busyTime[i]);
+//            // record collisions for this period
+//            collisionsOut[i]->record(nCollisions[i]);
+//
+//            // and reset counter
+//            busyTime[i] = SimTime(0);
+//            nCollisions[i] = 0;
+//
+//        }
+//        scheduleAt(simTime() + SimTime(1, SIMTIME_S), recordData);
+//    }
 }
 
 void BaseProtocol::sendPlatooningMessage(int destinationAddress, enum PlexeRadioInterfaces interfaces)
 {
-    sendTo(createBeacon(destinationAddress).release(), interfaces);
+    sendTo(encapsulateBeacon(createBeacon(), destinationAddress).release(), interfaces);
 }
 
 void BaseProtocol::sendTo(BaseFrame1609_4* frame, enum PlexeRadioInterfaces interfaces)
@@ -187,21 +194,27 @@ void BaseProtocol::sendTo(BaseFrame1609_4* frame, enum PlexeRadioInterfaces inte
     delete frame;
 }
 
-std::unique_ptr<BaseFrame1609_4> BaseProtocol::createBeacon(int destinationAddress)
+std::unique_ptr<BaseFrame1609_4> BaseProtocol::encapsulateBeacon(PlatooningBeacon* pkt, int destinationAddress)
+{
+    auto frame = veins::make_unique<BaseFrame1609_4>("", BEACON_TYPE);
+
+    int L2address = LAddress::L2BROADCAST();
+    if (destinationAddress != ProtocolCAMScope::BROADCAST)
+        L2address = destinationAddress;
+    frame->setRecipientAddress(L2address);
+
+    frame->setChannelNumber(static_cast<int>(Channel::cch));
+    frame->setUserPriority(priority);
+    frame->encapsulate(pkt);
+    return frame;
+}
+
+void BaseProtocol::pupulateBeacon(PlatooningBeacon* pkt)
 {
     // vehicle's data to be included in the message
     VEHICLE_DATA data;
     // get information about the vehicle via traci
     plexeTraciVehicle->getVehicleData(&data);
-
-    // create and send beacon
-    auto wsm = veins::make_unique<BaseFrame1609_4>("", BEACON_TYPE);
-    wsm->setRecipientAddress(LAddress::L2BROADCAST());
-    wsm->setChannelNumber(static_cast<int>(Channel::cch));
-    wsm->setUserPriority(priority);
-
-    // create platooning beacon with data about the car
-    PlatooningBeacon* pkt = new PlatooningBeacon();
     pkt->setControllerAcceleration(data.u);
     pkt->setAcceleration(data.acceleration);
     pkt->setSpeed(data.speed);
@@ -217,10 +230,14 @@ std::unique_ptr<BaseFrame1609_4> BaseProtocol::createBeacon(int destinationAddre
     pkt->setKind(BEACON_TYPE);
     pkt->setByteLength(packetSize);
     pkt->setSequenceNumber(seq_n++);
+}
 
-    wsm->encapsulate(pkt);
-
-    return wsm;
+PlatooningBeacon* BaseProtocol::createBeacon()
+{
+    // create platooning beacon with data about the car
+    PlatooningBeacon* pkt = new PlatooningBeacon();
+    this->pupulateBeacon(pkt);
+    return pkt;
 }
 
 bool BaseProtocol::isDuplicated(const PlatooningBeacon* beacon)
@@ -236,24 +253,30 @@ void BaseProtocol::receiveSignal(cComponent* source, simsignal_t signalID, bool 
 
     Enter_Method_Silent();
     if (signalID == veins::Mac1609_4::sigChannelBusy) {
-        if (v && !channelBusy) {
+        if (moduleToIndex.find((Mac1609_4*)source) == moduleToIndex.end())
+            throw cRuntimeError("Received a sigChannelBusy from an unknown module");
+        size_t i = moduleToIndex[(Mac1609_4*)source];
+        if (v && !channelBusy[i]) {
             // channel turned busy, was idle before
-            startBusy = simTime();
-            channelBusy = true;
+            startBusy[i] = simTime();
+            channelBusy[i] = true;
             channelBusyStart();
             return;
         }
-        if (!v && channelBusy) {
+        if (!v && channelBusy[i]) {
             // channel turned idle, was busy before
-            busyTime += simTime() - startBusy;
-            channelBusy = false;
+            busyTime[i] += simTime() - startBusy[i];
+            channelBusy[i] = false;
             channelIdleStart();
             return;
         }
     }
     if (signalID == veins::Mac1609_4::sigCollision) {
+        if (moduleToIndex.find((Mac1609_4*)source) == moduleToIndex.end())
+            throw cRuntimeError("Received a sigChannelBusy from an unknown module");
+        size_t i = moduleToIndex[(Mac1609_4*)source];
         collision();
-        nCollisions++;
+        nCollisions[i]++;
     }
 }
 
@@ -291,22 +314,6 @@ void BaseProtocol::handleLowerMsg(cMessage* msg)
         messageReceived(epkt, frame);
         messageReceived(epkt, frame, (enum PlexeRadioInterfaces) radioIns[msg->getArrivalGateId()]);
 
-        if (positionHelper->getLeaderId() == epkt->getVehicleId()) {
-            // check if this is at least the second message we have received
-            if (lastLeaderMsgTime.dbl() > 0) {
-                leaderDelayOut.record(simTime() - lastLeaderMsgTime);
-                leaderDelayIdOut.record(myId);
-            }
-            lastLeaderMsgTime = simTime();
-        }
-        if (positionHelper->getFrontId() == epkt->getVehicleId()) {
-            // check if this is at least the second message we have received
-            if (lastFrontMsgTime.dbl() > 0) {
-                frontDelayOut.record(simTime() - lastFrontMsgTime);
-                frontDelayIdOut.record(myId);
-            }
-            lastFrontMsgTime = simTime();
-        }
     }
 
     // find the application responsible for this beacon

@@ -52,6 +52,11 @@ public:
     virtual int getId() const;
 
     /**
+     * Returns the SUMO vehicle-type of this car
+     */
+    virtual std::string getVehicleType() const;
+
+    /**
      * Returns the position of this vehicle within the platoon
      */
     virtual int getPosition() const;
@@ -85,6 +90,11 @@ public:
      * Returns the id of the vehicle in front of me
      */
     virtual int getFrontId() const;
+
+    /**
+     * Returns the id of the last vehicle in the platoon (my own id if alone)
+     */
+    virtual int getLastId() const;
 
     /**
      * Retuns the id of the vehicle in the back of me

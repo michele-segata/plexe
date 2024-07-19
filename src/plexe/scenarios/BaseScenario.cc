@@ -105,7 +105,7 @@ double BaseScenario::getStandstillDistance(enum ACTIVE_CONTROLLER controller)
     case CONSENSUS:
         return 15;
     default:
-        throw cRuntimeError("Unkown controller in BaseScenario::getTargetDistance()");
+        throw cRuntimeError("Unkown controller in BaseScenario::getStandstillDistance()");
     }
 }
 double BaseScenario::getHeadway(enum ACTIVE_CONTROLLER controller)
@@ -121,7 +121,7 @@ double BaseScenario::getHeadway(enum ACTIVE_CONTROLLER controller)
     case CONSENSUS:
         return 0.8;
     default:
-        throw cRuntimeError("Unkown controller in BaseScenario::getTargetDistance()");
+        throw cRuntimeError("Unkown controller in BaseScenario::getHeadway()");
     }
 }
 

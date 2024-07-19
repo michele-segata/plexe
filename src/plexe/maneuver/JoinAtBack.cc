@@ -24,10 +24,17 @@
 namespace plexe {
 
 JoinAtBack::JoinAtBack(GeneralPlatooningApp* app)
-    : JoinManeuver(app)
+    : JoinManeuver(app, 30/3.6)
     , joinManeuverState(JoinManeuverState::IDLE)
 {
 }
+
+JoinAtBack::JoinAtBack(GeneralPlatooningApp* app, double joinSpeedIncrement)
+    : JoinManeuver(app, joinSpeedIncrement)
+    , joinManeuverState(JoinManeuverState::IDLE)
+{
+}
+
 
 bool JoinAtBack::initializeJoinManeuver(const void* parameters)
 {
@@ -94,12 +101,15 @@ void JoinAtBack::onPlatoonBeacon(const PlatooningBeacon* pb)
             double distance = position.distance(frontPosition) - pb->getLength();
             plexeTraciVehicle->setFrontVehicleFakeData(pb->getControllerAcceleration(), pb->getAcceleration(), pb->getSpeed(), distance);
             // if we are in position, tell the leader about that
-            if (distance < app->getTargetDistance(app->getTargetController(), targetPlatoonData->platoonSpeed) + 11) {
+            double targetDist = app->getTargetDistance(app->getTargetController(), targetPlatoonData->platoonSpeed);
+            double thresholdDist = std::min(targetDist + 11.0,  1.75 * targetDist);
+            if (distance <  thresholdDist) {
                 // controller and headway time
                 // send move to position response to confirm the parameters
                 LOG << positionHelper->getId() << " sending MoveToPositionAck to platoon with id " << targetPlatoonData->platoonId << " (leader id " << targetPlatoonData->platoonLeader << ")\n";
                 MoveToPositionAck* ack = createMoveToPositionAck(positionHelper->getId(), positionHelper->getExternalId(), targetPlatoonData->platoonId, targetPlatoonData->platoonLeader, targetPlatoonData->platoonSpeed, targetPlatoonData->platoonLane, targetPlatoonData->newFormation);
                 app->sendUnicast(ack, targetPlatoonData->newFormation.at(0));
+                plexeTraciVehicle->setCruiseControlDesiredSpeed(targetPlatoonData->platoonSpeed + joinSpeedIncrement * 0.5);
                 joinManeuverState = JoinManeuverState::J_WAIT_JOIN;
             }
         }
@@ -211,14 +221,21 @@ void JoinAtBack::handleMoveToPosition(const MoveToPosition* msg)
 
     // activate faked CACC. this way we can approach the front car
     // using data obtained through GPS
-    plexeTraciVehicle->setCACCConstantSpacing(15);
+    double targetDist = app->getTargetDistance(app->getTargetController(), targetPlatoonData->platoonSpeed);
+    targetDist = std::min(1.5 * targetDist, 15.0);
     // we have no data so far, so for the moment just initialize
     // with some fake data
     plexeTraciVehicle->setLeaderVehicleFakeData(0, 0, targetPlatoonData->platoonSpeed);
-    plexeTraciVehicle->setFrontVehicleFakeData(0, 0, targetPlatoonData->platoonSpeed, 15);
+    plexeTraciVehicle->setFrontVehicleFakeData(0, 0, targetPlatoonData->platoonSpeed, targetDist);
     // set a CC speed higher than the platoon speed to approach it
-    plexeTraciVehicle->setCruiseControlDesiredSpeed(targetPlatoonData->platoonSpeed + (30 / 3.6));
-    plexeTraciVehicle->setActiveController(FAKED_CACC);
+    plexeTraciVehicle->setCruiseControlDesiredSpeed(targetPlatoonData->platoonSpeed + joinSpeedIncrement);
+    plexeTraciVehicle->setCACCConstantSpacing(targetDist);
+    int frontPosition = targetPlatoonData->joinIndex - 1;
+    int frontId = targetPlatoonData->newFormation.at(frontPosition);
+    std::stringstream ss;
+    ss << positionHelper->getVehicleType() << "." << frontId;
+    std::string futurePredecessor =  ss.str();
+    plexeTraciVehicle->activateFakedCACC(app->getTargetController(), FAKED_CACC_ROLE::JOINER, futurePredecessor);
 
     joinManeuverState = JoinManeuverState::J_MOVE_IN_POSITION;
 }
@@ -256,7 +273,8 @@ void JoinAtBack::handleJoinFormation(const JoinFormation* msg)
     positionHelper->setDistance(app->getStandstillDistance(app->getTargetController()));
     positionHelper->setHeadway(app->getHeadway(app->getTargetController()));
     // set spacing to the target distance to get close to the platoon
-    if (positionHelper->getController() == CACC || positionHelper->getController() == FLATBED) plexeTraciVehicle->setCACCConstantSpacing(app->getTargetDistance(targetPlatoonData->platoonSpeed));
+    if (positionHelper->getController() == CACC || positionHelper->getController() == FLATBED)
+        plexeTraciVehicle->setCACCConstantSpacing(app->getTargetDistance(targetPlatoonData->platoonSpeed));
 
     // update platoon information
     positionHelper->setPlatoonId(msg->getPlatoonId());
@@ -273,7 +291,6 @@ void JoinAtBack::handleJoinFormation(const JoinFormation* msg)
 
     app->setPlatoonRole(PlatoonRole::FOLLOWER);
     joinManeuverState = JoinManeuverState::IDLE;
-
     app->setInManeuver(false, nullptr);
 }
 

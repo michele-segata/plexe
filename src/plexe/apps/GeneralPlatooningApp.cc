@@ -47,15 +47,17 @@ void GeneralPlatooningApp::initialize(int stage)
         // register to the signal indicating failed unicast transmissions
         findHost()->subscribe(Mac1609_4::sigRetriesExceeded, this);
 
+        joinSpeedIncrement = par("joinSpeedIncrement").doubleValueInUnit("mps");
+
         std::string joinManeuverName = par("joinManeuver").stdstringValue();
         if (joinManeuverName == "JoinAtBack")
-            joinManeuver = new JoinAtBack(this);
+            joinManeuver = new JoinAtBack(this, joinSpeedIncrement);
         else
             throw new cRuntimeError("Invalid join maneuver implementation chosen");
 
         std::string mergeManeuverName = par("mergeManeuver").stdstringValue();
         if (mergeManeuverName == "MergeAtBack")
-            mergeManeuver = new MergeAtBack(this);
+            mergeManeuver = new MergeAtBack(this, joinSpeedIncrement);
         else
             throw new cRuntimeError("Invalid merge maneuver implementation chosen");
 
@@ -63,6 +65,8 @@ void GeneralPlatooningApp::initialize(int stage)
         else setPlatoonRole(PlatoonRole::FOLLOWER);
 
         scenario = FindModule<BaseScenario*>::findSubModule(getParentModule());
+
+
     }
 }
 

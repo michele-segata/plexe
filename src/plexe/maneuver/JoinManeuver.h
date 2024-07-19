@@ -49,11 +49,13 @@ public:
      * @param app pointer to the generic application used to fetch parameters and inform it about a concluded maneuver
      */
     JoinManeuver(GeneralPlatooningApp* app);
+    JoinManeuver(GeneralPlatooningApp* app, double joinSpeedIncrement);
     virtual ~JoinManeuver(){};
 
     virtual void onManeuverMessage(const ManeuverMessage* mm) override;
 
 protected:
+    double joinSpeedIncrement;
     /**
      * Creates a JoinPlatoonRequest message
      *

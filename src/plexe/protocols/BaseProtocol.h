@@ -24,6 +24,7 @@
 #include "veins/base/modules/BaseApplLayer.h"
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 #include "veins/modules/messages/BaseFrame1609_4_m.h"
+#include "veins/modules/mac/ieee80211p/Mac1609_4.h"
 
 #include "plexe/messages/PlatooningBeacon_m.h"
 #include "plexe/mobility/CommandInterface.h"
@@ -39,32 +40,38 @@
 
 namespace plexe {
 
+enum ProtocolCAMScope {
+    // just to make clear in code when
+    // you want to send a CAM in L2broadcast
+    BROADCAST = -1,
+};
+
 using veins::BaseFrame1609_4;
+using veins::Mac1609_4;
 
 class BaseProtocol : public veins::BaseApplLayer {
 
 private:
     // amount of time channel has been observed busy during the last "statisticsPeriod" seconds
-    SimTime busyTime;
+    std::vector<SimTime> busyTime;
     // count the number of collision at the phy layer
-    int nCollisions;
+    std::vector<int> nCollisions;
     // time at which channel turned busy
-    SimTime startBusy;
+    std::vector<SimTime> startBusy;
     // indicates whether channel is busy or not
-    bool channelBusy;
-
-    // record the delay between each pair of messages received from leader and car in front
-    SimTime lastLeaderMsgTime;
-    SimTime lastFrontMsgTime;
+    std::vector<bool> channelBusy;
+    // number of mac 1609 layers
+    size_t nMacs;
+    // map from Mac1609_4 pointer to index in vector statistics
+    std::map<Mac1609_4*, int> moduleToIndex;
 
     // own id for statistics
     cOutVector nodeIdOut;
+    // position of where the stats where taken
+    cOutVector channelPosOut;
 
     // output vectors for busy time and collisions
-    cOutVector busyTimeOut, collisionsOut;
-
-    // output vector for delays
-    cOutVector leaderDelayIdOut, frontDelayIdOut, leaderDelayOut, frontDelayOut;
+    std::vector<std::unique_ptr<cOutVector>> busyTimeOut, collisionsOut;
 
     // map of radio interfaces from radio ids
     std::map<int, cGate*> radioOuts;
@@ -159,7 +166,9 @@ protected:
      */
     virtual void sendPlatooningMessage(int destinationAddress, enum PlexeRadioInterfaces interfaces = PlexeRadioInterfaces::ALL);
 
-    virtual std::unique_ptr<BaseFrame1609_4> createBeacon(int destinationAddress);
+    virtual PlatooningBeacon* createBeacon();
+    virtual void pupulateBeacon(PlatooningBeacon* pkt);
+    virtual std::unique_ptr<BaseFrame1609_4> encapsulateBeacon(PlatooningBeacon* pkt, int destinationAddress);
 
     /**
      * This method must be overridden by subclasses to take decisions

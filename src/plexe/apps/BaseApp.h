@@ -54,20 +54,25 @@ protected:
     // lower layer protocol
     BaseProtocol* protocol;
 
+    bool enableLogging;
+    double loggingInterval;
     /**
      * Log data about vehicle
      */
     virtual void logVehicleData(bool crashed = false);
 
-    // output vectors for mobility stats
     // id of the vehicle
-    cOutVector nodeIdOut;
+    simsignal_t nodeIdSignal;
     // distance and relative speed
-    cOutVector distanceOut, relSpeedOut;
+    simsignal_t distanceSignal;
+    simsignal_t relativeSpeedSignal;
     // speed and position
-    cOutVector speedOut, posxOut, posyOut;
+    simsignal_t speedSignal;
+    simsignal_t posxSignal;
+    simsignal_t posySignal;
     // real acceleration and controller acceleration
-    cOutVector accelerationOut, controllerAccelerationOut;
+    simsignal_t accelerationSignal;
+    simsignal_t controllerAccelerationSignal;
 
     // messages for scheduleAt
     cMessage* recordData;

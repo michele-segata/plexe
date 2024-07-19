@@ -298,13 +298,15 @@ protected:
 
     BaseScenario* scenario;
 
-private:
+protected:
     /** the role of this vehicle */
     PlatoonRole role;
     /** join maneuver implementation */
     JoinManeuver* joinManeuver;
     /** platoons merge maneuver implementation */
     JoinManeuver* mergeManeuver;
+
+    double joinSpeedIncrement;
 };
 
 } // namespace plexe

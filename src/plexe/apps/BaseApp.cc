@@ -40,21 +40,23 @@ void BaseApp::initialize(int stage)
     BaseApplLayer::initialize(stage);
 
     if (stage == 0) {
-        // set names for output vectors
-        // distance from front vehicle
-        distanceOut.setName("distance");
-        // relative speed w.r.t. front vehicle
-        relSpeedOut.setName("relativeSpeed");
-        // vehicle id
-        nodeIdOut.setName("nodeId");
-        // current speed
-        speedOut.setName("speed");
-        // vehicle position
-        posxOut.setName("posx");
-        posyOut.setName("posy");
-        // vehicle acceleration
-        accelerationOut.setName("acceleration");
-        controllerAccelerationOut.setName("controllerAcceleration");
+
+        // registering signals emitted to record nodeId, distance, speed...
+        // id of the vehicle
+        nodeIdSignal = registerSignal("nodeId");
+        // distance and relative speed
+        distanceSignal = registerSignal("distance");
+        relativeSpeedSignal = registerSignal("relativeSpeed");
+        // speed and position
+        speedSignal = registerSignal("speed");
+        posxSignal = registerSignal("posx");
+        posySignal = registerSignal("posy");
+        // real acceleration and controller acceleration
+        accelerationSignal = registerSignal("acceleration");
+        controllerAccelerationSignal = registerSignal("controllerAcceleration");
+
+        enableLogging = par("enableLogging").boolValue();
+        loggingInterval = par("loggingInterval").doubleValue();
     }
 
     if (stage == 1) {
@@ -116,15 +118,16 @@ void BaseApp::logVehicleData(bool crashed)
         stopSimulation = new cMessage("stopSimulation");
         scheduleAt(simTime() + SimTime(1, SIMTIME_MS), stopSimulation);
     }
-    // write data to output files
-    distanceOut.record(distance);
-    relSpeedOut.record(relSpeed);
-    nodeIdOut.record(myId);
-    accelerationOut.record(data.acceleration);
-    controllerAccelerationOut.record(data.u);
-    speedOut.record(data.speed);
-    posxOut.record(data.positionX);
-    posyOut.record(data.positionY);
+
+    // emit signals!
+    emit(nodeIdSignal, myId);
+    emit(distanceSignal, distance);
+    emit(relativeSpeedSignal, relSpeed);
+    emit(speedSignal, data.speed);
+    emit(posxSignal, data.positionX);
+    emit(posySignal, data.positionY);
+    emit(accelerationSignal, data.acceleration);
+    emit(controllerAccelerationSignal, data.u);
 }
 
 void BaseApp::handleLowerControl(cMessage* msg)
@@ -144,12 +147,21 @@ void BaseApp::handleSelfMsg(cMessage* msg)
 {
     if (msg == recordData) {
         // log mobility data
-        logVehicleData(plexeTraciVehicle->isCrashed());
+        if (enableLogging) {
+            logVehicleData(plexeTraciVehicle->isCrashed());
+        }
+        else {
+            if (plexeTraciVehicle->isCrashed()) {
+                stopSimulation = new cMessage("stopSimulation");
+                scheduleAt(simTime() + SimTime(1, SIMTIME_MS), stopSimulation);
+            }
+        }
         // re-schedule next event
-        scheduleAt(simTime() + SimTime(100, SIMTIME_MS), recordData);
+        scheduleAt(simTime() + loggingInterval, recordData);
     }
     if (msg == stopSimulation) {
-        endSimulation();
+        throw cRuntimeError("Collision detected!");
+        //endSimulation();
     }
 }
 

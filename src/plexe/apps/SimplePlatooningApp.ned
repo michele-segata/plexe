@@ -28,6 +28,10 @@ simple SimplePlatooningApp like BaseApp
         int headerLength @unit("bit") = default(0 bit);
         @display("i=block/app2");
         @class(plexe::SimplePlatooningApp);
+
+        bool enableLogging = default(true);
+        double loggingInterval @unit(s) = default(0.1 s);
+
     gates:
         input lowerLayerIn;
         output lowerLayerOut;

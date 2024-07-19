@@ -41,6 +41,15 @@ enum PLATOONING_LANE_CHANGE_ACTION {
     MOVE_TO_FIXED_LANE = 4 // move the car to a specific lane
 };
 
+enum PFResponseCode {
+    OK,
+    DENY,
+};
+
+enum PFManeuverCode {
+    MERGEATBACK,
+};
+
 /**
  * @brief TraCI modes for lane changing
  */
@@ -62,6 +71,12 @@ enum ACTIVE_CONTROLLER {
     CONSENSUS = 5,
     FLATBED = 6
 };
+
+#define INVALID_SESSION 0
+
+#define BARRIER_VALUE -1001
+#define COOLDOWNBARRIER "cooldown"
+#define SWITCHOFFBARRIER "switchoff"
 
 /**
  * @brief struct used as header for generic data passing to this model through
