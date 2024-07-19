@@ -1,0 +1,19 @@
+<additionals>
+    <!--E0 (first 15 km stretch) detectors-->
+    <inductionLoop id="debug_E0_0" lane="E0_0" pos="10.0" file="inductionLoop.xml"/>
+    <inductionLoop id="debug_E0_1" lane="E0_1" pos="10.0" file="inductionLoop.xml"/>
+    <inductionLoop id="debug_E0_2" lane="E0_2" pos="10.0" file="inductionLoop.xml"/>
+
+    <inductionLoop id="humstart_0" lane="hum_0" pos="0.0" file="inductionLoop.xml"/>
+    <inductionLoop id="humstart_1" lane="hum_1" pos="0.0" file="inductionLoop.xml"/>
+    <inductionLoop id="humstart_2" lane="hum_2" pos="0.0" file="inductionLoop.xml"/>
+
+    <inductionLoop id="cooldown_0" lane="hum_0" pos="-1000.0" file="inductionLoop.xml"/>
+    <inductionLoop id="cooldown_1" lane="hum_1" pos="-1000.0" file="inductionLoop.xml"/>
+    <inductionLoop id="cooldown_2" lane="hum_2" pos="-1000.0" file="inductionLoop.xml"/>
+
+    <inductionLoop id="switchoff_0" lane="hum_0" pos="-0.1" file="inductionLoop.xml"/>
+    <inductionLoop id="switchoff_1" lane="hum_1" pos="-0.1" file="inductionLoop.xml"/>
+    <inductionLoop id="switchoff_2" lane="hum_2" pos="-0.1" file="inductionLoop.xml"/>
+</additionals>
+

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2023-09-25 19:47:33 by Eclipse SUMO netedit Version 1.18.0
+-->
+
+<routes>
+    <!-- VTypes -->
+    <vType id="vtypecomm" color="red" 
+       length="4.00" maxSpeed="200.00" accel="2.5" decel="9.0" probability="1.00" speedFactor="normc(2.00,0.10,0.20,2.00)"
+       carFollowModel="CC" 
+       minGap="0.00" ccAccel="2.5" ccDecel="9.0" lanesCount="3"
+       c1="0.5" xi="1" omegaN="0.2" tauEngine="0.5" ploegKp="0.2" ploegKd="0.7" ploegH="0.5"
+       laneChangeModel="LC2013_CC"
+       lcStrategic="5" lcCooperative="5" lcSpeedGain="5" lcKeepRight="5"/>
+    <vType id="vtypenocomm" color="blue"
+       length="4.00" maxSpeed="200.0" accel="2.5" decel="9.0" probability="1.00" speedFactor="normc(1.0,0.5,0.69,1)"
+       carFollowModel="CC"
+       minGap="2.00" ccAccel="2.5" ccDecel="9.0" lanesCount="3"
+       c1="0.5" xi="1" omegaN="0.2" tauEngine="0.5" ploegKp="0.2" ploegKd="0.7" ploegH="0.5"
+       laneChangeModel="LC2013_CC"
+       lcStrategic="5" lcCooperative="5" lcSpeedGain="5" lcKeepRight="5"/>
+
+    <!-- Routes -->
+    <route id="E0" edges="E0 hum exit" color="orange"/>
+
+    <route id="insertion_1" edges="E0" color="orange"/>
+    <!-- NOT USED YET
+    <route id="insertion_2" edges="E1" color="orange"/>
+    <route id="insertion_3" edges="E2" color="orange"/>
+    <route id="insertion_4" edges="E3" color="orange"/>
+    <route id="insertion_5" edges="E4" color="orange"/>
+    <route id="insertion_6" edges="E5" color="orange"/>
+    <route id="dontleave" edges="E0 E1 E2 E3 E4 E5" color="cyan"/>
+    <route id="exit_route" edges="E0 E1 E6" color="yellow"/>
+    <route id="juncroute" edges="E7 E3 E4 E5" color="red"/>
+    -->
+</routes>

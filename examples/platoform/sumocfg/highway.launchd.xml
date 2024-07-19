@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<!-- debug config -->
+<launch>
+    <basedir path="sumocfg" />
+    <copy file="highway.net.xml" />
+    <copy file="highway.rou.xml" />
+    <copy file="highway.gui.xml" />
+    <copy file="highway.sumo.cfg" type="config" />
+</launch>
+
