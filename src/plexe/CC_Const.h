@@ -57,6 +57,13 @@ enum PFManeuverCode {
 #define FIX_LC_AGGRESSIVE 0b0000000000
 #define DEFAULT_NOTRACI_LC 0b1010101010
 
+/**
+ * default lane change mode means that the laneChangeModel may execute all changes
+ * unless in conflict with TraCI. Requests from TraCI are handled urgently (with cooperative
+ * speed adaptations by the ego vehicle and surrounding traffic) but with
+ * full consideration for safety constraints.
+ */
+#define DEFAULT_LC 0b011001010101
 /** @enum ACTIVE_CONTROLLER
  * @brief Determines the currently active controller, i.e., ACC, CACC, or the
  * driver. In future we might need to switch off the automatic controller and
