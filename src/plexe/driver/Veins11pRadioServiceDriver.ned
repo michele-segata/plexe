@@ -18,30 +18,12 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-#pragma once
+package org.car2x.plexe.driver;
 
-#include <string>
+import org.car2x.plexe.driver.Veins11pRadioDriver;
 
-namespace plexe {
-
-enum PlexeRadioInterfaces {
-    // up to 16 interfaces
-    ALL = 65535,
-    VEINS_11P = 1,
-    LTE_CV2X_MODE3 = 2,
-    VEINS_VLC_FRONT = 4,
-    VEINS_VLC_BACK = 8,
-    COOPERIS = 16,
-    VEINS_11P_SERVICE = 32,
-};
-
-class PlexeRadioDriverInterface {
-public:
-    PlexeRadioDriverInterface(){};
-    virtual ~PlexeRadioDriverInterface(){};
-
-    // returns the type of the device which is used by the protocols to choose the proper radio interface
-    virtual int getDeviceType() = 0;
-};
-
-} /* namespace plexe */
+simple Veins11pRadioServiceDriver extends Veins11pRadioDriver
+{
+    parameters:
+        @class(plexe::Veins11pRadioServiceDriver);
+}

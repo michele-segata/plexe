@@ -125,9 +125,11 @@ void BaseProtocol::initialize(int stage)
         // this is the id of the vehicle. used also as network address
         myId = positionHelper->getId();
         length = traciVehicle->getLength();
-        if (Veins11pRadioDriver* driver = FindModule<Veins11pRadioDriver*>::findSubModule(getParentModule())) {
-            driver->registerNode(myId);
-        }
+
+        auto drivers = getSubmodulesOfType<Veins11pRadioDriver>(getParentModule(), true);
+        EV << "Registering " << drivers.size() << " drivers\n";
+        for (auto drv : drivers)
+            drv->registerNode(myId);
     }
 }
 

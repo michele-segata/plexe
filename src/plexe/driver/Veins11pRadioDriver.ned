@@ -27,6 +27,7 @@ simple Veins11pRadioDriver like IBaseApplLayer
     parameters:
         @class(plexe::Veins11pRadioDriver);
         int headerLength @unit("bit") = default(0bit);
+        string macpath = default("^.nic.mac1609_4");
 
     gates:
         input upperLayerIn;

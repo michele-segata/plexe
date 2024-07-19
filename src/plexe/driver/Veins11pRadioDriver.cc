@@ -49,11 +49,15 @@ void Veins11pRadioDriver::handleUpperMsg(cMessage* msg)
 
 bool Veins11pRadioDriver::registerNode(int nodeId)
 {
-    if (Mac1609_4* mac = FindModule<Mac1609_4*>::findSubModule(getParentModule())) {
-        mac->setMACAddress(VEH_ID_TO_MAC(nodeId));
+    if (Mac1609_4* mac = static_cast<Mac1609_4*>(getModuleByPath(par("macpath").stringValue()))) {
+        int mymacdd = VEH_ID_TO_MAC(nodeId);
+        EV << "found macpath: " << par("macpath").stringValue()
+            << "MacAddr will be: " << mymacdd <<"\n";
+        mac->setMACAddress(mymacdd);
         return true;
     }
     else {
+        EV << "NOT FOUND macpath: " << par("macpath").stringValue() << "!!!\n";
         return false;
     }
 }

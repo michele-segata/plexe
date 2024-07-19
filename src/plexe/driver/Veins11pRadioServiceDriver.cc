@@ -17,31 +17,17 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
+//
 
-#pragma once
+#include "Veins11pRadioServiceDriver.h"
+#include "veins/modules/messages/BaseFrame1609_4_m.h"
+#include "veins/modules/mac/ieee80211p/Mac1609_4.h"
+#include "veins/base/utils/FindModule.h"
 
-#include <string>
+using namespace veins;
 
 namespace plexe {
 
-enum PlexeRadioInterfaces {
-    // up to 16 interfaces
-    ALL = 65535,
-    VEINS_11P = 1,
-    LTE_CV2X_MODE3 = 2,
-    VEINS_VLC_FRONT = 4,
-    VEINS_VLC_BACK = 8,
-    COOPERIS = 16,
-    VEINS_11P_SERVICE = 32,
-};
+Define_Module(plexe::Veins11pRadioServiceDriver);
 
-class PlexeRadioDriverInterface {
-public:
-    PlexeRadioDriverInterface(){};
-    virtual ~PlexeRadioDriverInterface(){};
-
-    // returns the type of the device which is used by the protocols to choose the proper radio interface
-    virtual int getDeviceType() = 0;
-};
-
-} /* namespace plexe */
+} // namespace plexe
