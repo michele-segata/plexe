@@ -20,9 +20,13 @@
 
 #include "CommandInterface.h"
 
+#include <veins/modules/mobility/traci/TraCIScenarioManager.h>
 #include <veins/modules/mobility/traci/TraCIConnection.h>
 #include <veins/modules/mobility/traci/TraCIConstants.h>
 #include <veins/modules/mobility/traci/ParBuffer.h>
+#include "plexe/utilities/BasePositionHelper.h"
+
+#include <sstream>
 
 using veins::ParBuffer;
 using veins::TraCIBuffer;
@@ -165,7 +169,17 @@ const double CommandInterface::Vehicle::getCruiseControlDesiredSpeed()
 
 void CommandInterface::Vehicle::setActiveController(int activeController)
 {
-    veinsVehicle().setParameter(PAR_ACTIVE_CONTROLLER, activeController);
+    if (activeController != FAKED_CACC)
+        veinsVehicle().setParameter(PAR_ACTIVE_CONTROLLER, activeController);
+    else
+        throw cRuntimeError("Activacting FAKED_CACC must be done through the activateFakedCACC() API to specify a role and a future predecessor");
+}
+
+void CommandInterface::Vehicle::activateFakedCACC(int targetController, enum FAKED_CACC_ROLE role, std::string futurePredecessor)
+{
+    ParBuffer buf;
+    buf << targetController << (int)role << futurePredecessor;
+    veinsVehicle().setParameter(PAR_ACTIVE_FAKED_CACC, buf.str());
 }
 
 int CommandInterface::Vehicle::getActiveController()
@@ -234,6 +248,7 @@ void CommandInterface::Vehicle::setFixedLane(int8_t laneIndex, bool safe)
     if (laneIndex == -1) {
         // give back total control to sumo (e.g., when using human driven vehicles)
         setLaneChangeMode(DEFAULT_NOTRACI_LC);
+        return;
     }
     else {
         setLaneChangeMode(FIX_LC);
@@ -377,6 +392,56 @@ unsigned int CommandInterface::Vehicle::getLanesCount()
     int v;
     veinsVehicle().getParameter(PAR_LANES_COUNT, v);
     return (unsigned int) v;
+}
+
+void CommandInterface::vehicleRemoved(cObject* module, std::string platooningVType)
+{
+    cModule* mod = dynamic_cast<cModule*>(module);
+    ASSERT(mod);
+    auto mobilityModules = veins::getSubmodulesOfType<veins::TraCIMobility>(mod);
+    veins::TraCIMobility* mob = mobilityModules[0];
+    ASSERT(mob);
+
+    std::string sumo_id = mob->getExternalId();
+    // if this is not a platooning vehicle simply ignore its deletion
+    if (sumo_id.find(platooningVType) == std::string::npos)
+        return;
+
+    // Delete the whole platoon when leader vanishes
+    BasePositionHelper* positionHelper = veins::FindModule<BasePositionHelper*>::findSubModule(mod);
+    veins::TraCIScenarioManager* manager = veins::TraCIScenarioManagerAccess().get();
+    double maxObservedVehicles = manager->par("maxObservedVehicles").intValue();
+
+    killedVehicles++; // count killed leaders/non-followers...
+    int progress = (int)(killedVehicles / maxObservedVehicles * 100);
+    if (progress > 0 && progress % 10 == 0) {
+        std::cout << " Sim Progress: " << killedVehicles / maxObservedVehicles * 100
+            << "%" << " observedVehs: " << killedVehicles << " out of necessary: " << maxObservedVehicles << std::endl;
+    }
+    ASSERT(positionHelper);
+    if (positionHelper->isLeader()) {
+        EV_DEBUG << "Leader " << sumo_id << " (Plexe id " << positionHelper->getId() << ") is being removed from the simulation. Removing followers as well";
+        auto form = positionHelper->getPlatoonFormation();
+        for (int i = 1; i < form.size(); i++) {
+            std::stringstream ss;
+            ss << platooningVType << "." << form[i];
+            std::string follower_id = ss.str();
+
+            EV_DEBUG << "Removing follower " << follower_id;
+            manager->removeVehicle(follower_id, false);
+            killedVehicles++; // count killed followers
+            if (progress > 0 && progress % 10 == 0) {
+                std::cout << " Sim Progress: " << killedVehicles / maxObservedVehicles * 100
+                    << "%" << " observedVehs: " << killedVehicles << " out of necessary: " << maxObservedVehicles << std::endl;
+            }
+            ss.clear();
+        }
+    }
+
+    if (killedVehicles >= maxObservedVehicles) {
+        std::cout << "Simulation ended because " << killedVehicles << " has left already the simulation" << std::endl;
+        manager->endSimulation();
+    }
 }
 
 } // namespace traci

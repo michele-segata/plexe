@@ -88,10 +88,12 @@ protected:
 
     struct Vehicle {
         int id; // id of the vehicle in sumo. this is the index of the vehicle type in the array of vehicle types
+        int routeid;
         int lane; // index of the lane where to insert (set to -1 to choose first free)
         float position; // position on the first edge
         float speed; // start speed (-1 for lane speed?)
         int vehicleId = -1;
+        float ccDesiredSpeed = 14; // mps
     };
 
     // queue of vehicles to be inserted. maps the index of a route in routeIds to a list of indexes of vehicle

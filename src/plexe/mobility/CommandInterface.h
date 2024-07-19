@@ -25,6 +25,8 @@
 
 #include <veins/modules/utility/HasLogProxy.h>
 #include <veins/modules/mobility/traci/TraCICommandInterface.h>
+#include "veins/modules/mobility/traci/TraCIMobility.h"
+#include "veins/base/utils/FindModule.h"
 
 #include <map>
 
@@ -98,11 +100,18 @@ public:
          * Set the currently active controller, which can be either the driver, the ACC or
          * the CACC. CC is not mentioned because CC and ACC work together
          *
-         * @param vehicleId the id of vehicle for which the active controller must be set
-         * @param activeController the controller to be activated: 0 for driver, 1 for
-         * ACC and 2 for CACC
+         * @param activeController the controller to be activated. See the ACTIVE_CONTROLLER enum
          */
         void setActiveController(int activeController);
+
+        /**
+         * Activates the FAKED CACC controller to perform actions for a join maneuver
+         *
+         * @param targetController the controller that will be used once the join maneuver is complete
+         * @param role indicates whether the vehicle is the one joining the platoon or the one opening a gap for the joiner
+         * @param futurePredecessor sumo vehicle id of the predecessor for the joiner, or the id of the joiner for the gap opener
+         */
+        void activateFakedCACC(int targetController, enum FAKED_CACC_ROLE role, std::string futurePredecessor);
 
         /**
          * Returns the currently active controller
@@ -309,6 +318,11 @@ public:
 
     CommandInterface(cComponent* owner, veins::TraCICommandInterface* commandInterface, veins::TraCIConnection* connection);
 
+    /**
+     * Callback to be invoked when a vehicle has been deleted
+     */
+    void vehicleRemoved(cObject* mod, std::string platooningVType);
+
     Vehicle vehicle(const std::string& nodeId)
     {
         return {this, nodeId};
@@ -317,6 +331,7 @@ public:
 private:
     veins::TraCICommandInterface* veinsCommandInterface;
     veins::TraCIConnection* connection;
+    int killedVehicles = 0;
 };
 
 } // namespace traci

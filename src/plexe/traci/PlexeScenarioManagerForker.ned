@@ -62,10 +62,16 @@ simple PlexeScenarioManagerForker like PlexeScenarioManager
         string roiRects = default("");  // which rectangles (e.g. "0,0-10,10 20,20-30,30) are considered to consitute the region of interest, if not empty. Note that these rectangles have to use TraCI (SUMO) coordinates and not OMNeT++. They can be easily read from sumo-gui.
         double penetrationRate = default(1); //the probability of a vehicle being equipped with Car2X technology
         bool ignoreGuiCommands = default(false); // whether to ignore all TraCI commands that only make sense when the server has a graphical user interface
-        string commandLine = default("$command --remote-port $port --seed $seed --configuration-file $configFile"); // command line for running TraCI server (substituting $command, $configFile, $seed, $port)
+
+        int maxObservedVehicles = default(100000000);
+        double stepLength  @unit("s") = default(-1s);
+        string sumoOptions = default("");
+        // command line for running TraCI server (substituting $command, $configFile, $seed, $port)
+        string commandLine = default(
+        "$command --remote-port $port --seed $seed --configuration-file $configFile $stepLength $sumoOptions");
         string command = default("sumo"); // substitution for $command parameter
         string configFile = default("my.sumo.cfg"); // substitution for $configFile parameter
-        @class(veins::TraCIScenarioManagerForker);
+        @class(plexe::PlexeScenarioManagerForker);
         @display("i=block/network2");
         int order = default(-1); // specific position in the multi-client execution order of the TraCI server to request upon connecting (-1: do not request a position)
         bool ignoreUnknownSubscriptionResults = default(false); // whether to (try and) ignore any subscription result we did not request (but another client might have)
