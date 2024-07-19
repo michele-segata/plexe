@@ -28,6 +28,9 @@ Define_Module(PlexeManager);
 
 void PlexeManager::initialize(int stage)
 {
+    deleteMembersOnLeaderArrival = par("deleteMembersOnLeaderArrival");
+    platooningVType = par("platooningVType").stdstringValue();
+
     const auto scenarioManager = veins::TraCIScenarioManagerAccess().get();
     ASSERT(scenarioManager);
 
@@ -45,6 +48,11 @@ void PlexeManager::initializeCommandInterface()
     const auto scenarioManager = veins::TraCIScenarioManagerAccess().get();
     ASSERT(scenarioManager);
     commandInterface.reset(new traci::CommandInterface(this, scenarioManager->getCommandInterface(), scenarioManager->getConnection()));
+    if (deleteMembersOnLeaderArrival) {
+        auto removed = [this](veins::SignalPayload<cObject*> payload) { commandInterface->vehicleRemoved(payload.p, platooningVType); };
+        signalManager.subscribeCallback(scenarioManager, veins::TraCIScenarioManager::traciModuleRemovedSignal, removed);
+    }
+
 }
 
 } // namespace plexe

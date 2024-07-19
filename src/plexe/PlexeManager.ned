@@ -23,6 +23,8 @@ package org.car2x.plexe;
 simple PlexeManager
 {
     parameters:
+        bool deleteMembersOnLeaderArrival = default(false);
+        string platooningVType;
         @display("i=block/network2");
         @class(plexe::PlexeManager);
 }

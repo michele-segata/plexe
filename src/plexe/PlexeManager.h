@@ -42,7 +42,11 @@ public:
         return commandInterface.get();
     }
 
+    std::map<std::string, std::string> vtypes2modulename();
+
 private:
+    bool deleteMembersOnLeaderArrival = false;
+    std::string platooningVType;
     void initializeCommandInterface();
 
     std::unique_ptr<traci::CommandInterface> commandInterface;
