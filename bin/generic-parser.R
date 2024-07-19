@@ -51,6 +51,9 @@ outtype <- "Rdata"
 if (length(args) == 5) {
     outtype  <- args[5]
 }
+if (outtype == "feather" | outtype == "parquet") {
+    library("arrow", warn.conflicts = FALSE) #func 'timestamp' wuold conflict with ‘package:utils’
+}
 
 outfile <- paste(dirname(infile), '/', prefix, '.', basename(infile), sep='')
 outfile <- gsub(".vec", paste(".", outtype, sep=''), outfile)
@@ -77,12 +80,16 @@ toclean <- prepare.vector(infile, selector)
 names(toclean) <- rename.columns(names(toclean))
 toclean <- subset(toclean, eval(parse(text=condition)))
 gc()
-runData <- toclean
+runData <- type.convert(toclean)
 
 if (outtype == "Rdata") {
     save(runData, file=outfile)
-} else {
+} else if (outtype == "csv") {
     write.csv(runData, file=outfile, row.names=F)
+} else if (outtype == "feather") {
+    write_feather(runData, outfile)
+} else if (outtype == "parquet") {
+    write_parquet(runData, outfile)
 }
 
 warnings()

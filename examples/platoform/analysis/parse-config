@@ -1,0 +1,51 @@
+[DEFAULT]
+defaultMap = default
+file = map-config
+
+[params]
+resdir = ../results
+
+[config]
+config = platoform
+out = platoform
+map    = platoform
+mapFile = %(file)s
+prefix = pf
+merge = 1
+type = parquet
+
+[config]
+config = platoform
+out = pfoperation
+map    = pfop
+mapFile = %(file)s
+prefix = pfop
+merge = 0
+type = parquet
+
+[config]
+config = platoform
+out = platodyn
+map    = platoformdynamic
+mapFile = %(file)s
+prefix = dynpf
+merge = 0
+type = csv
+
+[config]
+config = simple1
+out = simple1
+map    = %(defaultMap)s
+mapFile = %(file)s
+prefix = s
+merge = 0
+type = csv
+
+[config]
+config = simple2
+out = simple2
+map    = %(defaultMap)s
+mapFile = %(file)s
+prefix = s
+merge = 0
+type = csv

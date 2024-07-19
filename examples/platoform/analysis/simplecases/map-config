@@ -1,0 +1,33 @@
+#default setup
+
+[default]
+module = Highway.node[*].appl
+names = nodeId,speed,acceleration,posx,posy,distance,
+
+[platoform]
+module = Highway.node[*].appl
+names = pfvehId,platoonId,platoonSize,platoVarX,platoleaderFlag
+2 = mps
+3 = vr
+4 = mad
+5 = pr
+6 = rep
+
+
+[pfop]
+module = Highway.node[*].appl
+names = pfvehSessId,pfoperation,pfsessionId,pfsession_startT,pfsession_endT,pfsession_startX,pfsession_endX,pfcoordId
+2 = mps
+3 = vr
+4 = mad
+5 = pr
+6 = rep
+
+
+[pfchannel]
+module = Highway.node[*].prot
+names = nodeId,channelPos,busyTime0,collisions0,busyTime1,collisions1,
+
+[platoformdynamic]
+module = Highway.node[*].appl
+names = nodeId,speed,posx,

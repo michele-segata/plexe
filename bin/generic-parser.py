@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2016-2023 Michele Segata <segata@ccs-labs.org>
 #
@@ -140,7 +140,7 @@ def get_params(filename, fields, suffix=".vec"):
     # p[f] is the value of the parameter
     # fields[f] is the name of the parameter
     param_names = [f for f in fields.values()]
-    values = [[int(p[f]) if p[f].isnumeric() else float(p[f]) for f in fields.keys()]]
+    values = [[int(p[f]) if p[f].isnumeric() else str(p[f]) for f in fields.keys()]]
     d = DataFrame(values, columns=param_names)
     return d
 
@@ -167,7 +167,7 @@ def load_vectors_shaped(vecFile, selector):
     result = DataFrame()
     merge_columns = [MODULE, VECTIME]
     for v in vector_names:
-        vectors = d.loc[d[NAME] == v][[MODULE, VECTIME, VECVALUE]]
+        vectors = d.loc[(d[NAME] == v) & (d[VECVALUE].notnull())][[MODULE, VECTIME, VECVALUE]]
         vectors = vectors.explode([VECTIME, VECVALUE], ignore_index=True)
         if all(x.is_integer() for x in vectors[VECVALUE]):
             vectors[VECVALUE] = vectors[VECVALUE].astype(int)
@@ -236,11 +236,16 @@ def main():
     print("infile: {}".format(infile))
     print("outfile: {}".format(outfile))
     print("-------------------------")
-    print("run: {}".format(params.iloc[0]["runNumber"]))
+    print("run: {}".format(params.iloc[0].to_list()))
 
     selector = get_selector(map_data[config][MODULE], map_data[config][NAMES])
     data = load_vectors_shaped(infile, selector)
-    data.to_csv(outfile, index=False)
+    if outfile.endswith(".csv"):
+        data.to_csv(outfile, index=False)
+    elif outfile.endswith("feather"):
+        data.to_feather(outfile)
+    elif outfile.endswith("parquet"):
+        data.to_parquet(outfile, index=False)
 
 
 if __name__ == "__main__":

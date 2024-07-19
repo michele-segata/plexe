@@ -46,6 +46,10 @@ if (length(args) != 0) {
     if (length(args) == 6) {
         outtype = args[6]
     }
+    if (outtype == "feather" | outtype == "parquet") {
+        library("arrow")
+    }
+
     files <- list.files(res.folder, pattern=paste('^', args[2], "_.*\\.", outtype, sep=""))
 
     #get maps from mapfile
@@ -69,9 +73,15 @@ if (length(args) != 0) {
             i <<- i + 1
             if (outtype == "Rdata") {
                 load(x)
-            } else {
+            } else if (outtype == "csv") {
                 runData <- read.csv(x)
+            } else if (outtype == "feather") {
+                runData <- read_feather(x)
             }
+            else if (outtype == "parquet") {
+                runData <- read_parquet(x)
+            }
+
             params <- get.params(x, map[[config]]$fields, suffix=paste(".", outtype, sep=""))
             runData <- cbind(runData, params)
             runData
@@ -80,11 +90,17 @@ if (length(args) != 0) {
         rbindlist(datalist)
     }
     allData = multmerge(files)
+    allData <- type.convert(allData, as.is = TRUE)
     cat("Saving to", outfile, "...\n")
     if (outtype == "Rdata") {
         save(allData, file=outfile)
-    } else {
+    } else if (outtype == "csv") {
         write.csv(allData, file=outfile, row.names=F)
+    } else if (outtype == "feather") {
+        write_feather(allData, outfile)
+    }
+    else if (outtype == "parquet") {
+        write_parquet(allData, outfile)
     }
 
 }

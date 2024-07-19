@@ -1,0 +1,24 @@
+[DEFAULT]
+defaultMap = default
+file = map-config
+
+[params]
+resdir = ../../results
+
+[config]
+config = simple1
+out = simple1
+map    = %(defaultMap)s
+mapFile = %(file)s
+prefix = s
+merge = 0
+type = csv
+
+[config]
+config = simple2
+out = simple2
+map    = %(defaultMap)s
+mapFile = %(file)s
+prefix = s
+merge = 0
+type = csv
