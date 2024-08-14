@@ -30,18 +30,23 @@ import org.car2x.veins.modules.world.annotations.AnnotationManager;
 import org.car2x.plexe.PlexeManager;
 import org.car2x.plexe.mobility.TraCIBaseTrafficManager;
 
-import lte.corenetwork.nodes.eNodeB;
-import inet.node.ethernet.Eth10G;
-import lte.corenetwork.binder.LteBinder;
-import lte.world.radio.LteChannelControl;
-import lte.common.LteNetworkConfigurator;
-import lte.epc.PgwStandardSimplified;
+import inet.networklayer.configurator.ipv4.Ipv4NetworkConfigurator;
+import inet.networklayer.ipv4.RoutingTableRecorder;
+import inet.node.inet.AdhocHost;
 import inet.node.inet.Router;
 import inet.node.inet.StandardHost;
+import inet.node.ethernet.Eth10G;
+
+import simu5g.world.radio.LteChannelControl;
+import simu5g.common.carrierAggregation.CarrierAggregation;
+import simu5g.nodes.Upf;
+import simu5g.common.binder.Binder;
+import simu5g.nodes.NR.gNodeB;
+import org.car2x.plexe.subprojects.plexe_5g.PlatoonCarNR;
 
 import org.car2x.veins.subprojects.veins_inet.VeinsInetManagerForker;
 
-network PlatooningLte
+network Platooning5G
 {
     parameters:
         double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)
@@ -50,16 +55,22 @@ network PlatooningLte
         string traffic_type;
         @display("bgb=1164.825,450.9");
     submodules:
-        //# LTE modules
-        channelControl: LteChannelControl {
-            @display("p=50,25;is=s");
+        //# 5G modules
+        routingRecorder: RoutingTableRecorder {
+            @display("p=50,75;is=s");
         }
-        configurator: LteNetworkConfigurator {
+        configurator: Ipv4NetworkConfigurator {
             @display("p=50,125");
             config = xmldoc("demo.xml");
         }
-        binder: LteBinder {
+        channelControl: LteChannelControl {
+            @display("p=50,25;is=s");
+        }
+        binder: Binder {
             @display("p=50,175;is=s");
+        }
+        carrierAggregation: CarrierAggregation {
+            @display("p=50.993748,258.7;is=s");
         }
         router: Router {
             @display("p=321,136;i=device/smallrouter");
@@ -67,14 +78,13 @@ network PlatooningLte
         trafficAuthority: StandardHost {
             @display("p=212,118;is=n;i=device/server");
         }
-        pgw: PgwStandardSimplified {
-            nodeType = "PGW";
-            @display("p=172,287;is=l");
+        upf: Upf {
+            @display("p=462,136");
         }
-        eNodeB1: eNodeB {
+        gNodeB1: gNodeB {
             @display("p=0,0;is=vl");
         }
-        eNodeB2: eNodeB {
+        gNodeB2: gNodeB {
             @display("p=1000,0;is=vl");
         }
         obstacles: ObstacleControl {
@@ -89,9 +99,9 @@ network PlatooningLte
         }
         world: BaseWorldUtility {
             parameters:
-                playgroundSizeX = playgroundSizeX;
-                playgroundSizeY = playgroundSizeY;
-                playgroundSizeZ = playgroundSizeZ;
+                playgroundSizeX = parent.playgroundSizeX;
+                playgroundSizeY = parent.playgroundSizeY;
+                playgroundSizeZ = parent.playgroundSizeZ;
                 @display("p=30,0;i=misc/globe");
         }
         manager: VeinsInetManagerForker {
@@ -105,12 +115,15 @@ network PlatooningLte
             parameters:
                 @display("p=200,200");
         }
+        node[0]: PlatoonCarNR;
 
     connections allowunconnected:
         trafficAuthority.pppg++ <--> Eth10G <--> router.pppg++;
-        router.pppg++ <--> Eth10G <--> pgw.filterGate;
-        pgw.pppg++ <--> Eth10G <--> eNodeB1.ppp;
-        pgw.pppg++ <--> Eth10G <--> eNodeB2.ppp;
-        eNodeB1.x2++ <--> Eth10G <--> eNodeB2.x2++;
+        router.pppg++ <--> Eth10G <--> upf.filterGate;
+        upf.pppg++ <--> Eth10G <--> gNodeB1.ppp;
+        upf.pppg++ <--> Eth10G <--> gNodeB2.ppp;
+
+        //# X2 connections
+        gNodeB1.x2++ <--> Eth10G <--> gNodeB2.x2++;
 }
 

@@ -31,13 +31,13 @@
 
 namespace plexe {
 
-class LTECV2XMode3RadioDriver : public PlexeRadioDriverInterface, public omnetpp::cSimpleModule {
+class NRCV2XMode1RadioDriver : public PlexeRadioDriverInterface, public omnetpp::cSimpleModule {
 public:
-    ~LTECV2XMode3RadioDriver();
-    LTECV2XMode3RadioDriver();
+    ~NRCV2XMode1RadioDriver();
+    NRCV2XMode1RadioDriver();
 
     void setMulticastAddress(std::string address);
-    virtual int getDeviceType() override {return PlexeRadioInterfaces::LTE_CV2X_MODE3;}
+    virtual int getDeviceType() override {return PlexeRadioInterfaces::NR_CV2X_MODE1;}
 
 protected:
 

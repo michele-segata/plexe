@@ -20,7 +20,7 @@
 // Adapted from AlertSender from SimuLTE
 //
 
-#include "LTECV2XMode3RadioDriver.h"
+#include "NRCV2XMode1RadioDriver.h"
 #include "inet/common/ModuleAccess.h"
 #include "veins/modules/messages/BaseFrame1609_4_m.h"
 #include "plexe_5g/PlexeInetUtils.h"
@@ -29,9 +29,9 @@ using namespace veins;
 
 namespace plexe {
 
-Define_Module(LTECV2XMode3RadioDriver);
+Define_Module(NRCV2XMode1RadioDriver);
 
-LTECV2XMode3RadioDriver::LTECV2XMode3RadioDriver()
+NRCV2XMode1RadioDriver::NRCV2XMode1RadioDriver()
     : destinationPort(3000)
     , socketInGate(-1)
     , socketOutGate(-1)
@@ -39,10 +39,10 @@ LTECV2XMode3RadioDriver::LTECV2XMode3RadioDriver()
     , upperLayerOut(-1)
 {}
 
-LTECV2XMode3RadioDriver::~LTECV2XMode3RadioDriver()
+NRCV2XMode1RadioDriver::~NRCV2XMode1RadioDriver()
 {}
 
-void LTECV2XMode3RadioDriver::initialize(int stage)
+void NRCV2XMode1RadioDriver::initialize(int stage)
 {
 
     cSimpleModule::initialize(stage);
@@ -61,7 +61,7 @@ void LTECV2XMode3RadioDriver::initialize(int stage)
     setMulticastAddress(par("multicastAddress").stdstringValue());
 }
 
-void LTECV2XMode3RadioDriver::setMulticastAddress(std::string address)
+void NRCV2XMode1RadioDriver::setMulticastAddress(std::string address)
 {
     if (!multicastAddress.isUnspecified()) {
         // we are already bound to a multicast address. leave this group first
@@ -76,7 +76,7 @@ void LTECV2XMode3RadioDriver::setMulticastAddress(std::string address)
     socket.joinMulticastGroup(multicastAddress, ie->getInterfaceId());
 }
 
-void LTECV2XMode3RadioDriver::handleMessage(cMessage* msg)
+void NRCV2XMode1RadioDriver::handleMessage(cMessage* msg)
 {
     if (msg->getArrivalGateId() == upperLayerIn) {
         BaseFrame1609_4* frame = check_and_cast<BaseFrame1609_4*>(msg);

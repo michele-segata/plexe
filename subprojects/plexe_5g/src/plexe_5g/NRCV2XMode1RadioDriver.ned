@@ -24,10 +24,10 @@ package org.car2x.plexe.subprojects.plexe_5g;
 
 import inet.applications.contract.IApp;
 
-simple LTECV2XMode3RadioDriver like IApp
+simple NRCV2XMode1RadioDriver like IApp
 {
     parameters:
-        @class(plexe::LTECV2XMode3RadioDriver);
+        @class(plexe::NRCV2XMode1RadioDriver);
         int destinationPort = default(3000);
         string multicastAddress = default("224.0.0.1");
         string interfaceTableModule;
