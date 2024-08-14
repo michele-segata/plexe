@@ -51,7 +51,7 @@ inet = Library(name="INET", library="INET", default_path="../../../inet",
                version_script=["_scripts/get_version", "bin/inet_version"])
 simu5g = Library(name="Simu5G", library="simu5g",
                   default_path="../../../simu5g", versions=["1.2.2"],
-                  source_folder="src", lib_folder="src",
+                  source_folder="src/simu5g", lib_folder="src",
                   images_folder="images", version_script="Version",
                   run_version_script=False, ned_folder="src")
 
