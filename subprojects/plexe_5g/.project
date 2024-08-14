@@ -4,7 +4,7 @@
 	<comment></comment>
 	<projects>
 		<project>inet4.5</project>
-		<project>simu5g</project>
+		<project>simu5G</project>
 		<project>veins</project>
 		<project>veins_inet</project>
 		<project>plexe</project>
