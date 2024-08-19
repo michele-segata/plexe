@@ -90,14 +90,9 @@ module PlatoonCarNR
         //# Network Layer specs
         bool hasIpv4 = default(true);
         bool hasIpv6 = default(false);
-//        *.interfaceTableModule = default(absPath(".interfaceTable"));
-//        *.routingTableModule = default("^.ipv4.routingTable");
 
         //# External Ethernet interfaces
         string extHostAddress = default("");
-
-        //# Loopback interfaces
-//        int numLoInterfaces = default(1);
 
         //# Num of PcapRecorders
         int numPcapRecorders = default(0); // no of PcapRecorders
@@ -148,15 +143,11 @@ module PlatoonCarNR
         interfaceTable: InterfaceTable {
             @display("p=50,75;is=s");
         }
-        // TODO: this is different from 5G Ue.ned: check if still working
+
         mobility: <default("")> like IMobility {
             @display("p=50,175;is=s");
         }
 
-        //        lo[numLoInterfaces]: <default("LoopbackInterface")> like ILoopbackInterface {
-        //            parameters:
-        //                @display("p=503.736,589.50397,row,150");
-        //        }
         cellularNic: <nicType> like ICellularNic {
             nodeType = parent.nodeType;
             @display("p=355.152,589.50397");
