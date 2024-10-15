@@ -34,6 +34,7 @@ import org.car2x.plexe.apps.BaseApp;
 import org.car2x.plexe.driver.Veins11pRadioDriver;
 
 import inet.applications.contract.IApp;
+import inet.linklayer.contract.ILoopbackInterface;
 import inet.mobility.contract.IMobility;
 import inet.networklayer.common.InterfaceTable;
 import inet.networklayer.contract.IRoutingTable;
@@ -65,7 +66,7 @@ module PlatoonCarNR
         *.interfaceTableModule = default(absPath(".interfaceTable"));
 
         ipv4.configurator.typename = "HostAutoConfigurator";
-        ipv4.configurator.interfaces = "cellular";
+        ipv4.configurator.interfaces = "cellular lo0";
 
         //# Apps
         int numApps = default(0);   // no of apps.
@@ -93,6 +94,10 @@ module PlatoonCarNR
 
         //# External Ethernet interfaces
         string extHostAddress = default("");
+
+        //# Loopback interfaces
+        //CAREFUL: it is necessary to have a loopback interface as there might be internal dispatching of packets
+        int numLoInterfaces = default(1);
 
         //# Num of PcapRecorders
         int numPcapRecorders = default(0); // no of PcapRecorders
@@ -148,6 +153,10 @@ module PlatoonCarNR
             @display("p=50,175;is=s");
         }
 
+        lo[numLoInterfaces]: <default("LoopbackInterface")> like ILoopbackInterface {
+            parameters:
+                @display("p=503.736,589.50397,row,150");
+        }
         cellularNic: <nicType> like ICellularNic {
             nodeType = parent.nodeType;
             @display("p=355.152,589.50397");
@@ -232,6 +241,10 @@ module PlatoonCarNR
         cellularNic.upperLayerOut --> nl.in++;
         cellularNic.upperLayerIn <-- nl.out++;
 
+        for i=0..numLoInterfaces-1 {
+            nl.out++ --> lo[i].upperLayerIn;
+            lo[i].upperLayerOut --> nl.in++;
+        }
 
         cellularNic.radioIn <-- radioIn;
         cellularNic.nrRadioIn <-- nrRadioIn;
