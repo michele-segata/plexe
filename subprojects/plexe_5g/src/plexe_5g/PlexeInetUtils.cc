@@ -20,11 +20,6 @@
 
 #include "PlexeInetUtils.h"
 
-#include "inet/common/packet/chunk/cPacketChunk.h"
-#include "inet/common/packet/chunk/SequenceChunk.h"
-#include <deque>
-#include "plexe_5g/messages/PlatoonUpdateMessage_m.h"
-
 namespace plexe {
 
 PlexeInetUtils::PlexeInetUtils() {}
@@ -39,44 +34,41 @@ inet::Packet* PlexeInetUtils::encapsulate(omnetpp::cPacket* packet, const char* 
     return container;
 
 }
-omnetpp::cPacket* PlexeInetUtils::decapsulate(inet::Packet* packet)
-{
-    const inet::cPacketChunk* pc;
-
-    pc = dynamic_cast<const inet::cPacketChunk*>(packet->peekAll().get());
-
-    if (pc)
-        return pc->getPacket()->dup();
-
-    const inet::SequenceChunk* data = dynamic_cast<const inet::SequenceChunk*>(packet->peekAll().get());
-    if (data) {
-        const std::deque<inet::Ptr<const inet::Chunk>> chunks = data->getChunks();
-        //        std::cout << "Sequence chunk with:\n";
-        //        for (int i = 0; i < chunks.size(); i++) {
-        //            const inet::Chunk* ch = chunks[i].get();
-        //            std::cout << "\t" << typeid(*ch).name();
-        //            pc = dynamic_cast<const inet::cPacketChunk*>(ch);
-        //            if (pc) {
-        //                std::cout << " -> " << typeid(*(pc->getPacket())).name();
-        //                const PlatoonUpdateMessage* pum = dynamic_cast<const PlatoonUpdateMessage*>(pc->getPacket());
-        //                if (pum) {
-        //                    std::cout << " UPDATE";
-        //                }
-        //            }
-        //            std::cout  << "\n";
-        //        }
-        pc = dynamic_cast<const inet::cPacketChunk*>(chunks[chunks.size()-1].get());
-        if (pc)
-            return pc->getPacket()->dup();
-        else
-            return nullptr;
-    }
-    //    else {
-    //        const inet::Chunk* ch = packet->peekAll().get();
-    //        std::cout << "Packet with chunk of type: " << typeid(*ch).name() << "\n";
-    //        return nullptr;
-    //    }
-    return nullptr;
-}
+//omnetpp::cPacket* PlexeInetUtils::decapsulate(inet::Packet* packet)
+//{
+//    // TODO: add template to search for specific packet type
+//    const inet::cPacketChunk* pc;
+//
+//    pc = dynamic_cast<const inet::cPacketChunk*>(packet->peekAll().get());
+//
+//    if (pc)
+//        return pc->getPacket()->dup();
+//
+//    const inet::SequenceChunk* data = dynamic_cast<const inet::SequenceChunk*>(packet->peekAll().get());
+//    if (data) {
+//        const std::deque<inet::Ptr<const inet::Chunk>> chunks = data->getChunks();
+////        std::cout << "Sequence chunk with:\n";
+//        for (int i = 0; i < chunks.size(); i++) {
+//            const inet::Chunk* ch = chunks[i].get();
+////            std::cout << "\t" << typeid(*ch).name();
+//            pc = dynamic_cast<const inet::cPacketChunk*>(ch);
+//            if (pc) {
+////                std::cout << " -> " << typeid(*(pc->getPacket())).name();
+//                const PlatoonUpdateMessage* pum = dynamic_cast<const PlatoonUpdateMessage*>(pc->getPacket());
+//                if (pum) {
+////                    std::cout << " UPDATE";
+//                    return pc->getPacket()->dup();
+//                }
+//            }
+////            std::cout  << "\n";
+//        }
+//    }
+////    else {
+////        const inet::Chunk* ch = packet->peekAll().get();
+////        std::cout << "Packet with chunk of type: " << typeid(*ch).name() << "\n";
+////        return nullptr;
+////    }
+//    return nullptr;
+//}
 
 } // namespace plexe

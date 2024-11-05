@@ -58,7 +58,7 @@ network PlatooningMEC
         double playgroundSizeY @unit(m); // y size of the area the nodes are in (in meters)
         double playgroundSizeZ @unit(m); // z size of the area the nodes are in (in meters)
         string traffic_type;
-        @display("bgb=1163.62,658.45996");
+        @display("bgb=2000,1000");
     submodules:
         //# 5G modules
         routingRecorder: RoutingTableRecorder {
@@ -147,11 +147,11 @@ network PlatooningMEC
     connections allowunconnected:
         upf.pppg++ <--> Eth10G <--> iUpf1.pppg++;
         upf.pppg++ <--> Eth10G <--> iUpf2.pppg++;
+        iUpf1.pppg++ <--> Eth10G <--> iUpf2.pppg++;
         iUpf1.pppg++ <--> Eth10G <--> gnb1.ppp;
         iUpf2.pppg++ <--> Eth10G <--> gnb2.ppp;
 
                 //# MEC-related connections
-        //        ualcmp.ppp++ <--> Eth10G <--> upf.filterGate;
         ualcmp.ppp++ <--> Eth10G <--> router.pppg++;
         ualcmp.toMecOrchestrator --> mecOrchestrator.fromUALCMP;
         ualcmp.fromMecOrchestrator <-- mecOrchestrator.toUALCMP;

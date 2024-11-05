@@ -70,20 +70,20 @@ void PlatoonTrafficAuthorityThread::established()
 
 void PlatoonTrafficAuthorityThread::dataArrived(inet::Packet* packet, bool urgent)
 {
-    cPacket* msg = PlexeInetUtils::decapsulate(packet);
-
-    if (PlatoonUpdateMessage* update = dynamic_cast<PlatoonUpdateMessage*>(msg)) {
+    if (PlatoonUpdateMessage* update = PlexeInetUtils::decapsulate<PlatoonUpdateMessage>(packet)) {
         onPlatoonUpdate(update, sock);
+        delete update;
     }
-    else if (PlatoonSearchRequest* search = dynamic_cast<PlatoonSearchRequest*>(msg)) {
+    else if (PlatoonSearchRequest* search = PlexeInetUtils::decapsulate<PlatoonSearchRequest>(packet)) {
         onPlatoonSearch(search);
+        delete search;
     }
-    else if (PlatoonApproachRequest* request = dynamic_cast<PlatoonApproachRequest*>(msg)) {
+    else if (PlatoonApproachRequest* request = PlexeInetUtils::decapsulate<PlatoonApproachRequest>(packet)) {
         onPlatoonApproachRequest(request);
+        delete request;
     }
 
     delete packet;
-    delete msg;
 }
 
 void PlatoonTrafficAuthorityThread::onPlatoonUpdate(const PlatoonUpdateMessage* msg, TcpSocket* socket)

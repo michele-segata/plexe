@@ -122,17 +122,18 @@ void PlatooningCoordinationApp::handleTimer(cMessage* msg)
 
 void PlatooningCoordinationApp::socketDataArrived(inet::TcpSocket* socket, inet::Packet* msg, bool urgent)
 {
-    cPacket* packet = PlexeInetUtils::decapsulate(msg);
-    if (PlatoonSearchResponse* response = dynamic_cast<PlatoonSearchResponse*>(packet)) {
+    if (PlatoonSearchResponse* response = PlexeInetUtils::decapsulate<PlatoonSearchResponse>(msg)) {
         onPlatoonSearchResponse(response);
+        delete response;
     }
-    else if (PlatoonSpeedCommand* speedCommand = dynamic_cast<PlatoonSpeedCommand*>(packet)) {
+    else if (PlatoonSpeedCommand* speedCommand = PlexeInetUtils::decapsulate<PlatoonSpeedCommand>(msg)) {
         onPlatoonSpeedCommand(speedCommand);
+        delete speedCommand;
     }
-    else if (PlatoonContactCommand* contactCommand = dynamic_cast<PlatoonContactCommand*>(packet)) {
+    else if (PlatoonContactCommand* contactCommand = PlexeInetUtils::decapsulate<PlatoonContactCommand>(msg)) {
         onPlatoonContactCommand(contactCommand);
+        delete contactCommand;
     }
-    delete packet;
     delete msg;
 }
 
