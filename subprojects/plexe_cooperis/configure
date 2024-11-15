@@ -41,7 +41,7 @@ veins = Library(name="Veins", library="veins", default_path="../../../veins",
                 versions=["5.2"], source_folder="src/veins", lib_folder="src",
                 images_folder="images", version_script="print-veins-version")
 veins_ris = Library(name="CoopeRIS", library="cooperis",
-                    default_path="../../../cooperis", versions=["1.0"],
+                    default_path="../../../cooperis", versions=["1.0", "1.1"],
                     source_folder="src/cooperis", lib_folder="src",
                     images_folder="images",
                     version_script="print-cooperis-version")
