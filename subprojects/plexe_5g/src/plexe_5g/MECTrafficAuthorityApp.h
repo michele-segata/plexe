@@ -17,7 +17,7 @@
 #include "inet/networklayer/common/L3AddressResolver.h"
 
 #include "nodes/mec/MECPlatform/ServiceRegistry/ServiceRegistry.h"
-#include "nodes/mec/MECPlatform/MultiUEMECApp.h"
+#include "apps/mec/MecApps/MultiUEMECApp.h"
 
 #include "veins/modules/mobility/traci/TraCIMobility.h"
 
