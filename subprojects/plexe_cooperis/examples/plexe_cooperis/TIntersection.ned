@@ -29,6 +29,7 @@ network TIntersection extends PlexeScenario
 {
     parameters:
         bool useBuildingShadowing;
+        bool useRis = default(true);
     submodules:
         obstacles: ObstacleControl if useBuildingShadowing {
             @display("p=240,50");
@@ -36,7 +37,7 @@ network TIntersection extends PlexeScenario
         obstaclesRis: ObstacleControl {
            @display("p=240,50");
         }
-        ris[1]: Ris {
+        ris[1]: Ris if useRis {
             @display("i=block/broadcast");
         }
         risConnectionManager: RisConnectionManager {
