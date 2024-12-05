@@ -83,6 +83,11 @@ class UETrafficAuthorityApp: public cSimpleModule
     cMessage *selfStart_;
     cMessage *selfMecAppStart_;
 
+    // multicast socket used to send and receive 5G V2X multicast frames
+    inet::UdpSocket multicastSocket;
+    int multicastDestinationPort;
+    inet::L3Address multicastAddress;
+
     public:
         ~UETrafficAuthorityApp();
         UETrafficAuthorityApp();
@@ -115,6 +120,10 @@ class UETrafficAuthorityApp: public cSimpleModule
         GeneralPlatooningApp* app;
 
         void sendInetPacket(cPacket* packet);
+
+        void sendBroadcast(cPacket* packet);
+        void handleMulticastPacket(cMessage* packet);
+        void setMulticastAddress(std::string address);
 
         virtual int numInitStages() const override { return inet::NUM_INIT_STAGES; }
         void initialize(int stage) override;

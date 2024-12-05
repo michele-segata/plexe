@@ -116,6 +116,32 @@ void UETrafficAuthorityApp::initialize(int stage)
         EV << "UETrafficAuthorityApp::initialize - binding to port: local:" << localPort_ << " , dest:" << deviceAppPort_ << endl;
     }
 
+    // dynamically connect the multicast in and out gates to lower stack layers
+    cGate* lowerInput = getParentModule()->getSubmodule("at")->getOrCreateFirstUnconnectedGate("in", 0, false, true);
+    cGate* lowerOutput = getParentModule()->getSubmodule("at")->getOrCreateFirstUnconnectedGate("out", 0, false, true);
+    gate("multicastSocketOut")->connectTo(lowerInput);
+    lowerOutput->connectTo(gate("multicastSocketIn"));
+
+    // hardcoded multicast IP and port just to enable broadcast like communication through 5G C-V2X (mode 1)
+    multicastDestinationPort = 6789;
+    multicastSocket.setOutputGate(gate("multicastSocketOut"));
+    multicastSocket.bind(multicastDestinationPort);
+    setMulticastAddress(std::string("224.0.0.1"));
+}
+
+void UETrafficAuthorityApp::setMulticastAddress(std::string address)
+{
+    if (!multicastAddress.isUnspecified()) {
+        // we are already bound to a multicast address. leave this group first
+        multicastSocket.leaveMulticastGroup(multicastAddress);
+    }
+    multicastAddress = inet::L3AddressResolver().resolve(address.c_str());
+    inet::IInterfaceTable* ift = inet::getModuleFromPar<inet::IInterfaceTable>(par("interfaceTableModule"), this);
+    inet::NetworkInterface* ie = ift->findInterfaceByName("cellular");
+    if (!ie)
+        throw cRuntimeError("Wrong multicastInterface setting: no interface named cellular");
+    multicastSocket.setMulticastOutputInterface(ie->getInterfaceId());
+    multicastSocket.joinMulticastGroup(multicastAddress, ie->getInterfaceId());
 }
 
 void UETrafficAuthorityApp::handleMessage(cMessage *msg)
@@ -146,6 +172,11 @@ void UETrafficAuthorityApp::handleMessage(cMessage *msg)
 
         else
             throw cRuntimeError("UETrafficAuthorityApp::handleMessage - \tWARNING: Unrecognized self message");
+    }
+    else if (strcmp(msg->getArrivalGate()->getName(), "multicastSocketIn") == 0) {
+
+        handleMulticastPacket(msg);
+
     }
     // Receiver Side
     else {
@@ -277,6 +308,22 @@ void UETrafficAuthorityApp::sendInetPacket(cPacket *packet)
 {
     inet::Packet *container = PlexeInetUtils::encapsulate(packet, "Plexe_Container");
     socket.sendTo(container, mecAppAddress_, mecAppPort_);
+}
+
+void UETrafficAuthorityApp::sendBroadcast(cPacket *pkt)
+{
+    inet::Packet* container = PlexeInetUtils::encapsulate(pkt, "Plexe_Container");
+    multicastSocket.sendTo(container, multicastAddress, multicastDestinationPort);
+}
+
+void UETrafficAuthorityApp::handleMulticastPacket(cMessage* msg)
+{
+    inet::Packet* container = check_and_cast<inet::Packet*>(msg);
+    if (container) {
+        // TODO: decapsulate as needed
+        // PlatoonUpdateMessage* frame = PlexeInetUtils::decapsulate<PlatoonUpdateMessage>(container);
+    }
+    delete container;
 }
 
 void UETrafficAuthorityApp::finish()

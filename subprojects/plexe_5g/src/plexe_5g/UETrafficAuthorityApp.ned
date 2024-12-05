@@ -61,5 +61,8 @@ simple UETrafficAuthorityApp like IApp
     gates:
         output socketOut;
         input socketIn;
+        // input and output gates for 5G V2X multicast traffic
+        input multicastSocketIn;
+        output multicastSocketOut;
 }
 
