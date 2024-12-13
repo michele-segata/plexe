@@ -44,7 +44,7 @@ Define_Module(MECTrafficAuthorityApp);
 #define PLATOON_SPEED_SIZE_B (PLATOON_QUERY_SIZE_B + 4)
 #define PLATOON_CONTACT_SIZE_B (PLATOON_QUERY_SIZE_B + 4)
 
-MECTrafficAuthorityApp::MECTrafficAuthorityApp(): MultiUEMECApp()
+MECTrafficAuthorityApp::MECTrafficAuthorityApp(): MECBaseApp()
 {
     traci = nullptr;
 
@@ -56,7 +56,7 @@ MECTrafficAuthorityApp::~MECTrafficAuthorityApp()
 
 void MECTrafficAuthorityApp::initialize(int stage)
 {
-    MecAppBase::initialize(stage);
+    MECBaseApp::initialize(stage);
 
     // avoid multiple initializations
     if (stage!=inet::INITSTAGE_APPLICATION_LAYER)
@@ -65,81 +65,32 @@ void MECTrafficAuthorityApp::initialize(int stage)
     approachDistanceThreshold = par("approachDistanceThreshold");
     approachSpeedDelta = par("approachSpeedDelta");
 
-    // set Udp Socket
-    ueSocket.setOutputGate(gate("socketOut"));
-
-    localUePort = par("localUePort");
-    ueSocket.bind(localUePort);
-
     //testing
     EV << "MECTrafficAuthorityApp::initialize - Mec application "<< getClassName() << " with mecAppId["<< mecAppId << "] has started!" << endl;
-
-    mp1Socket_ = addNewSocket();
-
-    // connect with the service registry
-    cMessage *msg = new cMessage("connectMp1");
-    scheduleAt(simTime() + 0, msg);
 
 }
 
 void MECTrafficAuthorityApp::finish(){
-    MecAppBase::finish();
-    EV << "MECTrafficAuthorityApp::finish()" << endl;
-
-    if(gate("socketOut")->isConnected()){
-
-    }
 }
 
-void MECTrafficAuthorityApp::addNewUE(struct UE_MEC_CLIENT ueData)
-{
-    for (auto address : ueAddresses) {
-        if (address.address == ueData.address)
-            return;
-    }
-    ueAddresses.push_back(ueData);
-}
-
-void MECTrafficAuthorityApp::handleUeMessage(omnetpp::cMessage *msg)
+void MECTrafficAuthorityApp::handleUEAppMsg(inet::Packet* packet)
 {
     // determine its source address/port
-    auto pk = check_and_cast<Packet *>(msg);
-    L3Address ueAppAddress = pk->getTag<L3AddressInd>()->getSrcAddress();
-    int ueAppPort = pk->getTag<L4PortInd>()->getSrcPort();
+    L3Address ueAppAddress = packet->getTag<L3AddressInd>()->getSrcAddress();
+    int ueAppPort = packet->getTag<L4PortInd>()->getSrcPort();
 
-    for (size_t i = 0; i < ueAddresses.size(); i++) {
-        if (ueAddresses[i].address == ueAppAddress) {
-            if (ueAddresses[i].port == -1) {
-
-                // send ACK. check if necessary
-                auto ack = inet::makeShared<TrafficAuthorityAppPacket>();
-                ack->setType(TA_START_ACK);
-                ack->setChunkLength(inet::B(2));
-                inet::Packet* packet = new inet::Packet("TrafficAuthorityAppPacket");
-                packet->insertAtBack(ack);
-                ueSocket.sendTo(packet, ueAppAddress, ueAppPort);
-
-                ueAddresses[i].port = ueAppPort;
-
-            }
-            break;
-        }
-    }
-
-    if (PlatoonUpdateMessage* update = PlexeInetUtils::decapsulate<PlatoonUpdateMessage>(pk)) {
+    if (PlatoonUpdateMessage* update = PlexeInetUtils::decapsulate<PlatoonUpdateMessage>(packet)) {
         onPlatoonUpdate(update, ueAppAddress, ueAppPort);
         delete update;
     }
-    else if (PlatoonSearchRequest* search = PlexeInetUtils::decapsulate<PlatoonSearchRequest>(pk)) {
+    else if (PlatoonSearchRequest* search = PlexeInetUtils::decapsulate<PlatoonSearchRequest>(packet)) {
         onPlatoonSearch(search);
         delete search;
     }
-    else if (PlatoonApproachRequest* request = PlexeInetUtils::decapsulate<PlatoonApproachRequest>(pk)) {
+    else if (PlatoonApproachRequest* request = PlexeInetUtils::decapsulate<PlatoonApproachRequest>(packet)) {
         onPlatoonApproachRequest(request);
         delete request;
     }
-
-    delete msg;
 
 }
 
@@ -225,7 +176,7 @@ void MECTrafficAuthorityApp::sendPlatoonSearchResponse(const PlatoonInfo& search
     msg->setSpeedDifference(speedDifference);
     msg->setAhead(ahead);
     msg->setByteLength(PLATOON_SEARCH_RESPONSE_SIZE_B);
-    sendInetPacket(msg, searchingPlatoon.leaderAddress, searchingPlatoon.leaderPort);
+    sendToUEApp(msg, searchingPlatoon.leaderAddress, searchingPlatoon.leaderPort);
 }
 
 void MECTrafficAuthorityApp::sendSpeedCommand(const PlatoonInfo& platoon, double speed)
@@ -235,7 +186,7 @@ void MECTrafficAuthorityApp::sendSpeedCommand(const PlatoonInfo& platoon, double
     populateResponse(*msg, platoon);
     msg->setSpeed(speed);
     msg->setByteLength(PLATOON_SPEED_SIZE_B);
-    sendInetPacket(msg, platoon.leaderAddress, platoon.leaderPort);
+    sendToUEApp(msg, platoon.leaderAddress, platoon.leaderPort);
 }
 
 void MECTrafficAuthorityApp::sendContactPlatoonCommand(const PlatoonInfo& platoon, int contactPlatoonId, int contactLeaderId)
@@ -245,7 +196,7 @@ void MECTrafficAuthorityApp::sendContactPlatoonCommand(const PlatoonInfo& platoo
     msg->setContactPlatoonId(contactPlatoonId);
     msg->setContactLeaderId(contactLeaderId);
     msg->setByteLength(PLATOON_CONTACT_SIZE_B);
-    sendInetPacket(msg, platoon.leaderAddress, platoon.leaderPort);
+    sendToUEApp(msg, platoon.leaderAddress, platoon.leaderPort);
 }
 
 void MECTrafficAuthorityApp::populateResponse(PlatoonTAQuery& msg, const PlatoonInfo& destination)
@@ -309,106 +260,6 @@ double MECTrafficAuthorityApp::getDistance(const PlatoonInfo& first, const Plato
         ahead = false;
     }
     return distance;
-}
-
-void MECTrafficAuthorityApp::sendInetPacket(cPacket *packet, inet::L3Address ueAddress, int uePort)
-{
-    inet::Packet *container = PlexeInetUtils::encapsulate(packet, "Plexe_Container");
-    ueSocket.sendTo(container, ueAddress, uePort);
-}
-
-void MECTrafficAuthorityApp::established(int connId)
-{
-    if(connId == mp1Socket_->getSocketId())
-    {
-        EV << "MECTrafficAuthorityApp::established - Mp1Socket"<< endl;
-    }
-    else if (connId == serviceSocket_->getSocketId())
-    {
-        EV << "MECTrafficAuthorityApp::established - serviceSocket"<< endl;
-        // here we previously sent a START_ACK when established, but this app uses UDP so we will send the START_ACK when we get the first packet
-        return;
-    }
-    else
-    {
-        throw cRuntimeError("MecAppBase::socketEstablished - Socket %d not recognized", connId);
-    }
-}
-
-
-void MECTrafficAuthorityApp::handleHttpMessage(int connId)
-{
-    if (mp1Socket_ != nullptr && connId == mp1Socket_->getSocketId()) {
-        handleMp1Message(connId);
-    }
-    else
-    {
-        handleServiceMessage(connId);
-    }
-}
-
-void MECTrafficAuthorityApp::handleMp1Message(int connId)
-{
-    // for now I only have just one Service Registry
-    HttpMessageStatus *msgStatus = (HttpMessageStatus*) mp1Socket_->getUserData();
-    mp1HttpMessage = (HttpBaseMessage*) msgStatus->httpMessageQueue.front();
-    EV << "MECTrafficAuthorityApp::handleMp1Message - payload: " << mp1HttpMessage->getBody() << endl;
-
-}
-
-void MECTrafficAuthorityApp::handleServiceMessage(int connId)
-{
-    HttpMessageStatus *msgStatus = (HttpMessageStatus*) serviceSocket_->getUserData();
-    serviceHttpMessage = (HttpBaseMessage*) msgStatus->httpMessageQueue.front();
-    EV << "MECTrafficAuthorityApp::handleTcpMsg - REQUEST " << serviceHttpMessage->getBody()<< endl;
-    // we do not handle http requests in this app
-
-    if(serviceHttpMessage->getType() == HttpMsgType::REQUEST)
-    {
-        Http::send204Response(serviceSocket_); // send back 204 no content
-    }
-
-}
-
-void MECTrafficAuthorityApp::handleSelfMessage(cMessage *msg)
-{
-    if(strcmp(msg->getName(), "connectMp1") == 0)
-    {
-        EV << "MecAppBase::handleMessage- " << msg->getName() << endl;
-        connect(mp1Socket_, mp1Address, mp1Port);
-    }
-
-    else if(strcmp(msg->getName(), "connectService") == 0)
-    {
-        EV << "MecAppBase::handleMessage- " << msg->getName() << endl;
-        if(!serviceAddress.isUnspecified() && serviceSocket_->getState() != inet::TcpSocket::CONNECTED)
-        {
-            connect(serviceSocket_, serviceAddress, servicePort);
-        }
-        else
-        {
-            if(serviceAddress.isUnspecified())
-                EV << "MECTrafficAuthorityApp::handleSelfMessage - service IP address is  unspecified (maybe response from the service registry is arriving)" << endl;
-            else if(serviceSocket_->getState() == inet::TcpSocket::CONNECTED)
-                EV << "MECTrafficAuthorityApp::handleSelfMessage - service socket is already connected" << endl;
-
-            throw cRuntimeError("service socket already connected, or service IP address is unspecified");
-        }
-    }
-
-    delete msg;
-}
-
-void MECTrafficAuthorityApp::handleProcessedMessage(cMessage *msg)
-{
-    if (!msg->isSelfMessage()) {
-        if(ueSocket.belongsToSocket(msg))
-       {
-           handleUeMessage(msg);
-           return;
-       }
-    }
-    MecAppBase::handleProcessedMessage(msg);
 }
 
 } //namespace

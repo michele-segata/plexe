@@ -12,7 +12,7 @@
 
 package org.car2x.plexe.subprojects.plexe_5g;
 
-import inet.applications.contract.IApp;
+import org.car2x.plexe.subprojects.plexe_5g.UEBaseApp;
 
 
  //
@@ -28,41 +28,19 @@ import inet.applications.contract.IApp;
  //  3) wait for danger events
  //  4) send delete MEC app to the Device App
  //
-simple UETrafficAuthorityApp like IApp
+simple UETrafficAuthorityApp extends UEBaseApp
 {
     parameters:
         @class(plexe::UETrafficAuthorityApp);
         @display("i=block/source");
 
-        //connection infos
-        int localPort = default(4000);
-        int deviceAppPort = default(4000); // ipAddress of the DeviceApp
-        string deviceAppAddress; // port of the DeviceApp
-
-        int packetSize @unit(B) = default(10B);
-
-        int tos = default(-1); // if not -1, set the Type Of Service (IPv4) / Traffic Class (IPv6) field of sent packets to this value
-
         //autoscheduling infos
-        double period @unit("s") = default(1s);
         double startTime @unit("s") = default(0s);
         double stopTime @unit("s") = default(120s);
-
-        string mecAppName = default("MECTrafficAuthorityApp"); // but could be MEWarningAlertApp_rest_External
 
         // indicates how frequently update messages should be sent to the traffic authority
         double sendUpdateInterval @unit(s) = default(1s);
         // indicates when the platoon should send a message for searching for other platoons
         double sendPlatoonSearchTime @unit(s) = default(2s);
-
-        bool logger = default(false);
-        string interfaceTableModule;
-
-    gates:
-        output socketOut;
-        input socketIn;
-        // input and output gates for 5G V2X multicast traffic
-        input multicastSocketIn;
-        output multicastSocketOut;
 }
 

@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "UEBaseApp.h"
+
 #include "inet/transportlayer/contract/udp/UdpSocket.h"
 #include "inet/networklayer/common/L3Address.h"
 #include "inet/networklayer/common/L3AddressResolver.h"
@@ -54,103 +56,60 @@ using namespace omnetpp;
  * 4) send delete MEC app to the Device App
  */
 
-class UETrafficAuthorityApp: public cSimpleModule
+class UETrafficAuthorityApp: public UEBaseApp
 {
-
-    //communication to device app and mec app
-    inet::UdpSocket socket;
-
-    int size_;
-    simtime_t period_;
-    int localPort_;
-    int deviceAppPort_;
-    inet::L3Address deviceAppAddress_;
-
-    char* sourceSimbolicAddress;            //Ue[x]
-    char* deviceSimbolicAppAddress_;              //meHost.virtualisationInfrastructure
-
-    // MEC application endPoint (returned by the device app)
-    inet::L3Address mecAppAddress_;
-    int mecAppPort_;
 
     std::string mecAppName;
 
-    // mobility informations
-    cModule* ue;
-    inet::Coord position;
-
     //scheduling
     cMessage *selfStart_;
-    cMessage *selfMecAppStart_;
 
-    // multicast socket used to send and receive 5G V2X multicast frames
-    inet::UdpSocket multicastSocket;
-    int multicastDestinationPort;
-    inet::L3Address multicastAddress;
+public:
+    ~UETrafficAuthorityApp();
+    UETrafficAuthorityApp();
 
-    public:
-        ~UETrafficAuthorityApp();
-        UETrafficAuthorityApp();
+protected:
 
-    protected:
+    // indicates whether we are connected to the traffic authority
+    bool connectedToTA;
+    // indicates how frequently update messages should be sent to the traffic authority
+    simtime_t sendUpdateInterval;
+    // indicates when the platoon should send a message for searching for other platoons
+    simtime_t sendPlatoonSearchTime;
 
-        // indicates whether we are connected to the traffic authority
-        bool connectedToTA;
-        // indicates how frequently update messages should be sent to the traffic authority
-        simtime_t sendUpdateInterval;
-        // indicates when the platoon should send a message for searching for other platoons
-        simtime_t sendPlatoonSearchTime;
+    // self message for sending updates to the traffic authority
+    cMessage* sendUpdateMsg;
+    // self message for sending a platoon search query
+    cMessage* sendPlatoonSearchMsg;
+    // original speed of this platoon
+    double mySpeed;
 
-        // self message for sending updates to the traffic authority
-        cMessage* sendUpdateMsg;
-        // self message for sending a platoon search query
-        cMessage* sendPlatoonSearchMsg;
-        // original speed of this platoon
-        double mySpeed;
+    // general platooning app, storing implementation of maneuvers
+    GeneralPlatooningApp* app;
 
-        // determines position and role of each vehicle
-        BasePositionHelper* positionHelper;
-        // traci mobility. used for getting/setting info about the car
-        veins::TraCIMobility* mobility;
-        veins::TraCICommandInterface* traci;
-        veins::TraCICommandInterface::Vehicle* traciVehicle;
-        traci::CommandInterface* plexeTraci;
-        std::unique_ptr<traci::CommandInterface::Vehicle> plexeTraciVehicle;
-        // general platooning app, storing implementation of maneuvers
-        GeneralPlatooningApp* app;
+    void initialize(int stage) override;
+    virtual void finish() override;
 
-        void sendInetPacket(cPacket* packet);
+    virtual void handleSelfMsg(cMessage *msg) override;
+    virtual void handleMECAppMsg(inet::Packet* msg) override;
+    virtual void handleCV2XPacket(inet::Packet* packet) override;
+    virtual void handleMECAppStartAck(inet::Packet* packet) override;
 
-        void sendBroadcast(cPacket* packet);
-        void handleMulticastPacket(cMessage* packet);
-        void setMulticastAddress(std::string address);
+    // sends a platoon update (platoon id, position) to the traffic authority
+    void sendUpdateToTA();
+    // sends a query to the traffic authority searching for other platoons
+    void sendPlatoonSearch();
+    // sends a query to the traffic authority asking help for approaching another platoon
+    void sendPlatoonApproachRequest(int platoonId);
+    // helper method to populate traffic authority queries packets
+    void populatePlatooningTAQuery(PlatoonTAQuery* msg);
+    // invoked when a platooning search response have been received
+    void onPlatoonSearchResponse(PlatoonSearchResponse* msg);
+    // invoked when a change speed command is received
+    void onPlatoonSpeedCommand(PlatoonSpeedCommand* msg);
+    // invoked when a command to contact a platoon is received from the traffic authority
+    void onPlatoonContactCommand(PlatoonContactCommand* msg);
 
-        virtual int numInitStages() const override { return inet::NUM_INIT_STAGES; }
-        void initialize(int stage) override;
-        virtual void handleMessage(cMessage *msg) override;
-        virtual void finish() override;
-
-        // sends a platoon update (platoon id, position) to the traffic authority
-        void sendUpdateToTA();
-        // sends a query to the traffic authority searching for other platoons
-        void sendPlatoonSearch();
-        // sends a query to the traffic authority asking help for approaching another platoon
-        void sendPlatoonApproachRequest(int platoonId);
-        // helper method to populate traffic authority queries packets
-        void populatePlatooningTAQuery(PlatoonTAQuery* msg);
-        // invoked when a platooning search response have been received
-        void onPlatoonSearchResponse(PlatoonSearchResponse* msg);
-        // invoked when a change speed command is received
-        void onPlatoonSpeedCommand(PlatoonSpeedCommand* msg);
-        // invoked when a command to contact a platoon is received from the traffic authority
-        void onPlatoonContactCommand(PlatoonContactCommand* msg);
-
-        void sendStartMETrafficAuthorityApp();
-        void sendMessageToMECApp();
-//        void sendStopMEWarningAlertApp();
-
-        void handleAckStartMETrafficAuthorityApp(cMessage* msg);
-        void handleInfoMETrafficAuthorityApp(cMessage* msg);
 };
 
 } //namespace

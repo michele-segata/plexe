@@ -36,16 +36,14 @@ using namespace inet;
 using namespace std;
 using namespace simu5g;
 
-UETrafficAuthorityApp::UETrafficAuthorityApp()
+UETrafficAuthorityApp::UETrafficAuthorityApp() : UEBaseApp()
 {
     selfStart_ = NULL;
-    sendUpdateMsg = NULL;
 }
 
 UETrafficAuthorityApp::~UETrafficAuthorityApp()
 {
     cancelAndDelete(selfStart_);
-    cancelAndDelete(selfMecAppStart_);
     cancelAndDelete(sendUpdateMsg);
 
 }
@@ -53,50 +51,16 @@ UETrafficAuthorityApp::~UETrafficAuthorityApp()
 void UETrafficAuthorityApp::initialize(int stage)
 {
     EV << "UETrafficAuthorityApp::initialize - stage " << stage << endl;
-    cSimpleModule::initialize(stage);
+    UEBaseApp::initialize(stage);
     // avoid multiple initializations
     if (stage != inet::INITSTAGE_APPLICATION_LAYER)
         return;
 
-    //retrieve parameters
-    size_ = par("packetSize");
-    period_ = par("period");
-    localPort_ = par("localPort");
-    deviceAppPort_ = par("deviceAppPort");
-    sourceSimbolicAddress = (char*) getParentModule()->getFullName();
-    deviceSimbolicAppAddress_ = (char*) par("deviceAppAddress").stringValue();
-    deviceAppAddress_ = inet::L3AddressResolver().resolve(deviceSimbolicAppAddress_);
-
-    //binding socket
-    socket.setOutputGate(gate("socketOut"));
-    socket.bind(localPort_);
-
-    int tos = par("tos");
-    if (tos != -1)
-        socket.setTos(tos);
-
-    //retrieving car cModule
-    ue = this->getParentModule();
-
-    mecAppName = par("mecAppName").stringValue();
+    mecAppName = "MECTrafficAuthorityApp";
 
     //initializing the auto-scheduling messages
     selfStart_ = new cMessage("selfStart");
-    selfMecAppStart_ = new cMessage("selfMecAppStart");
 
-    // get traci interface
-    mobility = veins::TraCIMobilityAccess().get(getParentModule());
-    ASSERT(mobility);
-    traci = mobility->getCommandInterface();
-    ASSERT(traci);
-    traciVehicle = mobility->getVehicleCommandInterface();
-    ASSERT(traciVehicle);
-    auto plexe = FindModule<PlexeManager*>::findGlobalModule();
-    ASSERT(plexe);
-    plexeTraci = plexe->getCommandInterface();
-    plexeTraciVehicle.reset(new traci::CommandInterface::Vehicle(plexeTraci, mobility->getExternalId()));
-    positionHelper = FindModule<BasePositionHelper*>::findSubModule(getParentModule());
-    ASSERT(positionHelper);
     app = FindModule<GeneralPlatooningApp*>::findSubModule(getParentModule());
     ASSERT(app);
 
@@ -107,138 +71,54 @@ void UETrafficAuthorityApp::initialize(int stage)
         sendUpdateMsg = new cMessage("sendUpdateMsg");
         //starting UETrafficAuthorityApp
         simtime_t startTime = par("startTime");
-        EV << "UETrafficAuthorityApp::initialize - starting sendStartMEWarningAlertApp() in " << startTime << " seconds " << endl;
+        EV << "UETrafficAuthorityApp::initialize - starting in " << startTime << " seconds " << endl;
         scheduleAt(simTime() + startTime, selfStart_);
-
-        //testing
-        EV << "UETrafficAuthorityApp::initialize - sourceAddress: " << sourceSimbolicAddress << " [" << inet::L3AddressResolver().resolve(sourceSimbolicAddress).str() << "]" << endl;
-        EV << "UETrafficAuthorityApp::initialize - destAddress: " << deviceSimbolicAppAddress_ << " [" << deviceAppAddress_.str() << "]" << endl;
-        EV << "UETrafficAuthorityApp::initialize - binding to port: local:" << localPort_ << " , dest:" << deviceAppPort_ << endl;
     }
-
-    // dynamically connect the multicast in and out gates to lower stack layers
-    cGate* lowerInput = getParentModule()->getSubmodule("at")->getOrCreateFirstUnconnectedGate("in", 0, false, true);
-    cGate* lowerOutput = getParentModule()->getSubmodule("at")->getOrCreateFirstUnconnectedGate("out", 0, false, true);
-    gate("multicastSocketOut")->connectTo(lowerInput);
-    lowerOutput->connectTo(gate("multicastSocketIn"));
-
-    // hardcoded multicast IP and port just to enable broadcast like communication through 5G C-V2X (mode 1)
-    multicastDestinationPort = 6789;
-    multicastSocket.setOutputGate(gate("multicastSocketOut"));
-    multicastSocket.bind(multicastDestinationPort);
-    setMulticastAddress(std::string("224.0.0.1"));
 }
 
-void UETrafficAuthorityApp::setMulticastAddress(std::string address)
+void UETrafficAuthorityApp::handleSelfMsg(cMessage *msg)
 {
-    if (!multicastAddress.isUnspecified()) {
-        // we are already bound to a multicast address. leave this group first
-        multicastSocket.leaveMulticastGroup(multicastAddress);
+    if (msg == sendUpdateMsg) {
+        sendUpdateToTA();
+        return;
     }
-    multicastAddress = inet::L3AddressResolver().resolve(address.c_str());
-    inet::IInterfaceTable* ift = inet::getModuleFromPar<inet::IInterfaceTable>(par("interfaceTableModule"), this);
-    inet::NetworkInterface* ie = ift->findInterfaceByName("cellular");
-    if (!ie)
-        throw cRuntimeError("Wrong multicastInterface setting: no interface named cellular");
-    multicastSocket.setMulticastOutputInterface(ie->getInterfaceId());
-    multicastSocket.joinMulticastGroup(multicastAddress, ie->getInterfaceId());
+
+    if (msg == sendPlatoonSearchMsg) {
+        sendPlatoonSearch();
+        delete sendPlatoonSearchMsg;
+        sendPlatoonSearchMsg = nullptr;
+        return;
+    }
+
+    if (msg == selfStart_) {
+        sendStartMECApp(mecAppName, true, PLATOONING_TRAFFIC_AUTHORITY_APP_ID);
+        return;
+    }
 }
 
-void UETrafficAuthorityApp::handleMessage(cMessage *msg)
+void UETrafficAuthorityApp::handleMECAppStartAck(inet::Packet* packet)
 {
-    EV << "UETrafficAuthorityApp::handleMessage" << endl;
-    // Sender Side
-    if (msg->isSelfMessage()) {
+    scheduleAt(simTime() + sendUpdateInterval, sendUpdateMsg);
 
-        if (msg == sendUpdateMsg) {
-            sendUpdateToTA();
-            return;
-        }
-
-        if (msg == sendPlatoonSearchMsg) {
-            sendPlatoonSearch();
-            delete sendPlatoonSearchMsg;
-            sendPlatoonSearchMsg = nullptr;
-            return;
-        }
-
-        if (!strcmp(msg->getName(), "selfStart"))
-            sendStartMETrafficAuthorityApp();
-
-        else if (!strcmp(msg->getName(), "selfMecAppStart")) {
-            sendMessageToMECApp();
-            scheduleAt(simTime() + period_, selfMecAppStart_);
-        }
-
-        else
-            throw cRuntimeError("UETrafficAuthorityApp::handleMessage - \tWARNING: Unrecognized self message");
+    if (positionHelper->getPlatoonId() == 1) {
+        sendPlatoonSearchMsg = new cMessage("sendPlatoonSearchMsg");
+        scheduleAt(simTime() + sendPlatoonSearchTime, sendPlatoonSearchMsg);
     }
-    else if (strcmp(msg->getArrivalGate()->getName(), "multicastSocketIn") == 0) {
+}
 
-        handleMulticastPacket(msg);
-
+void UETrafficAuthorityApp::handleMECAppMsg(inet::Packet* packet)
+{
+    if (PlatoonSearchResponse* response = PlexeInetUtils::decapsulate<PlatoonSearchResponse>(packet)) {
+        onPlatoonSearchResponse(response);
+        delete response;
     }
-    // Receiver Side
-    else {
-        inet::Packet *packet = check_and_cast<inet::Packet*>(msg);
-
-        inet::L3Address ipAdd = packet->getTag<L3AddressInd>()->getSrcAddress();
-        // int port = packet->getTag<L4PortInd>()->getSrcPort();
-
-        /*
-         * From Device app
-         * device app usually runs in the UE (loopback), but it could also run in other places
-         */
-        if (ipAdd == deviceAppAddress_ || ipAdd == inet::L3Address("127.0.0.1")) // dev app
-                {
-            auto mePkt = packet->peekAtFront<DeviceAppPacket>();
-
-            if (mePkt == 0)
-                throw cRuntimeError("UETrafficAuthorityApp::handleMessage - \tFATAL! Error when casting to DeviceAppPacket");
-
-            if (!strcmp(mePkt->getType(), ACK_START_MECAPP))
-                handleAckStartMETrafficAuthorityApp(msg);
-
-            else {
-                throw cRuntimeError("UETrafficAuthorityApp::handleMessage - \tFATAL! Error, DeviceAppPacket type %s not recognized", mePkt->getType());
-            }
-        }
-        // From MEC application
-        else {
-            if (PlatoonSearchResponse* response = PlexeInetUtils::decapsulate<PlatoonSearchResponse>(packet)) {
-                onPlatoonSearchResponse(response);
-                delete response;
-            }
-            else if (PlatoonSpeedCommand* speedCommand = PlexeInetUtils::decapsulate<PlatoonSpeedCommand>(packet)) {
-                onPlatoonSpeedCommand(speedCommand);
-                delete speedCommand;
-            }
-            else if (PlatoonContactCommand* contactCommand = PlexeInetUtils::decapsulate<PlatoonContactCommand>(packet)) {
-                onPlatoonContactCommand(contactCommand);
-                delete contactCommand;
-            }
-            else {
-                auto mePkt = packet->peekAtFront<TrafficAuthorityAppPacket>();
-                if (mePkt == 0)
-                    throw cRuntimeError("UETrafficAuthorityApp::handleMessage - \tFATAL! Error when casting to TrafficAuthorityAppPacket");
-
-                if (!strcmp(mePkt->getType(), TA_MESSAGE))
-                    handleInfoMETrafficAuthorityApp(msg);
-                else if (!strcmp(mePkt->getType(), TA_START_NACK)) {
-                    EV << "UETrafficAuthorityApp::handleMessage - MEC app did not started correctly, trying to start again" << endl;
-                }
-                else if (!strcmp(mePkt->getType(), TA_START_ACK)) {
-                    EV << "UETrafficAuthorityApp::handleMessage - MEC app started correctly" << endl;
-                    if (selfMecAppStart_->isScheduled()) {
-                        cancelEvent(selfMecAppStart_);
-                    }
-                }
-                else {
-                    throw cRuntimeError("UETrafficAuthorityApp::handleMessage - \tFATAL! Error, TrafficAuthorityAppPacket type %s not recognized", mePkt->getType());
-                }
-            }
-        }
-        delete msg;
+    else if (PlatoonSpeedCommand* speedCommand = PlexeInetUtils::decapsulate<PlatoonSpeedCommand>(packet)) {
+        onPlatoonSpeedCommand(speedCommand);
+        delete speedCommand;
+    }
+    else if (PlatoonContactCommand* contactCommand = PlexeInetUtils::decapsulate<PlatoonContactCommand>(packet)) {
+        onPlatoonContactCommand(contactCommand);
+        delete contactCommand;
     }
 }
 
@@ -251,7 +131,7 @@ void UETrafficAuthorityApp::sendUpdateToTA()
     msg->setY(pos.y);
     msg->setSpeed(mobility->getSpeed());
     msg->setByteLength(PLATOON_UPDATE_SIZE_B);
-    sendInetPacket(msg);
+    sendToMECApp(msg);
     scheduleAt(simTime() + sendUpdateInterval, sendUpdateMsg);
     LOG << "Platoon " << positionHelper->getPlatoonId() << " sending update to traffic authority\n";
 }
@@ -263,7 +143,7 @@ void UETrafficAuthorityApp::sendPlatoonSearch()
     PlatoonSearchCriterion criterion = PlatoonSearchCriterion::DISTANCE;
     msg->setSearchCriterion(criterion);
     msg->setByteLength(PLATOON_SEARCH_SIZE_B);
-    sendInetPacket(msg);
+    sendToMECApp(msg);
     LOG << "Platoon " << positionHelper->getPlatoonId() << " searching for nearby platoons\n";
 }
 
@@ -274,7 +154,7 @@ void UETrafficAuthorityApp::sendPlatoonApproachRequest(int platoonId)
     populatePlatooningTAQuery(msg);
     msg->setApproachId(platoonId);
     msg->setByteLength(PLATOON_APPROACH_SIZE_B);
-    sendInetPacket(msg);
+    sendToMECApp(msg);
     mySpeed = mobility->getSpeed();
 }
 
@@ -304,122 +184,15 @@ void UETrafficAuthorityApp::onPlatoonContactCommand(PlatoonContactCommand *msg)
     app->startMergeManeuver(msg->getContactPlatoonId(), msg->getContactLeaderId(), -1);
 }
 
-void UETrafficAuthorityApp::sendInetPacket(cPacket *packet)
+void UETrafficAuthorityApp::handleCV2XPacket(inet::Packet* packet)
 {
-    inet::Packet *container = PlexeInetUtils::encapsulate(packet, "Plexe_Container");
-    socket.sendTo(container, mecAppAddress_, mecAppPort_);
-}
-
-void UETrafficAuthorityApp::sendBroadcast(cPacket *pkt)
-{
-    inet::Packet* container = PlexeInetUtils::encapsulate(pkt, "Plexe_Container");
-    multicastSocket.sendTo(container, multicastAddress, multicastDestinationPort);
-}
-
-void UETrafficAuthorityApp::handleMulticastPacket(cMessage* msg)
-{
-    inet::Packet* container = check_and_cast<inet::Packet*>(msg);
-    if (container) {
-        // TODO: decapsulate as needed
-        // PlatoonUpdateMessage* frame = PlexeInetUtils::decapsulate<PlatoonUpdateMessage>(container);
-    }
-    delete container;
+    // TODO: decapsulate as needed
+    // PlatoonUpdateMessage* frame = PlexeInetUtils::decapsulate<PlatoonUpdateMessage>(container);
 }
 
 void UETrafficAuthorityApp::finish()
 {
 
-}
-/*
- * -----------------------------------------------Sender Side------------------------------------------
- */
-void UETrafficAuthorityApp::sendStartMETrafficAuthorityApp()
-{
-    inet::Packet *packet = new inet::Packet("TrafficAuthorityPacketStart");
-    auto start = inet::makeShared<DeviceAppStartPacket>();
-
-    //instantiation requirements and info
-    start->setType(START_MECAPP);
-    start->setMecAppName(mecAppName.c_str());
-    // tell the device app that this app should be shared among multiple UEs
-    start->setShared(true);
-    start->setAssociateDevAppId(PLATOONING_TRAFFIC_AUTHORITY_APP_ID);
-
-    start->setChunkLength(inet::B(2 + mecAppName.size() + 1));
-    start->addTagIfAbsent<inet::CreationTimeTag>()->setCreationTime(simTime());
-
-    packet->insertAtBack(start);
-
-    socket.sendTo(packet, deviceAppAddress_, deviceAppPort_);
-
-    //rescheduling
-    scheduleAt(simTime() + period_, selfStart_);
-}
-
-/*
- * ---------------------------------------------Receiver Side------------------------------------------
- */
-void UETrafficAuthorityApp::handleAckStartMETrafficAuthorityApp(cMessage *msg)
-{
-    inet::Packet *packet = check_and_cast<inet::Packet*>(msg);
-    auto pkt = packet->peekAtFront<DeviceAppStartAckPacket>();
-
-    if (pkt->getResult() == true) {
-        mecAppAddress_ = L3AddressResolver().resolve(pkt->getIpAddress());
-        mecAppPort_ = pkt->getPort();
-        EV << "UETrafficAuthorityApp::handleAckStartMETrafficAuthorityApp - Received " << pkt->getType() << " type TrafficAuthorityPacket. mecApp isntance is at: " << mecAppAddress_ << ":" << mecAppPort_ << endl;
-        cancelEvent(selfStart_);
-        sendMessageToMECApp();
-        // TODO: what is this selfMecAppStart_???
-        scheduleAt(simTime() + period_, selfMecAppStart_);
-        scheduleAt(simTime() + sendUpdateInterval, sendUpdateMsg);
-
-        if (positionHelper->getPlatoonId() == 1) {
-            sendPlatoonSearchMsg = new cMessage("sendPlatoonSearchMsg");
-            scheduleAt(simTime() + sendPlatoonSearchTime, sendPlatoonSearchMsg);
-        }
-    }
-    else {
-        EV << "UETrafficAuthorityApp::handleAckStartMETrafficAuthorityApp - MEC application cannot be instantiated! Reason: " << pkt->getReason() << endl;
-    }
-}
-
-void UETrafficAuthorityApp::sendMessageToMECApp()
-{
-
-    // send star monitoring message to the MEC application
-
-    inet::Packet *pkt = new inet::Packet("TrafficAuthorityPacketStart");
-    auto alert = inet::makeShared<TrafficAuthorityPacket>();
-    alert->setType(TA_START_TA);
-    alert->setChunkLength(inet::B(20));
-    alert->addTagIfAbsent<inet::CreationTimeTag>()->setCreationTime(simTime());
-    pkt->insertAtBack(alert);
-
-    socket.sendTo(pkt, mecAppAddress_, mecAppPort_);
-    EV << "UETrafficAuthorityApp::sendMessageToMECApp() - start Message sent to the MEC app" << endl;
-}
-
-void UETrafficAuthorityApp::handleInfoMETrafficAuthorityApp(cMessage *msg)
-{
-    inet::Packet *packet = check_and_cast<inet::Packet*>(msg);
-    if (!packet) {
-        delete msg;
-        return;
-    }
-    if (PlatoonSearchResponse *response = PlexeInetUtils::decapsulate<PlatoonSearchResponse>(packet)) {
-        onPlatoonSearchResponse(response);
-        delete response;
-    }
-    else if (PlatoonSpeedCommand *speedCommand = PlexeInetUtils::decapsulate<PlatoonSpeedCommand>(packet)) {
-        onPlatoonSpeedCommand(speedCommand);
-        delete speedCommand;
-    }
-    else if (PlatoonContactCommand *contactCommand = PlexeInetUtils::decapsulate<PlatoonContactCommand>(packet)) {
-        onPlatoonContactCommand(contactCommand);
-        delete contactCommand;
-    }
-    delete msg;
 }
 
 } //namespace
