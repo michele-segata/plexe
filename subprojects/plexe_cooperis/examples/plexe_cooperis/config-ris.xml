@@ -35,20 +35,15 @@
             <parameter name="alpha" type="double" value="2.0"/>
             <parameter name="carrierFrequency" type="double" value="25e+9"/>
         </AnalogueModel>-->
-<!--         <AnalogueModel type="SimpleObstacleShadowingRis" thresholding="false">
+        <AnalogueModel type="SimpleObstacleShadowingRis" thresholding="false">
             <obstacles>
                 <type id="building" db-per-cut="100" db-per-meter="0.4" />
             </obstacles>
-        </AnalogueModel>-->
+        </AnalogueModel>
         <AnalogueModel type="RisPathLoss" thresholding="false">
             <parameter name="alpha" type="double" value="2.0"/>
             <parameter name="carrierFrequency" type="double" value="25e+9"/>
             <parameter name="n" type="long" value="2"/>
-        </AnalogueModel>
-        <AnalogueModel type="ETSI_TR_138_901" thresholding="false">
-            <obstacles>
-                <type id="building" db-per-cut="100" db-per-meter="0.4" />
-            </obstacles>
         </AnalogueModel>
         <!--<AnalogueModel type="TwoRayInterferenceModel">
             <parameter name="DielectricConstant" type="double" value="1.02"/>
