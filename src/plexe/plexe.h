@@ -25,7 +25,7 @@
 // Version number of last release ("major.minor.patch") or an alpha version, if nonzero
 #define PLEXE_VERSION_MAJOR 3
 #define PLEXE_VERSION_MINOR 1
-#define PLEXE_VERSION_PATCH 3
+#define PLEXE_VERSION_PATCH 4
 #define PLEXE_VERSION_ALPHA 0
 
 // Explicitly check Veins version number

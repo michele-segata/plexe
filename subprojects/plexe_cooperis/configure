@@ -34,14 +34,14 @@ sys.path.insert(0, "../../src/scripts/")
 from library import Library, LibraryChecker
 
 plexe = Library(name="Plexe", library="plexe", default_path="../../",
-                versions=["3.1.3"], source_folder="src/plexe",
+                versions=["3.1.4"], source_folder="src/plexe",
                 lib_folder="src", images_folder="images",
                 version_script="print-plexe-version")
 veins = Library(name="Veins", library="veins", default_path="../../../veins",
                 versions=["5.2"], source_folder="src/veins", lib_folder="src",
                 images_folder="images", version_script="print-veins-version")
 veins_ris = Library(name="CoopeRIS", library="cooperis",
-                    default_path="../../../cooperis", versions=["1.0", "1.1"],
+                    default_path="../../../cooperis", versions=["1.1"],
                     source_folder="src/cooperis", lib_folder="src",
                     images_folder="images",
                     version_script="print-cooperis-version")
