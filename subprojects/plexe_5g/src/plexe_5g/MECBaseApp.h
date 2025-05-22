@@ -55,6 +55,9 @@ class MECBaseApp : public MultiUEMECApp
     inet::UdpSocket ueSocket;
     int localUePort;
 
+    cPar* delay = nullptr;
+    bool useDelay = false;
+
     inet::TcpSocket* serviceSocket_;
     inet::TcpSocket* mp1Socket_;
 
@@ -90,7 +93,7 @@ protected:
 
     veins::TraCICommandInterface* traci;
 
-    void sendToUEApp(cPacket* packet, inet::L3Address ueAddress, int uePort);
+    virtual void sendToUEApp(cPacket* packet, inet::L3Address ueAddress, int uePort);
 
     // to be overridden by inheriting classes
     virtual void handleUEAppMsg(inet::Packet* packet) {};

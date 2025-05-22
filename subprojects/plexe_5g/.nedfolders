@@ -1,3 +1,5 @@
 src/plexe_5g
 examples/platooning_5g
 examples/platooning_mec
+examples/platooning_mec_overtake
+examples/platooning_mec_intersection

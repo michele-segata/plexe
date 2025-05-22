@@ -19,4 +19,5 @@ packet PlatoonUpdateMessage extends PlatoonTAQuery {
     double x;
     double y;
     double speed;
+    double time;
 }

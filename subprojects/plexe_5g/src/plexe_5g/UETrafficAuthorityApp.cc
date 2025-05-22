@@ -76,6 +76,14 @@ void UETrafficAuthorityApp::initialize(int stage)
     }
 }
 
+//void UETrafficAuthorityApp::handleHandover(bool b)
+//{
+//    if (b)
+//        EV << positionHelper->getId() << " is starting handover " << b << endl;
+//    else
+//        EV << positionHelper->getId() << " completed handover " << b << endl;
+//}
+
 void UETrafficAuthorityApp::handleSelfMsg(cMessage *msg)
 {
     if (msg == sendUpdateMsg) {
@@ -130,6 +138,7 @@ void UETrafficAuthorityApp::sendUpdateToTA()
     msg->setX(pos.x);
     msg->setY(pos.y);
     msg->setSpeed(mobility->getSpeed());
+    msg->setTime(simTime().dbl());
     msg->setByteLength(PLATOON_UPDATE_SIZE_B);
     sendToMECApp(msg);
     scheduleAt(simTime() + sendUpdateInterval, sendUpdateMsg);

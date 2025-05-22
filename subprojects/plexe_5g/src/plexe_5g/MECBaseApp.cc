@@ -61,6 +61,12 @@ void MECBaseApp::initialize(int stage)
     localUePort = par("localUePort");
     ueSocket.bind(localUePort);
 
+    delay = &par("delay");
+    if (delay->doubleValue() < 0)
+        useDelay = false;
+    else
+        useDelay = true;
+
     //testing
     EV << "MECBaseApp::initialize - Mec application "<< getClassName() << " with mecAppId["<< mecAppId << "] has started!" << endl;
 
@@ -132,7 +138,19 @@ void MECBaseApp::sendInetPacket(inet::UdpSocket s, inet::L3Address address, int 
 
 void MECBaseApp::sendToUEApp(cPacket* packet, inet::L3Address ueAddress, int uePort)
 {
-    sendInetPacket(ueSocket, ueAddress, uePort, packet);
+    if (!useDelay) {
+        sendInetPacket(ueSocket, ueAddress, uePort, packet);
+    }
+    else {
+        auto delayedMsg = new cMessage("sendToUEAppDelayed");
+        delayedMsg->addPar("packet");
+        delayedMsg->par("packet").setObjectValue(packet);
+        delayedMsg->addPar("ueAddress");
+        delayedMsg->par("ueAddress").setStringValue(ueAddress.str().c_str());
+        delayedMsg->addPar("uePort");
+        delayedMsg->par("uePort").setLongValue(uePort);
+        scheduleAfter(delay->doubleValue(), delayedMsg);
+    }
 }
 
 void MECBaseApp::established(int connId)
@@ -212,6 +230,14 @@ void MECBaseApp::handleSelfMessage(cMessage *msg)
 
             throw cRuntimeError("service socket already connected, or service IP address is unspecified");
         }
+    }
+    else if(strcmp(msg->getName(), "sendToUEAppDelayed") == 0) {
+        auto packet = dynamic_cast<cPacket*>(msg->par("packet").getObjectValue());
+        if (!packet)
+            throw new cRuntimeError("MECBaseApp::handleSelfMessage() got a sendToUEAppDelayed without an embedded packet");
+        inet::L3Address ueAddress(msg->par("ueAddress").stringValue());
+        int uePort = msg->par("uePort").longValue();
+        sendInetPacket(ueSocket, ueAddress, uePort, packet);
     }
     else {
         handleSelfMsg(msg);

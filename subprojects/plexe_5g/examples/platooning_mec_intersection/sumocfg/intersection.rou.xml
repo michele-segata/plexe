@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2024-10-25 15:57:14 by Eclipse SUMO netedit Version v1_20_0+0106-922c8ef6b57
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <!-- VTypes -->
+    <vType id="shockwave" length="4.00" minGap="0.00" maxSpeed="1000.00" probability="1.00" speedFactor="normc(2.00,0.10,0.20,2.00)" color="red" carFollowModel="CC" accel="2.5" decel="9.0" c1="0.5" xi="1" omegaN="0.2" tauEngine="0" lanesCount="4" ccAccel="1.5" ploegKp="0.2" ploegKd="0.7" ploegH="0.5"/>
+    <vType id="vtypeauto" length="4.00" minGap="0.00" maxSpeed="1000.00" probability="1.00" speedFactor="normc(2.00,0.10,0.20,2.00)" emissionClass="HBEFA3/PC_D_EU6" color="red" carFollowModel="CC" accel="2.5" decel="9.0" c1="0.5" xi="1" omegaN="0.2" tauEngine="0.5" lanesCount="4" ccAccel="1.5" ploegKp="0.2" ploegKd="0.7" ploegH="0.5"/>
+    <!-- Routes -->
+    <route id="east_south" edges="-E1 -E2"/>
+    <route id="east_west" edges="-E1 -E0"/>
+    <route id="south_east" edges="E2 E1"/>
+    <route id="south_west" edges="E2 -E0"/>
+    <route id="west_east" edges="E0 E1"/>
+    <route id="west_south" edges="E0 -E2"/>
+</routes>

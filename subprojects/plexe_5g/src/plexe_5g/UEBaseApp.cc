@@ -26,6 +26,7 @@
 #include "plexe_5g/PlexeInetUtils.h"
 
 #include "veins/base/utils/FindModule.h"
+#include "stack/phy/layer/NRPhyUe.h"
 
 namespace plexe {
 
@@ -102,6 +103,17 @@ void UEBaseApp::initialize(int stage)
     multicastSocket.setOutputGate(gate("multicastSocketOut"));
     multicastSocket.bind(multicastDestinationPort);
     setMulticastAddress(par("multicastAddress"));
+
+    std::stringstream idipPath;
+    idipPath << "<root>." << par("idipModule").stdstringValue();
+    idip = dynamic_cast<IDIPAddressHandler*>(findModuleByPath(idipPath.str().c_str()));
+    if (idip) {
+        cModule * host = getContainingNode(this);
+        L3Address addr = L3AddressResolver().addressOf(host);
+        idip->registerIDIPMapping(positionHelper->getId(), addr);
+    }
+
+    veins::FindModule<>::findHost(this)->subscribe(NRPhyUe::lte_stack_phy_handover, this);
 }
 
 void UEBaseApp::setMulticastAddress(std::string address)
@@ -221,6 +233,20 @@ void UEBaseApp::sendCV2XPacket(cPacket *packet)
     sendInetPacket(multicastSocket, multicastAddress, multicastDestinationPort, packet);
 }
 
+void UEBaseApp::sendCV2XUnicast(cPacket* packet, int vehicleId)
+{
+    if (!idip) {
+        throw cRuntimeError("UEBaseApp: requesting to send a C-V2X unicast but the IDIPAddressHandler module was not found");
+    }
+
+    L3Address destIp = idip->getIpAddress(vehicleId);
+    if (destIp == IDIPAddressHandler::IP_NOT_FOUND) {
+        throw cRuntimeError("UEBaseApp: requesting to send a C-V2X unicast but the IP address of vehicle %d cannot be found", vehicleId);
+    }
+
+    sendInetPacket(multicastSocket, destIp, multicastDestinationPort, packet);
+}
+
 void UEBaseApp::finish()
 {
 
@@ -276,6 +302,16 @@ void UEBaseApp::sendFirstMessageToMECApp()
     pkt->insertAtBack(alert);
     socket.sendTo(pkt, mecAppAddress_, mecAppPort_);
     EV << "UEBaseApp::sendFirstMessageToMECApp() - start Message sent to the MEC app" << endl;
+}
+
+void UEBaseApp::receiveSignal(cComponent *source, simsignal_t signalID, bool b, cObject *details)
+{
+    if (signalID == NRPhyUe::lte_stack_phy_handover) {
+        handleHandover(b);
+    }
+    else {
+        cListener::receiveSignal(source, signalID, b, details);
+    }
 }
 
 } //namespace

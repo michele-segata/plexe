@@ -105,6 +105,7 @@ void MECTrafficAuthorityApp::onPlatoonUpdate(const PlatoonUpdateMessage* msg, in
     platoonInfo.x = msg->getX();
     platoonInfo.y = msg->getY();
     platoonInfo.speed = msg->getSpeed();
+    platoonInfo.time = msg->getTime();
     platoonData[platoonId] = platoonInfo;
     LOG << "Traffic authority got update from platoon " << platoonId << ": position x=" << platoonInfo.x << " y=" << platoonInfo.y << " speed=" << platoonInfo.speed << std::endl;
 

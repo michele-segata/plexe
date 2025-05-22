@@ -48,6 +48,7 @@ import simu5g.nodes.mec.MECOrchestrator.MecOrchestrator;
 import simu5g.nodes.mec.UALCMP.UALCMP;
 
 import org.car2x.plexe.subprojects.plexe_5g.PlatoonCarNR;
+import org.car2x.plexe.subprojects.plexe_5g.IDIPAddressHandler;
 
 import org.car2x.veins.subprojects.veins_inet.VeinsInetManagerForker;
 
@@ -142,6 +143,9 @@ network PlatooningMEC
                 @display("p=567.94,573.77997");
         }
         node[0]: PlatoonCarNR {
+            @display("p=10.211249,198.39");
+        }
+        idip : IDIPAddressHandler {
             @display("p=10.211249,198.39");
         }
     connections allowunconnected:

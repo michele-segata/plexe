@@ -42,6 +42,7 @@ struct PlatoonInfo {
     double x;
     double y;
     double speed;
+    double time;
 };
 
 class MECTrafficAuthorityApp : public MECBaseApp

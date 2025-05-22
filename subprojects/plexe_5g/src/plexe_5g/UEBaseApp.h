@@ -22,11 +22,13 @@
 #include "plexe/utilities/BasePositionHelper.h"
 #include "plexe/PlexeManager.h"
 
+#include "IDIPAddressHandler.h"
+
 namespace plexe {
 
 using namespace omnetpp;
 
-class UEBaseApp: public cSimpleModule
+class UEBaseApp: public cSimpleModule, public cListener
 {
 private:
 
@@ -69,6 +71,8 @@ public:
     ~UEBaseApp();
     UEBaseApp();
 
+    virtual void receiveSignal(cComponent *source, simsignal_t signalID, bool b, cObject *details) override;
+
 protected:
 
     // determines position and role of each vehicle
@@ -79,22 +83,30 @@ protected:
     veins::TraCICommandInterface::Vehicle* traciVehicle;
     traci::CommandInterface* plexeTraci;
     std::unique_ptr<traci::CommandInterface::Vehicle> plexeTraciVehicle;
+    // helps vehicles to find IP addresses of other vehicles
+    std::string idipPath;
+    IDIPAddressHandler* idip = nullptr;
 
     virtual int numInitStages() const override { return inet::NUM_INIT_STAGES; }
     void initialize(int stage) override;
     virtual void handleMessage(cMessage *msg) override;
     virtual void finish() override;
+    virtual void finish(cComponent *component, simsignal_t signalID) override {}
 
     // to send a packet to the MEC app
     void sendToMECApp(cPacket* packet);
     // to send a packet to other vehicles via 5G C-V2X Mode 1
     void sendCV2XPacket(cPacket* packet);
+    // to send a packet to other vehicles via 5G C-V2X Mode 1 using unicast
+    // this requires the IDIPAddressHandler module to be used in the simulation network
+    void sendCV2XUnicast(cPacket* packet, int vehicleId);
 
     // to be overridden by inheriting classes
     virtual void handleSelfMsg(cMessage* msg) {};
     virtual void handleMECAppMsg(inet::Packet* msg) {};
     virtual void handleCV2XPacket(inet::Packet* packet) {};
     virtual void handleMECAppStartAck(inet::Packet* packet) {};
+    virtual void handleHandover(bool start) {};
 
     /**
      * Sends a message requesting the instantiation (or the joining) of a MECApp
@@ -108,3 +120,4 @@ protected:
 };
 
 } //namespace
+

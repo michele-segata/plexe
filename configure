@@ -25,6 +25,7 @@
 """
 Creates Makefile(s) for building this project.
 """
+import os
 from os import mkdir
 from os.path import join, isdir
 import subprocess
@@ -48,8 +49,46 @@ run_neds = []
 run_imgs = []
 libraries.check_libraries(makemake_flags, run_libs, run_neds, run_imgs)
 
+
+# Add Plexe dependencies
 run_libs.append(join("src", "plexe"))
 run_neds.append(join("src", "plexe"))
+
+
+# Add Plexe-Matlab dependencies
+run_imgs.append(join("images"))
+
+# Add Matlab flags
+matlab_path = "/Applications/MATLAB_R2024b.app"
+
+check_fname = os.path.join(matlab_path, 'VersionInfo.xml')
+expect_version = 'R2024b'
+if not os.path.isfile(check_fname):
+    print('Could not find MATLAB')
+    sys.exit(1)
+
+matlab_includes = ["-I" + os.path.join(os.path.relpath(matlab_path, 'src'), 'extern', 'include')]
+matlab_extern = None
+archs = ['glnxa64', 'maci64', 'win64', 'maca64']
+basepath = os.path.join(os.path.relpath(matlab_path, 'src'), 'extern', 'bin')
+for ss in archs:
+    s = os.path.join(basepath, ss)
+    if os.path.isdir(s):
+        matlab_extern = s
+        print('Found Matlab version {}. Okay.'.format(expect_version))
+if not matlab_extern:
+    print('Could not detect architecture to link MATLAB with. Expected one of {} in {}'.format(archs, basepath))
+    sys.exit(1)
+matlab_link = ["-L" + matlab_extern, "-lMatlabEngine", "-lMatlabDataArray"]
+
+matlab_defs = []
+
+makemake_flags += matlab_includes + matlab_link + matlab_defs
+run_libs = [os.path.join(matlab_extern, 'MatlabEngine')] + run_libs
+run_libs = [os.path.join(matlab_extern, 'MatlabDataArray')] + run_libs
+
+
+
 
 # Start creating files
 if not isdir("out"):

@@ -47,6 +47,8 @@ simple UEBaseApp like IApp
         // multicast address used to communicate via 5G V2X sidelink
         string multicastAddress = default("224.0.0.1");
         int multicastPort = default(6789);
+        
+        string idipModule;
 
     gates:
         output socketOut;

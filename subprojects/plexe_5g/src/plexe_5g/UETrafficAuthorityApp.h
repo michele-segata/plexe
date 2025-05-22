@@ -94,6 +94,7 @@ protected:
     virtual void handleMECAppMsg(inet::Packet* msg) override;
     virtual void handleCV2XPacket(inet::Packet* packet) override;
     virtual void handleMECAppStartAck(inet::Packet* packet) override;
+//    virtual void handleHandover(bool b) override;
 
     // sends a platoon update (platoon id, position) to the traffic authority
     void sendUpdateToTA();

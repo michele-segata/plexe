@@ -47,6 +47,10 @@ simple MECBaseApp like IMECApp, IApp
 
         bool logger = default(false);
 
+        // adds a delay to every packet sent by the MEC app to the UE app
+        // this can be defined as a distribution and can be disabled by setting a negative value
+        volatile double delay @unit(s) = default(-1s);
+
     gates:
         input mePlatformIn;
         output mePlatformOut;

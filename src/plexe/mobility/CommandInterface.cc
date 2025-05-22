@@ -78,6 +78,15 @@ void CommandInterface::Vehicle::changeLane(int lane, double duration)
     performPlatoonLaneChange(lane);
 }
 
+void CommandInterface::Vehicle::changeLaneRelative(int lane, double duration)
+{
+    uint8_t commandType = TYPE_COMPOUND;
+    int nParameters = 3;
+    uint8_t variableId = CMD_CHANGELANE;
+    TraCIBuffer buf = cifc->connection->query(CMD_SET_VEHICLE_VARIABLE, TraCIBuffer() << variableId << nodeId << commandType << nParameters << static_cast<uint8_t>(TYPE_BYTE) << (uint8_t) lane << static_cast<uint8_t>(TYPE_DOUBLE) << duration << static_cast<uint8_t>(TYPE_BYTE) << (uint8_t) 1);
+    ASSERT(buf.eof());
+}
+
 std::vector<CommandInterface::Vehicle::neighbor> CommandInterface::Vehicle::getNeighbors(uint8_t lateralDirection, uint8_t longitudinalDirection, uint8_t blocking)
 {
     TraCIBuffer response = cifc->connection->query(CMD_GET_VEHICLE_VARIABLE, TraCIBuffer() << static_cast<uint8_t>(VAR_NEIGHBORS)

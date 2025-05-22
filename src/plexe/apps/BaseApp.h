@@ -37,6 +37,7 @@ class BaseApp : public veins::BaseApplLayer {
 
 public:
     virtual void initialize(int stage) override;
+    virtual void finish() override;
 
 protected:
     // id of this vehicle
@@ -73,6 +74,8 @@ protected:
     cMessage* recordData;
     // message to stop the simulation in case of collision
     cMessage* stopSimulation;
+
+    bool crashed = false;
 
 public:
     BaseApp()
