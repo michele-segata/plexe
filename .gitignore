@@ -35,3 +35,8 @@ subprojects/**/examples/**/.tkenvrc
 subprojects/**/examples/**/.qtenvrc
 subprojects/**/examples/**/.cmdenv-log
 subprojects/**/examples/**/valgrind.out
+
+**.vec
+**.vci
+**.csv
+**.sca
