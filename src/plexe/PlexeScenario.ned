@@ -41,7 +41,7 @@ network PlexeScenario
         string traffic_type;
         bool useLaunchd = default(false);
         string manager_type = useLaunchd ? "PlexeScenarioManagerLaunchd" : "PlexeScenarioManagerForker";
-        @display("bgb=$playgroundSizeX,$playgroundSizeY");
+        @display("bgb=dropUnit($playgroundSizeX),dropUnit($playgroundSizeY)");
     submodules:
         annotations: AnnotationManager {
             @display("p=260,50");
