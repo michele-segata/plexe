@@ -41,7 +41,7 @@ libraries = LibraryChecker()
 libraries.add_lib(veins)
 
 # Start with default flags
-makemake_flags = ["-f", "--deep", "--no-deep-includes", "--make-so", "-I", ".", "-o", "plexe", "-O", "out", "-p", "PLEXE"]
+makemake_flags = ["-f", "--deep", "--make-so", "-I", ".", "-o", "plexe", "-O", "out", "-p", "PLEXE"]
 
 run_libs = []
 run_neds = []
