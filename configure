@@ -34,7 +34,7 @@ sys.path.insert(0, "./src/scripts/")
 from library import Library, LibraryChecker
 
 veins = Library(name="Veins", library="veins", default_path="../veins",
-                versions=["5.1", "5.2"], source_folder="src/veins", lib_folder="src",
+                versions=["5.1", "5.2", "5.3", "5.3.1"], source_folder="src/veins", lib_folder="src",
                 images_folder="images", version_script="print-veins-version")
 
 libraries = LibraryChecker()
