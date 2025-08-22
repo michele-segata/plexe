@@ -41,6 +41,24 @@ public:
 
     // returns the type of the device which is used by the protocols to choose the proper radio interface
     virtual int getDeviceType() = 0;
+
+    static enum PlexeRadioInterfaces parseRadioInterface(const char* radioInterface)
+    {
+        if (!strcmp(radioInterface, "ALL"))
+            return ALL;
+        else if (!strcmp(radioInterface, "VEINS_11P"))
+            return VEINS_11P;
+        else if (!strcmp(radioInterface, "LTE_CV2X_MODE3"))
+            return LTE_CV2X_MODE3;
+        else if (!strcmp(radioInterface, "VEINS_VLC_FRONT"))
+            return VEINS_VLC_FRONT;
+        else if (!strcmp(radioInterface, "VEINS_VLC_BACK"))
+            return VEINS_VLC_BACK;
+        else if (!strcmp(radioInterface, "COOPERIS"))
+            return COOPERIS;
+        else
+            throw omnetpp::cRuntimeError("Unknown radio interface: '%s'", radioInterface);
+    }
 };
 
 } /* namespace plexe */
