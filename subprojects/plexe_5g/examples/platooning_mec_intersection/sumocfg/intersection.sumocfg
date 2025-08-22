@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2024-10-25 15:57:14 by Eclipse SUMO sumo Version v1_20_0+0106-922c8ef6b57
+-->
+
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="intersection.net.xml"/>
+        <route-files value="intersection.rou.xml"/>
+    </input>
+
+    <output>
+        <tripinfo-output value="../results/trip_info.xml"/>
+    </output>
+
+    <time>
+        <begin value="0"/>
+        <end value="81600"/>
+        <step-length value="0.01"/>
+    </time>
+
+    <processing>
+        <step-method.ballistic value="true"/>
+        <collision.action value="remove"/>
+        <collision.stoptime value="10"/>
+    </processing>
+
+    <emissions>
+        <device.emissions.probability value="1"/>
+    </emissions>
+
+    <gui_only>
+        <gui-settings-file value="intersection.gui.xml"/>
+        <start value="true"/>
+    </gui_only>
+
+</configuration>

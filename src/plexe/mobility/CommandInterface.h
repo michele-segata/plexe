@@ -54,6 +54,7 @@ public:
         void setLaneChangeMode(int mode);
         void getLaneChangeState(int direction, int& state1, int& state2);
         void changeLane(int lane, double duration);
+        void changeLaneRelative(int lane, double duration);
         /**
          * Get neighbors (i.e. a pair <name, distance>) of the vehicle.
          */

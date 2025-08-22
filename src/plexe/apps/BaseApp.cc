@@ -55,6 +55,11 @@ void BaseApp::initialize(int stage)
     }
 }
 
+void BaseApp::finish()
+{
+    recordScalar("crashed", crashed);
+}
+
 BaseApp::~BaseApp()
 {
     cancelAndDelete(recordData);
@@ -76,7 +81,9 @@ void BaseApp::logVehicleData(bool crashed)
     plexeTraciVehicle->getRadarMeasurements(distance, relSpeed);
     plexeTraciVehicle->getVehicleData(&data);
     if (crashed) {
+        this->crashed = true;
         distance = 0;
+        this->crashed = true;
         stopSimulation = new cMessage("stopSimulation");
         scheduleAt(simTime() + SimTime(1, SIMTIME_MS), stopSimulation);
     }

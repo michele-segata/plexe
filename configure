@@ -25,6 +25,7 @@
 """
 Creates Makefile(s) for building this project.
 """
+import os
 from os import mkdir
 from os.path import join, isdir
 import subprocess
@@ -48,8 +49,14 @@ run_neds = []
 run_imgs = []
 libraries.check_libraries(makemake_flags, run_libs, run_neds, run_imgs)
 
+
+# Add Plexe dependencies
 run_libs.append(join("src", "plexe"))
 run_neds.append(join("src", "plexe"))
+
+
+# Add Plexe-Matlab dependencies
+run_imgs.append(join("images"))
 
 # Start creating files
 if not isdir("out"):

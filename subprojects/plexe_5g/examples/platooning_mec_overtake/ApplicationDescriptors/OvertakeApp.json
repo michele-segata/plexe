@@ -1,0 +1,21 @@
+{
+"appDid" : "OVERTAKEMECAPP",
+"appName" : "MECOvertakeApp",
+"appProvider" : "org.car2x.plexe.subprojects.plexe_5g.MECOvertakeApp",
+"appInfoName" : "appInfoName_",
+"appDescription" : "appDescription_",
+"virtualComputeDescriptor" :{
+    "virtualDisk": 10,
+    "virtualCpu" : 1500,
+    "virtualMemory":10
+    },
+"appServiceRequired": [
+    {
+        "ServiceDependency" :{
+            "serName" : "LocationService",
+            "version" : "v2",
+            "serCategory": "Location"
+        }
+    }
+]
+}
