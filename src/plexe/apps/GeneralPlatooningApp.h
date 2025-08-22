@@ -185,8 +185,9 @@ public:
      * @param cPacket msg message to be encapsulated into the unicast
      * message
      * @param int destination of the message
+     * @param type type of message, used for decapsulation
      */
-    virtual void sendUnicast(cPacket* msg, int destination);
+    virtual void sendUnicast(cPacket* msg, int destination, short type);
 
     /**
      * Fills members of a ManeuverMessage
@@ -276,7 +277,7 @@ protected:
      *
      * @param PlatooningBeacon pb to handle
      */
-    virtual void onPlatoonBeacon(const PlatooningBeacon* pb) override;
+    virtual void onPlatoonBeacon(const PlatooningBeacon* pb);
 
     /**
      * Handles ManeuverMessages

@@ -28,6 +28,7 @@
 #include "plexe/messages/PlatooningBeacon_m.h"
 #include "plexe/mobility/CommandInterface.h"
 #include "plexe/utilities/BasePositionHelper.h"
+#include "plexe/driver/PlexeRadioDriverInterface.h"
 
 namespace plexe {
 
@@ -87,8 +88,10 @@ public:
      *
      * @param msg message to be encapsulated into the frame
      * @param destination id of the destination
+     * @param type packet type to be set. Used for demultiplexing at the receiver
+     * @param interfaces choose which radio interface should be used to send the packet. By default, only 11p is used
      */
-    void sendFrame(cPacket* msg, int destination);
+    void sendFrame(cPacket* msg, int destination, short type, enum PlexeRadioInterfaces interfaces = plexe::VEINS_11P);
 
 protected:
     virtual void handleLowerMsg(cMessage* msg) override;
@@ -96,9 +99,9 @@ protected:
     virtual void handleLowerControl(cMessage* msg) override;
 
     /**
-     * Handles PlatoonBeacons
+     * Tells this application to log mobility data about the vehicles
      */
-    virtual void onPlatoonBeacon(const PlatooningBeacon* pb);
+    void enableLogging();
 };
 
 } // namespace plexe

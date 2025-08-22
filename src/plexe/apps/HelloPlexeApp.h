@@ -24,22 +24,23 @@
 
 namespace plexe {
 
-class SimplePlatooningApp : public BaseApp {
+class HelloPlexeApp : public BaseApp {
+
+private:
+    cMessage* sendHello = nullptr;
+    enum PlexeRadioInterfaces interfaceToUse = PlexeRadioInterfaces::VEINS_11P;
 
 public:
-    SimplePlatooningApp()
+    HelloPlexeApp()
     {
     }
     virtual void initialize(int stage) override;
-
+    virtual void finish() override;
 protected:
     virtual void handleLowerMsg(cMessage* msg) override;
-
-    /**
-     * Handles PlatoonBeacons
-     */
-    virtual void onPlatoonBeacon(const PlatooningBeacon* pb);
+    virtual void handleSelfMsg(cMessage* msg) override;
 
 };
 
 } // namespace plexe
+

@@ -38,6 +38,7 @@ module PlatoonCar
         string helper_type;
         string appl_type;
         string protocol_type;
+        int numPlexeApps = default(0);
 
     submodules:
 
@@ -52,6 +53,11 @@ module PlatoonCar
         }
 
         appl: <appl_type> like BaseApp {
+            parameters:
+                @display("p=60,100");
+        }
+
+        plexeApp[numPlexeApps]: <> like BaseApp {
             parameters:
                 @display("p=60,100");
         }

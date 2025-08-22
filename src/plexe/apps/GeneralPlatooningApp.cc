@@ -44,6 +44,8 @@ void GeneralPlatooningApp::initialize(int stage)
     if (stage == 1) {
         // connect maneuver application to protocol
         protocol->registerApplication(MANEUVER_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"), gate("lowerControlIn"), gate("lowerControlOut"));
+        // request beacons as well to be able to approach the platoon
+        protocol->registerApplication(BaseProtocol::BEACON_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"), gate("lowerControlIn"), gate("lowerControlOut"));
         // register to the signal indicating failed unicast transmissions
         findHost()->subscribe(Mac1609_4::sigRetriesExceeded, this);
 
@@ -129,19 +131,11 @@ void GeneralPlatooningApp::startMergeManeuver(int platoonId, int leaderId, int p
     mergeManeuver->startManeuver(&params);
 }
 
-void GeneralPlatooningApp::sendUnicast(cPacket* msg, int destination)
+void GeneralPlatooningApp::sendUnicast(cPacket* msg, int destination, short type)
 {
     Enter_Method_Silent();
     take(msg);
-    BaseFrame1609_4* frame = new BaseFrame1609_4("BaseFrame1609_4", msg->getKind());
-    frame->setRecipientAddress(destination);
-    frame->setChannelNumber(static_cast<int>(Channel::cch));
-    frame->encapsulate(msg);
-    // send unicast frames using 11p only
-    PlexeInterfaceControlInfo* ctrl = new PlexeInterfaceControlInfo();
-    ctrl->setInterfaces(PlexeRadioInterfaces::VEINS_11P);
-    frame->setControlInfo(ctrl);
-    sendDown(frame);
+    sendFrame(msg, destination, type, PlexeRadioInterfaces::VEINS_11P);
 }
 
 void GeneralPlatooningApp::handleLowerMsg(cMessage* msg)
@@ -164,6 +158,10 @@ void GeneralPlatooningApp::handleLowerMsg(cMessage* msg)
         else {
             onManeuverMessage(mm);
         }
+        delete frame;
+    }
+    else if (enc->getKind() == BaseProtocol::BEACON_TYPE) {
+        onPlatoonBeacon(check_and_cast<PlatooningBeacon*>(enc));
         delete frame;
     }
     else {
@@ -208,8 +206,6 @@ void GeneralPlatooningApp::onPlatoonBeacon(const PlatooningBeacon* pb)
 {
     joinManeuver->onPlatoonBeacon(pb);
     mergeManeuver->onPlatoonBeacon(pb);
-    // maintain platoon
-    BaseApp::onPlatoonBeacon(pb);
 }
 
 void GeneralPlatooningApp::onManeuverMessage(ManeuverMessage* mm)

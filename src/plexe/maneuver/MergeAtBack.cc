@@ -51,7 +51,7 @@ void MergeAtBack::startManeuver(const void* parameters)
         // send merge request to leader
         LOG << positionHelper->getId() << " sending MergePlatoonRequest to platoon with id " << targetPlatoonData->platoonId << " (leader id " << targetPlatoonData->platoonLeader << ")\n";
         MergePlatoonRequest* req = createMergePlatoonRequest(positionHelper->getId(), positionHelper->getExternalId(), targetPlatoonData->platoonId, targetPlatoonData->platoonLeader, traciVehicle->getLaneIndex(), mobility->getPositionAt(simTime()).x, mobility->getPositionAt(simTime()).y, members);
-        app->sendUnicast(req, targetPlatoonData->platoonLeader);
+        app->sendUnicast(req, targetPlatoonData->platoonLeader, req->getKind());
     }
 }
 
@@ -71,7 +71,7 @@ void MergeAtBack::handleMergePlatoonRequest(const MergePlatoonRequest* msg)
         }
         LOG << positionHelper->getId() << " sending MoveToPosition to vehicle with id " << msg->getVehicleId() << "\n";
         MoveToPosition* mtp = createMoveToPosition(positionHelper->getId(), positionHelper->getExternalId(), positionHelper->getPlatoonId(), joinerData->joinerId, positionHelper->getPlatoonSpeed(), positionHelper->getPlatoonLane(), joinerData->newFormation);
-        app->sendUnicast(mtp, joinerData->joinerId);
+        app->sendUnicast(mtp, joinerData->joinerId, mtp->getKind());
     }
 }
 
@@ -92,7 +92,7 @@ bool MergeAtBack::handleSelfMsg(cMessage* msg)
         if (distance < app->getTargetDistance(targetPlatoonData->platoonSpeed) + 1) {
             for (unsigned int i = 1; i < oldFormation.size(); i++) {
                 UpdatePlatoonData* mm = app->createUpdatePlatoonData(positionHelper->getId(), positionHelper->getExternalId(), oldPlatoonId, oldFormation[i], targetPlatoonData->platoonSpeed, targetPlatoonData->platoonLane, targetPlatoonData->newFormation, targetPlatoonData->platoonId);
-                app->sendUnicast(mm, oldFormation[i]);
+                app->sendUnicast(mm, oldFormation[i], mm->getKind());
             }
         }
         else {
@@ -124,7 +124,7 @@ void MergeAtBack::handleJoinFormationAck(const JoinFormationAck* msg)
         UpdatePlatoonFormation* dup = app->createUpdatePlatoonFormation(positionHelper->getId(), positionHelper->getExternalId(), positionHelper->getPlatoonId(), -1, positionHelper->getPlatoonSpeed(), traciVehicle->getLaneIndex(), joinerData->newFormation);
         int dest = positionHelper->getMemberId(i);
         dup->setDestinationId(dest);
-        app->sendUnicast(dup, dest);
+        app->sendUnicast(dup, dest, dup->getKind());
     }
 
     joinManeuverState = JoinManeuverState::IDLE;
