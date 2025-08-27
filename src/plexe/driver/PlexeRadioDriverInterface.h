@@ -57,6 +57,8 @@ public:
             return VEINS_VLC_BACK;
         else if (!strcmp(radioInterface, "COOPERIS"))
             return COOPERIS;
+        else if (!strcmp(radioInterface, "NR_CV2X_MODE1"))
+            return NR_CV2X_MODE1;
         else
             throw omnetpp::cRuntimeError("Unknown radio interface: '%s'", radioInterface);
     }
