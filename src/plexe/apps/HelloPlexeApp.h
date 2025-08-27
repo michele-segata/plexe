@@ -27,6 +27,8 @@ namespace plexe {
 class HelloPlexeApp : public BaseApp {
 
 private:
+    int senderVehicleId = 0;
+    double sendMessageAfter = 3;
     cMessage* sendHello = nullptr;
     enum PlexeRadioInterfaces interfaceToUse = PlexeRadioInterfaces::VEINS_11P;
 

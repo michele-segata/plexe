@@ -38,6 +38,10 @@ simple HelloPlexeApp like BaseApp
         //    With the enum in C++ you can do "VEINS_11P | COOPERIS" to send a frame via those two interfaces. Here you
         //    cannot as this is just meant as an example
         string interfaceToUse @enum("ALL", "VEINS_11P", "LTE_CV2X_MODE3", "VEINS_VLC_FRONT", "VEINS_VLC_BACK", "COOPERIS");
+        // send the message X seconds after the initialization of the module
+        double sendMessageAfter @unit(s) = default(3s);
+        // id of the vehicle that should send the message
+        int senderVehicleId = default(0);
     gates:
         input lowerLayerIn;
         output lowerLayerOut;

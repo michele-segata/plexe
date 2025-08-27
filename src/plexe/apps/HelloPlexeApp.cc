@@ -39,11 +39,13 @@ void HelloPlexeApp::initialize(int stage)
         // connect this app application to protocol, and specify we're interested in receiving HELLO_PLEXE_TYPE messages
         protocol->registerApplication(HELLO_PLEXE_TYPE, gate("lowerLayerIn"), gate("lowerLayerOut"), gate("lowerControlIn"), gate("lowerControlOut"));
 
+        senderVehicleId = par("senderVehicleId");
         // let's assume vehicle with id 0 is the only one sending an hello
-        if (positionHelper->getId() == 0) {
+        if (positionHelper->getId() == senderVehicleId) {
+            sendMessageAfter = par("sendMessageAfter");
             sendHello = new cMessage("sendHello");
             // schedule sending after 3 seconds
-            scheduleAfter(SimTime(3), sendHello);
+            scheduleAfter(SimTime(sendMessageAfter), sendHello);
         }
 
         interfaceToUse = PlexeRadioDriverInterface::parseRadioInterface(par("interfaceToUse"));
