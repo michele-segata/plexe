@@ -24,6 +24,7 @@
 #include "veins/modules/messages/BaseFrame1609_4_m.h"
 #include "plexe/messages/HelloPlexeMsg_m.h"
 #include "veins/modules/utility/Consts80211p.h"
+#include "plexe/messages/PlexeInterfaceControlInfo_m.h"
 
 namespace plexe {
 
@@ -64,6 +65,9 @@ void HelloPlexeApp::handleLowerMsg(cMessage* msg)
     if (frame->getKind() == HELLO_PLEXE_TYPE) {
         HelloPlexeMsg* hello = check_and_cast<HelloPlexeMsg*>(frame->decapsulate());
         EV << "HelloPlexeApp received " << hello->getText() << " from " << hello->getSenderVehicle() << "\n";
+        auto incomingInterface = dynamic_cast<PlexeInterfaceControlInfo*>(frame->getControlInfo());
+        if (incomingInterface)
+            EV << "HelloMessage received from interface " << PlexeRadioDriverInterface::radioInterfacesToString((enum PlexeRadioInterfaces) incomingInterface->getInterfaces()) << "\n";
         delete hello;
         delete frame;
     }
