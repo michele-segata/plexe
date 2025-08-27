@@ -42,6 +42,7 @@ module PlatoonCarRis
         string helper_type;
         string appl_type;
         string protocol_type;
+        int numPlexeApps = default(0);
 
         @display("bgb=358,382");
     gates:
@@ -61,6 +62,11 @@ module PlatoonCarRis
         appl: <appl_type> like BaseApp {
             parameters:
                 @display("p=165,52");
+        }
+
+        plexeApp[numPlexeApps]: <> like BaseApp {
+            parameters:
+                @display("p=60,100");
         }
 
         prot: <protocol_type> like BaseProtocol {
