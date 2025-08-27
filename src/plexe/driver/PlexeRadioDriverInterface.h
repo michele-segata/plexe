@@ -62,6 +62,47 @@ public:
         else
             throw omnetpp::cRuntimeError("Unknown radio interface: '%s'", radioInterface);
     }
+
+    static std::string radioInterfacesToString(enum PlexeRadioInterfaces interfaces)
+    {
+        bool first = true;
+        std::stringstream ss;
+        if (interfaces & PlexeRadioInterfaces::VEINS_11P) {
+            ss << "VEINS_11P";
+            first = false;
+        }
+        if (interfaces & PlexeRadioInterfaces::LTE_CV2X_MODE3) {
+            if (!first)
+                ss << " | ";
+            ss << "LTE_CV2X_MODE3";
+            first = false;
+        }
+        if (interfaces & PlexeRadioInterfaces::VEINS_VLC_FRONT) {
+            if (!first)
+                ss << " | ";
+            ss << "VEINS_VLC_FRONT";
+            first = false;
+        }
+        if (interfaces & PlexeRadioInterfaces::VEINS_VLC_BACK) {
+            if (!first)
+                ss << " | ";
+            ss << "VEINS_VLC_BACK";
+            first = false;
+        }
+        if (interfaces & PlexeRadioInterfaces::COOPERIS) {
+            if (!first)
+                ss << " | ";
+            ss << "COOPERIS";
+            first = false;
+        }
+        if (interfaces & PlexeRadioInterfaces::NR_CV2X_MODE1) {
+            if (!first)
+                ss << " | ";
+            ss << "NR_CV2X_MODE1";
+            first = false;
+        }
+        return ss.str();
+    }
 };
 
 } /* namespace plexe */
