@@ -308,14 +308,24 @@ void BaseProtocol::handleLowerMsg(cMessage* msg)
     }
 
     // find the application responsible for this beacon
+    PlexeInterfaceControlInfo* incomingInterface = new PlexeInterfaceControlInfo();
+    auto interface = radioIns.find(msg->getArrivalGateId());
+    if (interface != radioIns.end())
+        incomingInterface->setInterfaces(interface->second);
+    else
+        incomingInterface->setInterfaces(0);
+
     ApplicationMap::iterator app = apps.find(frame->getKind());
     if (app != apps.end() && app->second.size() != 0) {
         AppList applications = app->second;
         for (AppList::iterator i = applications.begin(); i != applications.end(); i++) {
             // send the message to the applications responsible for it
-            send(frame->dup(), std::get<1>(*i));
+            auto duplicate = frame->dup();
+            duplicate->setControlInfo(incomingInterface->dup());
+            send(duplicate, std::get<1>(*i));
         }
     }
+    delete incomingInterface;
     delete frame;
 }
 
