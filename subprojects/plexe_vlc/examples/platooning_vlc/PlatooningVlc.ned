@@ -33,6 +33,8 @@ import org.car2x.plexe.mobility.TraCIBaseTrafficManager;
 import org.car2x.veins.modules.obstacle.VehicleObstacleControl;
 import org.car2x.veinsvlc.VlcConnectionManager;
 
+import org.car2x.plexe.subprojects.plexe_vlc.PlatoonCarVlc;
+
 network PlatooningVlc
 {
     parameters:
@@ -54,9 +56,9 @@ network PlatooningVlc
         }
         world: BaseWorldUtility {
             parameters:
-                playgroundSizeX = playgroundSizeX;
-                playgroundSizeY = playgroundSizeY;
-                playgroundSizeZ = playgroundSizeZ;
+                playgroundSizeX = parent.playgroundSizeX;
+                playgroundSizeY = parent.playgroundSizeY;
+                playgroundSizeZ = parent.playgroundSizeZ;
                 @display("p=30,0;i=misc/globe");
         }
         manager: TraCIScenarioManagerForker {
@@ -76,6 +78,8 @@ network PlatooningVlc
         vlcConnectionManager: VlcConnectionManager {
             parameters:
                 @display("p=146,112;i=abstract/multicast");
+        }
+        node[0]: PlatoonCarVlc {
         }
 
     connections allowunconnected:

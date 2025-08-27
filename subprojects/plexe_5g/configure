@@ -35,23 +35,23 @@ sys.path.insert(0, "../../src/scripts/")
 from library import Library, LibraryChecker
 
 plexe = Library(name="Plexe", library="plexe", default_path="../../",
-                versions=["3.1.3"], source_folder="src/plexe",
+                versions=["3.1.3", "3.1.4", "3.2"], source_folder="src/plexe",
                 lib_folder="src", images_folder="images",
                 version_script="print-plexe-version")
 veins = Library(name="Veins", library="veins", default_path="../../../veins",
-                versions=["5.2"], source_folder="src/veins", lib_folder="src",
+                versions=["5.2", "5.3", "5.3.1"], source_folder="src/veins", lib_folder="src",
                 images_folder="images", version_script="print-veins-version")
 veins_inet = Library(name="Veins INET 4", library="veins_inet",
                      default_path="../../../veins/subprojects/veins_inet",
-                     versions=["5.2"], source_folder="src/veins_inet",
+                     versions=["5.2", "5.3", "5.3.1"], source_folder="src/veins_inet",
                      lib_folder="src", images_folder="images",
                      version_script="print-veins_inet-version")
 inet = Library(name="INET", library="INET", default_path="../../../inet",
-               versions=["4.5.0"], source_folder="src/inet", lib_folder="src",
+               versions=["4.5.0", "4.5.4"], source_folder="src/inet", lib_folder="src",
                images_folder="images",
                version_script=["_scripts/get_version", "bin/inet_version"])
 simu5g = Library(name="Simu5G", library="simu5g",
-                  default_path="../../../simu5g", versions=["1.2.2"],
+                  default_path="../../../simu5g", versions=["1.2.2", "1.3.1"],
                   source_folder="src/simu5g", lib_folder="src",
                   images_folder="images", version_script="Version",
                   run_version_script=False, ned_folder="src")
@@ -64,7 +64,7 @@ libraries.add_lib(inet)
 libraries.add_lib(simu5g)
 
 # Start with default flags
-makemake_flags = ["-f", "--deep", "--no-deep-includes", "--make-so", "-I", ".", "-o", "plexe_5g", "-O", "out", "-p", "PLEXE_5G"]
+makemake_flags = ["-f", "--deep", "--make-so", "-I", ".", "-o", "plexe_5g", "-O", "out", "-p", "PLEXE_5G"]
 run_libs = [join("src", "plexe_5g")]
 run_neds = [join("src", "plexe_5g")]
 run_imgs = []

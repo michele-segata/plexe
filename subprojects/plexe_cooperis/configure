@@ -34,11 +34,11 @@ sys.path.insert(0, "../../src/scripts/")
 from library import Library, LibraryChecker
 
 plexe = Library(name="Plexe", library="plexe", default_path="../../",
-                versions=["3.1.4"], source_folder="src/plexe",
+                versions=["3.1.4", "3.2"], source_folder="src/plexe",
                 lib_folder="src", images_folder="images",
                 version_script="print-plexe-version")
 veins = Library(name="Veins", library="veins", default_path="../../../veins",
-                versions=["5.2"], source_folder="src/veins", lib_folder="src",
+                versions=["5.2", "5.3", "5.3.1"], source_folder="src/veins", lib_folder="src",
                 images_folder="images", version_script="print-veins-version")
 veins_ris = Library(name="CoopeRIS", library="cooperis",
                     default_path="../../../cooperis", versions=["1.1"],
@@ -52,7 +52,7 @@ libraries.add_lib(veins)
 libraries.add_lib(veins_ris)
 
 # Start with default flags
-makemake_flags = ["-f", "--deep", "--no-deep-includes", "--make-so", "-I", ".", "-o", "plexe_cooperis", "-O", "out", "-p", "PLEXE_COOPERIS"]
+makemake_flags = ["-f", "--deep", "--make-so", "-I", ".", "-o", "plexe_cooperis", "-O", "out", "-p", "PLEXE_COOPERIS"]
 run_libs = [join("src", "plexe_cooperis")]
 run_neds = [join("src", "plexe_cooperis")]
 run_imgs = []

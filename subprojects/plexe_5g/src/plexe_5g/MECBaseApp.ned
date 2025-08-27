@@ -28,12 +28,16 @@ simple MECBaseApp like IMECApp, IApp
         int packetSize @unit(B) = default(10B);
         string interfaceTableModule = default("");
 
-        int mecAppIndex;
         int mecAppId;
         int localUePort;
 
         string mp1Address = default("");
         int mp1Port = default(10021);
+
+        // modules:
+        string vimModule = default("^.vim");
+        string mecPlatformModule = default("^.mecPlatform");
+        string serviceRegistryModule = default("^.mecPlatform.serviceRegistry");
 
         //resource required info
         double requiredRam @unit("B");

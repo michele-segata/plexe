@@ -57,6 +57,7 @@ module PlatoonCarNR
         string helper_type;
         string appl_type;
         string protocol_type;
+        int numPlexeApps = default(0);
 
         //# Mobility
         mobility.typename = default("VeinsInetMobility");
@@ -123,6 +124,11 @@ module PlatoonCarNR
         appl: <appl_type> like BaseApp {
             parameters:
                 @display("p=60,234");
+        }
+
+        plexeApp[numPlexeApps]: <> like BaseApp {
+            parameters:
+                @display("p=60,100");
         }
 
         prot: <protocol_type> like BaseProtocol {

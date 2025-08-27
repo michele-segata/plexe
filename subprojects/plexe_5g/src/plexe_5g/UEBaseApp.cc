@@ -26,7 +26,7 @@
 #include "plexe_5g/PlexeInetUtils.h"
 
 #include "veins/base/utils/FindModule.h"
-#include "stack/phy/layer/NRPhyUe.h"
+#include "stack/phy/NRPhyUe.h"
 
 namespace plexe {
 
