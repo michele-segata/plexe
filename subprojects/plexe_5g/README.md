@@ -7,17 +7,17 @@ The following instructions describe how to compile the framework and how to run 
 To build and run the examples you will need OMNeT++ and SUMO as core software.
 For one specific example (intersection merge) you will also need Matlab.
 The required versions are:
-1. OMNeT++: v6.0.3 (Installation guide: [here](https://doc.omnetpp.org/q/InstallGuide.pdf))
+1. OMNeT++: v6.2.0 (Installation guide: [here](https://doc.omnetpp.org/q/InstallGuide.pdf))
 2. SUMO: v1.20 (v1.21 and v1.22 should also work) (Installation guide: [here](https://sumo.dlr.de/docs/Installing/index.html))
 3. Matlab (any version after R2020. Required for running the MEC intersection merge example)
 
-The OMNeT++ libraries required for Plexe 5G are, INET, Simu5G, Veins, and Plexe.
+The OMNeT++ libraries required for Plexe 5G are INET, Simu5G, Veins, and Plexe.
 The detailed instructions about cloning and compiling each library is explained below.
 
 **NOTE:** The directory structure before compiling libraries should be as follows:
 ```
 <root folder>
-  |-- omnetpp-6.0.3
+  |-- omnetpp-6.2.0
   |-- veins
   |-- inet
   |-- simu5g
@@ -28,21 +28,21 @@ The detailed instructions about cloning and compiling each library is explained 
 Before compiling the libraries, you need to first setup the OMNeT++ environment.
 Enter the OMNeT++ root directory and setup the environment with
 ```bash
-cd omnetpp-6.0.3/
+cd omnetpp-6.2.0/
 source setenv
 ```
 You can now proceed to the instructions for each of the libraries.
 
 ### 1. INET
 
-You can clone INET 4.5.0 from the INET github repository [here](https://github.com/inet-framework/inet).
-Once the repository is cloned, checkout the 4.5.0 tag as indicated below.
+You can clone INET 4.5.4 from the INET github repository [here](https://github.com/inet-framework/inet).
+Once the repository is cloned, checkout the 4.5.4 tag as indicated below.
 
 Enter the `inet` directory and setup the environment:
 ```bash
 git clone https://github.com/inet-framework/inet
 cd inet/
-git checkout -b inet_v4.5.0 v4.5.0
+git checkout -b inet_v4.5.4 v4.5.4
 source setenv
 ```
 Generate the `Makefile` and compile in both `release` and `debug` modes:
@@ -74,13 +74,13 @@ make -j <ncores> MODE=debug
 
 ### 3. Veins
 
-You can clone the repository from [here](https://github.com/michele-segata/veins/).
-Be sure to checkout the `plexe_mec` branch.
+You can clone the repository from [here](https://github.com/sommer/veins/).
+Be sure to checkout use version `5.3.1`.
 Enter the veins directory and setup the environment:
 ```bash
-git clone https://github.com/michele-segata/veins/
+git clone https://github.com/sommer/veins/
 cd veins/
-git checkout plexe_mec
+git checkout -b veins_v5.3.1 veins-5.3.1
 source setenv
 ```
 Generate the `Makefile` and compile the software:
@@ -98,12 +98,21 @@ make -j <ncores>
 
 ### 4. Plexe
 
-You can clone the repository from the [here](https://github.com/michele-segata/plexe) and checkout the `plexe_mec` branch.
+You can clone the repository from the [here](https://github.com/michele-segata/plexe), choosing version `3.2`.
 ```bash
 git clone https://github.com/michele-segata/plexe
 cd plexe/
-git checkout plexe_mec
+git checkout -b plexe_v3.2 plexe-3.2
 source setenv
+```
+Then configure and compile `plexe` with:
+```bash
+./configure
+make -j <ncores>
+```
+Once compiled, you will also have to compile the `plexe_5g` subproject.
+```bash
+cd subprojects/plexe_5g
 ```
 Open the `configure` file and change the path and version of Matlab:
 ```
@@ -137,18 +146,7 @@ cp libMatlabEngine.dylib libMatlabEngine_dbg.dylib
 ```
 This will not give you debug capabilities over Matlab, but enable to compile `plexe` in debug mode.
 The procedure is similar for Ubuntu.
-
-Once the `configure` file has been modified, configure and compile `plexe` with:
-```bash
-./configure
-make -j <ncores>
-```
-Once compiled, you will also have to compile the `plexe_5g` subproject.
-```bash
-cd subprojects/plexe_5g
-```
-Edit `configure` and change the Matlab configuration as above.
-Then configure and compile the software:
+Once done, save the file and finally configure and compile the software:
 ```bash
 ./configure
 make -j <ncores>
