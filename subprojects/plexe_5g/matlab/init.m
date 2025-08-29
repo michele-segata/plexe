@@ -1,7 +1,7 @@
   
 
 %
-% Copyright (C) 2019 Christoph Sommer <sommer@ccs-labs.org>
+% Copyright (C) 2019-2025 Christoph Sommer <sommer@ccs-labs.org>
 %
 % Documentation for these modules is at http://veins.car2x.org/
 %

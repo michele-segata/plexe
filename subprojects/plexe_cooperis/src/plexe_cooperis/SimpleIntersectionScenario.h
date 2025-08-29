@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2018-2024 Julian Heinovski <julian.heinovski@ccs-labs.org>
+// Copyright (C) 2018-2025 Julian Heinovski <julian.heinovski@ccs-labs.org>
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 //

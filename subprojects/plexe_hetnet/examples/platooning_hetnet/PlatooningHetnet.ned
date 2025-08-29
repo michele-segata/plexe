@@ -1,7 +1,7 @@
 //
-// Copyright (C) 2008 Christoph Sommer <christoph.sommer@informatik.uni-erlangen.de>
-// Copyright (C) 2012-2023 Michele Segata <segata@ccs-labs.org>
-// Copyright (C) 2020 Piermaria Arvani <piermaria.arvani@gmail.com>
+// Copyright (C) 2008-2025 Christoph Sommer <christoph.sommer@informatik.uni-erlangen.de>
+// Copyright (C) 2012-2025 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2020-2025 Piermaria Arvani <piermaria.arvani@gmail.com>
 //
 //
 // Documentation for these modules is at http://veins.car2x.org/

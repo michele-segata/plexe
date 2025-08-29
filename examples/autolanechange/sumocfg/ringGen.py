@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 #
-# Copyright (C) 2017-2023 Luca Terruzzi <luca.terruzzi@studenti.unitn.it>
-# Copyright (C) 2017-2023 Riccardo Colombo <riccardo.colombo@studenti.unitn.it>
+# Copyright (C) 2017-2025 Luca Terruzzi <luca.terruzzi@studenti.unitn.it>
+# Copyright (C) 2017-2025 Riccardo Colombo <riccardo.colombo@studenti.unitn.it>
 # Successive modifications by Michele Segata <segata@ccs-labs.org>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
@@ -153,7 +153,7 @@ print ("Creating node file..."),
 gen_string = "<!-- Generated with %s -->\n" % (' '.join(sys.argv))
 gen_string += """
 <!--
-// Copyright (C) 2019-2023 Michele Segata <segata@ccs-labs.org>
+// Copyright (C) 2019-2025 Michele Segata <segata@ccs-labs.org>
 //
 // Documentation for these modules is at http://veins.car2x.org/
 //
