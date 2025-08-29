@@ -8,7 +8,7 @@ To build and run the examples you will need OMNeT++ and SUMO as core software.
 For one specific example (intersection merge) you will also need Matlab.
 The required versions are:
 1. OMNeT++: v6.2.0 (Installation guide: [here](https://doc.omnetpp.org/q/InstallGuide.pdf))
-2. SUMO: v1.20 (v1.21 and v1.22 should also work) (Installation guide: [here](https://sumo.dlr.de/docs/Installing/index.html))
+2. SUMO: v1.20 (v1.21 and v1.22 should also work, but v1.23 is not currently supported by Veins 5.3.1) (Installation guide: [here](https://sumo.dlr.de/docs/Installing/index.html))
 
 The OMNeT++ libraries required for Plexe VLC are Veins, Veins VLC, and Plexe.
 The detailed instructions about cloning and compiling each library is explained below.
