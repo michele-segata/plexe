@@ -69,19 +69,17 @@ void MECBaselineIntersectionMergeApp::handleUEAppMsg(inet::Packet* packet)
     L3Address ueAppAddress = packet->getTag<L3AddressInd>()->getSrcAddress();
     int ueAppPort = packet->getTag<L4PortInd>()->getSrcPort();
 
-    if (IntersectionRequest* r = PlexeInetUtils::decapsulate<IntersectionRequest>(packet)) {
+    if (const IntersectionRequest* r = PlexeInetUtils::decapsulate<IntersectionRequest>(packet)) {
         onIntersectionRequest(r, ueAppAddress, ueAppPort);
-        delete r;
     }
 
-    if (IntersectionExit* e = PlexeInetUtils::decapsulate<IntersectionExit>(packet)) {
+    if (const IntersectionExit* e = PlexeInetUtils::decapsulate<IntersectionExit>(packet)) {
         onIntersectionExit(e, ueAppAddress, ueAppPort);
-        delete e;
     }
 
 }
 
-void MECBaselineIntersectionMergeApp::onIntersectionRequest(IntersectionRequest* req, L3Address ueAddress, int uePort){
+void MECBaselineIntersectionMergeApp::onIntersectionRequest(const IntersectionRequest* req, L3Address ueAddress, int uePort){
 
     Platoon* p = new Platoon();
     p->platoonId = req->getPlatoonId();
@@ -138,7 +136,7 @@ void MECBaselineIntersectionMergeApp::onIntersectionRequest(IntersectionRequest*
     }
 }
 
-void MECBaselineIntersectionMergeApp::onIntersectionExit(IntersectionExit* msg, L3Address ueAddress, int uePort){
+void MECBaselineIntersectionMergeApp::onIntersectionExit(const IntersectionExit* msg, L3Address ueAddress, int uePort){
 
     LOG << "MECBaselineIntersectionMergeApp: received IntersectionExit from platoon " << msg->getPlatoonId() << "\n";
     if (msg->getPlatoonId() == lastPlatoon->platoonId){

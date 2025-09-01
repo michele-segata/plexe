@@ -116,17 +116,14 @@ void UETrafficAuthorityApp::handleMECAppStartAck(inet::Packet* packet)
 
 void UETrafficAuthorityApp::handleMECAppMsg(inet::Packet* packet)
 {
-    if (PlatoonSearchResponse* response = PlexeInetUtils::decapsulate<PlatoonSearchResponse>(packet)) {
+    if (const PlatoonSearchResponse* response = PlexeInetUtils::decapsulate<PlatoonSearchResponse>(packet)) {
         onPlatoonSearchResponse(response);
-        delete response;
     }
-    else if (PlatoonSpeedCommand* speedCommand = PlexeInetUtils::decapsulate<PlatoonSpeedCommand>(packet)) {
+    else if (const PlatoonSpeedCommand* speedCommand = PlexeInetUtils::decapsulate<PlatoonSpeedCommand>(packet)) {
         onPlatoonSpeedCommand(speedCommand);
-        delete speedCommand;
     }
-    else if (PlatoonContactCommand* contactCommand = PlexeInetUtils::decapsulate<PlatoonContactCommand>(packet)) {
+    else if (const PlatoonContactCommand* contactCommand = PlexeInetUtils::decapsulate<PlatoonContactCommand>(packet)) {
         onPlatoonContactCommand(contactCommand);
-        delete contactCommand;
     }
 }
 
@@ -174,19 +171,19 @@ void UETrafficAuthorityApp::populatePlatooningTAQuery(PlatoonTAQuery *msg)
     msg->setQueryType(REQUEST);
 }
 
-void UETrafficAuthorityApp::onPlatoonSearchResponse(PlatoonSearchResponse *msg)
+void UETrafficAuthorityApp::onPlatoonSearchResponse(const PlatoonSearchResponse *msg)
 {
     LOG << "Platoon " << positionHelper->getPlatoonId() << " got answer from TA: matching platoon ID = " << msg->getMatchingPlatoonId() << "\n";
     sendPlatoonApproachRequest(msg->getMatchingPlatoonId());
 }
 
-void UETrafficAuthorityApp::onPlatoonSpeedCommand(PlatoonSpeedCommand *msg)
+void UETrafficAuthorityApp::onPlatoonSpeedCommand(const PlatoonSpeedCommand *msg)
 {
     LOG << "Platoon " << positionHelper->getPlatoonId() << " speed command from TA: setting speed to " << msg->getSpeed() << "m/s\n";
     plexeTraciVehicle->setCruiseControlDesiredSpeed(msg->getSpeed());
 }
 
-void UETrafficAuthorityApp::onPlatoonContactCommand(PlatoonContactCommand *msg)
+void UETrafficAuthorityApp::onPlatoonContactCommand(const PlatoonContactCommand *msg)
 {
     LOG << "Platoon " << positionHelper->getPlatoonId() << " contact command fromt TA: contacting platoon " << msg->getContactPlatoonId() << " (leader: " << msg->getContactLeaderId() << ")\n";
     plexeTraciVehicle->setCruiseControlDesiredSpeed(mySpeed);

@@ -37,11 +37,11 @@ public:
     static inet::Packet* encapsulate(omnetpp::cPacket* packet, const char* name = "");
 //    static omnetpp::cPacket* decapsulate(inet::Packet* packet);
 
-    template<class T> static T* decapsulate(inet::Packet* packet) {
+    template<class T> static const T* decapsulate(inet::Packet* packet) {
         const inet::cPacketChunk* pc = dynamic_cast<const inet::cPacketChunk*>(packet->peekAll().get());
 
         if (pc)
-            return dynamic_cast<T*>(pc->getPacket()->dup());
+            return dynamic_cast<const T*>(pc->getPacket());
 
         const inet::SequenceChunk* data = dynamic_cast<const inet::SequenceChunk*>(packet->peekAll().get());
         if (data) {
@@ -56,7 +56,7 @@ public:
                     const T* reqPacket = dynamic_cast<const T*>(pc->getPacket());
                     if (reqPacket) {
     //                    std::cout << " UPDATE";
-                        return dynamic_cast<T*>(reqPacket->dup());
+                        return reqPacket;
                     }
                 }
     //            std::cout  << "\n";

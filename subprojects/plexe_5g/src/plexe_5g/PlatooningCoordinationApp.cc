@@ -122,17 +122,14 @@ void PlatooningCoordinationApp::handleTimer(cMessage* msg)
 
 void PlatooningCoordinationApp::socketDataArrived(inet::TcpSocket* socket, inet::Packet* msg, bool urgent)
 {
-    if (PlatoonSearchResponse* response = PlexeInetUtils::decapsulate<PlatoonSearchResponse>(msg)) {
+    if (const PlatoonSearchResponse* response = PlexeInetUtils::decapsulate<PlatoonSearchResponse>(msg)) {
         onPlatoonSearchResponse(response);
-        delete response;
     }
-    else if (PlatoonSpeedCommand* speedCommand = PlexeInetUtils::decapsulate<PlatoonSpeedCommand>(msg)) {
+    else if (const PlatoonSpeedCommand* speedCommand = PlexeInetUtils::decapsulate<PlatoonSpeedCommand>(msg)) {
         onPlatoonSpeedCommand(speedCommand);
-        delete speedCommand;
     }
-    else if (PlatoonContactCommand* contactCommand = PlexeInetUtils::decapsulate<PlatoonContactCommand>(msg)) {
+    else if (const PlatoonContactCommand* contactCommand = PlexeInetUtils::decapsulate<PlatoonContactCommand>(msg)) {
         onPlatoonContactCommand(contactCommand);
-        delete contactCommand;
     }
     delete msg;
 }
@@ -192,19 +189,19 @@ void PlatooningCoordinationApp::sendPlatoonApproachRequest(int platoonId)
     mySpeed = mobility->getSpeed();
 }
 
-void PlatooningCoordinationApp::onPlatoonSearchResponse(PlatoonSearchResponse* msg)
+void PlatooningCoordinationApp::onPlatoonSearchResponse(const PlatoonSearchResponse* msg)
 {
     LOG << "Platoon " << positionHelper->getPlatoonId() << " got answer from TA: matching platoon ID = " << msg->getMatchingPlatoonId() << "\n";
     sendPlatoonApproachRequest(msg->getMatchingPlatoonId());
 }
 
-void PlatooningCoordinationApp::onPlatoonSpeedCommand(PlatoonSpeedCommand* msg)
+void PlatooningCoordinationApp::onPlatoonSpeedCommand(const PlatoonSpeedCommand* msg)
 {
     LOG << "Platoon " << positionHelper->getPlatoonId() << " speed command from TA: setting speed to " << msg->getSpeed() << "m/s\n";
     plexeTraciVehicle->setCruiseControlDesiredSpeed(msg->getSpeed());
 }
 
-void PlatooningCoordinationApp::onPlatoonContactCommand(PlatoonContactCommand* msg)
+void PlatooningCoordinationApp::onPlatoonContactCommand(const PlatoonContactCommand* msg)
 {
     LOG << "Platoon " << positionHelper->getPlatoonId() << " contact command fromt TA: contacting platoon " << msg->getContactPlatoonId() << " (leader: " << msg->getContactLeaderId() << ")\n";
     plexeTraciVehicle->setCruiseControlDesiredSpeed(mySpeed);

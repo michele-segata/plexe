@@ -85,9 +85,9 @@ void NRCV2XMode1RadioDriver::handleMessage(cMessage* msg)
     }
     else if (msg->getArrivalGateId() == socketInGate) {
         inet::Packet* container = check_and_cast<inet::Packet*>(msg);
-        BaseFrame1609_4* frame = PlexeInetUtils::decapsulate<BaseFrame1609_4>(container);
+        const BaseFrame1609_4* frame = PlexeInetUtils::decapsulate<BaseFrame1609_4>(container);
         if (frame) {
-            send(frame, upperLayerOut);
+            send(frame->dup(), upperLayerOut);
         }
         delete container;
     }

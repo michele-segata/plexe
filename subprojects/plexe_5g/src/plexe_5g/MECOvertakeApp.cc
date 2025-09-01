@@ -140,18 +140,16 @@ void MECOvertakeApp::handleUEAppMsg(inet::Packet* packet)
 //        }
 //    }
 
-    if (PlatoonUpdateMessage* update = PlexeInetUtils::decapsulate<PlatoonUpdateMessage>(packet)) {
+    if (const PlatoonUpdateMessage* update = PlexeInetUtils::decapsulate<PlatoonUpdateMessage>(packet)) {
 //        if (migrator) {
 //            delays[ueAppAddress] = simTime().dbl() - update->getTime();
 //            migrator->updateDelay(this, computeAverageDelay());
 //        }
         onPlatoonUpdate(update, ueAppAddress, ueAppPort);
-        delete update;
     }
 
-    if (StartOvertakeRequest* startOvertake = PlexeInetUtils::decapsulate<StartOvertakeRequest>(packet)) {
+    if (const StartOvertakeRequest* startOvertake = PlexeInetUtils::decapsulate<StartOvertakeRequest>(packet)) {
         onStartOvertakeRequest(startOvertake->getOvertakeSpeed(), startOvertake->getOvertakeAcceleration());
-        delete startOvertake;
     }
 
 }

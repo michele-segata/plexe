@@ -61,9 +61,8 @@ void MECMatlabIntersectionMergeApp::handleUEAppMsg(inet::Packet* packet)
     L3Address ueAppAddress = packet->getTag<L3AddressInd>()->getSrcAddress();
     int ueAppPort = packet->getTag<L4PortInd>()->getSrcPort();
 
-    if (IntersectionUpdate* r = PlexeInetUtils::decapsulate<IntersectionUpdate>(packet)) {
+    if (const IntersectionUpdate* r = PlexeInetUtils::decapsulate<IntersectionUpdate>(packet)) {
         onIntersectionUpdate(r, ueAppAddress, ueAppPort);
-        delete r;
     }
     else {
         MECBaselineIntersectionMergeApp::handleUEAppMsg(packet);
@@ -71,7 +70,7 @@ void MECMatlabIntersectionMergeApp::handleUEAppMsg(inet::Packet* packet)
 
 }
 
-void MECMatlabIntersectionMergeApp::onIntersectionRequest(IntersectionRequest *req, L3Address ueAddress, int uePort)
+void MECMatlabIntersectionMergeApp::onIntersectionRequest(const IntersectionRequest *req, L3Address ueAddress, int uePort)
 {
     if (platoonMap.find(req->getPlatoonId()) == platoonMap.end()) {
         // new platoon approaching
@@ -124,7 +123,7 @@ void MECMatlabIntersectionMergeApp::onIntersectionRequest(IntersectionRequest *r
     }
 }
 
-void MECMatlabIntersectionMergeApp::onIntersectionUpdate(IntersectionUpdate *req, L3Address ueAddress, int uePort)
+void MECMatlabIntersectionMergeApp::onIntersectionUpdate(const IntersectionUpdate *req, L3Address ueAddress, int uePort)
 {
 
     auto platoon = platoonMap.find(req->getPlatoonId());
@@ -198,7 +197,7 @@ void MECMatlabIntersectionMergeApp::sendIntersectionClearanceUpdate(int destinat
     sendToUEApp(e, ueAddress, uePort);
 }
 
-void MECMatlabIntersectionMergeApp::onIntersectionExit(IntersectionExit *msg, L3Address ueAddress, int uePort)
+void MECMatlabIntersectionMergeApp::onIntersectionExit(const IntersectionExit *msg, L3Address ueAddress, int uePort)
 {
 
 }

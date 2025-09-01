@@ -32,9 +32,9 @@ protected:
 
     virtual void handleUEAppMsg(inet::Packet* packet) override;
 
-    virtual void onIntersectionRequest(IntersectionRequest* req, L3Address ueAddress, int uePort) override;
-    virtual void onIntersectionUpdate(IntersectionUpdate *req, L3Address ueAddress, int uePort);
-    virtual void onIntersectionExit(IntersectionExit* msg, L3Address ueAddress, int uePort) override;
+    virtual void onIntersectionRequest(const IntersectionRequest* req, L3Address ueAddress, int uePort) override;
+    virtual void onIntersectionUpdate(const IntersectionUpdate *req, L3Address ueAddress, int uePort);
+    virtual void onIntersectionExit(const IntersectionExit* msg, L3Address ueAddress, int uePort) override;
 
     void sendIntersectionClearanceUpdate(int destination, double a, double ts, L3Address ueAddress, int uePort);
 

@@ -84,9 +84,9 @@ protected:
     // helper method to populate traffic authority queries packets
     void populatePlatooningTAQuery(PlatoonTAQuery* msg);
     // invoked when a change speed command is received
-    void onPlatoonSpeedCommand(PlatoonSpeedCommand* msg);
+    void onPlatoonSpeedCommand(const PlatoonSpeedCommand* msg);
     // invoked when a command to contact a platoon is received from the traffic authority
-    void onPlatoonChangeLaneCommand(PlatoonChangeLaneCommand* msg);
+    void onPlatoonChangeLaneCommand(const PlatoonChangeLaneCommand* msg);
 
 private:
 

@@ -58,8 +58,8 @@ protected:
     veins::TraCICommandInterface* traci;
 
     // incoming messages
-    virtual void onIntersectionRequest(IntersectionRequest* req, L3Address ueAddress, int uePort);
-    virtual void onIntersectionExit(IntersectionExit* msg, L3Address ueAddress, int uePort);
+    virtual void onIntersectionRequest(const IntersectionRequest* req, L3Address ueAddress, int uePort);
+    virtual void onIntersectionExit(const IntersectionExit* msg, L3Address ueAddress, int uePort);
 
     void fillIntersectionClearance(IntersectionClearance* e, double a, double ts);
     void sendIntersectionClearance(int destination, double a, double ts, L3Address ueAddress, int uePort);

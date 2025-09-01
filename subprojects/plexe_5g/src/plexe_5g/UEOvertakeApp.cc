@@ -137,13 +137,11 @@ void UEOvertakeApp::handleMECAppStartAck(inet::Packet* packet)
 
 void UEOvertakeApp::handleMECAppMsg(inet::Packet* packet)
 {
-    if (PlatoonSpeedCommand* speedCommand = PlexeInetUtils::decapsulate<PlatoonSpeedCommand>(packet)) {
+    if (const PlatoonSpeedCommand* speedCommand = PlexeInetUtils::decapsulate<PlatoonSpeedCommand>(packet)) {
         onPlatoonSpeedCommand(speedCommand);
-        delete speedCommand;
     }
-    else if (PlatoonChangeLaneCommand* changeLaneCommand = PlexeInetUtils::decapsulate<PlatoonChangeLaneCommand>(packet)) {
+    else if (const PlatoonChangeLaneCommand* changeLaneCommand = PlexeInetUtils::decapsulate<PlatoonChangeLaneCommand>(packet)) {
         onPlatoonChangeLaneCommand(changeLaneCommand);
-        delete changeLaneCommand;
     }
 }
 
@@ -180,13 +178,13 @@ void UEOvertakeApp::populatePlatooningTAQuery(PlatoonTAQuery *msg)
     msg->setQueryType(REQUEST);
 }
 
-void UEOvertakeApp::onPlatoonSpeedCommand(PlatoonSpeedCommand *msg)
+void UEOvertakeApp::onPlatoonSpeedCommand(const PlatoonSpeedCommand *msg)
 {
     LOG << "Platoon " << positionHelper->getPlatoonId() << " speed command from MEC App: setting speed to " << msg->getSpeed() << "m/s\n";
     plexeTraciVehicle->setCruiseControlDesiredSpeed(msg->getSpeed());
 }
 
-void UEOvertakeApp::onPlatoonChangeLaneCommand(PlatoonChangeLaneCommand *msg)
+void UEOvertakeApp::onPlatoonChangeLaneCommand(const PlatoonChangeLaneCommand *msg)
 {
     int changeLane = msg->getChangeLane();
     LOG << "Platoon " << positionHelper->getPlatoonId() << " change command from MEC App: changing lane to the " << (changeLane < 0 ? "right" : "left") << "\n";

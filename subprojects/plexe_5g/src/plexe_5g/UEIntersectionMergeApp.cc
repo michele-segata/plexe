@@ -258,37 +258,32 @@ void UEIntersectionMergeApp::handleMECAppMsg(inet::Packet *packet)
 {
 
     if (positionHelper->isLeader()) {
-        if (IntersectionClearanceUpdate *clearance = PlexeInetUtils::decapsulate<IntersectionClearanceUpdate>(packet)) {
+        if (const IntersectionClearanceUpdate *clearance = PlexeInetUtils::decapsulate<IntersectionClearanceUpdate>(packet)) {
             if (clearance->getDestinationId() == positionHelper->getId())
                 onIntersectionClearanceUpdate(clearance);
-            delete clearance;
             return;
         }
-        if (IntersectionClearance *clearance = PlexeInetUtils::decapsulate<IntersectionClearance>(packet)) {
+        if (const IntersectionClearance *clearance = PlexeInetUtils::decapsulate<IntersectionClearance>(packet)) {
             if (clearance->getDestinationId() == positionHelper->getId())
                 onIntersectionClearance(clearance);
-            delete clearance;
             return;
         }
-        if (IntersectionHold *hold = PlexeInetUtils::decapsulate<IntersectionHold>(packet)) {
+        if (const IntersectionHold *hold = PlexeInetUtils::decapsulate<IntersectionHold>(packet)) {
             if (hold->getDestinationId() == positionHelper->getId())
                 onIntersectionHold(hold);
-            delete hold;
             return;
         }
-        if (IntersectionExitNotification *en = PlexeInetUtils::decapsulate<IntersectionExitNotification>(packet)) {
+        if (const IntersectionExitNotification *en = PlexeInetUtils::decapsulate<IntersectionExitNotification>(packet)) {
             if (en->getDestinationId() == positionHelper->getId())
                 onIntersectionExitNotification(en);
-            delete en;
             return;
         }
     }
     else if (positionHelper->isLast()) {
-        if (IntersectionExitNotificationRequest *req = PlexeInetUtils::decapsulate<IntersectionExitNotificationRequest>(packet)) {
+        if (const IntersectionExitNotificationRequest *req = PlexeInetUtils::decapsulate<IntersectionExitNotificationRequest>(packet)) {
             if (req->getDestinationId() == positionHelper->getId())
                 onIntersectionExitNotificationRequest(req);
             state = IntersectionManeuverState::WAIT_EXIT;
-            delete req;
         }
     }
 }
