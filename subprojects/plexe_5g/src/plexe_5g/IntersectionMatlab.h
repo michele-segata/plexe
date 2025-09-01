@@ -50,10 +50,12 @@ public:
 
 protected:
     virtual void initialize(int stage);
+#ifdef WITH_MATLAB
     virtual void finish();
     virtual void handleMessage(cMessage* msg);
     virtual void connectMatlabSession(const std::u16string sessionName);
     virtual void startMatlabEngine();
+#endif
 
 private:
     double alpha;

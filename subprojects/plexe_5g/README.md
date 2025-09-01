@@ -9,7 +9,7 @@ For one specific example (intersection merge) you will also need Matlab.
 The required versions are:
 1. OMNeT++: v6.2.0 (Installation guide: [here](https://doc.omnetpp.org/q/InstallGuide.pdf))
 2. SUMO: v1.20 (v1.21 and v1.22 should also work, but v1.23 is not currently supported by Veins 5.3.1) (Installation guide: [here](https://sumo.dlr.de/docs/Installing/index.html))
-3. Matlab (any version after R2020. Required for running the MEC intersection merge example)
+3. **Optional for some simulations:** Matlab (any version after R2020. Required for running the MEC intersection merge example)
 
 The OMNeT++ libraries required for Plexe 5G are INET, Simu5G, Veins, and Plexe.
 The detailed instructions about cloning and compiling each library is explained below.
@@ -114,7 +114,23 @@ Once compiled, you will also have to compile the `plexe_5g` subproject.
 ```bash
 cd subprojects/plexe_5g
 ```
-Open the `configure` file and change the path and version of Matlab:
+
+If you do not have Matlab or you do not need it, you can simply run
+```bash
+./configure
+make -j <ncores>
+```
+to compile Plexe 5G.
+**Notice:** if you have named your frameworks folder differently from the standard, you might need to specify where they are located, e.g.:
+```bash
+./configure --with-INET=../../../inet4.5
+```
+Without using Matlab you will not be able to run the *Intersection merge* example, but you will be able to run the other 3 examples using 5G.
+If you instead need Matlab, please look at the next section.
+
+#### 4.1 Matlab configuration
+
+In the root folder of the Plexe 5G subproject, open the `configure` file and change the path and version of Matlab:
 ```
 # Add Matlab flags
 matlab_path = "<path to MATLAB folder>"
@@ -148,8 +164,12 @@ This will not give you debug capabilities over Matlab, but enable to compile `pl
 The procedure is similar for Ubuntu.
 Once done, save the file and finally configure and compile the software:
 ```bash
-./configure
+WITH_MATLAB=1 ./configure
 make -j <ncores>
+```
+**Notice:** if you have named your frameworks folder differently from the standard, you might need to specify where they are located, e.g.:
+```bash
+./configure --with-INET=../../../inet4.5
 ```
 
 ## Description of Plexe_5G and its example scenarios

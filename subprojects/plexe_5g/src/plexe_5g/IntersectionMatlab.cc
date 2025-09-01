@@ -27,11 +27,13 @@
 
 #include "IntersectionMatlab.h"
 
+#ifdef WITH_MATLAB
 #include "MatlabDataArray.hpp"
 #include "MatlabEngine.hpp"
 
 using namespace matlab::engine;
 using namespace matlab::data;
+#endif
 using namespace std;
 //using namespace std::placeholders;
 
@@ -39,6 +41,7 @@ namespace plexe {
 
 Define_Module(IntersectionMatlab);
 
+#ifdef WITH_MATLAB
 std::unique_ptr<MATLABEngine> matlabEngine;
 
 void IntersectionMatlab::initialize(int stage)
@@ -132,6 +135,17 @@ MatlabResult IntersectionMatlab::intersection(MatlabPlatoons* platoons, double s
     
     return res;
 }
+#else
+void IntersectionMatlab::initialize(int stage)
+{
+    throw cRuntimeError("This simulation requires MATLAB support. Please enable it by setting the WITH_MATLAB environment variable to 1");
+}
+
+MatlabResult IntersectionMatlab::intersection(MatlabPlatoons* platoons, double safetyDistance, double maxAcc, double maxSpeed)
+{
+    throw cRuntimeError("This simulation requires MATLAB support. Please enable it by setting the WITH_MATLAB environment variable to 1");
+}
+#endif
 
 IntersectionMatlab::~IntersectionMatlab(){
 }
